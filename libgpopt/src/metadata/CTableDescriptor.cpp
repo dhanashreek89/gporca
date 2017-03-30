@@ -366,12 +366,17 @@ CTableDescriptor::FDescriptorWithPartialIndexes()
 
 	CMDAccessor *pmda = COptCtxt::PoctxtFromTLS()->Pmda();
 	const IMDRelation *pmdrel = pmda->Pmdrel(m_pmdid);
+
+	BOOL fPartitionedTable = pmdrel->FPartitioned();
+
 	for (ULONG ul = 0; ul < ulIndices; ul++)
 	{
 		const IMDIndex *pmdindex = NULL;
 		GPOS_TRY
 		{
-			pmdindex = pmda->Pmdindex(pmdrel->PmdidIndex(ul));
+			IMDId *pmdidIndex = pmdrel->PmdidIndex(ul);
+			fPartitionedTable ? pmdidIndex->SetFAggregateIndex(true) : pmdidIndex->SetFAggregateIndex(false);
+			pmdindex = pmda->Pmdindex(pmdidIndex);
 		}
 		GPOS_CATCH_EX(ex)
 		{

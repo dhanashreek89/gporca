@@ -56,6 +56,8 @@ namespace gpmd
 			// MDAccessor is destroyed
 			volatile ULONG_PTR m_ulpDeletionLocks;
 
+			BOOL m_fAggregateIndex;
+
 		public:
 			//------------------------------------------------------------------
 			//	@doc:
@@ -78,7 +80,8 @@ namespace gpmd
 			// ctor
 			IMDId()
 				:
-				m_ulpDeletionLocks(0)
+				m_ulpDeletionLocks(0),
+				m_fAggregateIndex(true)
 			{}
 
 			// dtor
@@ -213,6 +216,10 @@ namespace gpmd
 			{
 				return NULL != pmdid && pmdid->FValid();
 			}
+
+		BOOL FAggregateIndex() { return m_fAggregateIndex; }
+
+		void SetFAggregateIndex(BOOL flag) { m_fAggregateIndex = flag; }
 	};
 	
 	// common structures over metadata id elements
