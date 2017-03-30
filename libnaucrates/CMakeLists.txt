@@ -97,6 +97,8 @@ add_library(naucrates
             src/md/CMDFunctionGPDB.cpp
             include/naucrates/md/CMDIdCast.h
             src/md/CMDIdCast.cpp
+	    include/naucrates/md/CMDIdIndex.h
+	    src/md/CMDIdIndex.cpp
             include/naucrates/md/CMDIdColStats.h
             src/md/CMDIdColStats.cpp
             include/naucrates/md/CMDIdGPDB.h
