@@ -36,7 +36,8 @@ CMDCastGPDB::CMDCastGPDB
 	IMDId *pmdidSrc,
 	IMDId *pmdidDest,
 	BOOL fBinaryCoercible,
-	IMDId *pmdidCastFunc
+	IMDId *pmdidCastFunc,
+	EmdCoercepathType emdPathType
 	)
 	:
 	m_pmp(pmp),
@@ -45,7 +46,8 @@ CMDCastGPDB::CMDCastGPDB
 	m_pmdidSrc(pmdidSrc),
 	m_pmdidDest(pmdidDest),
 	m_fBinaryCoercible(fBinaryCoercible),
-	m_pmdidCastFunc(pmdidCastFunc)
+	m_pmdidCastFunc(pmdidCastFunc),
+	m_emdPathType(emdPathType)
 {
 	GPOS_ASSERT(m_pmdid->FValid());
 	GPOS_ASSERT(m_pmdidSrc->FValid());
@@ -159,6 +161,13 @@ CMDCastGPDB::FBinaryCoercible() const
 	return m_fBinaryCoercible;
 }
 
+// returns coercion path type
+CMDCastGPDB::EmdCoercepathType
+CMDCastGPDB::EmdPathType() const
+{
+	return m_emdPathType;
+}
+
 //---------------------------------------------------------------------------
 //	@function:
 //		CMDCastGPDB::Serialize
@@ -181,6 +190,7 @@ CMDCastGPDB::Serialize
 
 	pxmlser->AddAttribute(CDXLTokens::PstrToken(EdxltokenName), m_pmdname->Pstr());
 	
+	pxmlser->AddAttribute(CDXLTokens::PstrToken(EdxltokenGPDBCastCoercePathType), m_emdPathType);
 	pxmlser->AddAttribute(CDXLTokens::PstrToken(EdxltokenGPDBCastBinaryCoercible), m_fBinaryCoercible);
 
 	m_pmdidSrc->Serialize(pxmlser, CDXLTokens::PstrToken(EdxltokenGPDBCastSrcType));

@@ -725,13 +725,20 @@ CTranslatorDXLToExpr::PexprCastPrjElem
 	pmdidDest->AddRef();
 	pmdcast->PmdidCastFunc()->AddRef();
 
-	CExpression *pexprCast =
-		GPOS_NEW(m_pmp) CExpression
+	if (pmdcast->EmdPathType() == IMDCast::EmdtArrayCoerce)
+	{
+		int typmod = 
+	}
+	else
+	{
+		CExpression *pexprCast =
+			GPOS_NEW(m_pmp) CExpression
 			(
-			m_pmp,
-			GPOS_NEW(m_pmp) CScalarCast(m_pmp, pmdidDest, pmdcast->PmdidCastFunc(), pmdcast->FBinaryCoercible()),
-			GPOS_NEW(m_pmp) CExpression(m_pmp, GPOS_NEW(m_pmp) CScalarIdent(m_pmp, pcrToCast))
+				m_pmp,
+				GPOS_NEW(m_pmp) CScalarCast(m_pmp, pmdidDest, pmdcast->PmdidCastFunc(), pmdcast->FBinaryCoercible()),
+				GPOS_NEW(m_pmp) CExpression(m_pmp, GPOS_NEW(m_pmp) CScalarIdent(m_pmp, pcrToCast))
 			);
+	}
 
 	return
 		GPOS_NEW(m_pmp) CExpression

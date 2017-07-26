@@ -108,7 +108,7 @@ CParseHandlerMDCast::StartElement
 									EdxltokenGPDBCastFuncId,
 									EdxltokenGPDBCast
 									);
-		
+
 	// parse whether func returns a set
 	BOOL fBinaryCoercible = CDXLOperatorFactory::FValueFromAttrs
 											(
@@ -117,8 +117,17 @@ CParseHandlerMDCast::StartElement
 											EdxltokenGPDBCastBinaryCoercible,
 											EdxltokenGPDBCast
 											);
+
+	IMDCast::EmdCoercepathType eCoercePathType = (IMDCast::EmdCoercepathType) CDXLOperatorFactory::IValueFromAttrs
+																							(
+																							m_pphm->Pmm(),
+																							attrs,
+																							EdxltokenGPDBCastCoercePathType,
+																							EdxltokenGPDBCast
+																							);
 	
-	m_pimdobj = GPOS_NEW(m_pmp) CMDCastGPDB(m_pmp, pmdid, pmdname, pmdidSrc, pmdidDest, fBinaryCoercible, pmdidCastFunc);
+
+	m_pimdobj = GPOS_NEW(m_pmp) CMDCastGPDB(m_pmp, pmdid, pmdname, pmdidSrc, pmdidDest, fBinaryCoercible, pmdidCastFunc, eCoercePathType);
 }
 
 //---------------------------------------------------------------------------
