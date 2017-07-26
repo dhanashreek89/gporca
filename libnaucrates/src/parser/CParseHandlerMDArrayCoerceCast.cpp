@@ -1,18 +1,18 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2013 EMC Corp.
+//	Copyright (C) 2017 Pivotal Software, Inc.
 //
 //	@filename:
-//		CParseHandlerMDCast.cpp
+//		CParseHandlerMDArrayCoerceCast.cpp
 //
 //	@doc:
 //		Implementation of the SAX parse handler class for parsing metadata for
 //		GPDB cast functions
 //---------------------------------------------------------------------------
 
-#include "naucrates/md/CMDCastGPDB.h"
+#include "naucrates/md/CMDArrayCoerceCastGPDB.h"
 
-#include "naucrates/dxl/parser/CParseHandlerMDCast.h"
+#include "naucrates/dxl/parser/CParseHandlerMDArrayCoerceCast.h"
 #include "naucrates/dxl/parser/CParseHandlerManager.h"
 
 #include "naucrates/dxl/parser/CParseHandlerFactory.h"
@@ -24,15 +24,8 @@ using namespace gpdxl;
 
 XERCES_CPP_NAMESPACE_USE
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CParseHandlerMDCast::CParseHandlerMDCast
-//
-//	@doc:
-//		Ctor
-//
-//---------------------------------------------------------------------------
-CParseHandlerMDCast::CParseHandlerMDCast
+// ctor
+CParseHandlerMDArrayCoerceCast::CParseHandlerMDArrayCoerceCast
 	(
 	IMemoryPool *pmp,
 	CParseHandlerManager *pphm,
@@ -42,16 +35,9 @@ CParseHandlerMDCast::CParseHandlerMDCast
 	CParseHandlerMetadataObject(pmp, pphm, pphRoot)
 {}
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CParseHandlerMDCast::StartElement
-//
-//	@doc:
-//		Invoked by Xerces to process an opening tag
-//
-//---------------------------------------------------------------------------
+// invoked by Xerces to process an opening tag
 void
-CParseHandlerMDCast::StartElement
+CParseHandlerMDArrayCoerceCast::StartElement
 	(
 	const XMLCh* const, // xmlszUri,
 	const XMLCh* const xmlszLocalname,
@@ -59,7 +45,7 @@ CParseHandlerMDCast::StartElement
 	const Attributes& attrs
 	)
 {
-	if (0 != XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenGPDBCast), xmlszLocalname))
+	if (0 != XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenGPDBArrayCoerceCast), xmlszLocalname))
 	{
 		CWStringDynamic *pstr = CDXLUtils::PstrFromXMLCh(m_pphm->Pmm(), xmlszLocalname);
 		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, pstr->Wsz());
@@ -70,7 +56,7 @@ CParseHandlerMDCast::StartElement
 														(
 														attrs,
 														EdxltokenName,
-														EdxltokenGPDBCast
+														EdxltokenGPDBArrayCoerceCast
 														);
 
 	CMDName *pmdname = CDXLUtils::PmdnameFromXmlsz(m_pphm->Pmm(), xmlszFuncName);
@@ -82,7 +68,7 @@ CParseHandlerMDCast::StartElement
 									m_pphm->Pmm(),
 									attrs,
 									EdxltokenMdid,
-									EdxltokenGPDBCast
+									EdxltokenGPDBArrayCoerceCast
 									);
 	
 	IMDId *pmdidSrc = CDXLOperatorFactory::PmdidFromAttrs
@@ -90,7 +76,7 @@ CParseHandlerMDCast::StartElement
 									m_pphm->Pmm(),
 									attrs,
 									EdxltokenGPDBCastSrcType,
-									EdxltokenGPDBCast
+									EdxltokenGPDBArrayCoerceCast
 									);
 	
 	IMDId *pmdidDest = CDXLOperatorFactory::PmdidFromAttrs
@@ -98,7 +84,7 @@ CParseHandlerMDCast::StartElement
 									m_pphm->Pmm(),
 									attrs,
 									EdxltokenGPDBCastDestType,
-									EdxltokenGPDBCast
+									EdxltokenGPDBArrayCoerceCast
 									);
 	
 	IMDId *pmdidCastFunc = CDXLOperatorFactory::PmdidFromAttrs
@@ -106,7 +92,7 @@ CParseHandlerMDCast::StartElement
 									m_pphm->Pmm(),
 									attrs,
 									EdxltokenGPDBCastFuncId,
-									EdxltokenGPDBCast
+									EdxltokenGPDBArrayCoerceCast
 									);
 
 	// parse whether func returns a set
@@ -115,7 +101,7 @@ CParseHandlerMDCast::StartElement
 											m_pphm->Pmm(),
 											attrs,
 											EdxltokenGPDBCastBinaryCoercible,
-											EdxltokenGPDBCast
+											EdxltokenGPDBArrayCoerceCast
 											);
 
 	IMDCast::EmdCoercepathType eCoercePathType = (IMDCast::EmdCoercepathType) CDXLOperatorFactory::IValueFromAttrs
@@ -123,30 +109,55 @@ CParseHandlerMDCast::StartElement
 																							m_pphm->Pmm(),
 																							attrs,
 																							EdxltokenGPDBCastCoercePathType,
-																							EdxltokenGPDBCast,
-																							true
+																							EdxltokenGPDBArrayCoerceCast
 																							);
+	
+	INT iMod = CDXLOperatorFactory::IValueFromAttrs
+							(
+							 m_pphm->Pmm(),
+							 attrs,
+							 EdxltokenTypeMod,
+							 EdxltokenGPDBArrayCoerceCast
+							 );
+	
+	BOOL fIsExplicit =CDXLOperatorFactory::FValueFromAttrs
+									(
+									 m_pphm->Pmm(),
+									 attrs,
+									 EdxltokenIsExplicit,
+									 EdxltokenGPDBArrayCoerceCast
+									 );
+	
+	EdxlCoercionForm edcf = (EdxlCoercionForm) CDXLOperatorFactory::IValueFromAttrs
+																		(
+																		 m_pphm->Pmm(),
+																		 attrs,
+																		 EdxltokenCoercionForm,
+																		 EdxltokenGPDBArrayCoerceCast
+																		 );
 
-	m_pimdobj = GPOS_NEW(m_pmp) CMDCastGPDB(m_pmp, pmdid, pmdname, pmdidSrc, pmdidDest, fBinaryCoercible, pmdidCastFunc, eCoercePathType);
+	INT iLoc = CDXLOperatorFactory::IValueFromAttrs
+							(
+							 m_pphm->Pmm(),
+							 attrs,
+							 EdxltokenLocation,
+							 EdxltokenGPDBArrayCoerceCast
+							 );
+	
+
+	m_pimdobj = GPOS_NEW(m_pmp) CMDArrayCoerceCastGPDB(m_pmp, pmdid, pmdname, pmdidSrc, pmdidDest, fBinaryCoercible, pmdidCastFunc, eCoercePathType, iMod, fIsExplicit, edcf, iLoc);
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CParseHandlerMDCast::EndElement
-//
-//	@doc:
-//		Invoked by Xerces to process a closing tag
-//
-//---------------------------------------------------------------------------
+// invoked by Xerces to process a closing tag
 void
-CParseHandlerMDCast::EndElement
+CParseHandlerMDArrayCoerceCast::EndElement
 	(
 	const XMLCh* const, // xmlszUri,
 	const XMLCh* const xmlszLocalname,
 	const XMLCh* const // xmlszQname
 	)
 {
-	if (0 != XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenGPDBCast), xmlszLocalname))
+	if (0 != XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenGPDBArrayCoerceCast), xmlszLocalname))
 	{
 		CWStringDynamic *pstr = CDXLUtils::PstrFromXMLCh(m_pphm->Pmm(), xmlszLocalname);
 		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, pstr->Wsz());

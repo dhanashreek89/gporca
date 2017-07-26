@@ -33,6 +33,10 @@ namespace gpmd
 	class CMDCastGPDB : public IMDCast
 	{
 		private:
+			// private copy ctor
+			CMDCastGPDB(const CMDCastGPDB &);
+
+		protected:
 			// memory pool
 			IMemoryPool *m_pmp;
 			
@@ -59,9 +63,6 @@ namespace gpmd
 		
 			// coercion path type
 			EmdCoercepathType m_emdPathType;
-		
-			// private copy ctor
-			CMDCastGPDB(const CMDCastGPDB &);
 			
 		public:
 			// ctor

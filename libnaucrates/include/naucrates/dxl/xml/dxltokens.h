@@ -579,6 +579,7 @@ namespace gpdxl
 		EdxltokenGPDBCastDestType,
 		EdxltokenGPDBCastFuncId,
 		EdxltokenGPDBCastCoercePathType,
+		EdxltokenGPDBArrayCoerceCast,
 		
 		EdxltokenGPDBMDScCmp,
 		
