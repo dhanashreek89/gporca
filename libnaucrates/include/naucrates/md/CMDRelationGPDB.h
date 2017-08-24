@@ -33,6 +33,7 @@ namespace gpmd
 	using namespace gpos;
 	using namespace gpdxl;
 
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CMDRelationGPDB
@@ -90,7 +91,7 @@ namespace gpmd
 			DrgPdrgPul *m_pdrgpdrgpulKeys;
 
 			// array of index ids
-			DrgPmdid *m_pdrgpmdidIndices;
+			DrgPmdIndexInfo *m_pdrgpmdidIndices;
 
 			// array of trigger ids
 			DrgPmdid *m_pdrgpmdidTriggers;
@@ -138,7 +139,7 @@ namespace gpmd
 				ULONG ulPartitions,
 				BOOL fConvertHashToRandom,
 				DrgPdrgPul *pdrgpdrgpul,
-				DrgPmdid *pdrgpmdidIndices,
+				DrgPmdIndexInfo *pdrgpmdidIndices,
 				DrgPmdid *pdrgpmdidTriggers,
 				DrgPmdid *pdrgpmdidCheckConstraint,
 				IMDPartConstraint *pmdpartcnstr,
