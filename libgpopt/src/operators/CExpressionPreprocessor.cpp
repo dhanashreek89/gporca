@@ -474,7 +474,7 @@ CExpressionPreprocessor::PexprRemoveSuperfluousOuterRefs
 			// -- constant for each invocation of subquery
 			// select a from t where c in (select count(s.j) from s group by s.i, t.b)
 			//
-			if (0 < pExprProjList->UlArity() || 0 < pdrgpcr->UlLength())
+			if ((pdrgpcr->UlLength() != 0 && pcrsOuter->CElements() == 0) && (0 < pExprProjList->UlArity() || 0 < pdrgpcr->UlLength()))
 			{
 				DrgPcr *pdrgpcrMinimal = popAgg->PdrgpcrMinimal();
 				if (NULL != pdrgpcrMinimal)
