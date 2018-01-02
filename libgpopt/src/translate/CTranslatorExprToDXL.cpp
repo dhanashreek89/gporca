@@ -2750,11 +2750,17 @@ CTranslatorExprToDXL::BuildSubplans
 			return;
 
 		case COperator::EopPhysicalCorrelatedInnerNLJoin:
-			BuildScalarSubplans(pdrgpcrInner, pexprInner, pdrgdxlcr, pdrgmdid, pdrgpdsBaseTables, pulNonGatherMotions, pfDML);
+			pdxlnSubPlan = BuildScalarSubplans(pdrgpcrInner, pexprInner, pdrgdxlcr, pdrgmdid, pdrgpdsBaseTables, pulNonGatherMotions, pfDML);
 
 			// now translate the scalar - references to the inner child will be
 			// replaced by the subplan
-			*ppdxlnScalar = PdxlnScalar(pexprScalar);
+			if (CUtils::FScalarConstTrue(pexprScalar))
+			{
+				pdxlnSubPlan->AddRef();
+				*ppdxlnScalar = pdxlnSubPlan;
+			}
+			else
+				*ppdxlnScalar = PdxlnScalar(pexprScalar);
 			return;
 
 		case COperator::EopPhysicalCorrelatedInLeftSemiNLJoin:
@@ -3137,7 +3143,7 @@ CTranslatorExprToDXL::PdxlnExistentialSubplan
 //		generated subplans in subplan map
 //
 //---------------------------------------------------------------------------
-void
+CDXLNode *
 CTranslatorExprToDXL::BuildScalarSubplans
 	(
 	DrgPcr *pdrgpcrInner,
@@ -3150,6 +3156,7 @@ CTranslatorExprToDXL::BuildScalarSubplans
 	)
 {
 	const ULONG ulSize = pdrgpcrInner->UlLength();
+	CDXLNode *pdxlnSubPlan = NULL;
 
 	DrgPdxln *pdrgpdxlnInner = GPOS_NEW(m_pmp) DrgPdxln(m_pmp);
 	for (ULONG ul = 0; ul < ulSize; ul++)
@@ -3175,10 +3182,11 @@ CTranslatorExprToDXL::BuildScalarSubplans
 			pdrgmdid->AddRef();
 		}
 		const CColRef *pcrInner = (*pdrgpcrInner)[ul];
-		BuildDxlnSubPlan(pdxlnInner, pcrInner, pdrgdxlcr, pdrgmdid);
+		pdxlnSubPlan = BuildDxlnSubPlan(pdxlnInner, pcrInner, pdrgdxlcr, pdrgmdid);
 	}
 
 	pdrgpdxlnInner->Release();
+	return pdxlnSubPlan;
 }
 
 
@@ -3231,7 +3239,7 @@ CTranslatorExprToDXL::PdxlnCorrelatedNLJoin
 	// extract components
 	CExpression *pexprOuterChild = (*pexpr)[0];
 	CExpression *pexprInnerChild = (*pexpr)[1];
-	CExpression *pexprScalar = (*pexpr)[2];
+	//CExpression *pexprScalar = (*pexpr)[2];
 
 	// outer references in the inner child
 	DrgPdxlcr *pdrgdxlcr = GPOS_NEW(m_pmp) DrgPdxlcr(m_pmp);
@@ -3250,8 +3258,17 @@ CTranslatorExprToDXL::PdxlnCorrelatedNLJoin
 		pdrgmdid->Append(pmdid);
 	}
 
-	COperator::EOperatorId eopid = pexpr->Pop()->Eopid();
 	CDXLNode *pdxlnCond = NULL;
+
+	// get the columns that the join needsto produce
+	DrgPcr *pdrgpcrJoinOutput = CPhysicalNLJoin::PopConvert(pexpr->Pop())->PdrgPcrInner();
+	CColRefSet *pcrsJoinOutput = GPOS_NEW(m_pmp) CColRefSet(m_pmp);
+	pcrsJoinOutput->Include(pdrgpcrJoinOutput);
+
+	CColRefSet *pcrsInnerColumns = CDrvdPropRelational::Pdprel(pexprInnerChild->Pdp(CDrvdProp::EptRelational))->PcrsOutput();
+	// check if the required columns are produced by the inner child of the correlated join
+	BOOL fInnerCols = pcrsInnerColumns->FSubset(pcrsJoinOutput) ? true : false;
+	pcrsJoinOutput->Release();
 
     // Create a subplan with a Boolean from the inner child if we have a Const True as a join condition.
     // One scenario for this is when IN sublinks contain a projection from the outer table only such as:
@@ -3260,8 +3277,7 @@ CTranslatorExprToDXL::PdxlnCorrelatedNLJoin
     // and condition foo.a = foo.b is added as a filter on the table scan of foo. If bar is a large table,
     // ORCA generates a plan with CorrelatedInnerNLJoin with a Const true join filter and a LIMIT over the
     // scan of bar. The same foo.a = foo.b condition is also added as a filter on the table scan of foo.
-	if (CUtils::FScalarConstTrue(pexprScalar) &&
-		(COperator::EopPhysicalCorrelatedInnerNLJoin == eopid || COperator::EopPhysicalCorrelatedInLeftSemiNLJoin == eopid))
+	if (/*CUtils::FScalarConstTrue(pexprScalar) && */!fInnerCols)
 	{
 		// translate relational inner child expression
 		CDXLNode *pdxlnInnerChild = Pdxln
@@ -3327,7 +3343,7 @@ CTranslatorExprToDXL::PdxlnCorrelatedNLJoin
 //		references that column can use the subplan
 //
 //---------------------------------------------------------------------------
-void
+CDXLNode*
 CTranslatorExprToDXL::BuildDxlnSubPlan
 	(
 	CDXLNode *pdxlnRelChild,
@@ -3350,6 +3366,8 @@ CTranslatorExprToDXL::BuildDxlnSubPlan
 #endif // GPOS_DEBUG
 	m_phmcrdxln->FInsert(const_cast<CColRef *>(pcr), pdxlnSubPlan);
 	GPOS_ASSERT(fRes);
+
+	return pdxlnSubPlan;
 }
 
 

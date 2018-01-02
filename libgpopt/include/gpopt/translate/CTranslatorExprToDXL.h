@@ -298,7 +298,7 @@ namespace gpopt
 			void StoreIndexNLJOuterRefs(CPhysical *pop);
 
 			// build a scalar DXL subplan node
-			void BuildDxlnSubPlan
+			CDXLNode* BuildDxlnSubPlan
 						(
 						CDXLNode *pdxlnRelChild,
 						const CColRef *pcr,
@@ -764,7 +764,7 @@ namespace gpopt
 
 			// helper to build scalar subplans from inner column references and store them
 			// in subplan map
-			void BuildScalarSubplans
+			CDXLNode * BuildScalarSubplans
 				(
 				DrgPcr *pdrgpcrInner,
 				CExpression *pexprInner,
