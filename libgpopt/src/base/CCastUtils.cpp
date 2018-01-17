@@ -157,20 +157,8 @@ CCastUtils::FBinaryCoercibleCast
 	GPOS_ASSERT(NULL != pexpr);
 	COperator *pop = pexpr->Pop();
 
-	return FScalarCast(pexpr) &&
+	return COperator::EopScalarCast == pop->Eopid() &&
 	CScalarCast::PopConvert(pop)->FBinaryCoercible();
-}
-
-BOOL
-CCastUtils::FScalarCast
-	(
-	CExpression *pexpr
-	)
-{
-	GPOS_ASSERT(NULL != pexpr);
-	COperator *pop = pexpr->Pop();
-
-	return COperator::EopScalarCast == pop->Eopid();
 }
 
 // return the given expression without any binary coercible casts

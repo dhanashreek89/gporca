@@ -49,10 +49,6 @@ namespace gpopt
 			static
 			BOOL FBinaryCoercibleCast(CExpression *pexpr);
 
-			// check whether the given expression is a cast of something
-			static
-			BOOL FScalarCast(CExpression *pexpr);
-
 			// return the given expression without any binary coercible casts
 			// that exist on the top
 			static
