@@ -221,9 +221,18 @@ namespace gpopt
 			static
 			BOOL FCompareCastIdentToConstArray(CExpression *pexpr);
 
+			// is the given expression a comparison between a scalar ident under a scalar cast and an array
+			// that has *any* constants
+			static
+			BOOL FCompareCastIdentToAnyConstArray(CExpression *pexpr);
+
 			// is the given expression a comparison between a scalar ident and a constant array
 			static
 			BOOL FCompareIdentToConstArray(CExpression *pexpr);
+
+			// is the given expression a comparison between a scalar ident and an array with *any* constants?
+			static
+			BOOL FCompareIdentToAnyConstArray(CExpression *pexpr);
 
 			// is the given expression a scalar range or equality comparison
 			static

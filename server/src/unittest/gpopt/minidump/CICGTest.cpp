@@ -40,6 +40,7 @@ ULONG CICGTest::m_ulNegativeIndexApplyTestCounter = 0;
 // minidump files
 const CHAR *rgszFileNames[] =
 	{
+		"../data/dxl/minidump/MCV_ArrayComparison.mdp",
 		"../data/dxl/minidump/DisableLargeTableBroadcast.mdp",
 		"../data/dxl/minidump/InsertIntoNonNullAfterDroppingColumn.mdp",
 		"../data/dxl/minidump/OrderByNullsFirst.mdp",

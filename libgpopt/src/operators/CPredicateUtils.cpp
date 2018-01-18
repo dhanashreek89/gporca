@@ -1227,6 +1227,7 @@ CPredicateUtils::FIdentINDFConstIgnoreCast
 	return FIdentCompareConstIgnoreCast((*pexpr)[0], COperator::EopScalarIsDistinctFrom);
 }
 
+#if 0
 // is the given expression a comparison between a scalar ident under a scalar cast and a constant array
 // +--CScalarArrayCmp Any (=)
 // |--CScalarCast
@@ -1250,6 +1251,32 @@ CPredicateUtils::FCompareCastIdentToConstArray
 
 	return false;
 }
+#endif
+
+// is the given expression a comparison between a scalar ident under a scalar cast and an array
+// that has *any* constants
+// +--CScalarArrayCmp Any (=)
+// |--CScalarCast
+// |  +--CScalarIdent
+// +--CScalarConstArray:
+BOOL
+CPredicateUtils::FCompareCastIdentToAnyConstArray
+	(
+	CExpression *pexpr
+	)
+{
+	GPOS_ASSERT(NULL != pexpr);
+
+	if (CUtils::FScalarArrayCmp(pexpr) &&
+		(CCastUtils::FBinaryCoercibleCast((*pexpr)[0]) &&
+		 CUtils::FScalarIdent((*(*pexpr)[0])[0])))
+	{
+		CExpression *pexprArray = CUtils::PexprScalarArrayChild(pexpr);
+		return CUtils::FScalarAnyConstArray(pexprArray);
+	}
+
+	return false;
+}
 
 // is the given expression a comparison between a scalar ident and a constant array
 BOOL
@@ -1269,6 +1296,27 @@ CPredicateUtils::FCompareIdentToConstArray
 
 	CExpression *pexprArray = CUtils::PexprScalarArrayChild(pexpr);
 	return CUtils::FScalarConstArray(pexprArray);
+}
+
+// is the given expression a comparison between a scalar ident and an array
+// that has *any* constants
+BOOL
+CPredicateUtils::FCompareIdentToAnyConstArray
+	(
+	CExpression *pexpr
+	)
+{
+	GPOS_ASSERT(NULL != pexpr);
+
+	if (!CUtils::FScalarArrayCmp(pexpr) ||
+		!CUtils::FScalarIdent((*pexpr)[0]) ||
+		!CUtils::FScalarArray((*pexpr)[1]))
+	{
+		return false;
+	}
+
+	CExpression *pexprArray = CUtils::PexprScalarArrayChild(pexpr);
+	return CUtils::FScalarAnyConstArray(pexprArray);
 }
 
 // Find a predicate that can be used for partition pruning with the given

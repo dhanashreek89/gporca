@@ -681,6 +681,23 @@ CUtils::FScalarConstArray(CExpression *pexprArray)
 	return fAllConsts;
 }
 
+// returns if the scalar array has any constant elements or children
+BOOL
+CUtils::FScalarAnyConstArray(CExpression *pexprArray)
+{
+	const ULONG ulArity = pexprArray->UlArity();
+
+	// do we still need this, or has it already been done?
+	//BOOL fAnyConsts = FScalarArray(pexprArray);
+	for (ULONG ul = 0; ul < ulArity; ul++)
+	{
+		if( CUtils::FScalarConst((*pexprArray)[ul]))
+			return true;
+	}
+
+	return false;
+}
+
 // returns if the scalar constant array has already been collapased
 BOOL
 CUtils::FScalarArrayCollapsed(CExpression *pexprArray)

@@ -769,6 +769,10 @@ namespace gpopt
 			static
 			BOOL FScalarConstArray(CExpression *pexpr);
 
+			// returns if the scalar array has any constant elements or children
+			static
+			BOOL FScalarAnyConstArray(CExpression *pexprArray);
+
 			// returns if the scalar constant array has already been collapased
 			static
 			BOOL FScalarArrayCollapsed(CExpression *pexprArray);
