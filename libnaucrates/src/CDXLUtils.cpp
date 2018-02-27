@@ -1780,6 +1780,8 @@ CDXLUtils::PstrFromSz
 	GPOS_ASSERT(NULL != sz);
 	
 	CAutoP<CWStringDynamic> a_pstr(GPOS_NEW(pmp) CWStringDynamic(pmp));
+	CAutoTrace at(pmp);
+	at.Os() << "string: " << sz;
 	a_pstr->AppendFormat(GPOS_WSZ_LIT("%s"), sz);
 	return a_pstr.PtReset();
 }

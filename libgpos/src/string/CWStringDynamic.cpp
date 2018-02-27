@@ -14,6 +14,8 @@
 #include "gpos/string/CStringStatic.h"
 #include "gpos/string/CWStringDynamic.h"
 #include "gpos/common/CAutoRg.h"
+#include "gpos/error/CAutoTrace.h"
+#include <fstream>
 using namespace gpos;
 
 
@@ -226,6 +228,13 @@ CWStringDynamic::AppendFormat
 	// attempt to fit the formatted string in a static array
 	WCHAR wszBufStatic[GPOS_WSTR_DYNAMIC_STATIC_BUFFER];
 
+	std::ofstream fout;
+
+	fout.open("/tmp/debug.out");
+	fout << "old ctype: " << setlocale(LC_CTYPE, NULL) << std::endl;
+	//setlocale(LC_CTYPE, "en_US.utf-8");
+	fout << "new ctype: " << setlocale(LC_CTYPE, NULL) << std::endl;
+
 	// get arguments
 	VA_START(vaArgs, wszFormat);
 
@@ -246,6 +255,9 @@ CWStringDynamic::AppendFormat
 		// try with a bigger buffer this time
 		ulSize *= 2;
 		CAutoRg<WCHAR> a_wszBuf;
+//		CAutoTrace at(m_pmp);
+		fout << "Size of string: " << ulSize << std::endl;
+		fout << "String: " << wszFormat << std::endl;
 		a_wszBuf = GPOS_NEW_ARRAY(m_pmp, WCHAR, ulSize + 1);
 
 		// get arguments
@@ -259,6 +271,8 @@ CWStringDynamic::AppendFormat
 
 		GPOS_ASSERT(-1 <= iRes);
 	}
+	fout.close();
+
 	// verify required buffer was not bigger than allowed
 	GPOS_ASSERT(iRes >= 0);
 
