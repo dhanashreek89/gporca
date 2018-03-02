@@ -44,13 +44,13 @@ CSubqueryTestUtils::GenerateGetExpressions
 	GPOS_ASSERT(NULL != ppexprInner);
 
 	// outer expression
-	CWStringConst strNameR(GPOS_WSZ_LIT("Rel1"));
+	CStringStatic strNameR((CHAR *)"Rel1", 1024);
 	CMDIdGPDB *pmdidR = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_TEST_REL_OID1, 1, 1);
 	CTableDescriptor *ptabdescR = CTestUtils::PtabdescCreate(pmp, 3 /*ulCols*/, pmdidR, CName(&strNameR));
 	*ppexprOuter = CTestUtils::PexprLogicalGet(pmp, ptabdescR, &strNameR);
 
 	// inner expression
-	CWStringConst strNameS(GPOS_WSZ_LIT("Rel2"));
+	CStringStatic strNameS((CHAR *)"Rel2", 1024);
 	CMDIdGPDB *pmdidS = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_TEST_REL_OID2, 1, 1);
 	CTableDescriptor *ptabdescS = CTestUtils::PtabdescCreate(pmp, 3 /*ulCols*/, pmdidS, CName(&strNameS));
 	*ppexprInner = CTestUtils::PexprLogicalGet(pmp, ptabdescS, &strNameS);
@@ -300,7 +300,7 @@ CSubqueryTestUtils::PexprSelectWithAggSubqueryOverJoin
 	GenerateGetExpressions(pmp, &pexprR, &pexprS);
 
 	// generate outer expression
-	CWStringConst strNameT(GPOS_WSZ_LIT("Rel3"));
+	CStringStatic strNameT((CHAR *)"Rel3", 1024);
 
 	CMDIdGPDB *pmdidT = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_TEST_REL_OID3, 1, 1);
 	CTableDescriptor *ptabdescT = CTestUtils::PtabdescCreate(pmp, 3 /*ulCols*/, pmdidT, CName(&strNameT));
@@ -783,7 +783,7 @@ CSubqueryTestUtils::PexprSelectWithCmpSubqueries
 	CExpression *pexprScalarSubquery1 = PexprSubqueryAgg(pmp, pexprOuter, pexprInner, fCorrelated);
 
 	// generate get expression
-	CWStringConst strNameT(GPOS_WSZ_LIT("Rel3"));
+	CStringStatic strNameT((CHAR *)"Rel3",1024);
 
 	CMDIdGPDB *pmdidT = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_TEST_REL_OID3, 1, 1);
 	CTableDescriptor *ptabdescT = CTestUtils::PtabdescCreate(pmp, 3 /*ulCols*/, pmdidT, CName(&strNameT));
@@ -1130,7 +1130,7 @@ CSubqueryTestUtils::PexprUndecorrelatableSubquery
 				COperator::EopScalarSubqueryExists == eopid ||
 				COperator::EopScalarSubqueryNotExists == eopid);
 
-	CWStringConst strNameR(GPOS_WSZ_LIT("Rel1"));
+	CStringStatic strNameR((CHAR *)"Rel1", 1024);
 	CMDIdGPDB *pmdidR = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_TEST_REL_OID1, 1 /*ulVersionMajor*/, 1 /*ulVersionMinor*/);
 	CTableDescriptor *ptabdescR = CTestUtils::PtabdescPlain(pmp, 3 /*ulCols*/, pmdidR, CName(&strNameR));
 	CExpression *pexprOuter = CTestUtils::PexprLogicalGet(pmp, ptabdescR, &strNameR);
@@ -1747,7 +1747,7 @@ CSubqueryTestUtils::PexprSubqueryWithConstTableGet
 	GPOS_ASSERT(COperator::EopScalarSubqueryAny == eopid ||
 				COperator::EopScalarSubqueryAll == eopid);
 
-	CWStringConst strNameR(GPOS_WSZ_LIT("Rel1"));
+	CStringStatic strNameR((CHAR *)"Rel1", 1024);
 	CMDIdGPDB *pmdidR = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_TEST_REL_OID1, 1, 1);
 	CTableDescriptor *ptabdescR = CTestUtils::PtabdescCreate(pmp, 3 /*ulCols*/, pmdidR, CName(&strNameR));
 
@@ -1810,7 +1810,7 @@ CSubqueryTestUtils::PexprSubqueryWithDisjunction
 {
 	GPOS_ASSERT(NULL != pmp);
 
-	CWStringConst strNameR(GPOS_WSZ_LIT("Rel1"));
+	CStringStatic strNameR((CHAR *)"Rel1", 1024);
 	CMDIdGPDB *pmdidR = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_TEST_REL_OID1, 1, 1);
 	CTableDescriptor *ptabdescR = CTestUtils::PtabdescCreate(pmp, 3 /*ulCols*/, pmdidR, CName(&strNameR));
 

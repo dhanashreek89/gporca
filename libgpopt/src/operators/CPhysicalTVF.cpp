@@ -36,7 +36,7 @@ CPhysicalTVF::CPhysicalTVF
 	IMemoryPool *pmp,
 	IMDId *pmdidFunc,
 	IMDId *pmdidRetType,
-	CWStringConst *pstr,
+	CStringStatic *pstr,
 	DrgPcoldesc *pdrgpcoldesc,
 	CColRefSet *pcrsOutput
 	)

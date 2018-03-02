@@ -64,7 +64,7 @@ CScalarFunc::CScalarFunc
 	IMDId *pmdidFunc,
 	IMDId *pmdidRetType,
 	INT iRetTypeModifier,
-	const CWStringConst *pstrFunc
+	const CStringStatic *pstrFunc
 	)
 	:
 	CScalar(pmp),
@@ -114,7 +114,7 @@ CScalarFunc::~CScalarFunc()
 //		Function name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
+const CStringStatic *
 CScalarFunc::PstrFunc() const
 {
 	return m_pstrFunc;
@@ -249,7 +249,7 @@ CScalarFunc::OsPrint
 	const
 {
 	os << SzId() << " (";
-	os << PstrFunc()->Wsz();
+	os << PstrFunc()->Sz();
 	os << ")";
 	
 	return os;

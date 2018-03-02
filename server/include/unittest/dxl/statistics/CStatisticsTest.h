@@ -209,8 +209,8 @@ namespace gpnaucrates
 				IMemoryPool *pmp,
 				const CName &nameTable,
 				const IMDTypeInt4 *pmdtype,
-				const CWStringConst &strColA,
-				const CWStringConst &strColB
+				const CStringStatic &strColA,
+				const CStringStatic &strColB
 				);
 
 			// do the bucket boundaries match

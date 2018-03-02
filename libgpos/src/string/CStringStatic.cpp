@@ -40,7 +40,7 @@ CStringStatic::CStringStatic
 	GPOS_ASSERT(NULL != szBuffer);
 	GPOS_ASSERT(0 < m_ulCapacity);
 
-	m_szBuf[0] = CHAR_EOS;
+	//m_szBuf[0] = CHAR_EOS;
 }
 
 
@@ -292,6 +292,10 @@ CStringStatic::FValid() const
 
 #endif // GPOS_DEBUG
 
-
+CStringStatic*
+CStringStatic::PStrCopy(IMemoryPool *pmp) const
+{
+	return GPOS_NEW(pmp) CStringStatic(Sz(), 1024);
+}
 // EOF
 

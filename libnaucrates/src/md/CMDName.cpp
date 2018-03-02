@@ -10,7 +10,7 @@
 //---------------------------------------------------------------------------
 
 #include "gpos/base.h"
-#include "gpos/string/CWStringDynamic.h"
+#include "gpos/string/CStringStatic.h"
 #include "naucrates/md/CMDName.h"
 
 using namespace gpmd;
@@ -28,13 +28,13 @@ using namespace gpmd;
 CMDName::CMDName
 	(
 	IMemoryPool *pmp,
-	const CWStringBase *pstr
+	const CStringStatic *pstr
 	)
 	:
 	m_psc(NULL),
 	m_fDeepCopy(true)
 {
-	m_psc = GPOS_NEW(pmp) CWStringConst(pmp, pstr->Wsz());
+	m_psc = GPOS_NEW(pmp) CStringStatic(pstr->Sz(), 1024);
 }
 
 //---------------------------------------------------------------------------
@@ -49,15 +49,14 @@ CMDName::CMDName
 //---------------------------------------------------------------------------
 CMDName::CMDName
 	(
-	const CWStringConst *pstr,
+	const CStringStatic *pstr,
 	BOOL fOwnsMemory
 	)
-	:
-	m_psc(pstr),
-	m_fDeepCopy(fOwnsMemory)
 {
-	GPOS_ASSERT(NULL != m_psc);
-	GPOS_ASSERT(m_psc->FValid());
+    if (fOwnsMemory) // this is stupid, see if we can get rid of fOwnsMemory
+        GPOS_ASSERT(NULL != m_psc);
+	m_psc = pstr;
+//	GPOS_ASSERT(m_psc->FValid());
 }
 
 //---------------------------------------------------------------------------
@@ -72,12 +71,11 @@ CMDName::CMDName
 	(
 	const CMDName &name
 	)
-	:
-	m_psc(name.Pstr()),
-	m_fDeepCopy(false)
+
 {
-	GPOS_ASSERT(NULL != m_psc->Wsz());
-	GPOS_ASSERT(m_psc->FValid());	
+	GPOS_ASSERT(NULL != m_psc->Sz());
+	m_psc = name.Pstr();
+//	GPOS_ASSERT(m_psc->FValid());
 }
 
 
@@ -91,7 +89,7 @@ CMDName::CMDName
 //---------------------------------------------------------------------------
 CMDName::~CMDName()
 {
-	GPOS_ASSERT(m_psc->FValid());
+	//GPOS_ASSERT(m_psc->FValid());
 
 	if (m_fDeepCopy)
 	{

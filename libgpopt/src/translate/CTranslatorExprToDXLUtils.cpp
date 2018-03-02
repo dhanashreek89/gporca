@@ -750,14 +750,18 @@ CTranslatorExprToDXLUtils::PdxlnRangePointPredicate
 	 	
 	// generate a predicate of the form "point < col" / "point > col"
 	pmdidCmpExl->AddRef();
-	
-	CWStringConst *pstrCmpExcl = GPOS_NEW(pmp) CWStringConst(pmp, pmda->Pmdscop(pmdidCmpExl)->Mdname().Pstr()->Wsz());
+
+	CWStringDynamic *pwstrdyn = GPOS_NEW(pmp) CWStringDynamic(pmp);
+	pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), (pmda->Pmdscop(pmdidCmpExl)->Mdname().Pstr())->Sz());
+	CWStringConst *pstrCmpExcl = GPOS_NEW(pmp) CWStringConst(pmp, pwstrdyn->Wsz());
 	CDXLNode *pdxlnPredicateExclusive = GPOS_NEW(pmp) CDXLNode(pmp, GPOS_NEW(pmp) CDXLScalarComp(pmp, pmdidCmpExl, pstrCmpExcl), pdxlnPoint, pdxlnPartBound);
 	
 	// generate a predicate of the form "point <= col and colIncluded" / "point >= col and colIncluded"
 	pmdidCmpIncl->AddRef();
 
-	CWStringConst *pstrCmpIncl = GPOS_NEW(pmp) CWStringConst(pmp, pmda->Pmdscop(pmdidCmpIncl)->Mdname().Pstr()->Wsz());
+	pwstrdyn->Reset();
+	pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), (pmda->Pmdscop(pmdidCmpIncl)->Mdname().Pstr())->Sz());
+	CWStringConst *pstrCmpIncl = GPOS_NEW(pmp) CWStringConst(pmp, pwstrdyn->Wsz());
 	pdxlnPartBound->AddRef();
 	pdxlnPoint->AddRef();
 	CDXLNode *pdxlnCmpIncl = GPOS_NEW(pmp) CDXLNode(pmp, GPOS_NEW(pmp) CDXLScalarComp(pmp, pmdidCmpIncl, pstrCmpIncl), pdxlnPoint, pdxlnPartBound);
@@ -911,7 +915,8 @@ CTranslatorExprToDXLUtils::PdxlnListFilterScCmp
 	pmdidScCmp = CUtils::PmdidScCmp(pmp, pmda, pmdidTypeOther, pmdidTypePartKey, ecmpt);
 
 	const IMDScalarOp *pmdscop = pmda->Pmdscop(pmdidScCmp);
-	const CWStringConst *pstrScCmp = pmdscop->Mdname().Pstr();
+	CWStringDynamic *pwstrdyn = GPOS_NEW(pmp) CWStringDynamic(pmp);
+	pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), (pmdscop->Mdname().Pstr())->Sz());
 
 	pmdidScCmp->AddRef();
 	CDXLNode *pdxlnScCmp = GPOS_NEW(pmp) CDXLNode
@@ -921,7 +926,7 @@ CTranslatorExprToDXLUtils::PdxlnListFilterScCmp
 															(
 															pmp,
 															pmdidScCmp,
-															GPOS_NEW(pmp) CWStringConst(pmp, pstrScCmp->Wsz()),
+															GPOS_NEW(pmp) CWStringConst(pmp, pwstrdyn->Wsz()),
 															Edxlarraycomptypeany
 															),
 												pdxlnOther,
@@ -1214,12 +1219,13 @@ CTranslatorExprToDXLUtils::PdxlnCmp
 		pmdidScCmp = CUtils::PmdidScCmp(pmp, pmda, pmdidTypePartKey, pmdidTypeExpr, ecmpt);
 	}
 	
-	const IMDScalarOp *pmdscop = pmda->Pmdscop(pmdidScCmp); 
-	const CWStringConst *pstrScCmp = pmdscop->Mdname().Pstr();
+	const IMDScalarOp *pmdscop = pmda->Pmdscop(pmdidScCmp);
+	CWStringDynamic *pwstrdyn = GPOS_NEW(pmp) CWStringDynamic(pmp);
+	pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), (pmdscop->Mdname().Pstr())->Sz());
 	
 	pmdidScCmp->AddRef();
 	
-	CDXLScalarComp *pdxlopCmp = GPOS_NEW(pmp) CDXLScalarComp(pmp, pmdidScCmp, GPOS_NEW(pmp) CWStringConst(pmp, pstrScCmp->Wsz()));
+	CDXLScalarComp *pdxlopCmp = GPOS_NEW(pmp) CDXLScalarComp(pmp, pmdidScCmp, GPOS_NEW(pmp) CWStringConst(pmp, pwstrdyn->Wsz()));
 	CDXLNode *pdxlnScCmp = GPOS_NEW(pmp) CDXLNode(pmp, pdxlopCmp);
 	
 	pmdidTypePartKey->AddRef();
@@ -1255,12 +1261,13 @@ CTranslatorExprToDXLUtils::PcrCreate
 	CColumnFactory *pcf,
 	IMDId *pmdidType,
 	INT iTypeModifier,
-	const WCHAR *wszName
+	const CHAR *szName
 	)
 {
 	const IMDType *pmdtype = pmda->Pmdtype(pmdidType);
-	
-	CName *pname = GPOS_NEW(pmp) CName(GPOS_NEW(pmp) CWStringConst(wszName), true /*fOwnsMemory*/);
+
+	CHAR *szName_new = strdup(szName);
+	CName *pname = GPOS_NEW(pmp) CName(GPOS_NEW(pmp) CStringStatic(szName_new, 1024), true /*fOwnsMemory*/);
 	CColRef *pcr = pcf->PcrCreate(pmdtype, iTypeModifier, *pname);
 	GPOS_DELETE(pname);
 	return pcr;

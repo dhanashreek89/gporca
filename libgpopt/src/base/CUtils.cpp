@@ -510,7 +510,9 @@ CUtils::PexprScalarCmp
 
 	pmdidCmpOp->AddRef();
 	const CMDName mdname = pmda->Pmdscop(pmdidCmpOp)->Mdname();
-	CWStringConst strCmpOpName(mdname.Pstr()->Wsz());
+	CWStringDynamic *pwstrdyn = GPOS_NEW(pmp) CWStringDynamic(pmp);
+	pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), mdname.Pstr()->Sz());
+	CWStringConst strCmpOpName(pwstrdyn->Wsz());
 	
 	CExpression *pexprResult = GPOS_NEW(pmp) CExpression
 					(
@@ -786,7 +788,9 @@ CUtils::PexprScalarArrayCmp
 	pmdidCmpOp ->AddRef();
 
 	const CMDName mdname = pmda->Pmdscop(pmdidCmpOp)->Mdname();
-	CWStringConst strOp(mdname.Pstr()->Wsz());
+	CWStringDynamic *pwstrdyn = GPOS_NEW(pmp) CWStringDynamic(pmp);
+	pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), mdname.Pstr()->Sz());
+	CWStringConst strOp(pwstrdyn->Wsz());
 
 	CExpression *pexprArray = GPOS_NEW(pmp) CExpression
 										(
@@ -823,7 +827,9 @@ CUtils::PexprCmpWithZero
 	IMDId *pmdidOp = pmdtype->PmdidCmp(ecmptype);
 	pmdidOp->AddRef();
 	const CMDName mdname = pmda->Pmdscop(pmdidOp)->Mdname();
-	CWStringConst strOpName(mdname.Pstr()->Wsz());
+	CWStringDynamic *pwstrdyn = GPOS_NEW(pmp) CWStringDynamic(pmp);
+	pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), mdname.Pstr()->Sz());
+	CWStringConst strOpName(pwstrdyn->Wsz());
 
 	return GPOS_NEW(pmp) CExpression
 						(
@@ -873,7 +879,9 @@ CUtils::PexprIDF
 
 	pmdidEqOp->AddRef();
 	const CMDName mdname = pmda->Pmdscop(pmdidEqOp)->Mdname();
-	CWStringConst strEqOpName(mdname.Pstr()->Wsz());
+	CWStringDynamic *pwstrdyn = GPOS_NEW(pmp) CWStringDynamic(pmp);
+	pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), mdname.Pstr()->Sz());
+	CWStringConst strEqOpName(pwstrdyn->Wsz());
 
 	return GPOS_NEW(pmp) CExpression
 				(
@@ -1931,7 +1939,7 @@ CUtils::PopAggFunc
 	(
 	IMemoryPool *pmp,
 	IMDId *pmdidAggFunc,
-	const CWStringConst *pstrAggFunc,
+	const CStringStatic *pstrAggFunc,
 	BOOL fDistinct,
 	EAggfuncStage eaggfuncstage,
 	BOOL fSplit,
@@ -1951,7 +1959,7 @@ CUtils::PexprAggFunc
 	(
 	IMemoryPool *pmp,
 	IMDId *pmdidAggFunc,
-	const CWStringConst *pstrAggFunc,
+	const CStringStatic *pstrAggFunc,
 	const CColRef *pcr,
 	BOOL fDistinct,
 	EAggfuncStage eaggfuncstage,
@@ -1985,7 +1993,7 @@ CUtils::PexprCountStar
 
 	DrgPexpr *pdrgpexpr = GPOS_NEW(pmp) DrgPexpr(pmp);
 	CMDIdGPDB *pmdid = GPOS_NEW(pmp) CMDIdGPDB(GPDB_COUNT_STAR);
-	CWStringConst *pstr = GPOS_NEW(pmp) CWStringConst(GPOS_WSZ_LIT("count"));
+	CStringStatic *pstr = GPOS_NEW(pmp) CStringStatic((CHAR *)"count", 1024);
 
 	CScalarAggFunc *popScAggFunc = PopAggFunc(pmp, pmdid, pstr, false /*fDistinct*/, EaggfuncstageGlobal /*eaggfuncstage*/, false /*fSplit*/);
 
@@ -2257,7 +2265,7 @@ CUtils::PexprAgg
 	
 	IMDId *pmdidAgg = pmdagg->Pmdid();
 	pmdidAgg->AddRef();
-	CWStringConst *pstr = GPOS_NEW(pmp) CWStringConst(pmp, pmdagg->Mdname().Pstr()->Wsz());
+	CStringStatic *pstr = GPOS_NEW(pmp) CStringStatic(pmdagg->Mdname().Pstr()->Sz(), 1024);
 
 	return PexprAggFunc(pmp, pmdidAgg, pstr, pcr, fDistinct, EaggfuncstageGlobal /*fGlobal*/, false /*fSplit*/);
 }

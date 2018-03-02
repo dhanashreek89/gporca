@@ -369,8 +369,8 @@ CDistributionSpecTest::EresUnittest_Hashed()
 	COptCtxt *poptctxt = COptCtxt::PoctxtFromTLS();
 	CColumnFactory *pcf = poptctxt->Pcf();
 		
-	CWStringConst strA(GPOS_WSZ_LIT("A"));
-	CWStringConst strB(GPOS_WSZ_LIT("B"));
+	CStringStatic strA((CHAR *)"A", 1024);
+	CStringStatic strB((CHAR *)"B", 1024);
 	
 	CName nameA(&strA);
 	CName nameB(&strB);

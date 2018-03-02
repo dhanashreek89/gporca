@@ -94,7 +94,7 @@ namespace gpmd
 		const CWStringDynamic *m_pstr;
 		
 		// type name and id
-		static CWStringConst m_str;
+		static CStringStatic m_str;
 		static CMDName m_mdname;
 
 		// a null datum of this type (used for statistics comparison)

@@ -132,7 +132,7 @@ CParseHandlerMDType::StartElement
 																EdxltokenMDType
 																);
 
-			CWStringDynamic *pstrTypeName = CDXLUtils::PstrFromXMLCh(m_pphm->Pmm(), xmlszTypeName);
+			CStringStatic *pstrTypeName = CDXLUtils::PStaticstrFromXMLCh(m_pphm->Pmm(), xmlszTypeName);
 
 			// create a copy of the string in the CMDName constructor
 			m_pmdname = GPOS_NEW(m_pmp) CMDName(m_pmp, pstrTypeName);

@@ -76,7 +76,7 @@ CColRefSetIterTest::EresUnittest_Basics()
 	CColumnFactory *pcf = COptCtxt::PoctxtFromTLS()->Pcf();
 
 	CColRefSet *pcrs = GPOS_NEW(pmp) CColRefSet(pmp);
-	CWStringConst strName(GPOS_WSZ_LIT("Test Column"));
+	CStringStatic strName((CHAR *)"Test Column", 1024);
 	CName name(&strName);
 
 	// create a int4 datum

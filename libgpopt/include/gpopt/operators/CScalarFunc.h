@@ -46,7 +46,7 @@ namespace gpopt
 			const INT m_iRetTypeModifier;
 
 			// function name
-			const CWStringConst *m_pstrFunc;
+			const CStringStatic *m_pstrFunc;
 
 			// function stability
 			IMDFunction::EFuncStbl m_efs;
@@ -74,7 +74,7 @@ namespace gpopt
 			CScalarFunc(IMemoryPool *pmp);
 
 			// ctor
-			CScalarFunc(IMemoryPool *pmp, IMDId *pmdidFunc, IMDId *pmdidRetType, INT iRetTypeModifier, const CWStringConst *pstrFunc);
+			CScalarFunc(IMemoryPool *pmp, IMDId *pmdidFunc, IMDId *pmdidRetType, INT iRetTypeModifier, const CStringStatic *pstrFunc);
 
 			// dtor
 			virtual 
@@ -149,7 +149,7 @@ namespace gpopt
 			
 
 			// function name
-			const CWStringConst *PstrFunc() const;
+			const CStringStatic *PstrFunc() const;
 
 			// func id
 			IMDId *PmdidFunc() const;

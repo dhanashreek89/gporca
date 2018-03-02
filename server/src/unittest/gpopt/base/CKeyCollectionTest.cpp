@@ -80,7 +80,7 @@ CKeyCollectionTest::EresUnittest_Basics()
 	CColumnFactory *pcf = COptCtxt::PoctxtFromTLS()->Pcf();
 	
 	// create test set
-	CWStringConst strName(GPOS_WSZ_LIT("Test Column"));
+	CStringStatic strName((CHAR *)"Test Column", 1024);
 	CName name(&strName);
 	const IMDTypeInt4 *pmdtypeint4 = mda.PtMDType<IMDTypeInt4>();
 
@@ -143,7 +143,7 @@ CKeyCollectionTest::EresUnittest_Subsumes()
 	CColumnFactory *pcf = COptCtxt::PoctxtFromTLS()->Pcf();
 
 	// create test set
-	CWStringConst strName(GPOS_WSZ_LIT("Test Column"));
+	CStringStatic strName((CHAR *)"Test Column", 1024);
 	CName name(&strName);
 	const IMDTypeInt4 *pmdtypeint4 = mda.PtMDType<IMDTypeInt4>();
 

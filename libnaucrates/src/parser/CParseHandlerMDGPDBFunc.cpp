@@ -72,7 +72,7 @@ CParseHandlerMDGPDBFunc::StartElement
 															EdxltokenGPDBFunc
 															);
 
-		CWStringDynamic *pstrFuncName = CDXLUtils::PstrFromXMLCh(m_pphm->Pmm(), xmlszFuncName);
+		CStringStatic *pstrFuncName = CDXLUtils::PStaticstrFromXMLCh(m_pphm->Pmm(), xmlszFuncName);
 		
 		// create a copy of the string in the CMDName constructor
 		m_pmdname = GPOS_NEW(m_pmp) CMDName(m_pmp, pstrFuncName);

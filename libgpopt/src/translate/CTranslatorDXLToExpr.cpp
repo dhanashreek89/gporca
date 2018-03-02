@@ -464,8 +464,9 @@ CTranslatorDXLToExpr::PexprLogicalTVF
 
 		const IMDType *pmdtype = m_pmda->Pmdtype(pdxlcoldesc->PmdidType());
 
-		GPOS_ASSERT(NULL != pdxlcoldesc->Pmdname()->Pstr()->Wsz());
-		CWStringConst strColName(m_pmp, pdxlcoldesc->Pmdname()->Pstr()->Wsz());
+		GPOS_ASSERT(NULL != pdxlcoldesc->Pmdname()->Pstr()->Sz());
+		
+		CStringStatic strColName(pdxlcoldesc->Pmdname()->Pstr()->Sz(), 1024);
 
 		INT iAttNo = pdxlcoldesc->IAttno();
 		CColumnDescriptor *pcoldesc = GPOS_NEW(m_pmp) CColumnDescriptor
@@ -492,7 +493,7 @@ CTranslatorDXLToExpr::PexprLogicalTVF
 										m_pmp,
 										pmdidFunc,
 										pmdidRetType,
-										GPOS_NEW(m_pmp) CWStringConst(m_pmp, pdxlop->Pmdname()->Pstr()->Wsz()),
+										GPOS_NEW(m_pmp) CStringStatic(pdxlop->Pmdname()->Pstr()->Sz(), 1024),
 										pdrgpcoldesc
 										);
 
@@ -543,7 +544,7 @@ CTranslatorDXLToExpr::PexprLogicalGet
 
 	CTableDescriptor *ptabdesc = Ptabdesc(pdxltabdesc);
 
-	CWStringConst strAlias(m_pmp, pdxltabdesc->Pmdname()->Pstr()->Wsz());
+	CStringStatic strAlias(pdxltabdesc->Pmdname()->Pstr()->Sz(), 1024);
 
 	// create a logical get or dynamic get operator
 	CName *pname = GPOS_NEW(m_pmp) CName(m_pmp, CName(&strAlias));
@@ -2057,7 +2058,7 @@ CTranslatorDXLToExpr::Ptabdesc
 	CDXLTableDescr *pdxltabdesc
 	)
 {
-	CWStringConst strName(m_pmp, pdxltabdesc->Pmdname()->Pstr()->Wsz());
+	CStringStatic strName(pdxltabdesc->Pmdname()->Pstr()->Sz(), 1024);
 
 	IMDId *pmdid = pdxltabdesc->Pmdid();
 
@@ -2118,8 +2119,8 @@ CTranslatorDXLToExpr::Ptabdesc
 		GPOS_ASSERT(pdxlcoldesc->PmdidType()->FValid());
 		const IMDType *pmdtype = m_pmda->Pmdtype(pdxlcoldesc->PmdidType());
 
-		GPOS_ASSERT(NULL != pdxlcoldesc->Pmdname()->Pstr()->Wsz());
-		CWStringConst strColName(m_pmp, pdxlcoldesc->Pmdname()->Pstr()->Wsz());
+		GPOS_ASSERT(NULL != pdxlcoldesc->Pmdname()->Pstr()->Sz());
+		CStringStatic strColName(pdxlcoldesc->Pmdname()->Pstr()->Sz(), 1024);
 
 		INT iAttNo = pdxlcoldesc->IAttno();
 
@@ -2261,7 +2262,7 @@ CTranslatorDXLToExpr::PtabdescFromCTAS
 	CDXLLogicalCTAS *pdxlopCTAS
 	)
 {
-	CWStringConst strName(m_pmp, pdxlopCTAS->Pmdname()->Pstr()->Wsz());
+	CStringStatic strName(pdxlopCTAS->Pmdname()->Pstr()->Sz(), 1024);
 
 	IMDId *pmdid = pdxlopCTAS->Pmdid();
 
@@ -2321,8 +2322,8 @@ CTranslatorDXLToExpr::PtabdescFromCTAS
 		GPOS_ASSERT(pdxlcoldesc->PmdidType()->FValid());
 		const IMDType *pmdtype = m_pmda->Pmdtype(pdxlcoldesc->PmdidType());
 
-		GPOS_ASSERT(NULL != pdxlcoldesc->Pmdname()->Pstr()->Wsz());
-		CWStringConst strColName(m_pmp, pdxlcoldesc->Pmdname()->Pstr()->Wsz());
+		GPOS_ASSERT(NULL != pdxlcoldesc->Pmdname()->Pstr()->Sz());
+		CStringStatic strColName(pdxlcoldesc->Pmdname()->Pstr()->Sz(), 1024);
 
 		INT iAttNo = pdxlcoldesc->IAttno();
 
@@ -2542,11 +2543,15 @@ CTranslatorDXLToExpr::PexprScalarSubqueryQuantified
 
 	IMDId *pmdid = pdxlopSubqueryQuantified->PmdidScalarOp();
 	pmdid->AddRef();
+
+	CWStringDynamic *pwstrdyn = GPOS_NEW(m_pmp) CWStringDynamic(m_pmp);
+	pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), (pdxlopSubqueryQuantified->PmdnameScalarOp()->Pstr())->Sz());
+	const CWStringConst *pstr = GPOS_NEW(m_pmp) CWStringConst(m_pmp, pwstrdyn->Wsz());
 	return PexprScalarSubqueryQuantified
 		(
 		pdxlop->Edxlop(),
 		pmdid,
-		pdxlopSubqueryQuantified->PmdnameScalarOp()->Pstr(),
+		pstr,
 		pdxlopSubqueryQuantified->UlColId(),
 		(*pdxlnSubquery)[CDXLScalarSubqueryQuantified::EdxlsqquantifiedIndexRelational],
 		(*pdxlnSubquery)[CDXLScalarSubqueryQuantified::EdxlsqquantifiedIndexScalar]
@@ -2638,7 +2643,9 @@ CTranslatorDXLToExpr::PexprCollapseNot
 			return NULL;
 		}
 
-		const CWStringConst *pstrInverseOp = m_pmda->Pmdscop(pmdidInverseOp)->Mdname().Pstr();
+		CWStringDynamic *pwstrdyn = GPOS_NEW(m_pmp) CWStringDynamic(m_pmp);
+		pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), (m_pmda->Pmdscop(pmdidInverseOp)->Mdname().Pstr())->Sz());
+		const CWStringConst *pstrInverseOp = GPOS_NEW(m_pmp) CWStringConst(m_pmp, pwstrdyn->Wsz());
 		
 		pmdidInverseOp->AddRef();
 		return PexprScalarSubqueryQuantified
@@ -2768,11 +2775,15 @@ CTranslatorDXLToExpr::PexprScalarIsDistinctFrom
 	pmdidOp->AddRef();
 	const IMDScalarOp *pmdscop = m_pmda->Pmdscop(pmdidOp);
 
+	CWStringDynamic *pwstrdyn = GPOS_NEW(m_pmp) CWStringDynamic(m_pmp);
+	pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), (pmdscop->Mdname().Pstr())->Sz());
+	const CWStringConst *pstr = GPOS_NEW(m_pmp) CWStringConst(m_pmp, pwstrdyn->Wsz());
+
 	CScalarIsDistinctFrom *popScIDF = GPOS_NEW(m_pmp) CScalarIsDistinctFrom
 													(
 													m_pmp,
 													pmdidOp,
-													GPOS_NEW(m_pmp) CWStringConst(m_pmp, (pmdscop->Mdname().Pstr())->Wsz())
+													pstr
 													);
 
 	CExpression *pexpr = GPOS_NEW(m_pmp) CExpression(m_pmp, popScIDF, pexprLeft, pexprRight);
@@ -2938,7 +2949,7 @@ CTranslatorDXLToExpr::PexprScalarFunc
 				pmdidFunc,
 				pmdidRetType,
 				pdxlopFuncExpr->ITypeModifier(),
-				GPOS_NEW(m_pmp) CWStringConst(m_pmp, (pmdfunc->Mdname().Pstr())->Wsz())
+				GPOS_NEW(m_pmp) CStringStatic((pmdfunc->Mdname().Pstr())->Sz(), 1024)
 				);
 	}
 	
@@ -2975,7 +2986,7 @@ CTranslatorDXLToExpr::PexprWindowFunc
 	IMDId *pmdidFunc = pdxlopWinref->PmdidFunc();
 	pmdidFunc->AddRef();
 
-	CWStringConst *pstrName = GPOS_NEW(m_pmp) CWStringConst(m_pmp, CMDAccessorUtils::PstrWindowFuncName(m_pmda, pmdidFunc)->Wsz());
+	CStringStatic *pstrName = GPOS_NEW(m_pmp) CStringStatic(CMDAccessorUtils::PstrWindowFuncName(m_pmda, pmdidFunc)->Sz(), 1024);
 
 	CScalarWindowFunc::EWinStage ews = Ews(pdxlopWinref->Edxlwinstage());
 
@@ -3133,7 +3144,7 @@ CTranslatorDXLToExpr::PexprAggFunc
 				(
 				m_pmp,
 				pmdidAggFunc,
-				GPOS_NEW(m_pmp) CWStringConst(m_pmp, (pmdagg->Mdname().Pstr())->Wsz()),
+				GPOS_NEW(m_pmp) CStringStatic((pmdagg->Mdname().Pstr())->Sz(), 1024),
 				pdxlop->FDistinct(),
 				eaggfuncstage,
 				fSplit,

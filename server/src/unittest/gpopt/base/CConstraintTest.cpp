@@ -1071,7 +1071,9 @@ CConstraintTest::PexprScalarCmp
 
 	const CMDName mdname = pmda->Pmdscop(pmdidOp)->Mdname();
 
-	CWStringConst strOpName(mdname.Pstr()->Wsz());
+	CWStringDynamic *pwstrdyn = GPOS_NEW(pmp) CWStringDynamic(pmp);
+	pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), (mdname.Pstr())->Sz());
+	CWStringConst strOpName(pwstrdyn->Wsz());
 
 	CExpression *pexpr = CUtils::PexprScalarCmp(pmp, pcr, pexprConst, strOpName, pmdidOp);
 	(void) pexpr->PdpDerive();
@@ -1284,7 +1286,7 @@ CConstraintTest::EresUnittest_NegativeTests()
 	GPOS_ASSERT(NULL != COptCtxt::PoctxtFromTLS()->Pcomp());
 
 	const IMDType *pmdtype = mda.Pmdtype(&CMDIdGPDB::m_mdidText);
-	CWStringConst str(GPOS_WSZ_LIT("text_col"));
+	CStringStatic str((CHAR *)"text_col", 1024);
 	CName name(pmp, &str);
 	CAutoP<CColRef> pcr(COptCtxt::PoctxtFromTLS()->Pcf()->PcrCreate(pmdtype, IDefaultTypeModifier, name));
 

@@ -1714,6 +1714,30 @@ CDXLUtils::PstrFromXMLCh
 	}
 }
 
+CStringStatic *
+CDXLUtils::PStaticstrFromXMLCh
+	(
+	CDXLMemoryManager *pmm,
+	const XMLCh *xmlsz
+	)
+{
+	GPOS_ASSERT(NULL != pmm);
+	GPOS_ASSERT(NULL != xmlsz);
+	
+	IMemoryPool *pmp = pmm->Pmp();
+	
+	{
+		CAutoTraceFlag atf(EtraceSimulateOOM, false);
+		CHAR *sz = XMLString::transcode(xmlsz, pmm);
+
+		CStringStatic *pstr = GPOS_NEW(pmp) CStringStatic(sz, 1024);
+
+		// cleanup temporary buffer
+		XMLString::release(&sz, pmm);
+	
+		return pstr;
+	}
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -1771,7 +1795,7 @@ CDXLUtils::PbaFromBase64XMLStr
 //
 //---------------------------------------------------------------------------
 CWStringDynamic *
-CDXLUtils::PstrFromSz
+CDXLUtils::PWstrFromSz
 	(
 	IMemoryPool *pmp,
 	const CHAR *sz
@@ -1783,6 +1807,22 @@ CDXLUtils::PstrFromSz
 	a_pstr->AppendFormat(GPOS_WSZ_LIT("%s"), sz);
 	return a_pstr.PtReset();
 }
+
+CStringStatic *
+CDXLUtils::PstrFromSz
+	(
+	IMemoryPool *pmp,
+	const CHAR *sz
+	)
+{
+	GPOS_ASSERT(NULL != sz);
+
+	CHAR buffer[1024];
+	CAutoP<CStringStatic> a_pstr(GPOS_NEW(pmp) CStringStatic(buffer, 1024));
+	a_pstr->AppendFormat((CHAR *)"%s", sz);
+	return a_pstr.PtReset();
+}
+
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -1798,12 +1838,12 @@ CMDName *
 CDXLUtils::PmdnameFromSz
 	(
 	IMemoryPool *pmp,
-	const CHAR *sz
+	CHAR *sz
 	)
 {
 	GPOS_ASSERT(NULL != sz);
 	
-	CWStringDynamic *pstr = CDXLUtils::PstrFromSz(pmp, sz);
+	CStringStatic *pstr = GPOS_NEW(pmp) CStringStatic(sz, 1024);
 	CMDName *pmdname = GPOS_NEW(pmp) CMDName(pmp, pstr);
 
 	// CMDName ctor created a copy of the string

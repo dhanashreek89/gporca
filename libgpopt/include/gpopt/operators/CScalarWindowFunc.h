@@ -79,7 +79,7 @@ namespace gpopt
 				IMemoryPool *pmp,
 				IMDId *pmdidFunc,
 				IMDId *pmdidRetType,
-				const CWStringConst *pstrFunc,
+				const CStringStatic *pstrFunc,
 				EWinStage ewinstage,
 				BOOL fDistinct,
 				BOOL fStarArg,

@@ -75,7 +75,7 @@ CParseHandlerLogicalTVF::StartElement
 																EdxltokenLogicalTVF
 																);
 
-		CWStringDynamic *pstrFuncName = CDXLUtils::PstrFromXMLCh(m_pphm->Pmm(), xmlszFuncName);
+		CStringStatic *pstrFuncName = CDXLUtils::PStaticstrFromXMLCh(m_pphm->Pmm(), xmlszFuncName);
 		m_pmdname = GPOS_NEW(m_pmp) CMDName(m_pmp, pstrFuncName);
 		GPOS_DELETE(pstrFuncName);
 

@@ -1469,8 +1469,8 @@ CStatisticsTest::PtabdescTwoColumnSource
 	IMemoryPool *pmp,
 	const CName &nameTable,
 	const IMDTypeInt4 *pmdtype,
-	const CWStringConst &strColA,
-	const CWStringConst &strColB
+	const CStringStatic &strColA,
+	const CStringStatic &strColB
 	)
 {
 	CTableDescriptor *ptabdesc = GPOS_NEW(pmp) CTableDescriptor
@@ -1487,7 +1487,7 @@ CStatisticsTest::PtabdescTwoColumnSource
 	for (ULONG ul = 0; ul < 2; ul++)
 	{
 		// create a shallow constant string to embed in a name
-		const CWStringConst *pstrName = &strColA;
+		const CStringStatic *pstrName = &strColA;
 		if (0 < ul)
 		{
 			pstrName = &strColB;
@@ -1528,9 +1528,9 @@ CStatisticsTest::EresUnittest_CStatisticsBasic()
 
 	const IMDTypeInt4 *pmdtypeint4 = COptCtxt::PoctxtFromTLS()->Pmda()->PtMDType<IMDTypeInt4>();
 
-	CWStringConst strRelAlias(GPOS_WSZ_LIT("Rel1"));
-	CWStringConst strColA(GPOS_WSZ_LIT("a"));
-	CWStringConst strColB(GPOS_WSZ_LIT("b"));
+	CStringStatic strRelAlias((CHAR *)"Rel1", 1024);
+	CStringStatic strColA((CHAR *)"a", 1024);
+	CStringStatic strColB((CHAR *)"b", 1024);
 	CTableDescriptor *ptabdesc =
 			PtabdescTwoColumnSource(pmp, CName(&strRelAlias), pmdtypeint4, strColA, strColB);
 	CExpression *pexprGet = CTestUtils::PexprLogicalGet(pmp, ptabdesc, &strRelAlias);

@@ -11,6 +11,7 @@
 //---------------------------------------------------------------------------
 
 #include "gpos/string/CWStringDynamic.h"
+#include "gpos/string/CStringStatic.h"
 
 #include "naucrates/md/CMDTypeBoolGPDB.h"
 #include "naucrates/md/CGPDBTypeHelper.h"
@@ -28,8 +29,8 @@ using namespace gpmd;
 using namespace gpnaucrates;
 
 // static member initialization 
-CWStringConst
-CMDTypeBoolGPDB::m_str = CWStringConst(GPOS_WSZ_LIT("bool"));
+CStringStatic
+CMDTypeBoolGPDB::m_str = CStringStatic((CHAR *)"bool", 1024);
 CMDName
 CMDTypeBoolGPDB::m_mdname(&m_str);
 

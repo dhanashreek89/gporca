@@ -207,7 +207,7 @@ CTestUtils::PtabdescPlainWithColNameFormat
 	CMDAccessor *pmda = COptCtxt::PoctxtFromTLS()->Pmda();
 
 	const IMDTypeInt4 *pmdtypeint4 = pmda->PtMDType<IMDTypeInt4>(CTestUtils::m_sysidDefault);
-	CWStringDynamic *pstrName = GPOS_NEW(pmp) CWStringDynamic(pmp);
+	CStringStatic *pstrName = GPOS_NEW(pmp) CWStringDynamic(pmp);
 	CTableDescriptor *ptabdesc = GPOS_NEW(pmp) CTableDescriptor
 											(
 											pmp, 
@@ -225,7 +225,7 @@ CTestUtils::PtabdescPlainWithColNameFormat
 		pstrName->AppendFormat(wszColNameFormat, i);
 
 		// create a shallow constant string to embed in a name
-		CWStringConst strName(pstrName->Wsz());
+		CStringStatic strName(pstrName->Sz());
 		CName nameColumnInt(&strName);
 
 		CColumnDescriptor *pcoldescInt = GPOS_NEW(pmp) CColumnDescriptor(pmp, pmdtypeint4, IDefaultTypeModifier, nameColumnInt, i + 1, fNullable);
@@ -310,7 +310,7 @@ CTestUtils::PexprLogicalGet
 	(
 	IMemoryPool *pmp,
 	CTableDescriptor *ptabdesc,
-	const CWStringConst *pstrTableAlias
+	const CStringStatic *pstrTableAlias
 	)
 {
 	GPOS_ASSERT(NULL != ptabdesc);
@@ -340,14 +340,14 @@ CTestUtils::PexprLogicalGetNullable
 	(
 	IMemoryPool *pmp,
 	OID oidTable,
-	const CWStringConst *pstrTableName,
-	const CWStringConst *pstrTableAlias
+	const CStringStatic *pstrTableName,
+	const CStringStatic *pstrTableAlias
 	)
 {
-	CWStringConst strName(pstrTableName->Wsz());
+	CStringStatic strName(pstrTableName->Sz());
 	CMDIdGPDB *pmdid = GPOS_NEW(pmp) CMDIdGPDB(oidTable, 1, 1);
 	CTableDescriptor *ptabdesc = CTestUtils::PtabdescPlain(pmp, 3, pmdid, CName(&strName), true /*fNullable*/);
-	CWStringConst strAlias(pstrTableAlias->Wsz());
+	CStringStatic strAlias(pstrTableAlias->Sz());
 
 	return PexprLogicalGet(pmp, ptabdesc, &strAlias);
 }
@@ -365,8 +365,8 @@ CExpression *
 CTestUtils::PexprLogicalGet
 	(
 	IMemoryPool *pmp,
-	CWStringConst *pstrTableName,
-	CWStringConst *pstrTableAlias,
+	CStringStatic *pstrTableName,
+	CStringStatic *pstrTableAlias,
 	ULONG ulTableId
 	)
 {
@@ -378,7 +378,7 @@ CTestUtils::PexprLogicalGet
 									CName(pstrTableName)
 									);
 
-	CWStringConst strAlias(pstrTableAlias->Wsz());
+	CStringStatic strAlias(pstrTableAlias->Sz());
 	return PexprLogicalGet(pmp, ptabdesc, &strAlias);
 }
 
@@ -396,10 +396,10 @@ CTestUtils::PexprLogicalGet
 	IMemoryPool *pmp
 	)
 {
-	CWStringConst strName(GPOS_WSZ_LIT("BaseTable"));
+	CStringStatic strName((CHAR *)"BaseTable", 1024);
 	CMDIdGPDB *pmdid = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_MDCACHE_TEST_OID, 1, 1);
 	CTableDescriptor *ptabdesc = PtabdescCreate(pmp, 3, pmdid, CName(&strName));
-	CWStringConst strAlias(GPOS_WSZ_LIT("BaseTableAlias"));
+	CStringStatic strAlias((CHAR *)"BaseTableAlias", 1024);
 
 	return PexprLogicalGet(pmp, ptabdesc, &strAlias);
 }
@@ -418,10 +418,10 @@ CTestUtils::PexprLogicalExternalGet
 	IMemoryPool *pmp
 	)
 {
-	CWStringConst strName(GPOS_WSZ_LIT("ExternalTable"));
+	CStringStatic strName((CHAR *)"ExternalTable", 1024);
 	CMDIdGPDB *pmdid = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_MDCACHE_TEST_OID, 1, 1);
 	CTableDescriptor *ptabdesc = PtabdescCreate(pmp, 3, pmdid, CName(&strName));
-	CWStringConst strAlias(GPOS_WSZ_LIT("ExternalTableAlias"));
+	CStringStatic strAlias((CHAR *)"ExternalTableAlias", 1024);
 
 	return GPOS_NEW(pmp) CExpression
 					(
@@ -450,10 +450,10 @@ CTestUtils::PexprLogicalGetPartitioned
 	)
 {
 	ULONG ulAttributes = 2;
-	CWStringConst strName(GPOS_WSZ_LIT("PartTable"));
+	CStringStatic strName((CHAR *)"PartTable", 1024);
 	CMDIdGPDB *pmdid = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_MDCACHE_TEST_OID_PARTITIONED);
 	CTableDescriptor *ptabdesc = PtabdescCreate(pmp, ulAttributes, pmdid, CName(&strName), true /*fPartitioned*/);
-	CWStringConst strAlias(GPOS_WSZ_LIT("PartTableAlias"));
+	CStringStatic strAlias((CHAR *)"PartTableAlias", 1024);
 
 	return PexprLogicalGet(pmp, ptabdesc, &strAlias);
 }
@@ -474,10 +474,10 @@ CTestUtils::PexprLogicalDynamicGetWithIndexes
 	)
 {
 	ULONG ulAttributes = 2;
-	CWStringConst strName(GPOS_WSZ_LIT("P1"));
+	CStringStatic strName(GPOS_WSZ_LIT("P1"));
 	CMDIdGPDB *pmdid = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_MDCACHE_TEST_OID_PARTITIONED_WITH_INDEXES);
 	CTableDescriptor *ptabdesc = PtabdescCreate(pmp, ulAttributes, pmdid, CName(&strName), true /*fPartitioned*/);
-	CWStringConst strAlias(GPOS_WSZ_LIT("P1Alias"));
+	CStringStatic strAlias(GPOS_WSZ_LIT("P1Alias"));
 
 	return GPOS_NEW(pmp) CExpression
 					(
@@ -531,8 +531,8 @@ CExpression *
 CTestUtils::PexprLogicalSelect
 	(
 	IMemoryPool *pmp,
-	CWStringConst *pstrTableName,
-	CWStringConst *pstrTableAlias,
+	CStringStatic *pstrTableName,
+	CStringStatic *pstrTableAlias,
 	ULONG ulTableId
 	)
 {
@@ -1038,7 +1038,7 @@ CTestUtils::PexprLogicalSubqueryWithConstTableGet
 	GPOS_ASSERT(COperator::EopScalarSubqueryAny == eopid ||
 				COperator::EopScalarSubqueryAll == eopid);
 
-	CWStringConst strNameR(GPOS_WSZ_LIT("Rel1"));
+	CStringStatic strNameR(GPOS_WSZ_LIT("Rel1"));
 	CMDIdGPDB *pmdidR = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_TEST_REL_OID1, 1, 1);
 	CTableDescriptor *ptabdescR = PtabdescCreate(pmp, 3 /*ulCols*/, pmdidR, CName(&strNameR));
 
@@ -1740,7 +1740,7 @@ CTestUtils::PexprPrjElemWithSum
 
 	// generate a SUM expression
 	CMDIdGPDB *pmdidSumAgg = GPOS_NEW(pmp) CMDIdGPDB(GPDB_INT4_SUM_AGG);
-	CWStringConst *pstrAggFunc = GPOS_NEW(pmp) CWStringConst(GPOS_WSZ_LIT("sum"));
+	CStringStatic *pstrAggFunc = GPOS_NEW(pmp) CStringStatic((CHAR *)"sum", 1024);
 	CExpression *pexprScalarAgg = CUtils::PexprAggFunc
 									(
 									pmp,
@@ -1756,7 +1756,7 @@ CTestUtils::PexprPrjElemWithSum
 	CScalar *pop = CScalar::PopConvert(pexprScalarAgg->Pop());
 	IMDId *pmdidType = pop->PmdidType();
 	const IMDType *pmdtype = pmda->Pmdtype(pmdidType);
-	CWStringConst str(GPOS_WSZ_LIT("sum_col"));
+	CStringStatic str(GPOS_WSZ_LIT("sum_col"));
 	CName name(pmp, &str);
 	CColRef *pcrComputed = COptCtxt::PoctxtFromTLS()->Pcf()->PcrCreate(pmdtype, pop->ITypeModifier(), name);
 
@@ -1881,7 +1881,7 @@ CTestUtils::PexprConstTableGet
 	const IMDTypeInt4 *pmdtypeint4 = pmda->PtMDType<IMDTypeInt4>(CTestUtils::m_sysidDefault);
 
 	// create an integer column descriptor
-	CWStringConst strName(GPOS_WSZ_LIT("A"));
+	CStringStatic strName(GPOS_WSZ_LIT("A"));
 	CName name(&strName);
 	CColumnDescriptor *pcoldescInt = GPOS_NEW(pmp) CColumnDescriptor
 													(
@@ -1947,7 +1947,7 @@ CTestUtils::PexprLogicalInsert
 	CColRefSet *pcrs = CDrvdPropRelational::Pdprel(pexprCTG->PdpDerive())->PcrsOutput();
 	DrgPcr *pdrgpcr = pcrs->Pdrgpcr(pmp);
 
-	CWStringConst strName(GPOS_WSZ_LIT("BaseTable"));
+	CStringStatic strName(GPOS_WSZ_LIT("BaseTable"));
 	CMDIdGPDB *pmdid = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_MDCACHE_TEST_OID, 1, 1);
 	CTableDescriptor *ptabdesc = PtabdescCreate(pmp, 1, pmdid, CName(&strName));
 
@@ -1973,10 +1973,10 @@ CTestUtils::PexprLogicalDelete
 	IMemoryPool *pmp
 	)
 {
-	CWStringConst strName(GPOS_WSZ_LIT("BaseTable"));
+	CStringStatic strName(GPOS_WSZ_LIT("BaseTable"));
 	CMDIdGPDB *pmdid = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_MDCACHE_TEST_OID, 1, 1);
 	CTableDescriptor *ptabdesc = PtabdescCreate(pmp, 1, pmdid, CName(&strName));
-	CWStringConst strAlias(GPOS_WSZ_LIT("BaseTableAlias"));
+	CStringStatic strAlias(GPOS_WSZ_LIT("BaseTableAlias"));
 
 	CExpression *pexprGet = PexprLogicalGet(pmp, ptabdesc, &strAlias);
 
@@ -2009,10 +2009,10 @@ CTestUtils::PexprLogicalUpdate
 	IMemoryPool *pmp
 	)
 {
-	CWStringConst strName(GPOS_WSZ_LIT("BaseTable"));
+	CStringStatic strName(GPOS_WSZ_LIT("BaseTable"));
 	CMDIdGPDB *pmdid = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_MDCACHE_TEST_OID, 1, 1);
 	CTableDescriptor *ptabdesc = PtabdescCreate(pmp, 1, pmdid, CName(&strName));
-	CWStringConst strAlias(GPOS_WSZ_LIT("BaseTableAlias"));
+	CStringStatic strAlias(GPOS_WSZ_LIT("BaseTableAlias"));
 
 	CExpression *pexprGet = PexprLogicalGet(pmp, ptabdesc, &strAlias);
 
@@ -2045,7 +2045,7 @@ CTestUtils::PexprLogicalDynamicGet
 	(
 	IMemoryPool *pmp,
 	CTableDescriptor *ptabdesc,
-	const CWStringConst *pstrTableAlias,
+	const CStringStatic *pstrTableAlias,
 	ULONG ulPartIndex
 	)
 {
@@ -2078,10 +2078,10 @@ CTestUtils::PexprLogicalDynamicGet
 	IMemoryPool *pmp
 	)
 {
-	CWStringConst strName(GPOS_WSZ_LIT("PartTable"));
+	CStringStatic strName(GPOS_WSZ_LIT("PartTable"));
 	CMDIdGPDB *pmdid = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_MDCACHE_TEST_OID_PARTITIONED, 1, 1);
 	CTableDescriptor *ptabdesc = PtabdescCreate(pmp, 3, pmdid, CName(&strName), true /*fPartitioned*/);
-	CWStringConst strAlias(GPOS_WSZ_LIT("PartTableAlias"));
+	CStringStatic strAlias(GPOS_WSZ_LIT("PartTableAlias"));
 
 	return PexprLogicalDynamicGet(pmp, ptabdesc, &strAlias, GPOPT_TEST_PART_INDEX);
 }
@@ -2101,10 +2101,10 @@ CTestUtils::PexprLogicalSelectWithEqPredicateOverDynamicGet
 	IMemoryPool *pmp
 	)
 {
-	CWStringConst strName(GPOS_WSZ_LIT("PartTable"));
+	CStringStatic strName(GPOS_WSZ_LIT("PartTable"));
 	CMDIdGPDB *pmdid = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_MDCACHE_TEST_OID_PARTITIONED, 1, 1);
 	CTableDescriptor *ptabdesc = PtabdescCreate(pmp, 3, pmdid, CName(&strName), true /*fPartitioned*/);
-	CWStringConst strAlias(GPOS_WSZ_LIT("PartTableAlias"));
+	CStringStatic strAlias(GPOS_WSZ_LIT("PartTableAlias"));
 
 	CExpression *pexprDynamicGet = PexprLogicalDynamicGet(pmp, ptabdesc, &strAlias, GPOPT_TEST_PART_INDEX);
 	
@@ -2135,10 +2135,10 @@ CTestUtils::PexprLogicalSelectWithLTPredicateOverDynamicGet
 	IMemoryPool *pmp
 	)
 {
-	CWStringConst strName(GPOS_WSZ_LIT("PartTable"));
+	CStringStatic strName(GPOS_WSZ_LIT("PartTable"));
 	CMDIdGPDB *pmdid = GPOS_NEW(pmp) CMDIdGPDB(GPOPT_MDCACHE_TEST_OID_PARTITIONED, 1, 1);
 	CTableDescriptor *ptabdesc = PtabdescCreate(pmp, 3, pmdid, CName(&strName), true /*fPartitioned*/);
-	CWStringConst strAlias(GPOS_WSZ_LIT("PartTableAlias"));
+	CStringStatic strAlias(GPOS_WSZ_LIT("PartTableAlias"));
 
 	CExpression *pexprDynamicGet = PexprLogicalDynamicGet(pmp, ptabdesc, &strAlias, GPOPT_TEST_PART_INDEX);
 	
@@ -2225,12 +2225,12 @@ CTestUtils::PexprLogicalTVF
 	const WCHAR *wszFuncName = GPOS_WSZ_LIT("generate_series");
 
 	IMDId *pmdid = GPOS_NEW(pmp) CMDIdGPDB(GPDB_INT8_GENERATE_SERIES);
-	CWStringConst *pstrFuncName = GPOS_NEW(pmp) CWStringConst(pmp, wszFuncName);
+	CStringStatic *pstrFuncName = GPOS_NEW(pmp) CStringStatic(pmp, wszFuncName);
 
 	const IMDTypeInt8 *pmdtypeint8 = pmda->PtMDType<IMDTypeInt8>(CTestUtils::m_sysidDefault);
 
 	// create an integer column descriptor
-	CWStringConst strName(GPOS_WSZ_LIT("generate_series"));
+	CStringStatic strName(GPOS_WSZ_LIT("generate_series"));
 	CName name(&strName);
 
 	CColumnDescriptor *pcoldescInt = GPOS_NEW(pmp) CColumnDescriptor(pmp, pmdtypeint8, IDefaultTypeModifier, name, 1 /* iAttno */, false /*FNullable*/);
@@ -2532,7 +2532,7 @@ CTestUtils::PexprLogicalSequenceProject
 							pmp,
 							pmdid,
 							pmdidRetType,
-							GPOS_NEW(pmp) CWStringConst(pmp, pmdfunc->Mdname().Pstr()->Wsz()),
+							GPOS_NEW(pmp) CStringStatic(pmp, pmdfunc->Mdname().Pstr()->Wsz()),
 							CScalarWindowFunc::EwsImmediate,
 							false /*fDistinct*/,
 							false /*fStarArg*/,
@@ -2613,7 +2613,7 @@ DrgPexprJoins *
 CTestUtils::PdrgpexprJoins
 	(
 	IMemoryPool *pmp,
-	CWStringConst *pstrRel, // array of relation names
+	CStringStatic *pstrRel, // array of relation names
 	ULONG *pulRel, // array of relation oids
 	ULONG ulRels, // number of relations
 	BOOL fCrossProduct
@@ -2681,7 +2681,7 @@ CExpression *
 CTestUtils::PexprLogicalNAryJoin
 	(
 	IMemoryPool *pmp,
-	CWStringConst *pstrRel,
+	CStringStatic *pstrRel,
 	ULONG *pulRel,
 	ULONG ulRels,
 	BOOL fCrossProduct

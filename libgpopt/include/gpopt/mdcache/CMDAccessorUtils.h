@@ -35,7 +35,7 @@ namespace gpopt
 
 			// return the name of the window operation
 			static
-			const CWStringConst *PstrWindowFuncName(CMDAccessor *pmda, IMDId *pmdid);
+			const CStringStatic *PstrWindowFuncName(CMDAccessor *pmda, IMDId *pmdid);
 
 			// return the return type of the window operation
 			static

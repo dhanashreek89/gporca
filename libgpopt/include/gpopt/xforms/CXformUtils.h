@@ -767,7 +767,7 @@ namespace gpopt
 			// return a formatted error message for the given exception
 			static
 			CWStringConst *PstrErrorMessage(IMemoryPool *pmp, ULONG ulMajor, ULONG ulMinor, ...);
-			
+
 			// return the array of key columns from the given array of columns which appear 
 			// in the index key columns
 			static

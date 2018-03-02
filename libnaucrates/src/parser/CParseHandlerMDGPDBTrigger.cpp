@@ -78,7 +78,7 @@ CParseHandlerMDGPDBTrigger::StartElement
 	m_pmdid = CDXLOperatorFactory::PmdidFromAttrs(m_pphm->Pmm(), attrs, EdxltokenMdid, EdxltokenGPDBTrigger);
 
 	const XMLCh *xmlszName = CDXLOperatorFactory::XmlstrFromAttrs(attrs, EdxltokenName, EdxltokenGPDBTrigger);
-	CWStringDynamic *pstrName = CDXLUtils::PstrFromXMLCh(m_pphm->Pmm(), xmlszName);
+	CStringStatic *pstrName = CDXLUtils::PStaticstrFromXMLCh(m_pphm->Pmm(), xmlszName);
 	m_pmdname = GPOS_NEW(m_pmp) CMDName(m_pmp, pstrName);
 	GPOS_DELETE(pstrName);
 	GPOS_ASSERT(m_pmdid->FValid() && NULL != m_pmdname);

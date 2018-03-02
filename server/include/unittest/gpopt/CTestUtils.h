@@ -197,7 +197,7 @@ namespace gpopt
 
 			// generate a get expression
 			static
-			CExpression *PexprLogicalGet(IMemoryPool *pmp, CTableDescriptor *ptabdesc, const CWStringConst *pstrTableAlias);
+			CExpression *PexprLogicalGet(IMemoryPool *pmp, CTableDescriptor *ptabdesc, const CStringStatic *pstrTableAlias);
 
 			// generate a get expression over table with nullable columns
 			static
@@ -205,7 +205,7 @@ namespace gpopt
 
 			// generate a get expression
 			static
-			CExpression *PexprLogicalGet(IMemoryPool *pmp, CWStringConst *pstrTableName, CWStringConst *pstrTableAlias, ULONG ulTableId);
+			CExpression *PexprLogicalGet(IMemoryPool *pmp, CWStringConst *pstrTableName, CStringStatic *pstrTableAlias, ULONG ulTableId);
 
 			// generate a random get expression
 			static

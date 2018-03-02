@@ -77,7 +77,7 @@ CColumnFactoryTest::EresUnittest_Basic()
 	cf.Destroy(pcrOne);
 
 	// typed/named colref
-	CWStringConst strName(GPOS_WSZ_LIT("C_CustKey"));
+	CStringStatic strName((CHAR *)"C_CustKey", 1024);
 	CColRef *pcrTwo = cf.PcrCreate(pmdtypeint4, IDefaultTypeModifier, CName(&strName));
 	GPOS_ASSERT(pcrTwo == cf.PcrLookup(pcrTwo->m_ulId));
 

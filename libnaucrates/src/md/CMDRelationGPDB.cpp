@@ -825,7 +825,7 @@ CMDRelationGPDB::DebugPrint
 	Pmdid()->OsPrint(os);
 	os << std::endl;
 	
-	os << "Relation name: " << (Mdname()).Pstr()->Wsz() << std::endl;
+	os << "Relation name: " << (Mdname()).Pstr()->Sz() << std::endl;
 	
 	os << "Storage type: " << IMDRelation::PstrStorageType(m_erelstorage)->Wsz() << std::endl;
 	
@@ -850,7 +850,7 @@ CMDRelationGPDB::DebugPrint
 		}
 		
 		const IMDColumn *pimdcolDistrKey = PmdcolDistrColumn(ul);
-		os << (pimdcolDistrKey->Mdname()).Pstr()->Wsz();		
+		os << (pimdcolDistrKey->Mdname()).Pstr()->Sz();
 	}
 	
 	os << std::endl;
@@ -865,7 +865,7 @@ CMDRelationGPDB::DebugPrint
 		}
 		
 		const IMDColumn *pmdcolPartKey = PmdcolPartColumn(ul);
-		os << (pmdcolPartKey->Mdname()).Pstr()->Wsz();		
+		os << (pmdcolPartKey->Mdname()).Pstr()->Sz();
 	}
 		
 	os << std::endl;

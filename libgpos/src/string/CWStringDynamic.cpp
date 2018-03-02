@@ -24,7 +24,7 @@ using namespace gpos;
 //	@doc:
 //		Constructs an empty string
 //
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------ ---
 CWStringDynamic::CWStringDynamic
 	(
 	IMemoryPool *pmp

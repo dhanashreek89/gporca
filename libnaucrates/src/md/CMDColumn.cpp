@@ -213,7 +213,7 @@ CMDColumn::DebugPrint
 {
 	os << "Attno: " << IAttno() << std::endl;
 	
-	os << "Column name: " << (Mdname()).Pstr()->Wsz() << std::endl;
+	os << "Column name: " << (Mdname()).Pstr()->Sz() << std::endl;
 	os << "Column type: ";
 	PmdidType()->OsPrint(os);
 	os << std::endl;

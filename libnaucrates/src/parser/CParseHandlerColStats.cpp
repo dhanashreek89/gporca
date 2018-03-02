@@ -85,7 +85,7 @@ CParseHandlerColStats::StartElement
 																EdxltokenColumnStats
 																);
 
-		CWStringDynamic *pstrColName = CDXLUtils::PstrFromXMLCh(m_pphm->Pmm(), xmlszColName);
+		CStringStatic *pstrColName = CDXLUtils::PStaticstrFromXMLCh(m_pphm->Pmm(), xmlszColName);
 		
 		// create a copy of the string in the CMDName constructor
 		m_pmdname = GPOS_NEW(m_pmp) CMDName(m_pmp, pstrColName);

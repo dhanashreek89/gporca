@@ -78,8 +78,8 @@ CParseHandlerPhysicalTVF::StartElement
 																EdxltokenPhysicalTVF
 																);
 
-		CWStringDynamic *pstrFuncName = CDXLUtils::PstrFromXMLCh(m_pphm->Pmm(), xmlszFuncName);
-		m_pstr = GPOS_NEW(m_pmp) CWStringConst(m_pmp, pstrFuncName->Wsz());
+		CStringStatic *pstrFuncName = CDXLUtils::PStaticstrFromXMLCh(m_pphm->Pmm(), xmlszFuncName);
+		m_pstr = GPOS_NEW(m_pmp) CStringStatic(pstrFuncName->Sz(), 1024);
 		GPOS_DELETE(pstrFuncName);
 
 		// parse return type

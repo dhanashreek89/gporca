@@ -77,7 +77,7 @@ CColRefSetTest::EresUnittest_Basics()
 	// get column factory from optimizer context object
 	CColumnFactory *pcf = COptCtxt::PoctxtFromTLS()->Pcf();
 
-	CWStringConst strName(GPOS_WSZ_LIT("Test Column"));
+	CStringStatic strName((CHAR *)"Test Column", 1024);
 	CName name(&strName);
 
 	const IMDTypeInt4 *pmdtypeint4 = mda.PtMDType<IMDTypeInt4>();

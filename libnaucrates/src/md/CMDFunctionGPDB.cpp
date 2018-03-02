@@ -309,7 +309,7 @@ CMDFunctionGPDB::DebugPrint
 	Pmdid()->OsPrint(os);
 	os << std::endl;
 	
-	os << "Function name: " << (Mdname()).Pstr()->Wsz() << std::endl;
+	os << "Function name: " << (Mdname()).Pstr()->Sz() << std::endl;
 	
 	os << "Result type id: ";
 	PmdidTypeResult()->OsPrint(os);

@@ -92,7 +92,7 @@ CParseHandlerMetadataColumn::StartElement
 												EdxltokenMetadataColumn
 												);
 
-	CWStringDynamic *pstrColumnName = CDXLUtils::PstrFromXMLCh(m_pphm->Pmm(), xmlszColumnName);
+	CStringStatic *pstrColumnName = CDXLUtils::PStaticstrFromXMLCh(m_pphm->Pmm(), xmlszColumnName);
 	
 	// create a copy of the string in the CMDName constructor
 	m_pmdname = GPOS_NEW(m_pmp) CMDName(m_pmp, pstrColumnName);
