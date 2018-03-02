@@ -38,7 +38,7 @@ namespace gpopt
 			IMDId *m_pmdidRetType;
 
 			// function name
-			CWStringConst *m_pstr;
+			CStringStatic *m_pstr;
 			
 			// array of column descriptors: the schema of the function result
 			DrgPcoldesc *m_pdrgpcoldesc;
@@ -69,7 +69,7 @@ namespace gpopt
 				IMemoryPool *pmp,
 				IMDId *pmdidFunc,
 				IMDId *pmdidRetType,
-				CWStringConst *pstr,
+				CStringStatic *pstr,
 				DrgPcoldesc *pdrgpcoldesc
 				);
 
@@ -78,7 +78,7 @@ namespace gpopt
 				IMemoryPool *pmp,
 				IMDId *pmdidFunc,
 				IMDId *pmdidRetType,
-				CWStringConst *pstr,
+				CStringStatic *pstr,
 				DrgPcoldesc *pdrgpcoldesc,
 				DrgPcr *pdrgpcrOutput
 				);
@@ -114,7 +114,7 @@ namespace gpopt
 			}
 
 			// function name
-			const CWStringConst *Pstr() const
+			const CStringStatic *Pstr() const
 			{
 				return m_pstr;
 			}

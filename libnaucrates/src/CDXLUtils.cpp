@@ -1714,6 +1714,30 @@ CDXLUtils::PstrFromXMLCh
 	}
 }
 
+CStringStatic *
+CDXLUtils::PStaticstrFromXMLCh
+	(
+	CDXLMemoryManager *pmm,
+	const XMLCh *xmlsz
+	)
+{
+	GPOS_ASSERT(NULL != pmm);
+	GPOS_ASSERT(NULL != xmlsz);
+	
+	IMemoryPool *pmp = pmm->Pmp();
+	
+	{
+		CAutoTraceFlag atf(EtraceSimulateOOM, false);
+		CHAR *sz = XMLString::transcode(xmlsz, pmm);
+
+		CStringStatic *pstr = GPOS_NEW(pmp) CStringStatic(sz, 1024);
+
+		// cleanup temporary buffer
+		XMLString::release(&sz, pmm);
+	
+		return pstr;
+	}
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -1798,12 +1822,12 @@ CMDName *
 CDXLUtils::PmdnameFromSz
 	(
 	IMemoryPool *pmp,
-	const CHAR *sz
+	CHAR *sz
 	)
 {
 	GPOS_ASSERT(NULL != sz);
 	
-	CWStringDynamic *pstr = CDXLUtils::PstrFromSz(pmp, sz);
+	CStringStatic *pstr = GPOS_NEW(pmp) CStringStatic(sz, 1024);
 	CMDName *pmdname = GPOS_NEW(pmp) CMDName(pmp, pstr);
 
 	// CMDName ctor created a copy of the string

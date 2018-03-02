@@ -81,7 +81,7 @@ namespace gpopt
 				CColumnFactory *pcf,
 				IMDId *pmdid,
 				INT iTypeModifier,
-				const WCHAR *wszName
+				const CHAR *wszName
 				);
 
 			// find the partitioning level of the given part key, given the whole

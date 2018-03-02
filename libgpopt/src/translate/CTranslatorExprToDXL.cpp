@@ -2029,7 +2029,7 @@ CTranslatorExprToDXL::PdxlnTVF
 	IMDId *pmdidRetType = popTVF->PmdidRetType();
 	pmdidRetType->AddRef();
 
-	CWStringConst *pstrFunc = GPOS_NEW(m_pmp) CWStringConst(m_pmp, popTVF->Pstr()->Wsz());
+	CStringStatic *pstrFunc = GPOS_NEW(m_pmp) CStringStatic(popTVF->Pstr()->Sz(), 1024);
 
 	CDXLPhysicalTVF *pdxlop = GPOS_NEW(m_pmp) CDXLPhysicalTVF(m_pmp, pmdidFunc, pmdidRetType, pstrFunc);
 
@@ -7655,9 +7655,11 @@ CTranslatorExprToDXL::PdxlnSortColList
 		
 		// get sort operator name
 		const IMDScalarOp *pmdscop = m_pmda->Pmdscop(pmdidSortOp);
-		
+
+		CWStringDynamic *pwstrdyn = GPOS_NEW(m_pmp) CWStringDynamic(m_pmp);
+		pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), (pmdscop->Mdname().Pstr())->Sz());
 		CWStringConst *pstrSortOpName = 
-				GPOS_NEW(m_pmp) CWStringConst(m_pmp, pmdscop->Mdname().Pstr()->Wsz());
+				GPOS_NEW(m_pmp) CWStringConst(m_pmp, pwstrdyn->Wsz());
 		
 		BOOL fSortNullsFirst = false;
 		if (COrderSpec::EntFirst == ent)

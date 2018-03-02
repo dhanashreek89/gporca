@@ -205,7 +205,9 @@ CScalarCmp::Pstr
 	)
 {
 	pmdid->AddRef();
-	return GPOS_NEW(pmp) CWStringConst(pmp, (pmda->Pmdscop(pmdid)->Mdname().Pstr())->Wsz());
+	CWStringDynamic *pwstrdyn = GPOS_NEW(pmp) CWStringDynamic(pmp);
+	pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), (pmda->Pmdscop(pmdid)->Mdname().Pstr())->Sz());
+	return GPOS_NEW(pmp) CWStringConst(pmp, pwstrdyn->Wsz());
 }
 
 // get commuted scalar comparision operator

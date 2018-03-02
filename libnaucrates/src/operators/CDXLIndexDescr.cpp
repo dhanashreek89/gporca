@@ -38,7 +38,7 @@ CDXLIndexDescr::CDXLIndexDescr
 {
 	GPOS_ASSERT(m_pmdid->FValid());
 	GPOS_ASSERT(NULL != m_pmdname);
-	GPOS_ASSERT(m_pmdname->Pstr()->FValid());
+	//GPOS_ASSERT(m_pmdname->Pstr()->FValid());
 }
 
 

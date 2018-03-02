@@ -39,7 +39,7 @@ CScalarWindowFunc::CScalarWindowFunc
 	IMemoryPool *pmp,
 	IMDId *pmdidFunc,
 	IMDId *pmdidRetType,
-	const CWStringConst *pstrFunc,
+	const CStringStatic *pstrFunc,
 	EWinStage ewinstage,
 	BOOL fDistinct,
 	BOOL fStarArg,
@@ -162,7 +162,7 @@ CScalarWindowFunc::OsPrint
 	const
 {
 	os << SzId() << " (";
-	os << PstrFunc()->Wsz();
+	os << PstrFunc()->Sz();
 	os << " , Agg: " << (m_fAgg ? "true" : "false");
 	os << " , Distinct: " << (m_fDistinct ? "true" : "false");
 	os << " , StarArgument: " << (m_fStarArg ? "true" : "false");

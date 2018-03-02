@@ -16,6 +16,7 @@
 #include "gpos/common/CAutoP.h"
 #include "gpos/io/IOstream.h"
 #include "gpos/string/CWStringDynamic.h"
+#include "gpos/string/CStringStatic.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/xml/dxltokens.h"
@@ -404,6 +405,14 @@ namespace gpdxl
 				CDXLMemoryManager *pmm,
 				const XMLCh *
 				);
+
+			static
+			CStringStatic *PStaticstrFromXMLCh
+				(
+				CDXLMemoryManager *pmm,
+				const XMLCh *
+				);
+
 			
 			// create a GPOS string object from a base 64 encoded XML string
 			static
@@ -424,7 +433,7 @@ namespace gpdxl
 			
 			// create an MD name from a character array
 			static 
-			CMDName *PmdnameFromSz(IMemoryPool *pmp, const CHAR *sz);	
+			CMDName *PmdnameFromSz(IMemoryPool *pmp, CHAR *sz);	
 			
 			// create an MD name from a Xerces character array
 			static 

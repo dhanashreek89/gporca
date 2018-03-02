@@ -275,7 +275,7 @@ CXformSplitDQA::PexprSplitIntoLocalDQAGlobalAgg
 												(
 												pmp,
 												popScAggFunc->Pmdid(),
-												GPOS_NEW(pmp) CWStringConst(pmp, popScAggFunc->PstrAggFunc()->Wsz()),
+												GPOS_NEW(pmp) CStringStatic(popScAggFunc->PstrAggFunc()->Sz(), 1024),
 												true /* fDistinct */,
 												EaggfuncstageLocal /*eaggfuncstage*/,
 												true /* fSplit */
@@ -307,7 +307,7 @@ CXformSplitDQA::PexprSplitIntoLocalDQAGlobalAgg
 													(
 													pmp,
 													popScAggFunc->Pmdid(),
-													GPOS_NEW(pmp) CWStringConst(pmp, popScAggFunc->PstrAggFunc()->Wsz()),
+													GPOS_NEW(pmp) CStringStatic(popScAggFunc->PstrAggFunc()->Sz(), 1024),
 													false /* fDistinct */,
 													EaggfuncstageGlobal /*eaggfuncstage*/,
 													true /* fSplit */
@@ -417,7 +417,7 @@ CXformSplitDQA::PexprSplitHelper
 												(
 												pmp,
 												popScAggFunc->Pmdid(),
-												GPOS_NEW(pmp) CWStringConst(pmp, popScAggFunc->PstrAggFunc()->Wsz()),
+												GPOS_NEW(pmp) CStringStatic(popScAggFunc->PstrAggFunc()->Sz(), 1024),
 												false /* fDistinct */,
 												EaggfuncstageGlobal /*eaggfuncstage*/,
 												false /* fSplit */
@@ -524,7 +524,7 @@ CXformSplitDQA::PexprPrElAgg
 												(
 												pmp,
 												popScAggFunc->Pmdid(),
-												GPOS_NEW(pmp) CWStringConst(pmp, popScAggFunc->PstrAggFunc()->Wsz()),
+												GPOS_NEW(pmp) CStringStatic(popScAggFunc->PstrAggFunc()->Sz(), 1024),
 												false, /*fdistinct */
 												eaggfuncstage,
 												true /* fSplit */

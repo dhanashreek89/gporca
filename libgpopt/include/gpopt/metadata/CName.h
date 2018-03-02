@@ -13,12 +13,10 @@
 #define GPOPT_CName_H
 
 #include "gpos/base.h"
-#include "gpos/string/CWStringConst.h"
+#include "gpos/string/CStringStatic.h"
 
 #define GPOPT_NAME_QUOTE_BEGIN	"\""
 #define GPOPT_NAME_QUOTE_END	"\""
-
-#define GPOPT_NAME_SEPARATOR	GPOS_WSZ_LIT(".")
 
 namespace gpopt
 {
@@ -29,7 +27,7 @@ namespace gpopt
 	//		CName
 	//
 	//	@doc:
-	//		Names consist of a null terminated wide character string; 
+	//		Names consist of a null terminated character string;
 	//		No assumptions about format and encoding; only semantics 
 	//		enforced is zero termination of string;
 	//
@@ -39,19 +37,19 @@ namespace gpopt
 		private:
 			
 			// actual name
-			const CWStringConst *m_pstrName;
+			const CStringStatic *m_pstrName;
 
 			// keep track of copy status
 			BOOL m_fDeepCopy;
 			
 			// deep copy function
-			void DeepCopy(IMemoryPool *pmp, const CWStringConst *pstr);
+			void DeepCopy(IMemoryPool *pmp, const CStringStatic *pstr);
 			
 		public:
 		
 			// ctors
-			CName(IMemoryPool *, const CWStringBase *);
-			CName(const CWStringConst *, BOOL fOwnsMemory = false);
+			CName(IMemoryPool *, const CStringStatic *);
+			CName(const CStringStatic *, BOOL fOwnsMemory = false);
 			CName(const CName &);
 
 			CName(IMemoryPool *pmp, const CName &);
@@ -61,7 +59,7 @@ namespace gpopt
 			~CName();
 
 			// accessors
-			const CWStringConst *Pstr() const
+			const CStringStatic *Pstr() const
 			{
 				return m_pstrName;
 			}

@@ -82,7 +82,7 @@ CParseHandlerMDGPDBScalarOp::StartElement
 															EdxltokenGPDBScalarOp
 															);
 
-		CWStringDynamic *pstrOpName = CDXLUtils::PstrFromXMLCh(m_pphm->Pmm(), xmlszOpName);
+		CStringStatic *pstrOpName = CDXLUtils::PStaticstrFromXMLCh(m_pphm->Pmm(), xmlszOpName);
 		
 		// create a copy of the string in the CMDName constructor
 		m_pmdname = GPOS_NEW(m_pmp) CMDName(m_pmp, pstrOpName);

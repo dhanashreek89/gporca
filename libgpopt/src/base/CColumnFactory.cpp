@@ -11,6 +11,7 @@
 
 #include "gpos/base.h"
 #include "gpos/memory/CAutoMemoryPool.h"
+#include "gpos/string/CStringStatic.h"
 #include "gpos/common/CSyncHashtableAccessByKey.h"
 #include "gpos/string/CWStringDynamic.h"
 #include "gpos/common/CAutoP.h"
@@ -112,11 +113,12 @@ CColumnFactory::PcrCreate
 	// increment atomic counter
 	ULONG ulId = m_aul.TIncr();
 	
-	WCHAR wszFmt[] = GPOS_WSZ_LIT("ColRef_%04d");
-	CWStringDynamic *pstrTempName = GPOS_NEW(m_pmp) CWStringDynamic(m_pmp);
-	CAutoP<CWStringDynamic> a_pstrTempName(pstrTempName);
-	pstrTempName->AppendFormat(wszFmt, ulId);
-	CWStringConst strName(pstrTempName->Wsz());
+	CHAR szFmt[] = "ColRef_%04d";
+	// TODO: Figure out how to calculate the right capacity instead of hardcoding 1024
+	CStringStatic *pstrTempName = GPOS_NEW(m_pmp) CStringStatic(szFmt, 1024);
+	CAutoP<CStringStatic> a_pstrTempName(pstrTempName);
+	pstrTempName->AppendFormat(szFmt, ulId);
+	CStringStatic strName((CHAR *)pstrTempName->Sz(), pstrTempName->UlLength());
 	return PcrCreate(pmdtype, iTypeModifier, ulId, CName(&strName));
 }
 

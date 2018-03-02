@@ -190,6 +190,25 @@ CXMLSerializer::AddAttribute
 	m_os << CDXLTokens::PstrToken(EdxltokenQuote)->Wsz();	// "
 }
 
+void
+CXMLSerializer::AddAttribute
+	(
+	const CWStringBase *pstrAttr,
+	const CStringStatic *pstrValue
+	)
+{
+	GPOS_ASSERT(NULL != pstrAttr);
+	GPOS_ASSERT(NULL != pstrValue);
+
+	GPOS_ASSERT(m_fOpenTag);
+	m_os << CDXLTokens::PstrToken(EdxltokenSpace)->Wsz()
+		 << pstrAttr->Wsz()
+		 << CDXLTokens::PstrToken(EdxltokenEq)->Wsz()		// = 
+		 <<  CDXLTokens::PstrToken(EdxltokenQuote)->Wsz();	// "
+	WriteEscaped(m_os, pstrValue);
+	m_os << CDXLTokens::PstrToken(EdxltokenQuote)->Wsz();	// "
+}
+
 //---------------------------------------------------------------------------
 //	@function:
 //		CXMLSerializer::AddAttribute
@@ -460,6 +479,55 @@ CXMLSerializer::WriteEscaped
 		}
 	}
 }
+
+void
+CXMLSerializer::WriteEscaped
+	(
+	IOstream &os,
+	const CStringStatic *pstr
+	)
+{
+	GPOS_ASSERT(NULL != pstr);
+	
+	const ULONG ulLength = pstr->UlLength();
+	const CHAR *wsz = pstr->Sz();
+	
+	for (ULONG ulA = 0; ulA < ulLength; ulA++)
+	{
+		const CHAR wc = wsz[ulA];
+		
+		switch (wc)
+		{
+			case '\"':
+				os << "&quot;";
+				break;
+			case '\'':
+				os << "&apos;";
+				break;
+			case '<':
+				os << "&lt;";
+				break;
+			case '>':
+				os << "&gt;";
+				break;
+			case '&':
+				os << "&amp;";
+				break;
+			case '\t':
+				os << "&#x9;";
+				break;
+			case '\n':
+				os << "&#xA;";
+				break;
+			case '\r':
+				os << "&#xD;";
+				break;
+			default:
+				os << wc;
+		}
+	}
+}
+
 
 //---------------------------------------------------------------------------
 //	@function:

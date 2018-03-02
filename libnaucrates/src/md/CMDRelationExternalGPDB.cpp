@@ -674,7 +674,7 @@ CMDRelationExternalGPDB::DebugPrint
 	Pmdid()->OsPrint(os);
 	os << std::endl;
 
-	os << "Relation name: " << (Mdname()).Pstr()->Wsz() << std::endl;
+	os << "Relation name: " << (Mdname()).Pstr()->Sz() << std::endl;
 
 	os << "Distribution policy: " << PstrDistrPolicy(m_ereldistrpolicy)->Wsz() << std::endl;
 
@@ -697,7 +697,7 @@ CMDRelationExternalGPDB::DebugPrint
 		}
 
 		const IMDColumn *pimdcolDistrKey = PmdcolDistrColumn(ul);
-		os << (pimdcolDistrKey->Mdname()).Pstr()->Wsz();
+		os << (pimdcolDistrKey->Mdname()).Pstr()->Sz();
 	}
 
 	os << std::endl;

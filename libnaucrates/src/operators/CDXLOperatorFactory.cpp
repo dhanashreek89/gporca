@@ -11,6 +11,7 @@
 
 #include "gpos/string/CWStringConst.h"
 #include "gpos/string/CWStringDynamic.h"
+#include "gpos/string/CStringStatic.h"
 #include "gpos/common/clibwrapper.h"
 
 #include "naucrates/md/CMDIdColStats.h"
@@ -90,10 +91,11 @@ CDXLOperatorFactory::PdxlopSubqScan
 								);
 
 	CWStringDynamic *pstrAlias = CDXLUtils::PstrFromXMLCh(pmm,xmlszAlias);
-	
+    CHAR *name = CDXLUtils::SzFromWsz(pmp, pstrAlias->Wsz());
+    CStringStatic *alias = GPOS_NEW(pmp) CStringStatic(name, 1024);
 
 	// create a copy of the string in the CMDName constructor
-	CMDName *pmdnameAlias = GPOS_NEW(pmp) CMDName(pmp, pstrAlias);
+	CMDName *pmdnameAlias = GPOS_NEW(pmp) CMDName(pmp, alias);
 	
 	GPOS_DELETE(pstrAlias);
 
@@ -1454,7 +1456,7 @@ CDXLOperatorFactory::PdxlopProjElem
 					EdxltokenScalarProjElem
 					);
 	
-	CWStringDynamic *pstrAlias = CDXLUtils::PstrFromXMLCh(pmm, xmlszAlias);
+	CStringStatic *pstrAlias = CDXLUtils::PStaticstrFromXMLCh(pmm, xmlszAlias);
 
 	// create a copy of the string in the CMDName constructor
 	CMDName *pmdname = GPOS_NEW(pmp) CMDName(pmp, pstrAlias);
@@ -1692,7 +1694,7 @@ CDXLOperatorFactory::Pdxlid
 									EdxltokenIndexDescr
 									);
 
-	CWStringDynamic *pstrIndexName = CDXLUtils::PstrFromXMLCh(pmm, xmlszIndexName);
+	CStringStatic *pstrIndexName = CDXLUtils::PStaticstrFromXMLCh(pmm, xmlszIndexName);
 
 	// parse metadata id
 	IMDId *pmdid = PmdidFromAttrs
@@ -1817,7 +1819,7 @@ CDXLOperatorFactory::Pdxlcd
 					);
 	}
 
-	CWStringDynamic *pstrColumnName = CDXLUtils::PstrFromXMLCh(pmm,xmlszColumnName);
+	CStringStatic *pstrColumnName = CDXLUtils::PStaticstrFromXMLCh(pmm,xmlszColumnName);
 
 	// create a copy of the string in the CMDName constructor
 	CMDName *pmdname = GPOS_NEW(pmp) CMDName(pmp, pstrColumnName);
@@ -1870,7 +1872,7 @@ CDXLOperatorFactory::Pdxlcr
 	
 	ulId = XMLString::parseInt(xmlszColumnId, pmm);
 		
-	CWStringDynamic *pstrColumnName =  CDXLUtils::PstrFromXMLCh(pmm,xmlszColumnName);
+	CStringStatic *pstrColumnName =  CDXLUtils::PStaticstrFromXMLCh(pmm,xmlszColumnName);
 
 	// create a copy of the string in the CMDName constructor
 	CMDName *pmdname = GPOS_NEW(pmp) CMDName(pmp, pstrColumnName);

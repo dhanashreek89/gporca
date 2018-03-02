@@ -11,6 +11,7 @@
 
 
 #include "gpos/string/CWStringDynamic.h"
+#include "gpos/string/CStringStatic.h"
 
 #include "naucrates/md/CDXLRelStats.h"
 #include "naucrates/dxl/xml/CXMLSerializer.h"
@@ -169,7 +170,7 @@ CDXLRelStats::DebugPrint
 	Pmdid()->OsPrint(os);
 	os << std::endl;
 	
-	os << "Relation name: " << (Mdname()).Pstr()->Wsz() << std::endl;
+	os << "Relation name: " << (Mdname()).Pstr()->Sz() << std::endl;
 	
 	os << "Rows: " << DRows() << std::endl;
 
@@ -194,8 +195,9 @@ CDXLRelStats::PdxlrelstatsDummy
 	)
 {
 	CMDIdRelStats *pmdidRelStats = CMDIdRelStats::PmdidConvert(pmdid);
-	CAutoP<CWStringDynamic> a_pstr;
-	a_pstr = GPOS_NEW(pmp) CWStringDynamic(pmp, pmdidRelStats->Wsz());
+    CHAR *name = CDXLUtils::SzFromWsz(pmp, pmdidRelStats->Wsz());
+	CAutoP<CStringStatic> a_pstr;
+	a_pstr = GPOS_NEW(pmp) CStringStatic(name, 1024);
 	CAutoP<CMDName> a_pmdname;
 	a_pmdname = GPOS_NEW(pmp) CMDName(pmp, a_pstr.Pt());
 	CAutoRef<CDXLRelStats> a_pdxlrelstats;

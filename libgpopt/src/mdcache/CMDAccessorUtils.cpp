@@ -37,7 +37,7 @@ using namespace gpopt;
 //		Return the name of the window operation
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
+const CStringStatic *
 CMDAccessorUtils::PstrWindowFuncName
 	(
 	CMDAccessor *pmda,

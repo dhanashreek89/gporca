@@ -61,7 +61,7 @@ CLogicalTVF::CLogicalTVF
 	IMemoryPool *pmp,
 	IMDId *pmdidFunc,
 	IMDId *pmdidRetType,
-	CWStringConst *pstr,
+	CStringStatic *pstr,
 	DrgPcoldesc *pdrgpcoldesc
 	)
 	:
@@ -101,7 +101,7 @@ CLogicalTVF::CLogicalTVF
 	IMemoryPool *pmp,
 	IMDId *pmdidFunc,
 	IMDId *pmdidRetType,
-	CWStringConst *pstr,
+	CStringStatic *pstr,
 	DrgPcoldesc *pdrgpcoldesc,
 	DrgPcr *pdrgpcrOutput
 	)
@@ -220,7 +220,7 @@ CLogicalTVF::PopCopyWithRemappedColumns
 		pdrgpcrOutput = CUtils::PdrgpcrRemap(pmp, m_pdrgpcrOutput, phmulcr, fMustExist);
 	}
 
-	CWStringConst *pstr = GPOS_NEW(pmp) CWStringConst(m_pstr->Wsz());
+	CStringStatic *pstr = GPOS_NEW(pmp) CStringStatic(m_pstr->Sz(), 1024);
 	m_pmdidFunc->AddRef();
 	m_pmdidRetType->AddRef();
 	m_pdrgpcoldesc->AddRef();
@@ -377,7 +377,7 @@ CLogicalTVF::OsPrint
 	{
 		return COperator::OsPrint(os);
 	}
-	os << SzId() << " (" << Pstr()->Wsz() << ") ";
+	os << SzId() << " (" << Pstr()->Sz() << ") ";
 	os << "Columns: [";
 	CUtils::OsPrintDrgPcr(os, m_pdrgpcrOutput);
 	os << "] ";

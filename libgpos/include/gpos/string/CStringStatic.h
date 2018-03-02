@@ -57,9 +57,7 @@ namespace gpos
 			bool FValid() const;
 #endif // GPOS_DEBUG
 
-			// private copy ctor
-			CStringStatic(const CStringStatic&);
-
+        
 		public:
 
 			// ctor
@@ -67,13 +65,16 @@ namespace gpos
 
 			// ctor with string initialization
 			CStringStatic(CHAR szBuffer[], ULONG ulCapacity, const CHAR szInit[]);
-
+        
+        // copy ctor
+        CStringStatic(const CStringStatic&);
+        
 			// dtor - owner is responsible for releasing the buffer
 			~CStringStatic()
 			{}
 
 			// returns the wide character buffer storing the string
-			const CHAR* Sz() const
+			CHAR* Sz() const
 			{
 				return m_szBuf;
 			}

@@ -41,7 +41,7 @@ namespace gpdxl
 			IMDId *m_pmdidRetType;
 
 			// function name
-			CWStringConst *m_pstr;
+			CStringStatic *m_pstr;
 
 			// private copy ctor
 			CParseHandlerPhysicalTVF(const CParseHandlerPhysicalTVF &);

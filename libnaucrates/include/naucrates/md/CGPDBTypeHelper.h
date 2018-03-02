@@ -85,7 +85,7 @@ namespace gpmd
                 pt->Pmdid()->OsPrint(os);
                 os << std::endl;
 
-                os << "Type name: " << pt->Mdname().Pstr()->Wsz() << std::endl;
+                os << "Type name: " << pt->Mdname().Pstr()->Sz() << std::endl;
 
                 const CWStringConst *pstrRedistributable = pt->FRedistributable() ?
                 CDXLTokens::PstrToken(EdxltokenTrue):

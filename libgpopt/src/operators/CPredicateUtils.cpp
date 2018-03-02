@@ -522,12 +522,12 @@ CPredicateUtils::FLikePredicate
 	CMDAccessor *pmda = COptCtxt::PoctxtFromTLS()->Pmda();
 	const IMDScalarOp *pmdscop = pmda->Pmdscop(pmdid);
 
-	const CWStringConst *pstrOpName = pmdscop->Mdname().Pstr();
+	const CStringStatic *pstrOpName = pmdscop->Mdname().Pstr();
 
 	// comparison semantics for statistics purposes is looser
 	// than regular comparison
-	CWStringConst pstrLike(GPOS_WSZ_LIT("~~"));
-	if (!pstrOpName->FEquals(&pstrLike))
+	CStringStatic pstrLike((CHAR *)"~~", 1024);
+	if (!pstrOpName->FEquals(pstrLike.Sz()))
 	{
 		return false;
 	}
@@ -2081,7 +2081,9 @@ CPredicateUtils::PexprInverseComparison
 
 	IMDId *pmdidOp = CScalarCmp::PopConvert(pexprCmp->Pop())->PmdidOp();
 	IMDId *pmdidInverseOp = pmda->Pmdscop(pmdidOp)->PmdidOpInverse();
-	const CWStringConst *pstrFirst = pmda->Pmdscop(pmdidInverseOp)->Mdname().Pstr();
+	CWStringDynamic *pwstrdyn = GPOS_NEW(pmp) CWStringDynamic(pmp);
+	pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), (pmda->Pmdscop(pmdidInverseOp)->Mdname().Pstr())->Sz());
+	const CWStringConst *pstrFirst = GPOS_NEW(pmp) CWStringConst(pmp, pwstrdyn->Wsz());
 
 	// generate a predicate for the inversion of the comparison involved in the subquery
 	(*pexprCmp)[0]->AddRef();

@@ -350,7 +350,7 @@ CMDIndexGPDB::DebugPrint
 	Pmdid()->OsPrint(os);
 	os << std::endl;
 	
-	os << "Index name: " << (Mdname()).Pstr()->Wsz() << std::endl;
+	os << "Index name: " << (Mdname()).Pstr()->Sz() << std::endl;
 	os << "Index type: " << PstrIndexType(m_emdindt)->Wsz() << std::endl;
 
 	os << "Index keys: ";

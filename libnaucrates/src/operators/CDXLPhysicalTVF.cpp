@@ -31,7 +31,7 @@ CDXLPhysicalTVF::CDXLPhysicalTVF
 	IMemoryPool *pmp,
 	IMDId *pmdidFunc,
 	IMDId *pmdidRetType,
-	CWStringConst *pstr
+	CStringStatic *pstr
 	)
 	:
 	CDXLPhysical(pmp),

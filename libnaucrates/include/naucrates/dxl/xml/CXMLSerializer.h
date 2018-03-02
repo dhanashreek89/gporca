@@ -15,6 +15,7 @@
 #include "gpos/base.h"
 #include "gpos/common/CDouble.h"
 #include "gpos/string/CWStringConst.h"
+#include "gpos/string/CStringStatic.h"
 #include "gpos/io/COstream.h"
 
 #include "gpos/common/CStack.h"
@@ -68,6 +69,9 @@ namespace gpdxl
 			// escape the given string and write it to the given stream
 			static
 			void WriteEscaped(IOstream &os, const CWStringBase *pstr);
+
+			static
+			void WriteEscaped(IOstream &os, const CStringStatic *pstr);
 			
 		public:
 			// ctor/dtor
@@ -108,7 +112,10 @@ namespace gpdxl
 			
 			// adds a string-valued attribute
 			void AddAttribute(const CWStringBase *pstrAttr, const CWStringBase *pstrValue);
-			
+
+			// adds a string-valued attribute
+			void AddAttribute(const CWStringBase *pstrAttr, const CStringStatic *pstrValue);
+
 			// adds a character string attribute
 			void AddAttribute(const CWStringBase *pstrAttr, const CHAR *szValue);
 

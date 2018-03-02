@@ -1740,7 +1740,7 @@ CTestUtils::PexprPrjElemWithSum
 
 	// generate a SUM expression
 	CMDIdGPDB *pmdidSumAgg = GPOS_NEW(pmp) CMDIdGPDB(GPDB_INT4_SUM_AGG);
-	CWStringConst *pstrAggFunc = GPOS_NEW(pmp) CWStringConst(GPOS_WSZ_LIT("sum"));
+	CStringStatic *pstrAggFunc = GPOS_NEW(pmp) CStringStatic((CHAR *)"sum", 1024);
 	CExpression *pexprScalarAgg = CUtils::PexprAggFunc
 									(
 									pmp,

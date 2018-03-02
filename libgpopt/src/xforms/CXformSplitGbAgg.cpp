@@ -234,7 +234,7 @@ CXformSplitGbAgg::PopulateLocalGlobalProjectList
 														(
 														pmp,
 														popScAggFunc->Pmdid(),
-														GPOS_NEW(pmp) CWStringConst(pmp, popScAggFunc->PstrAggFunc()->Wsz()),
+														GPOS_NEW(pmp) CStringStatic(popScAggFunc->PstrAggFunc()->Sz(), 1024),
 														popScAggFunc->FDistinct(),
 														EaggfuncstageLocal, /* fGlobal */
 														true /* fSplit */
@@ -245,7 +245,7 @@ CXformSplitGbAgg::PopulateLocalGlobalProjectList
 														(
 														pmp,
 														popScAggFunc->Pmdid(),
-														GPOS_NEW(pmp) CWStringConst(pmp, popScAggFunc->PstrAggFunc()->Wsz()),
+														GPOS_NEW(pmp) CStringStatic(popScAggFunc->PstrAggFunc()->Sz(), 1024),
 														false /* fDistinct */,
 														EaggfuncstageGlobal, /* fGlobal */
 														true /* fSplit */
