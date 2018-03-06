@@ -37,7 +37,7 @@ namespace gpdxl
 			IMDId *m_pmdidRetType;
 
 			// function name
-			CStringStatic *m_pstr;
+			CStringConst *m_pstr;
 
 			// private copy ctor
 			CDXLPhysicalTVF(const CDXLPhysicalTVF &);
@@ -49,7 +49,7 @@ namespace gpdxl
 					IMemoryPool *pmp,
 					IMDId *pmdidFunc,
 					IMDId *pmdidRetType,
-					CStringStatic *pstr
+					CStringConst *pstr
 				);
 
 			// dtor
@@ -63,7 +63,7 @@ namespace gpdxl
 			const CWStringConst *PstrOpName() const;
 
 			// get function name
-			CStringStatic *Pstr() const
+			CStringConst *Pstr() const
 			{
 				return m_pstr;
 			}

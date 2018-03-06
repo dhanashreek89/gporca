@@ -71,7 +71,7 @@ namespace gpdxl
 			void WriteEscaped(IOstream &os, const CWStringBase *pstr);
 
 			static
-			void WriteEscaped(IOstream &os, const CStringStatic *pstr);
+			void WriteEscaped(IOstream &os, const CStringBase *pstr);
 			
 		public:
 			// ctor/dtor
@@ -114,7 +114,7 @@ namespace gpdxl
 			void AddAttribute(const CWStringBase *pstrAttr, const CWStringBase *pstrValue);
 
 			// adds a string-valued attribute
-			void AddAttribute(const CWStringBase *pstrAttr, const CStringStatic *pstrValue);
+			void AddAttribute(const CWStringBase *pstrAttr, const CStringBase *pstrValue);
 
 			// adds a character string attribute
 			void AddAttribute(const CWStringBase *pstrAttr, const CHAR *szValue);

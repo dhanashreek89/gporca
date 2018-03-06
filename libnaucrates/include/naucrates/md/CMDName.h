@@ -14,7 +14,7 @@
 
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
-#include "gpos/string/CStringStatic.h"
+#include "gpos/string/CStringConst.h"
 
 namespace gpmd
 {	
@@ -32,15 +32,15 @@ namespace gpmd
 	{
 		private:
 			// the string holding the name
-			const CStringStatic *m_psc;
+			const CStringConst *m_psc;
 			
 			// keep track of copy status
 			BOOL m_fDeepCopy;
 		
 		public:
 			// ctor/dtor
-			CMDName(IMemoryPool *pmp, const CStringStatic *pstr);
-			CMDName(const CStringStatic *, BOOL fOwnsMemory = false);
+			CMDName(IMemoryPool *pmp, const CStringBase *pstr);
+			CMDName(const CStringConst *, BOOL fOwnsMemory = false);
 			
 			// shallow copy ctor
 			CMDName(const CMDName &);
@@ -48,7 +48,7 @@ namespace gpmd
 			~CMDName();
 
 			// accessors
-			const CStringStatic *Pstr() const
+			const CStringConst *Pstr() const
 			{
 				return m_psc;
 			}

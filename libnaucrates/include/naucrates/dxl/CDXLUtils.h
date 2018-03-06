@@ -407,7 +407,7 @@ namespace gpdxl
 				);
 
 			static
-			CStringStatic *PStaticstrFromXMLCh
+			CStringDynamic *PStaticstrFromXMLCh
 				(
 				CDXLMemoryManager *pmm,
 				const XMLCh *
@@ -441,7 +441,7 @@ namespace gpdxl
 
 			// create an MD name from a character array
 			static 
-			CMDName *PmdnameFromSz(IMemoryPool *pmp, CHAR *sz);	
+			CMDName *PmdnameFromSz(IMemoryPool *pmp, const CHAR *sz);
 			
 			// create an MD name from a Xerces character array
 			static 
