@@ -2379,7 +2379,7 @@ CXformUtils::PexprRowNumber
 													pmp,
 													GPOS_NEW(pmp) CMDIdGPDB(oidRowNumber),
 													GPOS_NEW(pmp) CMDIdGPDB(GPDB_INT8_OID),
-													GPOS_NEW(pmp) CStringStatic((CHAR *) "row_number", 1024),
+													GPOS_NEW(pmp) CStringConst(pmp, (CHAR *) "row_number"),
 													CScalarWindowFunc::EwsImmediate,
 													false /* fDistinct */,
 													false /* fStarArg */,
@@ -2839,7 +2839,7 @@ CXformUtils::PexprBuildIndexPlan
 
 	CTableDescriptor *ptabdesc = NULL;
 	DrgPcr *pdrgpcrOutput = NULL;
-	CStringStatic *pstrAlias = NULL;
+	CStringConst *pstrAlias = NULL;
 	ULONG ulPartIndex = ULONG_MAX;
 	DrgDrgPcr *pdrgpdrgpcrPart = NULL;
 	BOOL fPartialIndex = pmdrel->FPartialIndex(pmdindex->Pmdid());
@@ -2862,7 +2862,7 @@ CXformUtils::PexprBuildIndexPlan
 		ulPartIndex = popDynamicGet->UlScanId();
 		pdrgpcrOutput = popDynamicGet->PdrgpcrOutput();
 		GPOS_ASSERT(NULL != pdrgpcrOutput);
-		pstrAlias = GPOS_NEW(pmp) CStringStatic(popDynamicGet->Name().Pstr()->Sz(), 1024);
+		pstrAlias = GPOS_NEW(pmp) CStringConst(pmp, popDynamicGet->Name().Pstr()->Sz());
 		pdrgpdrgpcrPart = popDynamicGet->PdrgpdrgpcrPart();
 		ulSecondaryPartIndex = popDynamicGet->UlSecondaryScanId();
 		ppartcnstrRel = popDynamicGet->PpartcnstrRel();
@@ -2873,7 +2873,7 @@ CXformUtils::PexprBuildIndexPlan
 		ptabdesc = popGet->Ptabdesc();
 		pdrgpcrOutput = popGet->PdrgpcrOutput();
 		GPOS_ASSERT(NULL != pdrgpcrOutput);
-		pstrAlias = GPOS_NEW(pmp) CStringStatic(popGet->Name().Pstr()->Sz(), 1024);
+		pstrAlias = GPOS_NEW(pmp) CStringConst(pmp, popGet->Name().Pstr()->Sz());
 	}
 
 	if (!FIndexApplicable(pmp, pmdindex, pmdrel, pdrgpcrOutput, pcrsReqd, pcrsScalarExpr, emdindtype))
@@ -4190,7 +4190,7 @@ CXformUtils::PexprPartialDynamicIndexGet
 	CTableDescriptor *ptabdesc = popGet->Ptabdesc();
 	ptabdesc->AddRef();
 
-	CStringStatic strTableAliasName(popGet->Name().Pstr()->Sz(), 1024);
+	CStringConst strTableAliasName(pmp, popGet->Name().Pstr()->Sz());
 
 	DrgDrgPcr *pdrgpdrgpcrPart = NULL;
 	CPartConstraint *ppartcnstrDIG = NULL;
@@ -4479,7 +4479,7 @@ CXformUtils::PexprWinFuncAgg2ScalarAgg
 				(
 				pmp,
 				pmdidFunc,
-				GPOS_NEW(pmp) CStringStatic(popScWinFunc->PstrFunc()->Sz(), 1024),
+				GPOS_NEW(pmp) CStringConst(pmp, popScWinFunc->PstrFunc()->Sz()),
 				popScWinFunc->FDistinct(),
 				EaggfuncstageGlobal,
 				false // fSplit

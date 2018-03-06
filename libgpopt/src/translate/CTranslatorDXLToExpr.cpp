@@ -466,7 +466,7 @@ CTranslatorDXLToExpr::PexprLogicalTVF
 
 		GPOS_ASSERT(NULL != pdxlcoldesc->Pmdname()->Pstr()->Sz());
 		
-		CStringStatic strColName(pdxlcoldesc->Pmdname()->Pstr()->Sz(), 1024);
+		CStringConst strColName(m_pmp, pdxlcoldesc->Pmdname()->Pstr()->Sz());
 
 		INT iAttNo = pdxlcoldesc->IAttno();
 		CColumnDescriptor *pcoldesc = GPOS_NEW(m_pmp) CColumnDescriptor
@@ -493,7 +493,7 @@ CTranslatorDXLToExpr::PexprLogicalTVF
 										m_pmp,
 										pmdidFunc,
 										pmdidRetType,
-										GPOS_NEW(m_pmp) CStringStatic(pdxlop->Pmdname()->Pstr()->Sz(), 1024),
+										GPOS_NEW(m_pmp) CStringConst(m_pmp, pdxlop->Pmdname()->Pstr()->Sz()),
 										pdrgpcoldesc
 										);
 
@@ -544,7 +544,7 @@ CTranslatorDXLToExpr::PexprLogicalGet
 
 	CTableDescriptor *ptabdesc = Ptabdesc(pdxltabdesc);
 
-	CStringStatic strAlias(pdxltabdesc->Pmdname()->Pstr()->Sz(), 1024);
+	CStringConst strAlias(m_pmp, pdxltabdesc->Pmdname()->Pstr()->Sz());
 
 	// create a logical get or dynamic get operator
 	CName *pname = GPOS_NEW(m_pmp) CName(m_pmp, CName(&strAlias));
@@ -2058,7 +2058,7 @@ CTranslatorDXLToExpr::Ptabdesc
 	CDXLTableDescr *pdxltabdesc
 	)
 {
-	CStringStatic strName(pdxltabdesc->Pmdname()->Pstr()->Sz(), 1024);
+	CStringConst strName(m_pmp, pdxltabdesc->Pmdname()->Pstr()->Sz());
 
 	IMDId *pmdid = pdxltabdesc->Pmdid();
 
@@ -2120,7 +2120,7 @@ CTranslatorDXLToExpr::Ptabdesc
 		const IMDType *pmdtype = m_pmda->Pmdtype(pdxlcoldesc->PmdidType());
 
 		GPOS_ASSERT(NULL != pdxlcoldesc->Pmdname()->Pstr()->Sz());
-		CStringStatic strColName(pdxlcoldesc->Pmdname()->Pstr()->Sz(), 1024);
+		CStringConst strColName(m_pmp, pdxlcoldesc->Pmdname()->Pstr()->Sz());
 
 		INT iAttNo = pdxlcoldesc->IAttno();
 
@@ -2262,7 +2262,7 @@ CTranslatorDXLToExpr::PtabdescFromCTAS
 	CDXLLogicalCTAS *pdxlopCTAS
 	)
 {
-	CStringStatic strName(pdxlopCTAS->Pmdname()->Pstr()->Sz(), 1024);
+	CStringConst strName(m_pmp, pdxlopCTAS->Pmdname()->Pstr()->Sz());
 
 	IMDId *pmdid = pdxlopCTAS->Pmdid();
 
@@ -2323,7 +2323,7 @@ CTranslatorDXLToExpr::PtabdescFromCTAS
 		const IMDType *pmdtype = m_pmda->Pmdtype(pdxlcoldesc->PmdidType());
 
 		GPOS_ASSERT(NULL != pdxlcoldesc->Pmdname()->Pstr()->Sz());
-		CStringStatic strColName(pdxlcoldesc->Pmdname()->Pstr()->Sz(), 1024);
+		CStringConst strColName(m_pmp, pdxlcoldesc->Pmdname()->Pstr()->Sz());
 
 		INT iAttNo = pdxlcoldesc->IAttno();
 
@@ -2949,7 +2949,7 @@ CTranslatorDXLToExpr::PexprScalarFunc
 				pmdidFunc,
 				pmdidRetType,
 				pdxlopFuncExpr->ITypeModifier(),
-				GPOS_NEW(m_pmp) CStringStatic((pmdfunc->Mdname().Pstr())->Sz(), 1024)
+				GPOS_NEW(m_pmp) CStringConst(m_pmp, (pmdfunc->Mdname().Pstr())->Sz())
 				);
 	}
 	
@@ -2986,7 +2986,7 @@ CTranslatorDXLToExpr::PexprWindowFunc
 	IMDId *pmdidFunc = pdxlopWinref->PmdidFunc();
 	pmdidFunc->AddRef();
 
-	CStringStatic *pstrName = GPOS_NEW(m_pmp) CStringStatic(CMDAccessorUtils::PstrWindowFuncName(m_pmda, pmdidFunc)->Sz(), 1024);
+	CStringConst *pstrName = GPOS_NEW(m_pmp) CStringConst(m_pmp, CMDAccessorUtils::PstrWindowFuncName(m_pmda, pmdidFunc)->Sz());
 
 	CScalarWindowFunc::EWinStage ews = Ews(pdxlopWinref->Edxlwinstage());
 
@@ -3144,7 +3144,7 @@ CTranslatorDXLToExpr::PexprAggFunc
 				(
 				m_pmp,
 				pmdidAggFunc,
-				GPOS_NEW(m_pmp) CStringStatic((pmdagg->Mdname().Pstr())->Sz(), 1024),
+				GPOS_NEW(m_pmp) CStringConst(m_pmp, (pmdagg->Mdname().Pstr())->Sz()),
 				pdxlop->FDistinct(),
 				eaggfuncstage,
 				fSplit,

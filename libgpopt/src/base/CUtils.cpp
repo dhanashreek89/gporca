@@ -1939,7 +1939,7 @@ CUtils::PopAggFunc
 	(
 	IMemoryPool *pmp,
 	IMDId *pmdidAggFunc,
-	const CStringStatic *pstrAggFunc,
+	const CStringConst *pstrAggFunc,
 	BOOL fDistinct,
 	EAggfuncStage eaggfuncstage,
 	BOOL fSplit,
@@ -1959,7 +1959,7 @@ CUtils::PexprAggFunc
 	(
 	IMemoryPool *pmp,
 	IMDId *pmdidAggFunc,
-	const CStringStatic *pstrAggFunc,
+	const CStringConst *pstrAggFunc,
 	const CColRef *pcr,
 	BOOL fDistinct,
 	EAggfuncStage eaggfuncstage,
@@ -1993,7 +1993,7 @@ CUtils::PexprCountStar
 
 	DrgPexpr *pdrgpexpr = GPOS_NEW(pmp) DrgPexpr(pmp);
 	CMDIdGPDB *pmdid = GPOS_NEW(pmp) CMDIdGPDB(GPDB_COUNT_STAR);
-	CStringStatic *pstr = GPOS_NEW(pmp) CStringStatic((CHAR *)"count", 1024);
+	CStringConst *pstr = GPOS_NEW(pmp) CStringConst((CHAR *)"count");
 
 	CScalarAggFunc *popScAggFunc = PopAggFunc(pmp, pmdid, pstr, false /*fDistinct*/, EaggfuncstageGlobal /*eaggfuncstage*/, false /*fSplit*/);
 
@@ -2265,7 +2265,7 @@ CUtils::PexprAgg
 	
 	IMDId *pmdidAgg = pmdagg->Pmdid();
 	pmdidAgg->AddRef();
-	CStringStatic *pstr = GPOS_NEW(pmp) CStringStatic(pmdagg->Mdname().Pstr()->Sz(), 1024);
+	CStringConst *pstr = GPOS_NEW(pmp) CStringConst(pmdagg->Mdname().Pstr()->Sz());
 
 	return PexprAggFunc(pmp, pmdidAgg, pstr, pcr, fDistinct, EaggfuncstageGlobal /*fGlobal*/, false /*fSplit*/);
 }

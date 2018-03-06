@@ -1267,7 +1267,7 @@ CTranslatorExprToDXLUtils::PcrCreate
 	const IMDType *pmdtype = pmda->Pmdtype(pmdidType);
 
 	CHAR *szName_new = strdup(szName);
-	CName *pname = GPOS_NEW(pmp) CName(GPOS_NEW(pmp) CStringStatic(szName_new, 1024), true /*fOwnsMemory*/);
+	CName *pname = GPOS_NEW(pmp) CName(GPOS_NEW(pmp) CStringConst(szName_new), true /*fOwnsMemory*/);
 	CColRef *pcr = pcf->PcrCreate(pmdtype, iTypeModifier, *pname);
 	GPOS_DELETE(pname);
 	return pcr;

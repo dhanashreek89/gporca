@@ -13,7 +13,7 @@
 //---------------------------------------------------------------------------
 
 #include "gpos/base.h"
-#include "gpos/string/CStringStatic.h"
+#include "gpos/string/CStringDynamic.h"
 #include "gpopt/metadata/CName.h"
 
 using namespace gpopt;
@@ -30,12 +30,12 @@ using namespace gpopt;
 CName::CName
 	(
 	IMemoryPool *pmp,
-	const CStringStatic *pstr
+	const CStringBase *pstr
 	)
 	:m_pstrName(NULL),
 	 m_fDeepCopy(true)
 {
-	m_pstrName = GPOS_NEW(pmp) CStringStatic(pstr->Sz(), 1024);
+	m_pstrName = GPOS_NEW(pmp) CStringConst(pmp, pstr->Sz());
 }
 
 //---------------------------------------------------------------------------
@@ -50,7 +50,7 @@ CName::CName
 //---------------------------------------------------------------------------
 CName::CName
 	(
-	const CStringStatic *pstr,
+	const CStringConst *pstr,
 	BOOL fOwnsMemory
 	)
 	:
@@ -81,10 +81,10 @@ CName::CName
 	m_pstrName(NULL),
 	m_fDeepCopy(false)
 {
-	CStringStatic *pstrTmp = GPOS_NEW(pmp) CStringStatic((nameFirst.Pstr())->Sz(), 1024);
+	CStringDynamic *pstrTmp = GPOS_NEW(pmp) CStringDynamic(pmp, (nameFirst.Pstr())->Sz());
 	pstrTmp->Append(nameSecond.Pstr());
 	
-	m_pstrName = GPOS_NEW(pmp) CStringStatic(pstrTmp->Sz(), 1024);
+	m_pstrName = GPOS_NEW(pmp) CStringConst(pmp, pstrTmp->Sz());
 	m_fDeepCopy = true;
 	
 	// release tmp string
@@ -168,10 +168,10 @@ void
 CName::DeepCopy
 	(
 	IMemoryPool *pmp,
-	const CStringStatic *pstr
+	const CStringConst *pstr
 	)
 {
-	m_pstrName = GPOS_NEW(pmp) CStringStatic(pstr->Sz(), 1024);
+	m_pstrName = GPOS_NEW(pmp) CStringConst(pmp, pstr->Sz());
 	m_fDeepCopy = true;
 }
 

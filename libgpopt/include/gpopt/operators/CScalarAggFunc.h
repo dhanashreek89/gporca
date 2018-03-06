@@ -57,7 +57,7 @@ namespace gpopt
 			IMDId *m_pmdidRetType;
 
 			// aggregate function name
-			const CStringStatic *m_pstrAggFunc;
+			const CStringConst *m_pstrAggFunc;
 			
 			// distinct aggregate computation
 			BOOL m_fDistinct;
@@ -79,7 +79,7 @@ namespace gpopt
 				IMemoryPool *pmp,
 				IMDId *pmdidAggFunc,
 				IMDId *pmdidResolvedRetType,
-				const CStringStatic *pstrAggFunc,
+				const CStringConst *pstrAggFunc,
 				BOOL fDistinct,
 				EAggfuncStage eaggfuncstage,
 				BOOL fSplit
@@ -150,7 +150,7 @@ namespace gpopt
 			
 
 			// aggregate function name
-			const CStringStatic *PstrAggFunc() const;
+			const CStringConst *PstrAggFunc() const;
 
 			// aggregate func id
 			IMDId *Pmdid() const;

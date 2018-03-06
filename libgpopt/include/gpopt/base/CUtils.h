@@ -232,7 +232,7 @@ namespace gpopt
 				(
 				IMemoryPool *pmp,
 				IMDId *pmdidAggFunc,
-				const CStringStatic *pstrAggFunc,
+				const CStringConst *pstrAggFunc,
 				BOOL fDistinct,
 				EAggfuncStage eaggfuncstage,
 				BOOL fSplit,
@@ -245,7 +245,7 @@ namespace gpopt
 				(
 				IMemoryPool *pmp,
 				IMDId *pmdidAggFunc,
-				const CStringStatic *pstrAggFunc,
+				const CStringConst *pstrAggFunc,
 				const CColRef *pcr,
 				BOOL fDistinct,
 				EAggfuncStage eaggfuncstage,

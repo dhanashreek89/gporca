@@ -15,7 +15,6 @@
 #include "gpos/string/CWStringStatic.h"
 
 
-
 using namespace gpos;
 
 
@@ -33,7 +32,6 @@ CStringStatic::CStringStatic
 	ULONG ulCapacity
 	)
 	:
-	m_szBuf(szBuffer),
 	m_ulLength(0),
 	m_ulCapacity(ulCapacity)
 {
@@ -41,8 +39,10 @@ CStringStatic::CStringStatic
 	GPOS_ASSERT(0 < m_ulCapacity);
 
 	//m_szBuf[0] = CHAR_EOS;
+	CHAR wszTempBuf[1024];
+	clib::SzStrNCpy(wszTempBuf, szBuffer, 1024);
+	m_szBuf = wszTempBuf;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:

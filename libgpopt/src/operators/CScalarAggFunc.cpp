@@ -38,7 +38,7 @@ CScalarAggFunc::CScalarAggFunc
 	IMemoryPool *pmp,
 	IMDId *pmdidAggFunc,
 	IMDId *pmdidResolvedRetType,
-	const CStringStatic *pstrAggFunc,
+	const CStringConst *pstrAggFunc,
 	BOOL fDistinct,
 	EAggfuncStage eaggfuncstage,
 	BOOL fSplit
@@ -73,7 +73,7 @@ CScalarAggFunc::CScalarAggFunc
 //		Aggregate function name
 //
 //---------------------------------------------------------------------------
-const CStringStatic *
+const CStringConst *
 CScalarAggFunc::PstrAggFunc() const
 {
 	return m_pstrAggFunc;

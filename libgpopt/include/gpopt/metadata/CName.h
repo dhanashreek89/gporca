@@ -13,7 +13,7 @@
 #define GPOPT_CName_H
 
 #include "gpos/base.h"
-#include "gpos/string/CStringStatic.h"
+#include "gpos/string/CStringConst.h"
 
 #define GPOPT_NAME_QUOTE_BEGIN	"\""
 #define GPOPT_NAME_QUOTE_END	"\""
@@ -37,19 +37,19 @@ namespace gpopt
 		private:
 			
 			// actual name
-			const CStringStatic *m_pstrName;
+			const CStringConst *m_pstrName;
 
 			// keep track of copy status
 			BOOL m_fDeepCopy;
 			
 			// deep copy function
-			void DeepCopy(IMemoryPool *pmp, const CStringStatic *pstr);
+			void DeepCopy(IMemoryPool *pmp, const CStringConst *pstr);
 			
 		public:
 		
 			// ctors
-			CName(IMemoryPool *, const CStringStatic *);
-			CName(const CStringStatic *, BOOL fOwnsMemory = false);
+			CName(IMemoryPool *, const CStringBase *);
+			CName(const CStringConst *, BOOL fOwnsMemory = false);
 			CName(const CName &);
 
 			CName(IMemoryPool *pmp, const CName &);
@@ -59,7 +59,7 @@ namespace gpopt
 			~CName();
 
 			// accessors
-			const CStringStatic *Pstr() const
+			const CStringConst *Pstr() const
 			{
 				return m_pstrName;
 			}

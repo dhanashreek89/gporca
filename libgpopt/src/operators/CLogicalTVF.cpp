@@ -61,7 +61,7 @@ CLogicalTVF::CLogicalTVF
 	IMemoryPool *pmp,
 	IMDId *pmdidFunc,
 	IMDId *pmdidRetType,
-	CStringStatic *pstr,
+	CStringConst *pstr,
 	DrgPcoldesc *pdrgpcoldesc
 	)
 	:
@@ -101,7 +101,7 @@ CLogicalTVF::CLogicalTVF
 	IMemoryPool *pmp,
 	IMDId *pmdidFunc,
 	IMDId *pmdidRetType,
-	CStringStatic *pstr,
+	CStringConst *pstr,
 	DrgPcoldesc *pdrgpcoldesc,
 	DrgPcr *pdrgpcrOutput
 	)
@@ -220,7 +220,7 @@ CLogicalTVF::PopCopyWithRemappedColumns
 		pdrgpcrOutput = CUtils::PdrgpcrRemap(pmp, m_pdrgpcrOutput, phmulcr, fMustExist);
 	}
 
-	CStringStatic *pstr = GPOS_NEW(pmp) CStringStatic(m_pstr->Sz(), 1024);
+	CStringConst *pstr = GPOS_NEW(pmp) CStringConst(m_pstr->Sz());
 	m_pmdidFunc->AddRef();
 	m_pmdidRetType->AddRef();
 	m_pdrgpcoldesc->AddRef();

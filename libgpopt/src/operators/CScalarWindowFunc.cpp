@@ -39,7 +39,7 @@ CScalarWindowFunc::CScalarWindowFunc
 	IMemoryPool *pmp,
 	IMDId *pmdidFunc,
 	IMDId *pmdidRetType,
-	const CStringStatic *pstrFunc,
+	const CStringConst *pstrFunc,
 	EWinStage ewinstage,
 	BOOL fDistinct,
 	BOOL fStarArg,

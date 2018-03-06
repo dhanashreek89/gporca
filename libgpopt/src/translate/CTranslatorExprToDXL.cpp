@@ -2029,7 +2029,7 @@ CTranslatorExprToDXL::PdxlnTVF
 	IMDId *pmdidRetType = popTVF->PmdidRetType();
 	pmdidRetType->AddRef();
 
-	CStringStatic *pstrFunc = GPOS_NEW(m_pmp) CStringStatic(popTVF->Pstr()->Sz(), 1024);
+	CStringConst *pstrFunc = GPOS_NEW(m_pmp) CStringConst(m_pmp, popTVF->Pstr()->Sz());
 
 	CDXLPhysicalTVF *pdxlop = GPOS_NEW(m_pmp) CDXLPhysicalTVF(m_pmp, pmdidFunc, pmdidRetType, pstrFunc);
 
@@ -7641,7 +7641,7 @@ CTranslatorExprToDXL::PdxlnSortColList
 	GPOS_ASSERT(NULL != pos);
 	
 	CDXLNode *pdxlnSortColList = GPOS_NEW(m_pmp) CDXLNode(m_pmp, GPOS_NEW(m_pmp) CDXLScalarSortColList(m_pmp));
-	
+
 	for (ULONG ul = 0; ul < pos->UlSortColumns(); ul++)
 	{
 		// get sort column components

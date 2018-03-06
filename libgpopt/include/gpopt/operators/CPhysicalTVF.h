@@ -36,7 +36,7 @@ namespace gpopt
 			IMDId *m_pmdidRetType;
 
 			// function name
-			CStringStatic *m_pstr;
+			CStringConst *m_pstr;
 
 			// MD cache info
 			const IMDFunction *m_pmdfunc;
@@ -58,7 +58,7 @@ namespace gpopt
 				IMemoryPool *pmp,
 				IMDId *pmdidFunc,
 				IMDId *pmdidRetType,
-				CStringStatic *pstr,
+				CStringConst *pstr,
 				DrgPcoldesc *pdrgpcoldesc,
 				CColRefSet *pcrsOutput
 				);
@@ -94,7 +94,7 @@ namespace gpopt
 			}
 
 			// function name
-			const CStringStatic *Pstr() const
+			const CStringConst *Pstr() const
 			{
 				return m_pstr;
 			}

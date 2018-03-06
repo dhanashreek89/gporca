@@ -13,14 +13,12 @@
 
 #include "gpos/base.h"
 #include "gpos/common/clibwrapper.h"
+#include "gpos/string/CStringBase.h"
 
 #define GPOS_SZ_LENGTH(x) gpos::clib::UlStrLen(x)
 
 // use this character to substitute non-ASCII wide characters
 #define GPOS_WCHAR_UNPRINTABLE	'.'
-
-// end-of-string character
-#define CHAR_EOS '\0'
 
 namespace gpos
 {
@@ -43,8 +41,7 @@ namespace gpos
 		private:
 
 			// null-terminated wide character buffer
-			CHAR *m_szBuf;
-
+			CHAR *m_szBuf; 
 			// size of the string in number of CHAR units,
 			// not counting the terminating '\0'
 			ULONG m_ulLength;
