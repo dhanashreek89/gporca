@@ -301,7 +301,9 @@ CParseHandlerMDRelation::ParseRelationAttributes
 {
 	// parse table name
 	const XMLCh *xmlszTableName = CDXLOperatorFactory::XmlstrFromAttrs(attrs, EdxltokenName, edxltokenElement);
-	CWStringDynamic *pstrTableName = CDXLUtils::PstrFromXMLCh(m_pphm->Pmm(), xmlszTableName);
+	ULONG ullength;
+	BYTE *pba = CDXLUtils::PbaFromBase64XMLStr(m_pphm->Pmm(), xmlszTableName, &ullength);
+	CWStringDynamic *pstrTableName = CDXLUtils::PstrFromByteArray(m_pmp, pba, ullength);
 	m_pmdname = GPOS_NEW(m_pmp) CMDName(m_pmp, pstrTableName);
 	GPOS_DELETE(pstrTableName);
 
