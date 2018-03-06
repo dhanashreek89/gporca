@@ -70,7 +70,7 @@ CParseHandlerWindowSpec::StartElement
 		const XMLCh *xmlszAlias = attrs.getValue(CDXLTokens::XmlstrToken(EdxltokenAlias));
 		if (NULL != xmlszAlias)
 		{
-			CStringStatic *pstrAlias = CDXLUtils::PStaticstrFromXMLCh(m_pphm->Pmm(), xmlszAlias);
+			CStringDynamic *pstrAlias = CDXLUtils::PDynamicstrFromXMLCh(m_pphm->Pmm(), xmlszAlias);
 			m_pmdname = GPOS_NEW(m_pmp) CMDName(m_pmp, pstrAlias);
 			GPOS_DELETE(pstrAlias);
 		}

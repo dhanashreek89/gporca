@@ -74,7 +74,7 @@ CParseHandlerMDGPDBAgg::StartElement
 										EdxltokenGPDBAgg
 										);
 
-		CStringStatic *pstrAggName = CDXLUtils::PStaticstrFromXMLCh(m_pphm->Pmm(), xmlszAggName);
+		CStringDynamic *pstrAggName = CDXLUtils::PDynamicstrFromXMLCh(m_pphm->Pmm(), xmlszAggName);
 		
 		// create a copy of the string in the CMDName constructor
 		m_pmdname = GPOS_NEW(m_pmp) CMDName(m_pmp, pstrAggName);

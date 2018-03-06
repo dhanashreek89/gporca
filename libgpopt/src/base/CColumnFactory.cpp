@@ -116,7 +116,7 @@ CColumnFactory::PcrCreate
 	
 	CHAR szFmt[] = "ColRef_%04d";
 	// TODO: Figure out how to calculate the right capacity instead of hardcoding 1024
-	CStringConst *pstrTempName = GPOS_NEW(m_pmp) CStringDynamic(m_pmp);
+	CStringDynamic *pstrTempName = GPOS_NEW(m_pmp) CStringDynamic(m_pmp);
 	CAutoP<CStringDynamic> a_pstrTempName(pstrTempName);
 	pstrTempName->AppendFormat(szFmt, ulId);
 	CStringConst strName(pstrTempName->Sz());

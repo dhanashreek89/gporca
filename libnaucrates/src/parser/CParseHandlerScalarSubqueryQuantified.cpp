@@ -91,7 +91,7 @@ CParseHandlerScalarSubqueryQuantified::StartElement
 										edxltokenElement
 										);
 	
-	CStringStatic *pstrScalarOpName = CDXLUtils::PStaticstrFromXMLCh(m_pphm->Pmm(), xmlszScalarOpName);
+	CStringDynamic *pstrScalarOpName = CDXLUtils::PDynamicstrFromXMLCh(m_pphm->Pmm(), xmlszScalarOpName);
 	CMDName *pmdnameScalarOp = GPOS_NEW(m_pmp) CMDName(m_pmp, pstrScalarOpName);
 	GPOS_DELETE(pstrScalarOpName);
 		

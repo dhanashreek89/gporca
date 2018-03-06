@@ -82,7 +82,7 @@ CParseHandlerMDGPDBCheckConstraint::StartElement
 
 	// parse check constraint name
 	const XMLCh *xmlszColName = CDXLOperatorFactory::XmlstrFromAttrs(attrs, EdxltokenName, EdxltokenCheckConstraint);
-	CStringStatic *pstrColName = CDXLUtils::PStaticstrFromXMLCh(m_pphm->Pmm(), xmlszColName);
+	CStringDynamic *pstrColName = CDXLUtils::PDynamicstrFromXMLCh(m_pphm->Pmm(), xmlszColName);
 
 	// create a copy of the string in the CMDName constructor
 	m_pmdname = GPOS_NEW(m_pmp) CMDName(m_pmp, pstrColName);

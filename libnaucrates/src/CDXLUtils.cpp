@@ -1715,7 +1715,7 @@ CDXLUtils::PstrFromXMLCh
 }
 
 CStringDynamic *
-CDXLUtils::PStaticstrFromXMLCh
+CDXLUtils::PDynamicstrFromXMLCh
 	(
 	CDXLMemoryManager *pmm,
 	const XMLCh *xmlsz
@@ -1808,7 +1808,7 @@ CDXLUtils::PWstrFromSz
 	return a_pstr.PtReset();
 }
 
-CStringStatic *
+CStringDynamic*
 CDXLUtils::PstrFromSz
 	(
 	IMemoryPool *pmp,
@@ -1817,8 +1817,7 @@ CDXLUtils::PstrFromSz
 {
 	GPOS_ASSERT(NULL != sz);
 
-	CHAR buffer[1024];
-	CAutoP<CStringStatic> a_pstr(GPOS_NEW(pmp) CStringStatic(buffer, 1024));
+	CAutoP<CStringDynamic> a_pstr(GPOS_NEW(pmp) CStringDynamic(pmp));
 	a_pstr->AppendFormat((CHAR *)"%s", sz);
 	return a_pstr.PtReset();
 }

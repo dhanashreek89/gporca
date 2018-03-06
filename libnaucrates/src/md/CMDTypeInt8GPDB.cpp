@@ -17,7 +17,7 @@
 //---------------------------------------------------------------------------
 
 #include "gpos/string/CWStringDynamic.h"
-#include "gpos/string/CStringStatic.h"
+#include "gpos/string/CStringConst.h"
 
 #include "naucrates/md/CMDTypeInt8GPDB.h"
 #include "naucrates/md/CGPDBTypeHelper.h"
@@ -34,8 +34,8 @@ using namespace gpmd;
 using namespace gpnaucrates;
 
 // static member initialization
-CStringStatic
-CMDTypeInt8GPDB::m_str = CStringStatic((CHAR *)"Int8", 1024);
+CStringConst
+CMDTypeInt8GPDB::m_str = CStringConst((CHAR *)"Int8");
 CMDName
 CMDTypeInt8GPDB::m_mdname(&m_str);
 

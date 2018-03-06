@@ -15,7 +15,7 @@
 #include "gpos/base.h"
 #include "gpos/common/CDouble.h"
 #include "gpos/string/CWStringConst.h"
-#include "gpos/string/CStringStatic.h"
+#include "gpos/string/CStringConst.h"
 #include "gpos/io/COstream.h"
 
 #include "gpos/common/CStack.h"

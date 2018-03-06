@@ -74,7 +74,7 @@ CParseHandlerRelStats::StartElement
 															EdxltokenRelationStats
 															);
 
-	CStringStatic *pstrTableName = CDXLUtils::PStaticstrFromXMLCh(m_pphm->Pmm(), xmlszTableName);
+	CStringDynamic *pstrTableName = CDXLUtils::PDynamicstrFromXMLCh(m_pphm->Pmm(), xmlszTableName);
 	
 	// create a copy of the string in the CMDName constructor
 	CMDName *pmdname = GPOS_NEW(m_pmp) CMDName(m_pmp, pstrTableName);

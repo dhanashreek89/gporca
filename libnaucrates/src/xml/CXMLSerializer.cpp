@@ -194,7 +194,7 @@ void
 CXMLSerializer::AddAttribute
 	(
 	const CWStringBase *pstrAttr,
-	const CStringStatic *pstrValue
+	const CStringBase *pstrValue
 	)
 {
 	GPOS_ASSERT(NULL != pstrAttr);
@@ -484,7 +484,7 @@ void
 CXMLSerializer::WriteEscaped
 	(
 	IOstream &os,
-	const CStringStatic *pstr
+	const CStringBase *pstr
 	)
 {
 	GPOS_ASSERT(NULL != pstr);

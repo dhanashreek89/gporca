@@ -527,7 +527,7 @@ CPredicateUtils::FLikePredicate
 	// comparison semantics for statistics purposes is looser
 	// than regular comparison
 	CStringConst pstrLike((CHAR *)"~~");
-	if (!pstrOpName->FEquals(pstrLike.Sz()))
+	if (!pstrOpName->FEquals(&pstrLike))
 	{
 		return false;
 	}
@@ -2081,6 +2081,7 @@ CPredicateUtils::PexprInverseComparison
 
 	IMDId *pmdidOp = CScalarCmp::PopConvert(pexprCmp->Pop())->PmdidOp();
 	IMDId *pmdidInverseOp = pmda->Pmdscop(pmdidOp)->PmdidOpInverse();
+    CWStringDynamic *pwstrdyn = GPOS_NEW(pmp) CWStringDynamic(pmp);
 	pwstrdyn->AppendFormat(GPOS_WSZ_LIT("%s"), (pmda->Pmdscop(pmdidInverseOp)->Mdname().Pstr())->Sz());
 	const CWStringConst *pstrFirst = GPOS_NEW(pmp) CWStringConst(pmp, pwstrdyn->Wsz());
 

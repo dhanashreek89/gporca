@@ -11,7 +11,7 @@
 //---------------------------------------------------------------------------
 
 #include "gpos/string/CWStringDynamic.h"
-#include "gpos/string/CStringStatic.h"
+#include "gpos/string/CStringConst.h"
 #include "naucrates/md/CMDTypeOidGPDB.h"
 #include "naucrates/md/CGPDBTypeHelper.h"
 
@@ -27,8 +27,8 @@ using namespace gpmd;
 using namespace gpnaucrates;
 
 // static member initialization
-CStringStatic
-CMDTypeOidGPDB::m_str = CStringStatic((CHAR *)"oid", 1024);
+CStringConst
+CMDTypeOidGPDB::m_str = CStringConst((CHAR *)"oid");
 CMDName
 CMDTypeOidGPDB::m_mdname(&m_str);
 

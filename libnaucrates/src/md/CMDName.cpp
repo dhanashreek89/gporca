@@ -10,7 +10,7 @@
 //---------------------------------------------------------------------------
 
 #include "gpos/base.h"
-#include "gpos/string/CStringStatic.h"
+#include "gpos/string/CStringDynamic.h"
 #include "naucrates/md/CMDName.h"
 
 using namespace gpmd;
@@ -28,13 +28,13 @@ using namespace gpmd;
 CMDName::CMDName
 	(
 	IMemoryPool *pmp,
-	const CStringStatic *pstr
+	const CStringBase *pstr
 	)
 	:
 	m_psc(NULL),
 	m_fDeepCopy(true)
 {
-	m_psc = GPOS_NEW(pmp) CStringStatic(pstr->Sz(), 1024);
+	m_psc = GPOS_NEW(pmp) CStringConst(pmp, pstr->Sz());
 }
 
 //---------------------------------------------------------------------------
@@ -49,7 +49,7 @@ CMDName::CMDName
 //---------------------------------------------------------------------------
 CMDName::CMDName
 	(
-	const CStringStatic *pstr,
+	const CStringConst *pstr,
 	BOOL fOwnsMemory
 	)
 {

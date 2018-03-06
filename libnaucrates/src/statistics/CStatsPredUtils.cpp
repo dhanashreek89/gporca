@@ -110,7 +110,7 @@ CStatsPredUtils::Estatscmpt
 
 	// Simply go by operator name.
 	// If the name of the operator is "<", then it is a LessThan etc.
-	const CStringStatic *pstrOpName = pmdscop->Mdname().Pstr();
+	const CStringConst *pstrOpName = pmdscop->Mdname().Pstr();
 	WCHAR wszBuf[1024];
 	clib::UlMbToWcs(wszBuf, pstrOpName->Sz(), pstrOpName->UlLength());
 	const CWStringConst pstrWOpName(wszBuf);

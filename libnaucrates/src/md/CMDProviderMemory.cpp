@@ -194,8 +194,8 @@ CMDProviderMemory::PstrObject
 			case IMDId::EmdidColStats:
 			{
                 CHAR *name = CDXLUtils::SzFromWsz(pmp, pmdid->Wsz());
-				CAutoP<CStringStatic> a_pstr;
-				a_pstr = GPOS_NEW(pmp) CStringStatic(name, 1024);
+				CAutoP<CStringDynamic> a_pstr;
+				a_pstr = GPOS_NEW(pmp) CStringDynamic(pmp, name);
 				CAutoP<CMDName> a_pmdname;
 				a_pmdname = GPOS_NEW(pmp) CMDName(pmp, a_pstr.Pt());
 				pmdid->AddRef();

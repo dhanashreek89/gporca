@@ -15,8 +15,7 @@
 #include "gpos/base.h"
 #include "gpos/common/CAutoP.h"
 #include "gpos/io/IOstream.h"
-#include "gpos/string/CWStringDynamic.h"
-#include "gpos/string/CStringStatic.h"
+#include "gpos/string/CStringDynamic.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/xml/dxltokens.h"
@@ -407,7 +406,7 @@ namespace gpdxl
 				);
 
 			static
-			CStringDynamic *PStaticstrFromXMLCh
+			CStringDynamic *PDynamicstrFromXMLCh
 				(
 				CDXLMemoryManager *pmm,
 				const XMLCh *
@@ -433,7 +432,7 @@ namespace gpdxl
 
 			// create a GPOS dynamic string from a regular character array
 			static 
-			CStringStatic *PstrFromSz
+			CStringDynamic *PstrFromSz
 				(
 				IMemoryPool *pmp,
 				const CHAR *sz

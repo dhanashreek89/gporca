@@ -11,7 +11,7 @@
 //---------------------------------------------------------------------------
 
 #include "gpos/string/CWStringDynamic.h"
-#include "gpos/string/CStringStatic.h"
+#include "gpos/string/CStringConst.h"
 
 #include "naucrates/md/CMDTypeInt2GPDB.h"
 #include "naucrates/md/CGPDBTypeHelper.h"
@@ -28,8 +28,8 @@ using namespace gpmd;
 using namespace gpnaucrates;
 
 // static member initialization
-CStringStatic
-CMDTypeInt2GPDB::m_str = CStringStatic((CHAR *)"Int2", 1024);
+CStringConst
+CMDTypeInt2GPDB::m_str = CStringConst((CHAR *)"Int2");
 CMDName
 CMDTypeInt2GPDB::m_mdname(&m_str);
 
