@@ -461,7 +461,7 @@ CSubqueryHandler::FGenerateCorrelatedApplyForScalarSubquery
 		return true;
 	}
 
-	GPOS_ASSERT(EsqctxtFilter == esqctxt);
+	GPOS_ASSERT(EsqctxtFilter == esqctxt || EsqctxtNested == esqctxt);
 
 	if (fUseMaxOneRow)
 	{
@@ -542,7 +542,7 @@ CSubqueryHandler::FRemoveScalarSubqueryInternal
 		return fSuccess;
 	}
 
-	GPOS_ASSERT(EsqctxtFilter == esqctxt);
+	GPOS_ASSERT(EsqctxtFilter == esqctxt || EsqctxtNested == esqctxt);
 
 	*ppexprNewOuter = CUtils::PexprLogicalApply<CLogicalInnerApply>(pmp, pexprOuter, pexprInner, pcr, pexprSubquery->Pop()->Eopid());
 	*ppexprResidualScalar = CUtils::PexprScalarIdent(pmp, pcr);
@@ -1221,12 +1221,20 @@ CSubqueryHandler::FRemoveAnySubquery
 			fSuccess = FCreateCorrelatedApplyForExistOrQuant(pmp, pexprOuter, pexprSubquery, fDisjunctionOrNegation, esqctxt, ppexprNewOuter, ppexprResidualScalar);
 		}
 	}
-	else
+	else if (EsqctxtFilter == esqctxt)
 	{
-		GPOS_ASSERT(EsqctxtFilter == esqctxt);
 
 		*ppexprNewOuter = CUtils::PexprLogicalApply<CLogicalLeftSemiApplyIn>(pmp, pexprOuter, pexprSelect, pcr, eopidSubq);
 		*ppexprResidualScalar = CUtils::PexprScalarConstBool(pmp, true /*fVal*/);
+	}
+	else
+	{
+		GPOS_ASSERT(EsqctxtNested == esqctxt);
+		CExpression *pexprProj = CUtils::PexprAddProjection(pmp, pexprResult, pexprPredicate);
+		CColRef *pcrProj = CScalarProjectElement::PopConvert((*(*pexprProj)[1])[0]->Pop())->Pcr();
+
+		*ppexprNewOuter = CUtils::PexprLogicalApply<CLogicalLeftSemiApplyIn>(pmp, pexprOuter, pexprProj, pcr, eopidSubq);
+		*ppexprResidualScalar = CUtils::PexprScalarIdent(pmp, pcrProj);
 	}
 
 	return fSuccess;
@@ -1739,11 +1747,14 @@ CSubqueryHandler::FRecursiveHandler
 		// set subquery context to Value
 		esqctxt = EsqctxtValue;
 	}
-
-	if (COperator::EopScalarNullTest == popScalar->Eopid())
+	else if (COperator::EopScalarNullTest == popScalar->Eopid())
 	{
 		// set subquery context to null test
 		esqctxt = EsqctxtNullTest;
+	}
+	else
+	{
+		esqctxt = EsqctxtNested;
 	}
 
 	// save the current logical expression
