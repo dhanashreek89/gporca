@@ -2964,25 +2964,6 @@ CXformUtils::PexprScalarBitmapBoolOp
 		
 	const ULONG ulPredicates = pdrgpexpr->UlLength();
 	
-	if (1 == ulPredicates)
-	{
-		return PexprBitmap
-				(
-				pmp, 
-				pmda, 
-				pexprOriginalPred, 
-				(*pdrgpexpr)[0], 
-				ptabdesc, 
-				pmdrel, 
-				pdrgpcrOutput,
-				pcrsOuterRefs,
-				pcrsReqd, 
-				!fConjunction, 
-				ppexprRecheck, 
-				ppexprResidual
-				);
-	}
-	
 	// array of recheck predicates
 	DrgPexpr *pdrgpexprRecheckNew = GPOS_NEW(pmp) DrgPexpr(pmp);
 	
@@ -3002,8 +2983,8 @@ CXformUtils::PexprScalarBitmapBoolOp
 		pmdrel, 
 		pdrgpcrOutput,
 		pcrsOuterRefs,
-		pcrsReqd, 
-		fConjunction, 
+		pcrsReqd,
+		fConjunction,
 		pdrgpexprBitmap, 
 		pdrgpexprRecheckNew, 
 		pdrgpexprResidualNew
@@ -3257,41 +3238,6 @@ CXformUtils::PexprBitmapFromChildren
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CXformUtils::PexprBitmapCondToUse
-//
-//	@doc:
-//		Returns the recheck condition to use in a bitmap index scan computed
-//		out of the expression 'pexprPred' that uses the bitmap index.
-// 		fBoolColumn (and fNegatedColumn) say whether the predicate is a
-// 		(negated) boolean scalar identifier.
-// 		Caller takes ownership of the returned expression
-//
-//---------------------------------------------------------------------------
-
-CExpression *
-CXformUtils::PexprBitmapCondToUse
-	(
-	IMemoryPool *pmp,
-	CMDAccessor *pmda,
-	CExpression *pexprPred,
-	BOOL fBoolColumn,
-	BOOL fNegatedBoolColumn,
-	CColRefSet *pcrsScalar
-	)
-{
-	GPOS_ASSERT(!fBoolColumn || !fNegatedBoolColumn);
-	if (fBoolColumn || fNegatedBoolColumn)
-	{
-		return
-			PexprEqualityOnBoolColumn(pmp, pmda, fBoolColumn, pcrsScalar->PcrFirst());
-	}
-	pexprPred->AddRef();
-
-	return pexprPred;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CXformUtils::PexprBitmap
 //
 //	@doc:
@@ -3310,7 +3256,6 @@ CXformUtils::PexprBitmap
 	DrgPcr *pdrgpcrOutput,
 	CColRefSet *pcrsOuterRefs,
 	CColRefSet *pcrsReqd,
-	BOOL fConjunction,
 	CExpression **ppexprRecheck,
 	CExpression **ppexprResidual
 	)
@@ -3318,16 +3263,18 @@ CXformUtils::PexprBitmap
 	GPOS_ASSERT(NULL == *ppexprRecheck);
 	GPOS_ASSERT(NULL == *ppexprResidual);
 
+	BOOL fConjunction =  CPredicateUtils::FAnd(pexprPred);
 	BOOL fBoolColumn = (COperator::EopScalarIdent == pexprPred->Pop()->Eopid());
 	BOOL fNegatedBoolColumn = (!fBoolColumn && CPredicateUtils::FNotIdent(pexprPred));
 
 	// if the expression is not of the form
 	// <ident> = <const> or <ident> or NOT <ident>
 	// then look for index access paths in its children
-	if (!CPredicateUtils::FCompareIdentToConst(pexprPred) &&
+	if (!CPredicateUtils::FAndWithScalarIdentToScalarConstChildren(pexprPred) &&
 		!fBoolColumn && !fNegatedBoolColumn)
 	{
 		// first, check if it is an index lookup predicate
+		// if the predicate is of the form <ident> op <ident>
 		CExpression *pexprBitmapForIndexLookup = PexprBitmapForIndexLookup
 												(
 												pmp,
@@ -3360,10 +3307,12 @@ CXformUtils::PexprBitmap
 											ppexprRecheck,
 											ppexprResidual
 											);
-		if (NULL != pexprBitmapFromChildren)
+		if (NULL == pexprBitmapFromChildren)
 		{
-			return pexprBitmapFromChildren;
+			pexprPred->AddRef();
+			(*ppexprResidual) = pexprPred;
 		}
+		return pexprBitmapFromChildren;
 	}
 
 	// predicate is of the form col op const (or boolean col): find an applicable bitmap index
@@ -3377,8 +3326,7 @@ CXformUtils::PexprBitmap
 				pdrgpcrOutput,
 				pcrsReqd,
 				ppexprRecheck,
-				fBoolColumn,
-				fNegatedBoolColumn
+				ppexprResidual
 				);
 }
 
@@ -3402,11 +3350,13 @@ CXformUtils::PexprBitmapForSelectCondition
 	DrgPcr *pdrgpcrOutput,
 	CColRefSet *pcrsReqd,
 	CExpression **ppexprRecheck,
-	BOOL fBoolColumn,
-	BOOL fNegatedBoolColumn
+    CExpression **ppexprResidual
 	)
 {
 	CColRefSet *pcrsScalar = CDrvdPropScalar::Pdpscalar(pexprPred->PdpDerive())->PcrsUsed();
+	ULONG ulBestIndex = 0;
+	CExpression *pexprIndexFinal = NULL;
+	ULONG ulResidual = gpos::ulong_max;
 
 	const ULONG ulIndexes = pmdrel->UlIndices();
 	for (ULONG ul = 0; ul < ulIndexes; ul++)
@@ -3425,16 +3375,7 @@ CXformUtils::PexprBitmapForSelectCondition
 									))
 		{
 			// found an applicable index
-			CExpression *pexprCondToUse = PexprBitmapCondToUse
-										(
-										pmp,
-										pmda,
-										pexprPred,
-										fBoolColumn,
-										fNegatedBoolColumn,
-										pcrsScalar
-										);
-			DrgPexpr *pdrgpexprScalar = CPredicateUtils::PdrgpexprConjuncts(pmp, pexprCondToUse);
+			DrgPexpr *pdrgpexprScalar = CPredicateUtils::PdrgpexprConjuncts(pmp, pexprPred);
 			DrgPcr *pdrgpcrIndexCols = PdrgpcrIndexKeys(pmp, pdrgpcrOutput, pmdindex, pmdrel);
 			DrgPexpr *pdrgpexprIndex = GPOS_NEW(pmp) DrgPexpr(pmp);
 			DrgPexpr *pdrgpexprResidual = GPOS_NEW(pmp) DrgPexpr(pmp);
@@ -3450,14 +3391,15 @@ CXformUtils::PexprBitmapForSelectCondition
 				pdrgpexprResidual,
 				NULL  // pcrsAcceptedOuterRefs
 				);
+
 			pdrgpexprScalar->Release();
-			pdrgpexprResidual->Release();
+
 			if (0 == pdrgpexprIndex->UlLength())
 			{
 				// no usable predicate, clean up
 				pdrgpcrIndexCols->Release();
 				pdrgpexprIndex->Release();
-				pexprCondToUse->Release();
+				pdrgpexprResidual->Release();
 				continue;
 			}
 
@@ -3468,22 +3410,55 @@ CXformUtils::PexprBitmapForSelectCondition
 			if (!fCompatible)
 			{
 				pdrgpexprIndex->Release();
-				pexprCondToUse->Release();
+				pdrgpexprResidual->Release();
 				continue;
 			}
 
-			*ppexprRecheck = pexprCondToUse;
-			CIndexDescriptor *pindexdesc = CIndexDescriptor::Pindexdesc(pmp, ptabdesc, pmdindex);
-			pmdindex->PmdidItemType()->AddRef();
-			return 	GPOS_NEW(pmp) CExpression
-							(
-							pmp,
-							GPOS_NEW(pmp) CScalarBitmapIndexProbe(pmp, pindexdesc, pmdindex->PmdidItemType()),
-							pdrgpexprIndex
-							);
+			ULONG ulResidualLength = pdrgpexprResidual->UlLength();
+			// if the number of residuals in the index is smaller than a previously found index, replace best index match
+			if (ulResidual > ulResidualLength)
+			{
+				CRefCount::SafeRelease((*ppexprResidual));
+				pdrgpexprResidual->AddRef();
+				(*ppexprResidual) = CPredicateUtils::PexprConjDisj(pmp, pdrgpexprResidual, true);
+				if (CUtils::FScalarConstTrue((*ppexprResidual)))
+				{
+					(*ppexprResidual)->Release();
+					(*ppexprResidual) = NULL;
+				}
+
+				ulBestIndex = ul;
+				ulResidual = ulResidualLength;
+				pdrgpexprIndex->AddRef();
+				CRefCount::SafeRelease(pexprIndexFinal);
+				pexprIndexFinal = CPredicateUtils::PexprConjunction(pmp, pdrgpexprIndex);
+			}
+
+			pdrgpexprIndex->Release();
+			pdrgpexprResidual->Release();
 		}
 	}
 
+	// if a final best index was found, return the correct expression
+	if ( NULL != pexprIndexFinal)
+	{
+		const IMDIndex *pmdindex = pmda->Pmdindex(pmdrel->PmdidIndex(ulBestIndex));
+		CIndexDescriptor *pindexdesc = CIndexDescriptor::Pindexdesc(pmp, ptabdesc, pmdindex);
+		pmdindex->PmdidItemType()->AddRef();
+		pexprIndexFinal->AddRef();
+		(*ppexprRecheck) = pexprIndexFinal;
+
+		return 	GPOS_NEW(pmp) CExpression
+			(
+			 pmp,
+			 GPOS_NEW(pmp) CScalarBitmapIndexProbe(pmp, pindexdesc, pmdindex->PmdidItemType()),
+			 pexprIndexFinal
+			 );
+	}
+
+	// else the unmatched predicate becomes the residual
+	pexprPred->AddRef();
+	(*ppexprResidual) = pexprPred;
 	return NULL;
 }
 
@@ -3599,63 +3574,118 @@ CXformUtils::CreateBitmapIndexProbeOps
 	)
 {
 	GPOS_ASSERT(NULL != pdrgpexpr);
-	
-	const ULONG ulPredicates = pdrgpexpr->UlLength();
 
-	for (ULONG ul = 0; ul < ulPredicates; ul++)
+	ULONG ulLength = pdrgpexpr->UlLength();
+
+	for ( ULONG ul = 0; ul < ulLength; ul++)
 	{
 		CExpression *pexprPred = (*pdrgpexpr)[ul];
-		CExpression *pexprRecheck = NULL;
-		CExpression *pexprResidual = NULL;
-		CExpression *pexprBitmap = CXformUtils::PexprBitmap
-									(
-									pmp,
-									pmda,
-									pexprOriginalPred,
-									pexprPred,
-									ptabdesc,
-									pmdrel,
-									pdrgpcrOutput,
-									pcrsOuterRefs,
-									pcrsReqd,
-									!fConjunction,
-									&pexprRecheck,
-									&pexprResidual
-									);
-		if (NULL != pexprBitmap)
-		{
-			GPOS_ASSERT(NULL != pexprRecheck);
+		pexprPred->AddRef();
 
-			// if possible, merge this index scan with a previous index scan on the same index
-			BOOL fAddedToPredicate = fConjunction && FMergeWithPreviousBitmapIndexProbe
-													(
-													pmp,
-													pexprBitmap,
-													pexprRecheck,
-													pdrgpexprBitmap,
-													pdrgpexprRecheck
-													);
-			if (NULL != pexprResidual)
-			{
-				pdrgpexprResidual->Append(pexprResidual);
-			}
-			if (fAddedToPredicate)
-			{
-				pexprBitmap->Release();
-				pexprRecheck->Release();
-			}
-			else
-			{
-				pdrgpexprRecheck->Append(pexprRecheck);
-				pdrgpexprBitmap->Append(pexprBitmap);
-			}
-		}
-		else
+		DrgPexpr *pdrgpexprBitmapTemp = GPOS_NEW(pmp) DrgPexpr(pmp);
+		DrgPexpr *pdrgpexprRecheckTemp = GPOS_NEW(pmp) DrgPexpr(pmp);
+
+		do
 		{
-			pexprPred->AddRef();
-			pdrgpexprResidual->Append(pexprPred);
+			CExpression *pexprRecheck = NULL;
+			CExpression *pexprResidual = NULL;
+
+			CExpression *pexprBitmap = CXformUtils::PexprBitmap
+										(
+										pmp,
+										pmda,
+										pexprOriginalPred,
+										pexprPred,
+										ptabdesc,
+										pmdrel,
+										pdrgpcrOutput,
+										pcrsOuterRefs,
+										pcrsReqd,
+										&pexprRecheck,
+										&pexprResidual
+										);
+
+			if (NULL != pexprBitmap)
+			{
+				GPOS_ASSERT(NULL != pexprRecheck);
+
+				BOOL fAddedToPredicate = fConjunction  && FMergeWithPreviousBitmapIndexProbe
+				(
+				 pmp,
+				 pexprBitmap,
+				 pexprRecheck,
+				 pdrgpexprBitmap,
+				 pdrgpexprRecheck
+				 );
+
+				 if (fAddedToPredicate)
+				{
+					pexprBitmap->Release();
+					pexprRecheck->Release();
+				}
+				else
+				{
+					pdrgpexprRecheckTemp->Append(pexprRecheck);
+					pdrgpexprBitmapTemp->Append(pexprBitmap);
+				}
+
+				// Todo - make sure pexprResidual is scalar cmp.
+				// attempt finding an Index path for the residual(if any)
+				CRefCount::SafeRelease(pexprPred);
+				pexprPred = pexprResidual;
+			}
+			else if (NULL != pexprResidual)
+			{
+				CRefCount::SafeRelease(pexprPred);
+				pdrgpexprResidual->Append(pexprResidual);
+				pexprPred = NULL;
+			}
+
+		} while(NULL != pexprPred && (0 < pdrgpexprBitmapTemp->UlLength()));
+
+		if (0 < pdrgpexprBitmapTemp->UlLength())
+		{
+			// if there were any Index Probes genearted, join them based on fConj
+			pdrgpexprRecheckTemp->AddRef();
+			JoinBitmapIndexProbes(pmp, pdrgpexprBitmapTemp, pdrgpexprRecheckTemp, pdrgpexprBitmap, pdrgpexprRecheck, true /*fConjunction*/);
 		}
+
+		// cleanup
+		CRefCount::SafeRelease(pdrgpexprBitmapTemp);
+		CRefCount::SafeRelease(pdrgpexprRecheckTemp);
 	}
+}
+
+void
+CXformUtils::JoinBitmapIndexProbes
+	(
+		IMemoryPool *pmp,
+		DrgPexpr *pdrgpexprBitmapOld,
+		DrgPexpr *pdrgpexprRecheckOld,
+		DrgPexpr *pdrgpexprBitmap,
+		DrgPexpr *pdrgpexprRecheck,
+		BOOL fConjunction
+	)
+{
+		CExpression *pexprBitmapBoolOp = (*pdrgpexprBitmapOld)[0];
+		pexprBitmapBoolOp->AddRef();
+		IMDId *pmdidBitmap = CScalar::PopConvert(pexprBitmapBoolOp->Pop())->PmdidType();
+
+		for (ULONG ul = 1; ul < pdrgpexprBitmapOld->UlLength(); ul++)
+		{
+			CExpression *pexprBitmap = (*pdrgpexprBitmapOld)[ul];
+			pexprBitmap->AddRef();
+			pmdidBitmap->AddRef();
+
+			pexprBitmapBoolOp = PexprBitmapBoolOp(pmp, pmdidBitmap, pexprBitmapBoolOp, pexprBitmap, fConjunction);
+		}
+
+		pdrgpexprBitmap->Append(pexprBitmapBoolOp);
+
+		GPOS_ASSERT(NULL != pexprBitmapBoolOp && 0 < pdrgpexprRecheckOld->UlLength());
+
+		CExpression *pexprRecheckNew = CPredicateUtils::PexprConjDisj(pmp, pdrgpexprRecheckOld, fConjunction);
+		pdrgpexprRecheck->Append(pexprRecheckNew);
 }
 
 //---------------------------------------------------------------------------
@@ -3794,9 +3824,23 @@ CXformUtils::PexprBitmapTableGet
 			COperator::EopLogicalDynamicGet == popGet->Eopid());
 	
 	BOOL fDynamicGet = (COperator::EopLogicalDynamicGet == popGet->Eopid());
-	
-	// array of expressions in the scalar expression
-	DrgPexpr *pdrgpexpr = CPredicateUtils::PdrgpexprConjuncts(pmp, pexprScalar);
+
+	DrgPexpr *pdrgpexpr;
+	BOOL fConjunction = true;
+
+	// separate the disjuncts from the predicates
+	if (CPredicateUtils::FOr(pexprScalar))
+	{
+		pdrgpexpr = CPredicateUtils::PdrgpexprDisjuncts(pmp, pexprScalar);
+		fConjunction = false;
+	}
+	else
+	{
+		pdrgpexpr = GPOS_NEW(pmp) DrgPexpr(pmp);
+		pexprScalar->AddRef();
+		pdrgpexpr->Append(pexprScalar);
+	}
+
 	GPOS_ASSERT(0 < pdrgpexpr->UlLength());
 
 	// find the indexes whose included columns meet the required columns
@@ -3821,7 +3865,7 @@ CXformUtils::PexprBitmapTableGet
 				pdrgpcrOutput,
 				pcrsOuterRefs,
 				pcrsReqd,
-				true, // fConjunction
+				fConjunction,
 				&pexprRecheck,
 				&pexprResidual
 				);

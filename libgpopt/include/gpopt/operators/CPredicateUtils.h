@@ -565,6 +565,10 @@ namespace gpopt
 			static
 			BOOL FConvertToCNF(CExpression *pexpr, 	CExpression *pexprOuter, CExpression *pexprInner);
 
+			// check if the AND expression contains children of the form <col op const>
+			static
+			BOOL FAndWithScalarIdentToScalarConstChildren(CExpression *pexpr);
+
 	}; // class CPredicateUtils
 }
 

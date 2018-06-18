@@ -2708,5 +2708,25 @@ CPredicateUtils::FCollapsibleChildUnionUnionAll
 	return (pexprChild->Pop()->Eopid() == pexpr->Pop()->Eopid());
 }
 
+BOOL
+CPredicateUtils::FAndWithScalarIdentToScalarConstChildren
+	(
+	CExpression *pexpr
+	)
+{
+	if (CPredicateUtils::FAnd(pexpr))
+	{
+		const ULONG ulArity = pexpr->UlArity();
+		BOOL result = true;
+		for (ULONG ul = 0; ul < ulArity && result; ul++)
+		{
+			result = result && CPredicateUtils::FAndWithScalarIdentToScalarConstChildren((*pexpr)[ul]);
+		}
+
+		return result;
+	}
+
+	return (CPredicateUtils::FCompareIdentToConst(pexpr) || CPredicateUtils::FCompareIdentToConstArray(pexpr));
+}
 
 // EOF
