@@ -3414,6 +3414,19 @@ CXformUtils::PexprBitmapForSelectCondition
 				continue;
 			}
 
+			 DrgPcr *indexColumns = CXformUtils::PdrgpcrIndexKeys(pmp,pdrgpcrOutput, pmdindex, pmdrel);
+
+			// make sure the first key of index is included in the scalar predicate
+			const CColRef *pcrFirstIndexKey = (*indexColumns)[0];
+
+			if (!pcrsScalar->FMember(pcrFirstIndexKey))
+			{
+				indexColumns->Release();
+				pdrgpexprIndex->Release();
+				pdrgpexprResidual->Release();
+				continue;
+			}
+
 			ULONG ulResidualLength = pdrgpexprResidual->UlLength();
 			// if the number of residuals in the index is smaller than a previously found index, replace best index match
 			if (ulResidual > ulResidualLength)
@@ -3436,6 +3449,7 @@ CXformUtils::PexprBitmapForSelectCondition
 
 			pdrgpexprIndex->Release();
 			pdrgpexprResidual->Release();
+			indexColumns->Release();
 		}
 	}
 
