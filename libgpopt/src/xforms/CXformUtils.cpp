@@ -3267,9 +3267,17 @@ CXformUtils::PexprBitmap
 	BOOL fBoolColumn = (COperator::EopScalarIdent == pexprPred->Pop()->Eopid());
 	BOOL fNegatedBoolColumn = (!fBoolColumn && CPredicateUtils::FNotIdent(pexprPred));
 
-	// if the expression is not of the form
-	// <ident> = <const> or <ident> or NOT <ident>
-	// then look for index access paths in its children
+	// the following condition decides whether to break the predicate down and look for index paths on the individual children.
+	// We do not break down the predicate in following two scenarios only :
+	// 1. For predicates of the form <ident> op <const>
+	// 2. For conjunct tree with children of the form <ident> op <const> ONLY
+	//	  When we look at these predicates as a whole, it gives us an opportunity to find indexes that cover maximum columns used in the predicate:
+	//    T(a, b, c , d , e , f , g , h), I1 (b, c, d), I2 (g, h), I3(b)
+	//    P (d and b and c and e and g and h)
+	//    the index paths chosen will be I1 and I2 with residual predicate on e.
+
+	// For rest of the expression types, such as <ident> op <ident>, disjuncts or a tree containing these
+	// look for index access paths in its children
 	if (!CPredicateUtils::FAndWithScalarIdentToScalarConstChildren(pexprPred) &&
 		!fBoolColumn && !fNegatedBoolColumn)
 	{
@@ -3292,6 +3300,7 @@ CXformUtils::PexprBitmap
 			return pexprBitmapForIndexLookup;
 		}
 
+		// look for index access paths in the children
 		CExpression *pexprBitmapFromChildren = PexprBitmapFromChildren
 											(
 											pmp,
@@ -3307,6 +3316,11 @@ CXformUtils::PexprBitmap
 											ppexprRecheck,
 											ppexprResidual
 											);
+
+		// if no index path was constructed for this predicate, return it as residual
+		// For instance, with schema as T(a, b, c, d), Bitmap(a,b)
+		// SELECT * FROM t WHERE (a = 3) OR (c = 4 AND d =5)
+		// no index path will be found for (c = 4 AND d =5). Hence, the entire disjunct will be the residual
 		if (NULL == pexprBitmapFromChildren)
 		{
 			pexprPred->AddRef();
@@ -3315,7 +3329,7 @@ CXformUtils::PexprBitmap
 		return pexprBitmapFromChildren;
 	}
 
-	// predicate is of the form col op const (or boolean col): find an applicable bitmap index
+	// find an applicable bitmap index for given predicate
 	return PexprBitmapForSelectCondition
 				(
 				pmp,
@@ -3356,7 +3370,7 @@ CXformUtils::PexprBitmapForSelectCondition
 	CColRefSet *pcrsScalar = CDrvdPropScalar::Pdpscalar(pexprPred->PdpDerive())->PcrsUsed();
 	ULONG ulBestIndex = 0;
 	CExpression *pexprIndexFinal = NULL;
-	ULONG ulResidual = gpos::ulong_max;
+	ULONG minResidual = gpos::ulong_max;
 
 	const ULONG ulIndexes = pmdrel->UlIndices();
 	for (ULONG ul = 0; ul < ulIndexes; ul++)
@@ -3428,12 +3442,14 @@ CXformUtils::PexprBitmapForSelectCondition
 			}
 
 			ULONG ulResidualLength = pdrgpexprResidual->UlLength();
-			// if the number of residuals in the index is smaller than a previously found index, replace best index match
-			if (ulResidual > ulResidualLength)
+			// If this index covers more columns than a previously found index, replace best index match
+			if (minResidual > ulResidualLength)
 			{
 				CRefCount::SafeRelease((*ppexprResidual));
 				pdrgpexprResidual->AddRef();
 				(*ppexprResidual) = CPredicateUtils::PexprConjDisj(pmp, pdrgpexprResidual, true);
+
+				// discard the trivial filter that gets generated when index covers all the columns in which case the residual is const true
 				if (CUtils::FScalarConstTrue((*ppexprResidual)))
 				{
 					(*ppexprResidual)->Release();
@@ -3441,7 +3457,7 @@ CXformUtils::PexprBitmapForSelectCondition
 				}
 
 				ulBestIndex = ul;
-				ulResidual = ulResidualLength;
+				minResidual = ulResidualLength;
 				pdrgpexprIndex->AddRef();
 				CRefCount::SafeRelease(pexprIndexFinal);
 				pexprIndexFinal = CPredicateUtils::PexprConjunction(pmp, pdrgpexprIndex);
