@@ -570,6 +570,12 @@ namespace gpopt
 			static
 			BOOL FConvertToCNF(CExpression *pexpr, 	CExpression *pexprOuter, CExpression *pexprInner);
 
+			// if the expression is a conjunct, the check if it's children are of the form:
+			// "Ident Op Const" or "Ident Op Const-Array" or
+			// "Boolean-Ident" or "NOT Boolean-Ident"
+			static
+			BOOL FBitmapScanSupportedConjunct(CExpression *pexpr);
+
 	}; // class CPredicateUtils
 }
 

@@ -2734,13 +2734,12 @@ CPredicateUtils::FCollapsibleChildUnionUnionAll
 	return (pexprChild->Pop()->Eopid() == pexpr->Pop()->Eopid());
 }
 
-// check if the expression is a conjunct with children of the form:
-// <ident/casted ident> op <const/casted const> or
-// <ident/casted ident> op <const array/casted const array>
-// <boolean ident> or
-// NOT <boolean ident>
+// if the expression is a conjunct, the check if it's children are of the form:
+// "Ident Op Const" or "Ident Op Const-Array" or
+// "Boolean-Ident" or "NOT Boolean-Ident"
+// where casts are allowed on Idents, Constants and Constant arrays.
 BOOL
-CPredicateUtils::FAndWithScalarIdentToScalarConstChildren
+CPredicateUtils::FBitmapScanSupportedConjunct
 	(
 	CExpression *pexpr
 	)
@@ -2751,7 +2750,7 @@ CPredicateUtils::FAndWithScalarIdentToScalarConstChildren
 		BOOL result = true;
 		for (ULONG ul = 0; ul < ulArity && result; ul++)
 		{
-			result = result && CPredicateUtils::FAndWithScalarIdentToScalarConstChildren((*pexpr)[ul]);
+			result = result && CPredicateUtils::FBitmapScanSupportedConjunct((*pexpr)[ul]);
 		}
 
 		return result;
