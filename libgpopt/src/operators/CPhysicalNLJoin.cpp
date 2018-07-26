@@ -121,6 +121,18 @@ CPhysicalNLJoin::PrsRequired
 	// if there are outer references, then we need a materialize on both children
 	if (exprhdl.FHasOuterRefs())
 	{
+		if(1==ulChildIndex)
+		{
+			// get the rewindability of the outer child
+			CRewindabilitySpec *prsOuter = CDrvdPropPlan::Pdpplan((*pdrgpdpCtxt)[0])->Prs();
+			if (prsOuter->Ert() == CRewindabilitySpec::ErtNotRewindableMotion ||
+				prsOuter->Ert() == CRewindabilitySpec::ErtRewindableMotion ||
+				prsRequired->Ert() == CRewindabilitySpec::ErtRewindableMotion ||
+				prsRequired->Ert() == CRewindabilitySpec::ErtNotRewindableMotion)
+			{
+				return GPOS_NEW(pmp) CRewindabilitySpec(CRewindabilitySpec::ErtRewindableMotion /*ert*/);
+			}
+		}
 		return GPOS_NEW(pmp) CRewindabilitySpec(CRewindabilitySpec::ErtRewindableNoMotion);
 	}
 
@@ -129,9 +141,10 @@ CPhysicalNLJoin::PrsRequired
 	{
 		// get the rewindability of the outer child
 		CRewindabilitySpec *prsOuter = CDrvdPropPlan::Pdpplan((*pdrgpdpCtxt)[0])->Prs();
-
 		if (prsOuter->Ert() == CRewindabilitySpec::ErtNotRewindableMotion ||
-			prsOuter->Ert() == CRewindabilitySpec::ErtRewindableMotion)
+			prsOuter->Ert() == CRewindabilitySpec::ErtRewindableMotion ||
+			prsRequired->Ert() == CRewindabilitySpec::ErtRewindableMotion ||
+			prsRequired->Ert() == CRewindabilitySpec::ErtNotRewindableMotion)
 		{
 			// alter the inner child to take care of motion hazard if necessary
 			return GPOS_NEW(pmp) CRewindabilitySpec(CRewindabilitySpec::ErtRewindableMotion /*ert*/);

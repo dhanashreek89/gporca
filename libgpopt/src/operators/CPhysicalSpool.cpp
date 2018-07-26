@@ -414,7 +414,7 @@ BOOL
 CPhysicalSpool::FValidContext
 	(
 	IMemoryPool *,
-	COptimizationContext *,
+	COptimizationContext *poc,
 	DrgPoc *pdrgpocChild
 	)
 	const
@@ -459,6 +459,13 @@ CPhysicalSpool::FValidContext
 	{
 		return false;
 	}
+
+	CEnfdRewindability *per = poc->Prpp()->Per();
+	if(per->PrsRequired()->Ert() == CRewindabilitySpec::ErtRewindableMotion && !m_eager)
+	{
+		return false;
+	}
+
 	return true;
 }
 // EOF

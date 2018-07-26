@@ -914,7 +914,7 @@ CPhysicalJoin::PrsRequiredCorrelatedJoin
 	CExpressionHandle &exprhdl,
 	CRewindabilitySpec *prsRequired,
 	ULONG ulChildIndex,
-	DrgPdp *, //pdrgpdpCtxt
+	DrgPdp *pdrgpdpCtxt,
 	ULONG // ulOptReq
 	)
 	const
@@ -936,7 +936,17 @@ CPhysicalJoin::PrsRequiredCorrelatedJoin
 		// will be requested where needed. However, if inner child has no outer
 		// refs (i.e. subplan with no params) then we need a materialize
 		if (!exprhdl.FHasOuterRefs(1))
+		
 		{
+			CRewindabilitySpec *prsOuter = CDrvdPropPlan::Pdpplan((*pdrgpdpCtxt)[0])->Prs();
+			if (prsOuter->Ert() == CRewindabilitySpec::ErtNotRewindableMotion ||
+				prsOuter->Ert() == CRewindabilitySpec::ErtRewindableMotion ||
+				prsRequired->Ert() == CRewindabilitySpec::ErtRewindableMotion ||
+				prsRequired->Ert() == CRewindabilitySpec::ErtNotRewindableMotion)
+			{
+				return GPOS_NEW(pmp) CRewindabilitySpec(CRewindabilitySpec::ErtRewindableMotion /*ert*/);
+			}
+
 			return GPOS_NEW(pmp) CRewindabilitySpec(CRewindabilitySpec::ErtRewindableNoMotion /*ert*/);
 		}
 
