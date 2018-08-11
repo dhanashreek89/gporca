@@ -28,54 +28,45 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformExternalGet2ExternalScan : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformExternalGet2ExternalScan(const CXformExternalGet2ExternalScan &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformExternalGet2ExternalScan(IMemoryPool *);
 
-			// private copy ctor
-			CXformExternalGet2ExternalScan(const CXformExternalGet2ExternalScan &);
+		// dtor
+		virtual ~CXformExternalGet2ExternalScan()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfExternalGet2ExternalScan;
+		}
 
-			// ctor
-			explicit
-			CXformExternalGet2ExternalScan(IMemoryPool *);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformExternalGet2ExternalScan";
+		}
 
-			// dtor
-			virtual
-			~CXformExternalGet2ExternalScan() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfExternalGet2ExternalScan;
-			}
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformExternalGet2ExternalScan";
-			}
+	};  // class CXformExternalGet2ExternalScan
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+}  // namespace gpopt
 
-			// actual transform
-			virtual
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformExternalGet2ExternalScan
-
-}
-
-#endif // !GPOPT_CXformExternalGet2ExternalScan_H
+#endif  // !GPOPT_CXformExternalGet2ExternalScan_H
 
 // EOF

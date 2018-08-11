@@ -9,7 +9,7 @@
 //		Constant expression evaluator implementation that delegats to a DXL evaluator
 //
 //	@owner:
-//		
+//
 //
 //	@test:
 //
@@ -37,16 +37,12 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CConstExprEvaluatorDXL::CConstExprEvaluatorDXL
-	(
-	IMemoryPool *mp,
-	CMDAccessor *md_accessor,
-	IConstDXLNodeEvaluator *pconstdxleval
-	)
-	:
-	m_pconstdxleval(pconstdxleval),
-	m_trexpr2dxl(mp, md_accessor, NULL /*pdrgpiSegments*/, false /*fInitColumnFactory*/),
-	m_trdxl2expr(mp, md_accessor, false /*fInitColumnFactory*/)
+CConstExprEvaluatorDXL::CConstExprEvaluatorDXL(IMemoryPool *mp,
+											   CMDAccessor *md_accessor,
+											   IConstDXLNodeEvaluator *pconstdxleval)
+	: m_pconstdxleval(pconstdxleval),
+	  m_trexpr2dxl(mp, md_accessor, NULL /*pdrgpiSegments*/, false /*fInitColumnFactory*/),
+	  m_trdxl2expr(mp, md_accessor, false /*fInitColumnFactory*/)
 {
 }
 
@@ -75,11 +71,7 @@ CConstExprEvaluatorDXL::~CConstExprEvaluatorDXL()
 //
 //---------------------------------------------------------------------------
 BOOL
-CConstExprEvaluatorDXL::FValidInput
-	(
-	CExpression *pexpr,
-	const CHAR **szErrorMsg
-	)
+CConstExprEvaluatorDXL::FValidInput(CExpression *pexpr, const CHAR **szErrorMsg)
 {
 	GPOS_ASSERT(NULL != pexpr);
 	// if the expression is not scalar, we should not try to evaluate it
@@ -102,8 +94,7 @@ CConstExprEvaluatorDXL::FValidInput
 	}
 	// if the expression uses or defines any variables, we should not try to evaluate it
 	CDrvdPropScalar *pdpScalar = CDrvdPropScalar::GetDrvdScalarProps(pexpr->PdpDerive());
-	if (0 != pdpScalar->PcrsUsed()->Size() ||
-		0 != pdpScalar->PcrsDefined()->Size())
+	if (0 != pdpScalar->PcrsUsed()->Size() || 0 != pdpScalar->PcrsDefined()->Size())
 	{
 		if (NULL != szErrorMsg)
 		{
@@ -124,10 +115,7 @@ CConstExprEvaluatorDXL::FValidInput
 //
 //---------------------------------------------------------------------------
 CExpression *
-CConstExprEvaluatorDXL::PexprEval
-	(
-	CExpression *pexpr
-	)
+CConstExprEvaluatorDXL::PexprEval(CExpression *pexpr)
 {
 	GPOS_ASSERT(NULL != pexpr);
 
@@ -141,7 +129,8 @@ CConstExprEvaluatorDXL::PexprEval
 
 	GPOS_ASSERT(EdxloptypeScalar == pdxlnResult->GetOperator()->GetDXLOperatorType());
 
-	CExpression *pexprResult = m_trdxl2expr.PexprTranslateScalar(pdxlnResult, NULL /*colref_array*/);
+	CExpression *pexprResult =
+		m_trdxl2expr.PexprTranslateScalar(pdxlnResult, NULL /*colref_array*/);
 	pdxlnResult->Release();
 	pdxlnExpr->Release();
 
@@ -156,7 +145,8 @@ CConstExprEvaluatorDXL::PexprEval
 //		Returns true, since this evaluator always attempts to evaluate the expression and compute a datum
 //
 //---------------------------------------------------------------------------
-BOOL CConstExprEvaluatorDXL::FCanEvalExpressions()
+BOOL
+CConstExprEvaluatorDXL::FCanEvalExpressions()
 {
 	return m_pconstdxleval->FCanEvalExpressions();
 }

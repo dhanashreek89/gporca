@@ -34,8 +34,7 @@ namespace gpos
 
 	public:
 		// ctor
-		explicit CEnumSet<T, sentinel_index>(IMemoryPool *mp)
-			: CBitSet(mp, sentinel_index)
+		explicit CEnumSet<T, sentinel_index>(IMemoryPool *mp) : CBitSet(mp, sentinel_index)
 		{
 		}
 

@@ -20,10 +20,9 @@
 
 namespace gpopt
 {
-
 	using namespace gpos;
 	using namespace gpmd;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CScalarCmp
@@ -34,140 +33,124 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalarCmp : public CScalar
 	{
-		private:
+	private:
+		// metadata id in the catalog
+		IMDId *m_mdid_op;
 
-			// metadata id in the catalog
-			IMDId *m_mdid_op;
+		// comparison operator name
+		const CWStringConst *m_pstrOp;
 
-			// comparison operator name
-			const CWStringConst *m_pstrOp;
-			
-			// comparison type
-			IMDType::ECmpType m_comparision_type;
+		// comparison type
+		IMDType::ECmpType m_comparision_type;
 
-			// does operator return NULL on NULL input?
-			BOOL m_returns_null_on_null_input;
+		// does operator return NULL on NULL input?
+		BOOL m_returns_null_on_null_input;
 
-			// is comparison commutative
-			BOOL m_fCommutative;
+		// is comparison commutative
+		BOOL m_fCommutative;
 
-			// private copy ctor
-			CScalarCmp(const CScalarCmp &);
+		// private copy ctor
+		CScalarCmp(const CScalarCmp &);
 
-		public:
-		
-			// ctor
-			CScalarCmp
-				(
-				IMemoryPool *mp,
-				IMDId *mdid_op,
-				const CWStringConst *pstrOp,
-				IMDType::ECmpType cmp_type
-				);
+	public:
+		// ctor
+		CScalarCmp(IMemoryPool *mp,
+				   IMDId *mdid_op,
+				   const CWStringConst *pstrOp,
+				   IMDType::ECmpType cmp_type);
 
-			// dtor
-			virtual 
-			~CScalarCmp()
-			{
-				m_mdid_op->Release();
-				GPOS_DELETE(m_pstrOp);
-			}
+		// dtor
+		virtual ~CScalarCmp()
+		{
+			m_mdid_op->Release();
+			GPOS_DELETE(m_pstrOp);
+		}
 
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopScalarCmp;
-			}
-			
-			// comparison type
-			IMDType::ECmpType ParseCmpType() const
-			{
-				return m_comparision_type;
-			}
-			
-			// return a string for operator name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CScalarCmp";
-			}
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopScalarCmp;
+		}
+
+		// comparison type
+		IMDType::ECmpType
+		ParseCmpType() const
+		{
+			return m_comparision_type;
+		}
+
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CScalarCmp";
+		}
 
 
-			// operator specific hash function
-			ULONG HashValue() const;
-			
-			// match function
-			BOOL Matches(COperator *pop) const;
-			
-			// sensitivity to order of inputs
-			BOOL FInputOrderSensitive() const;
-			
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *, //mp,
-						UlongToColRefMap *, //colref_mapping,
-						BOOL //must_exist
-						)
-			{
-				return PopCopyDefault();
-			}
+		// operator specific hash function
+		ULONG HashValue() const;
 
-			// is operator commutative
-			BOOL FCommutative() const;
+		// match function
+		BOOL Matches(COperator *pop) const;
 
-			// boolean expression evaluation
-			virtual
-			EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const;
+		// sensitivity to order of inputs
+		BOOL FInputOrderSensitive() const;
 
-			// name of the comparison operator
-			const CWStringConst *Pstr() const;
+		// return a copy of the operator with remapped columns
+		virtual COperator *
+		PopCopyWithRemappedColumns(IMemoryPool *,		//mp,
+								   UlongToColRefMap *,  //colref_mapping,
+								   BOOL					//must_exist
+		)
+		{
+			return PopCopyDefault();
+		}
 
-			// metadata id
-			IMDId *MdIdOp() const;
-			
-			// the type of the scalar expression
-			virtual 
-			IMDId *MDIdType() const;
+		// is operator commutative
+		BOOL FCommutative() const;
 
-			// print
-			virtual 
-			IOstream &OsPrint(IOstream &os) const;
+		// boolean expression evaluation
+		virtual EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const;
 
-			// conversion function
-			static
-			CScalarCmp *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopScalarCmp == pop->Eopid());
+		// name of the comparison operator
+		const CWStringConst *Pstr() const;
 
-				return dynamic_cast<CScalarCmp*>(pop);
-			}
-		
-			// get commuted scalar comparision operator
-			virtual
-			CScalarCmp *PopCommutedOp(IMemoryPool *mp, COperator *pop);
-		
-			// get the string representation of a metadata object
-			static
-			CWStringConst *Pstr(IMemoryPool *mp, CMDAccessor *md_accessor, IMDId *mdid);
+		// metadata id
+		IMDId *MdIdOp() const;
 
-			// get metadata id of the commuted operator
-			static
-			IMDId *PmdidCommuteOp(CMDAccessor *md_accessor, COperator *pop);
-		
-		
+		// the type of the scalar expression
+		virtual IMDId *MDIdType() const;
 
-	}; // class CScalarCmp
+		// print
+		virtual IOstream &OsPrint(IOstream &os) const;
 
-}
+		// conversion function
+		static CScalarCmp *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopScalarCmp == pop->Eopid());
 
-#endif // !GPOPT_CScalarCmp_H
+			return dynamic_cast<CScalarCmp *>(pop);
+		}
+
+		// get commuted scalar comparision operator
+		virtual CScalarCmp *PopCommutedOp(IMemoryPool *mp, COperator *pop);
+
+		// get the string representation of a metadata object
+		static CWStringConst *Pstr(IMemoryPool *mp, CMDAccessor *md_accessor, IMDId *mdid);
+
+		// get metadata id of the commuted operator
+		static IMDId *PmdidCommuteOp(CMDAccessor *md_accessor, COperator *pop);
+
+
+
+	};  // class CScalarCmp
+
+}  // namespace gpopt
+
+#endif  // !GPOPT_CScalarCmp_H
 
 // EOF

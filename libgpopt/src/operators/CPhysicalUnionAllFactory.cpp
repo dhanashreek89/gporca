@@ -11,23 +11,23 @@
 
 namespace gpopt
 {
-
-	CPhysicalUnionAllFactory::CPhysicalUnionAllFactory
-		(
-			CLogicalUnionAll *popLogicalUnionAll
-		)
-		: m_popLogicalUnionAll(popLogicalUnionAll) { }
-
-	CPhysicalUnionAll *CPhysicalUnionAllFactory::PopPhysicalUnionAll(IMemoryPool *mp, BOOL fParallel)
+	CPhysicalUnionAllFactory::CPhysicalUnionAllFactory(CLogicalUnionAll *popLogicalUnionAll)
+		: m_popLogicalUnionAll(popLogicalUnionAll)
 	{
+	}
 
+	CPhysicalUnionAll *
+	CPhysicalUnionAllFactory::PopPhysicalUnionAll(IMemoryPool *mp, BOOL fParallel)
+	{
 		CColRefArray *pdrgpcrOutput = m_popLogicalUnionAll->PdrgpcrOutput();
 		CColRefArrays *pdrgpdrgpcrInput = m_popLogicalUnionAll->PdrgpdrgpcrInput();
 
 		// TODO:  May 2nd 2012; support compatible types
 		if (!CXformUtils::FSameDatatype(pdrgpdrgpcrInput))
 		{
-			GPOS_RAISE(gpopt::ExmaGPOPT, gpopt::ExmiUnsupportedOp, GPOS_WSZ_LIT("Union of non-identical types"));
+			GPOS_RAISE(gpopt::ExmaGPOPT,
+					   gpopt::ExmiUnsupportedOp,
+					   GPOS_WSZ_LIT("Union of non-identical types"));
 		}
 
 		pdrgpcrOutput->AddRef();
@@ -35,26 +35,14 @@ namespace gpopt
 
 		if (fParallel)
 		{
-			return GPOS_NEW(mp) CPhysicalParallelUnionAll
-				(
-					mp,
-					pdrgpcrOutput,
-					pdrgpdrgpcrInput,
-					m_popLogicalUnionAll->UlScanIdPartialIndex()
-				);
+			return GPOS_NEW(mp) CPhysicalParallelUnionAll(
+				mp, pdrgpcrOutput, pdrgpdrgpcrInput, m_popLogicalUnionAll->UlScanIdPartialIndex());
 		}
 		else
 		{
-			return GPOS_NEW(mp) CPhysicalSerialUnionAll
-				(
-					mp,
-					pdrgpcrOutput,
-					pdrgpdrgpcrInput,
-					m_popLogicalUnionAll->UlScanIdPartialIndex()
-				);
-
+			return GPOS_NEW(mp) CPhysicalSerialUnionAll(
+				mp, pdrgpcrOutput, pdrgpdrgpcrInput, m_popLogicalUnionAll->UlScanIdPartialIndex());
 		}
-
 	}
 
-}
+}  // namespace gpopt

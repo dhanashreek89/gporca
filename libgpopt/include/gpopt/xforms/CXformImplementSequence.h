@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CXformImplementSequence
@@ -28,61 +28,49 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformImplementSequence : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformImplementSequence(const CXformImplementSequence &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementSequence(IMemoryPool *);
 
-			// private copy ctor
-			CXformImplementSequence(const CXformImplementSequence &);
+		// dtor
+		virtual ~CXformImplementSequence()
+		{
+		}
 
-		public:
-		
-			// ctor
-			explicit
-			CXformImplementSequence(IMemoryPool *);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementSequence;
+		}
 
-			// dtor
-			virtual 
-			~CXformImplementSequence() {}
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementSequence";
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementSequence;
-			}
-			
-			// return a string for xform name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CXformImplementSequence";
-			}
-			
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp
-				(
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{				
-				return CXform::ExfpHigh;
-			}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise
+		Exfp(CExpressionHandle &  // exprhdl
+			 ) const
+		{
+			return CXform::ExfpHigh;
+		}
 
-			// actual transform
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-		
-	}; // class CXformImplementSequence
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-}
+	};  // class CXformImplementSequence
+
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformImplementSequence_H
+#endif  // !GPOPT_CXformImplementSequence_H
 
 // EOF

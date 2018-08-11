@@ -29,41 +29,37 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformProject2Apply : public CXformSubqueryUnnest
 	{
+	private:
+		// private copy ctor
+		CXformProject2Apply(const CXformProject2Apply &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformProject2Apply(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformProject2Apply(const CXformProject2Apply &);
+		// dtor
+		virtual ~CXformProject2Apply()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfProject2Apply;
+		}
 
-			// ctor
-			explicit
-			CXformProject2Apply(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformProject2Apply";
+		}
 
-			// dtor
-			virtual
-			~CXformProject2Apply()
-			{}
+	};  // class CXformProject2Apply
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfProject2Apply;
-			}
+}  // namespace gpopt
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformProject2Apply";
-			}
-
-	}; // class CXformProject2Apply
-
-}
-
-#endif // !GPOPT_CXformProject2Apply_H
+#endif  // !GPOPT_CXformProject2Apply_H
 
 // EOF

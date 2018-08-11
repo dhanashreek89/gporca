@@ -34,14 +34,8 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalInnerIndexNLJoin::CPhysicalInnerIndexNLJoin
-	(
-	IMemoryPool *mp,
-	CColRefArray *colref_array
-	)
-	:
-	CPhysicalInnerNLJoin(mp),
-	m_pdrgpcrOuterRefs(colref_array)
+CPhysicalInnerIndexNLJoin::CPhysicalInnerIndexNLJoin(IMemoryPool *mp, CColRefArray *colref_array)
+	: CPhysicalInnerNLJoin(mp), m_pdrgpcrOuterRefs(colref_array)
 {
 	GPOS_ASSERT(NULL != colref_array);
 }
@@ -70,15 +64,12 @@ CPhysicalInnerIndexNLJoin::~CPhysicalInnerIndexNLJoin()
 //
 //---------------------------------------------------------------------------
 BOOL
-CPhysicalInnerIndexNLJoin::Matches
-	(
-	COperator *pop
-	)
-	const
+CPhysicalInnerIndexNLJoin::Matches(COperator *pop) const
 {
 	if (pop->Eopid() == Eopid())
 	{
-		return m_pdrgpcrOuterRefs->Equals(CPhysicalInnerIndexNLJoin::PopConvert(pop)->PdrgPcrOuterRefs());
+		return m_pdrgpcrOuterRefs->Equals(
+			CPhysicalInnerIndexNLJoin::PopConvert(pop)->PdrgPcrOuterRefs());
 	}
 
 	return false;
@@ -94,16 +85,13 @@ CPhysicalInnerIndexNLJoin::Matches
 //
 //---------------------------------------------------------------------------
 CDistributionSpec *
-CPhysicalInnerIndexNLJoin::PdsRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &,//exprhdl,
-	CDistributionSpec *,//pdsRequired,
-	ULONG child_index,
-	CDrvdPropArrays *pdrgpdpCtxt,
-	ULONG // ulOptReq
-	)
-	const
+CPhysicalInnerIndexNLJoin::PdsRequired(IMemoryPool *mp,
+									   CExpressionHandle &,  //exprhdl,
+									   CDistributionSpec *,  //pdsRequired,
+									   ULONG child_index,
+									   CDrvdPropArrays *pdrgpdpCtxt,
+									   ULONG  // ulOptReq
+									   ) const
 {
 	GPOS_ASSERT(2 > child_index);
 
@@ -135,7 +123,8 @@ CPhysicalInnerIndexNLJoin::PdsRequired
 		{
 			// request hashed distribution from outer
 			pdshashedEquiv->Pdrgpexpr()->AddRef();
-			return GPOS_NEW(mp) CDistributionSpecHashed(pdshashedEquiv->Pdrgpexpr(), pdshashedEquiv->FNullsColocated());
+			return GPOS_NEW(mp) CDistributionSpecHashed(pdshashedEquiv->Pdrgpexpr(),
+														pdshashedEquiv->FNullsColocated());
 		}
 	}
 
@@ -145,4 +134,3 @@ CPhysicalInnerIndexNLJoin::PdsRequired
 
 
 // EOF
-

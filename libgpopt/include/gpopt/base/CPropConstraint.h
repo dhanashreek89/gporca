@@ -35,77 +35,73 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPropConstraint : public CRefCount
 	{
-		private:
+	private:
+		// array of equivalence classes
+		CColRefSetArray *m_pdrgpcrs;
 
-			// array of equivalence classes
-			CColRefSetArray *m_pdrgpcrs;
+		// mapping from column to equivalence class
+		ColRefToColRefSetMap *m_phmcrcrs;
 
-			// mapping from column to equivalence class
-			ColRefToColRefSetMap *m_phmcrcrs;
+		// constraint
+		CConstraint *m_pcnstr;
 
-			// constraint
-			CConstraint *m_pcnstr;
+		// hidden copy ctor
+		CPropConstraint(const CPropConstraint &);
 
-			// hidden copy ctor
-			CPropConstraint(const CPropConstraint&);
+		// initialize mapping from columns to equivalence classes
+		void InitHashMap(IMemoryPool *mp);
 
-			// initialize mapping from columns to equivalence classes
-			void InitHashMap(IMemoryPool *mp);
+	public:
+		// ctor
+		CPropConstraint(IMemoryPool *mp, CColRefSetArray *pdrgpcrs, CConstraint *pcnstr);
 
-		public:
+		// dtor
+		virtual ~CPropConstraint();
 
-			// ctor
-			CPropConstraint(IMemoryPool *mp, CColRefSetArray *pdrgpcrs, CConstraint *pcnstr);
+		// equivalence classes
+		CColRefSetArray *
+		PdrgpcrsEquivClasses() const
+		{
+			return m_pdrgpcrs;
+		}
 
-			// dtor
-			virtual
-			~CPropConstraint();
+		// mapping
+		CColRefSet *
+		PcrsEquivClass(CColRef *colref) const
+		{
+			return m_phmcrcrs->Find(colref);
+		}
 
-			// equivalence classes
-			CColRefSetArray *PdrgpcrsEquivClasses() const
-			{
-				return m_pdrgpcrs;
-			}
+		// constraint
+		CConstraint *
+		Pcnstr() const
+		{
+			return m_pcnstr;
+		}
 
-			// mapping
-			CColRefSet *PcrsEquivClass
-				(
-				CColRef *colref
-				)
-				const
-			{
-				return m_phmcrcrs->Find(colref);
-			}
+		// is this a contradiction
+		BOOL FContradiction() const;
 
-			// constraint
-			CConstraint *Pcnstr() const
-			{
-				return m_pcnstr;
-			}
+		// scalar expression on given column mapped from all constraints
+		// on its equivalent columns
+		CExpression *PexprScalarMappedFromEquivCols(IMemoryPool *mp, CColRef *colref) const;
 
-			// is this a contradiction
-			BOOL FContradiction() const;
+		// print
+		IOstream &OsPrint(IOstream &) const;
 
-			// scalar expression on given column mapped from all constraints
-			// on its equivalent columns
-			CExpression *PexprScalarMappedFromEquivCols(IMemoryPool *mp, CColRef *colref) const;
+		// debug print
+		void DbgPrint() const;
 
-			// print
-			IOstream &OsPrint(IOstream &) const;
+	};  // class CPropConstraint
 
-			// debug print
-			void DbgPrint() const;
-
-	}; // class CPropConstraint
-
- 	// shorthand for printing
-	inline
-	IOstream &operator << (IOstream &os, CPropConstraint &pc)
+	// shorthand for printing
+	inline IOstream &
+	operator<<(IOstream &os, CPropConstraint &pc)
 	{
 		return pc.OsPrint(os);
 	}
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CPropConstraint_H
+#endif  // !GPOPT_CPropConstraint_H
 
 // EOF

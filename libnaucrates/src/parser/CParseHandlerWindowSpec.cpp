@@ -84,10 +84,7 @@ CParseHandlerWindowSpec::StartElement(const XMLCh *const element_uri,
 	{
 		// parse handler for the sorting column list
 		CParseHandlerBase *sort_col_list_parse_handler = CParseHandlerFactory::GetParseHandler(
-			m_mp,
-			CDXLTokens::XmlstrToken(EdxltokenScalarSortColList),
-			m_parse_handler_mgr,
-			this);
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarSortColList), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(sort_col_list_parse_handler);
 
 		// store parse handler
@@ -101,11 +98,8 @@ CParseHandlerWindowSpec::StartElement(const XMLCh *const element_uri,
 		m_has_window_frame = true;
 
 		// parse handler for the leading and trailing scalar values
-		CParseHandlerBase *window_frame_parse_handler =
-			CParseHandlerFactory::GetParseHandler(m_mp,
-												  CDXLTokens::XmlstrToken(EdxltokenWindowFrame),
-												  m_parse_handler_mgr,
-												  this);
+		CParseHandlerBase *window_frame_parse_handler = CParseHandlerFactory::GetParseHandler(
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenWindowFrame), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(window_frame_parse_handler);
 
 		// store parse handler
@@ -179,8 +173,8 @@ CParseHandlerWindowSpec::EndElement(const XMLCh *const,  // element_uri,
 			dynamic_cast<CParseHandlerWindowFrame *>((*this)[1]);
 		window_frame = window_frame_parse_handler->GetWindowFrame();
 	}
-	m_dxl_window_spec_gen = GPOS_NEW(m_mp) CDXLWindowSpec(
-		m_mp, m_part_by_colid_array, m_mdname, sort_col_list_dxlnode, window_frame);
+	m_dxl_window_spec_gen = GPOS_NEW(m_mp)
+		CDXLWindowSpec(m_mp, m_part_by_colid_array, m_mdname, sort_col_list_dxlnode, window_frame);
 
 	// deactivate handler
 	m_parse_handler_mgr->DeactivateHandler();

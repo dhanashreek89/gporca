@@ -14,16 +14,15 @@ namespace gpopt
 	// a CPhysicalSerialUnionAll instance.
 	class CPhysicalUnionAllFactory
 	{
-		private:
-			CLogicalUnionAll* const m_popLogicalUnionAll;
+	private:
+		CLogicalUnionAll *const m_popLogicalUnionAll;
 
-		public:
+	public:
+		CPhysicalUnionAllFactory(CLogicalUnionAll *popLogicalUnionAll);
 
-			CPhysicalUnionAllFactory(CLogicalUnionAll* popLogicalUnionAll);
-
-			CPhysicalUnionAll* PopPhysicalUnionAll(IMemoryPool* mp, BOOL fParallel);
+		CPhysicalUnionAll *PopPhysicalUnionAll(IMemoryPool *mp, BOOL fParallel);
 	};
 
-}
+}  // namespace gpopt
 
-#endif //GPOPT_CPhysicalUnionAllFactory_H
+#endif  //GPOPT_CPhysicalUnionAllFactory_H

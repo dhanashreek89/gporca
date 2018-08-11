@@ -52,8 +52,8 @@ CMDFunctionGPDB::CMDFunctionGPDB(IMemoryPool *mp,
 	GPOS_ASSERT(EfdaSentinel > func_data_access);
 
 	InitDXLTokenArrays();
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+	m_dxl_str =
+		CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
 }
 
 //---------------------------------------------------------------------------

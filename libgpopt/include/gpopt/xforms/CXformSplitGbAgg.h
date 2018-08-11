@@ -28,84 +28,68 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformSplitGbAgg : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformSplitGbAgg(const CXformSplitGbAgg &);
 
-		private:
+	protected:
+		// check if the transformation is applicable;
+		static BOOL FApplicable(CExpression *pexpr);
 
-			// private copy ctor
-			CXformSplitGbAgg(const CXformSplitGbAgg &);
+		// generate a project lists for the local and global aggregates
+		// from the original aggregate
+		static void PopulateLocalGlobalProjectList(
+			IMemoryPool *mp,					// memory pool
+			CExpression *pexprProjListOrig,		// project list of the original global aggregate
+			CExpression **ppexprProjListLocal,  // project list of the new local aggregate
+			CExpression **ppexprProjListGlobal  // project list of the new global aggregate
+		);
 
-		protected:
+	public:
+		// ctor
+		explicit CXformSplitGbAgg(IMemoryPool *mp);
 
-			// check if the transformation is applicable;
-			static
-			BOOL FApplicable(CExpression *pexpr);
+		// ctor
+		explicit CXformSplitGbAgg(CExpression *pexprPattern);
 
-			// generate a project lists for the local and global aggregates
-			// from the original aggregate
-			static
-			void PopulateLocalGlobalProjectList
-					(
-					IMemoryPool *mp, // memory pool
-					CExpression *pexprProjListOrig, // project list of the original global aggregate
-					CExpression **ppexprProjListLocal, // project list of the new local aggregate
-					CExpression **ppexprProjListGlobal // project list of the new global aggregate
-					);
+		// dtor
+		virtual ~CXformSplitGbAgg()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfSplitGbAgg;
+		}
 
-			// ctor
-			explicit
-			CXformSplitGbAgg(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformSplitGbAgg";
+		}
 
-			// ctor
-			explicit
-			CXformSplitGbAgg(CExpression *pexprPattern);
+		// Compatibility function for splitting aggregates
+		virtual BOOL
+		FCompatible(CXform::EXformId exfid)
+		{
+			return ((CXform::ExfSplitDQA != exfid) && (CXform::ExfSplitGbAgg != exfid));
+		}
 
-			// dtor
-			virtual
-			~CXformSplitGbAgg()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfSplitGbAgg;
-			}
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformSplitGbAgg";
-			}
+	};  // class CXformSplitGbAgg
 
-			// Compatibility function for splitting aggregates
-			virtual
-			BOOL FCompatible(CXform::EXformId exfid)
-			{
-				return ((CXform::ExfSplitDQA != exfid) &&
-						(CXform::ExfSplitGbAgg != exfid));
-			}
+}  // namespace gpopt
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp (CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			virtual
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformSplitGbAgg
-
-}
-
-#endif // !GPOPT_CXformSplitGbAgg_H
+#endif  // !GPOPT_CXformSplitGbAgg_H
 
 // EOF

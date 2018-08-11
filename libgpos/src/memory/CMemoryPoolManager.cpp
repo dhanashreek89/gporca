@@ -45,10 +45,7 @@ CMemoryPoolManager *CMemoryPoolManager::m_mp_mgr = NULL;
 //
 //---------------------------------------------------------------------------
 CMemoryPoolManager::CMemoryPoolManager(IMemoryPool *internal, IMemoryPool *base)
-	: m_base_mp(base),
-	  m_internal_mp(internal),
-	  m_global_mp(NULL),
-	  m_allow_global_new(true)
+	: m_base_mp(base), m_internal_mp(internal), m_global_mp(NULL), m_allow_global_new(true)
 {
 	GPOS_ASSERT(NULL != internal);
 	GPOS_ASSERT(NULL != base);
@@ -107,8 +104,7 @@ CMemoryPoolManager::Init(void *(*alloc)(SIZE_T), void (*free_func)(void *))
 	// instantiate manager
 	GPOS_TRY
 	{
-		CMemoryPoolManager::m_mp_mgr =
-			GPOS_NEW(internal) CMemoryPoolManager(internal, base);
+		CMemoryPoolManager::m_mp_mgr = GPOS_NEW(internal) CMemoryPoolManager(internal, base);
 	}
 	GPOS_CATCH_EX(ex)
 	{
@@ -143,11 +139,7 @@ CMemoryPoolManager::Create(AllocType alloc_type, BOOL thread_safe, ULLONG capaci
 #ifdef GPOS_DEBUG
 		CreatePoolStack(alloc_type, capacity, thread_safe);
 #else
-		New(alloc_type,
-			m_base_mp,
-			capacity,
-			thread_safe,
-			false /*owns_underlying_mp*/);
+		New(alloc_type, m_base_mp, capacity, thread_safe, false /*owns_underlying_mp*/);
 #endif  // GPOS_DEBUG
 
 	// accessor scope
@@ -178,12 +170,12 @@ CMemoryPoolManager::New(AllocType alloc_type,
 	switch (alloc_type)
 	{
 		case CMemoryPoolManager::EatTracker:
-			return GPOS_NEW(m_internal_mp) CMemoryPoolTracker(
-				underlying_mp, capacity, thread_safe, owns_underlying_mp);
+			return GPOS_NEW(m_internal_mp)
+				CMemoryPoolTracker(underlying_mp, capacity, thread_safe, owns_underlying_mp);
 
 		case CMemoryPoolManager::EatStack:
-			return GPOS_NEW(m_internal_mp) CMemoryPoolStack(
-				underlying_mp, capacity, thread_safe, owns_underlying_mp);
+			return GPOS_NEW(m_internal_mp)
+				CMemoryPoolStack(underlying_mp, capacity, thread_safe, owns_underlying_mp);
 	}
 
 	GPOS_ASSERT(!"No matching pool type found");
@@ -212,14 +204,13 @@ CMemoryPoolManager::CreatePoolStack(AllocType alloc_type, ULLONG capacity, BOOL 
 	if (NULL != ITask::Self() && !malloc_type && GPOS_FTRACE(EtraceTestMemoryPools))
 	{
 		// put fault injector on top of base pool
-		IMemoryPool *FPSim_low = GPOS_NEW(m_internal_mp)
-			CMemoryPoolInjectFault(base, false /*owns_underlying_mp*/
+		IMemoryPool *FPSim_low =
+			GPOS_NEW(m_internal_mp) CMemoryPoolInjectFault(base, false /*owns_underlying_mp*/
 			);
 
 		// put tracker on top of fault injector
-		base =
-			New(EatTracker, FPSim_low, capacity, thread_safe, true /*owns_underlying_mp*/
-			);
+		base = New(EatTracker, FPSim_low, capacity, thread_safe, true /*owns_underlying_mp*/
+		);
 	}
 
 	// tracker pool goes on top
@@ -231,8 +222,7 @@ CMemoryPoolManager::CreatePoolStack(AllocType alloc_type, ULLONG capacity, BOOL 
 	}
 
 	// put fault injector on top of requested pool
-	IMemoryPool *FPSim =
-		GPOS_NEW(m_internal_mp) CMemoryPoolInjectFault(requested, !malloc_type);
+	IMemoryPool *FPSim = GPOS_NEW(m_internal_mp) CMemoryPoolInjectFault(requested, !malloc_type);
 
 	// put tracker on top of the stack
 	return New(EatTracker, FPSim, capacity, thread_safe, true /*fOwnsUnderlying*/);

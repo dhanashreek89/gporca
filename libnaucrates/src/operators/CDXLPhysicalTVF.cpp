@@ -30,10 +30,7 @@ CDXLPhysicalTVF::CDXLPhysicalTVF(IMemoryPool *mp,
 								 IMDId *mdid_func,
 								 IMDId *mdid_return_type,
 								 CWStringConst *str)
-	: CDXLPhysical(mp),
-	  m_func_mdid(mdid_func),
-	  m_return_type_mdid(mdid_return_type),
-	  func_name(str)
+	: CDXLPhysical(mp), m_func_mdid(mdid_func), m_return_type_mdid(mdid_return_type), func_name(str)
 {
 	GPOS_ASSERT(NULL != m_func_mdid);
 	GPOS_ASSERT(m_func_mdid->IsValid());

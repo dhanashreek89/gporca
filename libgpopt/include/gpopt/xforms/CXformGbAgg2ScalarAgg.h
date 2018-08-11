@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CXformGbAgg2ScalarAgg
@@ -28,52 +28,44 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformGbAgg2ScalarAgg : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformGbAgg2ScalarAgg(const CXformGbAgg2ScalarAgg &);
 
-		private:
+	public:
+		// ctor
+		CXformGbAgg2ScalarAgg(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformGbAgg2ScalarAgg(const CXformGbAgg2ScalarAgg &);
+		// dtor
+		virtual ~CXformGbAgg2ScalarAgg()
+		{
+		}
 
-		public:
-		
-			// ctor
-			CXformGbAgg2ScalarAgg(IMemoryPool *mp);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfGbAgg2ScalarAgg;
+		}
 
-			// dtor
-			virtual 
-			~CXformGbAgg2ScalarAgg() {}
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformGbAgg2ScalarAgg";
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfGbAgg2ScalarAgg;
-			}
-			
-			// return a string for xform name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CXformGbAgg2ScalarAgg";
-			}
-			
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// actual transform
-			void Transform
-					(
-					CXformContext *pxfctxt,
-					CXformResult *pxfres,
-					CExpression *pexpr
-					) const;
-		
-	}; // class CXformGbAgg2ScalarAgg
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-}
+	};  // class CXformGbAgg2ScalarAgg
+
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformGbAgg2ScalarAgg_H
+#endif  // !GPOPT_CXformGbAgg2ScalarAgg_H
 
 // EOF

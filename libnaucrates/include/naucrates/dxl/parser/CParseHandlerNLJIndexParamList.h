@@ -6,7 +6,7 @@
 //		CParseHandlerNLJIndexParamList.h
 //
 //	@doc:
-//		
+//
 //		SAX parse handler class for parsing NLJ ParamList
 //---------------------------------------------------------------------------
 
@@ -32,55 +32,46 @@ namespace gpdxl
 	//---------------------------------------------------------------------------
 	class CParseHandlerNLJIndexParamList : public CParseHandlerBase
 	{
-		private:
+	private:
+		BOOL m_is_param_list;
 
-			BOOL m_is_param_list;
+		// array of outer column references
+		CDXLColRefArray *m_nest_params_colrefs_array;
 
-			// array of outer column references
-			CDXLColRefArray *m_nest_params_colrefs_array;
+		// private copy ctor
+		CParseHandlerNLJIndexParamList(const CParseHandlerNLJIndexParamList &);
 
-			// private copy ctor
-			CParseHandlerNLJIndexParamList(const CParseHandlerNLJIndexParamList &);
-	
-			// process the start of an element
-			void StartElement
-					(
-					const XMLCh* const element_uri, 		// URI of element's namespace
-					const XMLCh* const element_local_name,	// local part of element's name
-					const XMLCh* const element_qname,		// element's qname
-					const Attributes& attr				// element's attributes
-					);
-	
-			// process the end of an element
-			void EndElement
-					(
-					const XMLCh* const element_uri, 		// URI of element's namespace
-					const XMLCh* const element_local_name,	// local part of element's name
-					const XMLCh* const element_qname		// element's qname
-					);
-	
-		public:
-			// ctor
-			CParseHandlerNLJIndexParamList
-					(
-					IMemoryPool *mp,
-					CParseHandlerManager *parse_handler_mgr,
-					CParseHandlerBase *parse_handler_root
-					);
+		// process the start of an element
+		void StartElement(const XMLCh *const element_uri,		  // URI of element's namespace
+						  const XMLCh *const element_local_name,  // local part of element's name
+						  const XMLCh *const element_qname,		  // element's qname
+						  const Attributes &attr				  // element's attributes
+		);
 
-			// dtor
-			virtual
-			~CParseHandlerNLJIndexParamList();
+		// process the end of an element
+		void EndElement(const XMLCh *const element_uri,			// URI of element's namespace
+						const XMLCh *const element_local_name,  // local part of element's name
+						const XMLCh *const element_qname		// element's qname
+		);
 
-			// return param column references
-			CDXLColRefArray *GetNLParamsColRefs()
-			const
-			{
-				return m_nest_params_colrefs_array;
-			}
+	public:
+		// ctor
+		CParseHandlerNLJIndexParamList(IMemoryPool *mp,
+									   CParseHandlerManager *parse_handler_mgr,
+									   CParseHandlerBase *parse_handler_root);
+
+		// dtor
+		virtual ~CParseHandlerNLJIndexParamList();
+
+		// return param column references
+		CDXLColRefArray *
+		GetNLParamsColRefs() const
+		{
+			return m_nest_params_colrefs_array;
+		}
 	};
 
-}
-#endif // GPDXL_CParseHandlerNLJIndexParamList_H
+}  // namespace gpdxl
+#endif  // GPDXL_CParseHandlerNLJIndexParamList_H
 
 //EOF

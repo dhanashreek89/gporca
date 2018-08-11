@@ -123,11 +123,8 @@ CParseHandlerIndexScan::StartElementHelper(const XMLCh *const element_local_name
 	m_parse_handler_mgr->ActivateParseHandler(index_descr_parse_handler);
 
 	// parse handler for the index condition list
-	CParseHandlerBase *index_condition_list_parse_handler =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenScalarIndexCondList),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *index_condition_list_parse_handler = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarIndexCondList), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(index_condition_list_parse_handler);
 
 	// parse handler for the filter
@@ -197,14 +194,14 @@ CParseHandlerIndexScan::EndElementHelper(const XMLCh *const element_local_name,
 	CDXLPhysical *dxl_op = NULL;
 	if (EdxltokenPhysicalIndexOnlyScan == token_type)
 	{
-		dxl_op = GPOS_NEW(m_mp) CDXLPhysicalIndexOnlyScan(
-			m_mp, dxl_table_descr, dxl_index_descr, m_index_scan_dir);
+		dxl_op = GPOS_NEW(m_mp)
+			CDXLPhysicalIndexOnlyScan(m_mp, dxl_table_descr, dxl_index_descr, m_index_scan_dir);
 		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, dxl_op);
 	}
 	else if (EdxltokenPhysicalIndexScan == token_type)
 	{
-		dxl_op = GPOS_NEW(m_mp) CDXLPhysicalIndexScan(
-			m_mp, dxl_table_descr, dxl_index_descr, m_index_scan_dir);
+		dxl_op = GPOS_NEW(m_mp)
+			CDXLPhysicalIndexScan(m_mp, dxl_table_descr, dxl_index_descr, m_index_scan_dir);
 		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, dxl_op);
 	}
 	else
@@ -212,11 +209,11 @@ CParseHandlerIndexScan::EndElementHelper(const XMLCh *const element_local_name,
 		GPOS_ASSERT(EdxltokenPhysicalDynamicIndexScan == token_type);
 
 		dxl_op = GPOS_NEW(m_mp) CDXLPhysicalDynamicIndexScan(m_mp,
-																	  dxl_table_descr,
-																	  part_idx_id,
-																	  part_idx_id_printable,
-																	  dxl_index_descr,
-																	  m_index_scan_dir);
+															 dxl_table_descr,
+															 part_idx_id,
+															 part_idx_id_printable,
+															 dxl_index_descr,
+															 m_index_scan_dir);
 		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, dxl_op);
 	}
 

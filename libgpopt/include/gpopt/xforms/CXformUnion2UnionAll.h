@@ -8,8 +8,8 @@
 //	@doc:
 //		Transform logical union into an aggregate over a logical union all
 //
-//	@owner: 
-//		
+//	@owner:
+//
 //
 //	@test:
 //
@@ -34,54 +34,47 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformUnion2UnionAll : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformUnion2UnionAll(const CXformUnion2UnionAll &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformUnion2UnionAll(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformUnion2UnionAll(const CXformUnion2UnionAll &);
+		// dtor
+		virtual ~CXformUnion2UnionAll()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfUnion2UnionAll;
+		}
 
-			// ctor
-			explicit
-			CXformUnion2UnionAll(IMemoryPool *mp);
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformUnion2UnionAll";
+		}
 
-			// dtor
-			virtual
-			~CXformUnion2UnionAll()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise
+		Exfp(CExpressionHandle &  // exprhdl
+			 ) const
+		{
+			return CXform::ExfpHigh;
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfUnion2UnionAll;
-			}
+		// actual transform
+		void Transform(CXformContext *, CXformResult *, CExpression *) const;
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformUnion2UnionAll";
-			}
+	};  // class CXformUnion2UnionAll
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp
-				(
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{
-				return CXform::ExfpHigh;
-			}
+}  // namespace gpopt
 
-			// actual transform
-			void Transform(CXformContext *, CXformResult *, CExpression *) const;
-
-	}; // class CXformUnion2UnionAll
-
-}
-
-#endif // !GPOPT_CXformUnion2UnionAll_H
+#endif  // !GPOPT_CXformUnion2UnionAll_H
 
 // EOF

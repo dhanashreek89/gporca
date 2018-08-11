@@ -33,26 +33,22 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalSequenceProject::CPhysicalSequenceProject
-	(
-	IMemoryPool *mp,
-	CDistributionSpec *pds,
-	COrderSpecArray *pdrgpos,
-	CWindowFrameArray *pdrgpwf
-	)
-	:
-	CPhysical(mp),
-	m_pds(pds),
-	m_pdrgpos(pdrgpos),
-	m_pdrgpwf(pdrgpwf),
-	m_pos(NULL),
-	m_pcrsRequiredLocal(NULL)
+CPhysicalSequenceProject::CPhysicalSequenceProject(IMemoryPool *mp,
+												   CDistributionSpec *pds,
+												   COrderSpecArray *pdrgpos,
+												   CWindowFrameArray *pdrgpwf)
+	: CPhysical(mp),
+	  m_pds(pds),
+	  m_pdrgpos(pdrgpos),
+	  m_pdrgpwf(pdrgpwf),
+	  m_pos(NULL),
+	  m_pcrsRequiredLocal(NULL)
 {
 	GPOS_ASSERT(NULL != pds);
 	GPOS_ASSERT(NULL != pdrgpos);
 	GPOS_ASSERT(NULL != pdrgpwf);
 	GPOS_ASSERT(CDistributionSpec::EdtHashed == pds->Edt() ||
-			CDistributionSpec::EdtSingleton == pds->Edt());
+				CDistributionSpec::EdtSingleton == pds->Edt());
 	CreateOrderSpec(mp);
 	ComputeRequiredLocalColumns(mp);
 }
@@ -67,10 +63,7 @@ CPhysicalSequenceProject::CPhysicalSequenceProject
 //
 //---------------------------------------------------------------------------
 void
-CPhysicalSequenceProject::CreateOrderSpec
-	(
-	IMemoryPool *mp
-	)
+CPhysicalSequenceProject::CreateOrderSpec(IMemoryPool *mp)
 {
 	GPOS_ASSERT(NULL == m_pos);
 	GPOS_ASSERT(NULL != m_pds);
@@ -111,9 +104,9 @@ CPhysicalSequenceProject::CreateOrderSpec
 	{
 		COrderSpec *posCurrent = (*m_pdrgpos)[ul];
 		GPOS_ASSERT(posFirst->FSatisfies(posCurrent) &&
-				"first order spec must satisfy all other order specs");
+					"first order spec must satisfy all other order specs");
 	}
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 	// we assume here that the first order spec in the children array satisfies all other
 	// order specs in the array, this happens as part of the initial normalization
@@ -139,10 +132,7 @@ CPhysicalSequenceProject::CreateOrderSpec
 //
 //---------------------------------------------------------------------------
 void
-CPhysicalSequenceProject::ComputeRequiredLocalColumns
-	(
-	IMemoryPool *mp
-	)
+CPhysicalSequenceProject::ComputeRequiredLocalColumns(IMemoryPool *mp)
 {
 	GPOS_ASSERT(NULL != m_pos);
 	GPOS_ASSERT(NULL != m_pds);
@@ -165,11 +155,13 @@ CPhysicalSequenceProject::ComputeRequiredLocalColumns
 		CWindowFrame *pwf = (*m_pdrgpwf)[ul];
 		if (NULL != pwf->PexprLeading())
 		{
-			m_pcrsRequiredLocal->Union(CDrvdPropScalar::GetDrvdScalarProps(pwf->PexprLeading()->PdpDerive())->PcrsUsed());
+			m_pcrsRequiredLocal->Union(
+				CDrvdPropScalar::GetDrvdScalarProps(pwf->PexprLeading()->PdpDerive())->PcrsUsed());
 		}
 		if (NULL != pwf->PexprTrailing())
 		{
-			m_pcrsRequiredLocal->Union(CDrvdPropScalar::GetDrvdScalarProps(pwf->PexprTrailing()->PdpDerive())->PcrsUsed());
+			m_pcrsRequiredLocal->Union(
+				CDrvdPropScalar::GetDrvdScalarProps(pwf->PexprTrailing()->PdpDerive())->PcrsUsed());
 		}
 	}
 }
@@ -200,20 +192,16 @@ CPhysicalSequenceProject::~CPhysicalSequenceProject()
 //
 //---------------------------------------------------------------------------
 BOOL
-CPhysicalSequenceProject::Matches
-	(
-	COperator *pop
-	)
-	const
+CPhysicalSequenceProject::Matches(COperator *pop) const
 {
 	GPOS_ASSERT(NULL != pop);
 	if (Eopid() == pop->Eopid())
 	{
-		CPhysicalSequenceProject *popPhysicalSequenceProject = CPhysicalSequenceProject::PopConvert(pop);
-		return
-			m_pds->Matches(popPhysicalSequenceProject->Pds()) &&
-			CWindowFrame::Equals(m_pdrgpwf, popPhysicalSequenceProject->Pdrgpwf()) &&
-			COrderSpec::Equals(m_pdrgpos, popPhysicalSequenceProject->Pdrgpos());
+		CPhysicalSequenceProject *popPhysicalSequenceProject =
+			CPhysicalSequenceProject::PopConvert(pop);
+		return m_pds->Matches(popPhysicalSequenceProject->Pds()) &&
+			   CWindowFrame::Equals(m_pdrgpwf, popPhysicalSequenceProject->Pdrgpwf()) &&
+			   COrderSpec::Equals(m_pdrgpos, popPhysicalSequenceProject->Pdrgpos());
 	}
 
 	return false;
@@ -250,15 +238,13 @@ CPhysicalSequenceProject::HashValue() const
 //
 //---------------------------------------------------------------------------
 CColRefSet *
-CPhysicalSequenceProject::PcrsRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CColRefSet *pcrsRequired,
-	ULONG child_index,
-	CDrvdPropArrays *, // pdrgpdpCtxt
-	ULONG // ulOptReq
-	)
+CPhysicalSequenceProject::PcrsRequired(IMemoryPool *mp,
+									   CExpressionHandle &exprhdl,
+									   CColRefSet *pcrsRequired,
+									   ULONG child_index,
+									   CDrvdPropArrays *,  // pdrgpdpCtxt
+									   ULONG			   // ulOptReq
+)
 {
 	GPOS_ASSERT(0 == child_index &&
 				"Required properties can only be computed on the relational child");
@@ -282,20 +268,17 @@ CPhysicalSequenceProject::PcrsRequired
 //
 //---------------------------------------------------------------------------
 COrderSpec *
-CPhysicalSequenceProject::PosRequired
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &, // exprhdl
-	COrderSpec *, // posRequired
-	ULONG
+CPhysicalSequenceProject::PosRequired(IMemoryPool *,		// mp
+									  CExpressionHandle &,  // exprhdl
+									  COrderSpec *,			// posRequired
+									  ULONG
 #ifdef GPOS_DEBUG
-	child_index
-#endif // GPOS_DEBUG
-	,
-	CDrvdPropArrays *, // pdrgpdpCtxt
-	ULONG // ulOptReq
-	)
-	const
+										  child_index
+#endif  // GPOS_DEBUG
+									  ,
+									  CDrvdPropArrays *,  // pdrgpdpCtxt
+									  ULONG				  // ulOptReq
+									  ) const
 {
 	GPOS_ASSERT(0 == child_index);
 
@@ -313,16 +296,13 @@ CPhysicalSequenceProject::PosRequired
 //
 //---------------------------------------------------------------------------
 CDistributionSpec *
-CPhysicalSequenceProject::PdsRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CDistributionSpec *pdsRequired,
-	ULONG child_index,
-	CDrvdPropArrays *, // pdrgpdpCtxt
-	ULONG // ulOptReq
-	)
-	const
+CPhysicalSequenceProject::PdsRequired(IMemoryPool *mp,
+									  CExpressionHandle &exprhdl,
+									  CDistributionSpec *pdsRequired,
+									  ULONG child_index,
+									  CDrvdPropArrays *,  // pdrgpdpCtxt
+									  ULONG				  // ulOptReq
+									  ) const
 {
 	GPOS_ASSERT(0 == child_index);
 
@@ -365,16 +345,13 @@ CPhysicalSequenceProject::PdsRequired
 //
 //---------------------------------------------------------------------------
 CRewindabilitySpec *
-CPhysicalSequenceProject::PrsRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CRewindabilitySpec *prsRequired,
-	ULONG child_index,
-	CDrvdPropArrays *, // pdrgpdpCtxt
-	ULONG // ulOptReq
-	)
-	const
+CPhysicalSequenceProject::PrsRequired(IMemoryPool *mp,
+									  CExpressionHandle &exprhdl,
+									  CRewindabilitySpec *prsRequired,
+									  ULONG child_index,
+									  CDrvdPropArrays *,  // pdrgpdpCtxt
+									  ULONG				  // ulOptReq
+									  ) const
 {
 	GPOS_ASSERT(0 == child_index);
 
@@ -396,24 +373,23 @@ CPhysicalSequenceProject::PrsRequired
 //
 //---------------------------------------------------------------------------
 CPartitionPropagationSpec *
-CPhysicalSequenceProject::PppsRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CPartitionPropagationSpec *pppsRequired,
-	ULONG 
-#ifdef GPOS_DEBUG 
-	child_index
+CPhysicalSequenceProject::PppsRequired(IMemoryPool *mp,
+									   CExpressionHandle &exprhdl,
+									   CPartitionPropagationSpec *pppsRequired,
+									   ULONG
+#ifdef GPOS_DEBUG
+										   child_index
 #endif
-	,
-	CDrvdPropArrays *, //pdrgpdpCtxt,
-	ULONG //ulOptReq
-	)
+									   ,
+									   CDrvdPropArrays *,  //pdrgpdpCtxt,
+									   ULONG			   //ulOptReq
+)
 {
 	GPOS_ASSERT(0 == child_index);
 	GPOS_ASSERT(NULL != pppsRequired);
 
-	return CPhysical::PppsRequiredPushThruUnresolvedUnary(mp, exprhdl, pppsRequired, CPhysical::EppcAllowed);
+	return CPhysical::PppsRequiredPushThruUnresolvedUnary(
+		mp, exprhdl, pppsRequired, CPhysical::EppcAllowed);
 }
 
 //---------------------------------------------------------------------------
@@ -425,20 +401,17 @@ CPhysicalSequenceProject::PppsRequired
 //
 //---------------------------------------------------------------------------
 CCTEReq *
-CPhysicalSequenceProject::PcteRequired
-	(
-	IMemoryPool *, //mp,
-	CExpressionHandle &, //exprhdl,
-	CCTEReq *pcter,
-	ULONG
+CPhysicalSequenceProject::PcteRequired(IMemoryPool *,		 //mp,
+									   CExpressionHandle &,  //exprhdl,
+									   CCTEReq *pcter,
+									   ULONG
 #ifdef GPOS_DEBUG
-	child_index
+										   child_index
 #endif
-	,
-	CDrvdPropArrays *, //pdrgpdpCtxt,
-	ULONG //ulOptReq
-	)
-	const
+									   ,
+									   CDrvdPropArrays *,  //pdrgpdpCtxt,
+									   ULONG			   //ulOptReq
+									   ) const
 {
 	GPOS_ASSERT(0 == child_index);
 	return PcterPushThru(pcter);
@@ -453,13 +426,10 @@ CPhysicalSequenceProject::PcteRequired
 //
 //---------------------------------------------------------------------------
 BOOL
-CPhysicalSequenceProject::FProvidesReqdCols
-	(
-	CExpressionHandle &exprhdl,
-	CColRefSet *pcrsRequired,
-	ULONG // ulOptReq
-	)
-	const
+CPhysicalSequenceProject::FProvidesReqdCols(CExpressionHandle &exprhdl,
+											CColRefSet *pcrsRequired,
+											ULONG  // ulOptReq
+											) const
 {
 	GPOS_ASSERT(NULL != pcrsRequired);
 	GPOS_ASSERT(2 == exprhdl.Arity());
@@ -487,12 +457,8 @@ CPhysicalSequenceProject::FProvidesReqdCols
 //
 //---------------------------------------------------------------------------
 COrderSpec *
-CPhysicalSequenceProject::PosDerive
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CPhysicalSequenceProject::PosDerive(IMemoryPool *,  // mp
+									CExpressionHandle &exprhdl) const
 {
 	return PosDerivePassThruOuter(exprhdl);
 }
@@ -507,12 +473,8 @@ CPhysicalSequenceProject::PosDerive
 //
 //---------------------------------------------------------------------------
 CDistributionSpec *
-CPhysicalSequenceProject::PdsDerive
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CPhysicalSequenceProject::PdsDerive(IMemoryPool *,  // mp
+									CExpressionHandle &exprhdl) const
 {
 	return PdsDerivePassThruOuter(exprhdl);
 }
@@ -527,12 +489,8 @@ CPhysicalSequenceProject::PdsDerive
 //
 //---------------------------------------------------------------------------
 CRewindabilitySpec *
-CPhysicalSequenceProject::PrsDerive
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CPhysicalSequenceProject::PrsDerive(IMemoryPool *,  // mp
+									CExpressionHandle &exprhdl) const
 {
 	return PrsDerivePassThruOuter(exprhdl);
 }
@@ -547,12 +505,7 @@ CPhysicalSequenceProject::PrsDerive
 //
 //---------------------------------------------------------------------------
 CEnfdProp::EPropEnforcingType
-CPhysicalSequenceProject::EpetOrder
-	(
-	CExpressionHandle &exprhdl,
-	const CEnfdOrder *peo
-	)
-	const
+CPhysicalSequenceProject::EpetOrder(CExpressionHandle &exprhdl, const CEnfdOrder *peo) const
 {
 	GPOS_ASSERT(NULL != peo);
 	GPOS_ASSERT(!peo->PosRequired()->IsEmpty());
@@ -560,7 +513,7 @@ CPhysicalSequenceProject::EpetOrder
 	COrderSpec *pos = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Pos();
 	if (peo->FCompatible(pos))
 	{
-		return  CEnfdProp::EpetUnnecessary;
+		return CEnfdProp::EpetUnnecessary;
 	}
 
 	return CEnfdProp::EpetRequired;
@@ -576,18 +529,14 @@ CPhysicalSequenceProject::EpetOrder
 //
 //---------------------------------------------------------------------------
 CEnfdProp::EPropEnforcingType
-CPhysicalSequenceProject::EpetRewindability
-	(
-	CExpressionHandle &exprhdl,
-	const CEnfdRewindability *per
-	)
-	const
+CPhysicalSequenceProject::EpetRewindability(CExpressionHandle &exprhdl,
+											const CEnfdRewindability *per) const
 {
 	CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
 	if (per->FCompatible(prs))
 	{
-		 // required distribution is already provided
-		 return CEnfdProp::EpetUnnecessary;
+		// required distribution is already provided
+		return CEnfdProp::EpetUnnecessary;
 	}
 
 	// rewindability is enforced on operator's output
@@ -603,17 +552,13 @@ CPhysicalSequenceProject::EpetRewindability
 //
 //---------------------------------------------------------------------------
 IOstream &
-CPhysicalSequenceProject::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CPhysicalSequenceProject::OsPrint(IOstream &os) const
 {
-	os	<< SzId() << " (";
+	os << SzId() << " (";
 	(void) m_pds->OsPrint(os);
-	os	<< ", ";
+	os << ", ";
 	(void) COrderSpec::OsPrint(os, m_pdrgpos);
-	os	<< ", ";
+	os << ", ";
 	(void) CWindowFrame::OsPrint(os, m_pdrgpwf);
 
 	return os << ")";
@@ -621,4 +566,3 @@ CPhysicalSequenceProject::OsPrint
 
 
 // EOF
-

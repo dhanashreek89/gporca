@@ -57,13 +57,14 @@ CMDIndexGPDB::CMDIndexGPDB(IMemoryPool *mp,
 	GPOS_ASSERT(NULL != index_key_cols_array);
 	GPOS_ASSERT(0 < index_key_cols_array->Size());
 	GPOS_ASSERT(NULL != included_cols_array);
-	GPOS_ASSERT_IMP(NULL != mdid_item_type, IMDIndex::EmdindBitmap == index_type  || IMDIndex::EmdindGist == index_type);
+	GPOS_ASSERT_IMP(NULL != mdid_item_type,
+					IMDIndex::EmdindBitmap == index_type || IMDIndex::EmdindGist == index_type);
 	GPOS_ASSERT_IMP(IMDIndex::EmdindBitmap == index_type,
 					NULL != mdid_item_type && mdid_item_type->IsValid());
 	GPOS_ASSERT(NULL != mdid_op_classes_array);
 
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+	m_dxl_str =
+		CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
 }
 
 //---------------------------------------------------------------------------
@@ -289,14 +290,12 @@ CMDIndexGPDB::Serialize(CXMLSerializer *xml_serializer) const
 	}
 
 	// serialize index keys
-	CWStringDynamic *index_key_cols_str =
-		CDXLUtils::Serialize(m_mp, m_index_key_cols_array);
+	CWStringDynamic *index_key_cols_str = CDXLUtils::Serialize(m_mp, m_index_key_cols_array);
 	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexKeyCols),
 								 index_key_cols_str);
 	GPOS_DELETE(index_key_cols_str);
 
-	CWStringDynamic *available_cols_str =
-		CDXLUtils::Serialize(m_mp, m_included_cols_array);
+	CWStringDynamic *available_cols_str = CDXLUtils::Serialize(m_mp, m_included_cols_array);
 	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexIncludedCols),
 								 available_cols_str);
 	GPOS_DELETE(available_cols_str);

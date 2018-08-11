@@ -31,54 +31,49 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformLeftAntiSemiJoinNotIn2CrossProduct : public CXformLeftAntiSemiJoin2CrossProduct
 	{
+	private:
+		// private copy ctor
+		CXformLeftAntiSemiJoinNotIn2CrossProduct(const CXformLeftAntiSemiJoinNotIn2CrossProduct &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformLeftAntiSemiJoinNotIn2CrossProduct(IMemoryPool *mp)
+			:  // pattern
+			  CXformLeftAntiSemiJoin2CrossProduct(GPOS_NEW(mp) CExpression(
+				  mp,
+				  GPOS_NEW(mp) CLogicalLeftAntiSemiJoinNotIn(mp),
+				  GPOS_NEW(mp) CExpression(
+					  mp,
+					  GPOS_NEW(mp) CPatternTree(
+						  mp)),  // left child is a tree since we may need to push predicates down
+				  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // right child
+				  GPOS_NEW(mp) CExpression(
+					  mp,
+					  GPOS_NEW(mp) CPatternTree(
+						  mp))  // predicate is a tree since we may need to do clean-up of scalar expression
+				  ))
+		{
+		}
 
-			// private copy ctor
-			CXformLeftAntiSemiJoinNotIn2CrossProduct(const CXformLeftAntiSemiJoinNotIn2CrossProduct &);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftAntiSemiJoinNotIn2CrossProduct;
+		}
 
-		public:
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftAntiSemiJoinNotIn2CrossProduct";
+		}
 
-			// ctor
-			explicit
-			CXformLeftAntiSemiJoinNotIn2CrossProduct
-				(
-				IMemoryPool *mp
-				)
-				:
-				// pattern
-				CXformLeftAntiSemiJoin2CrossProduct
-					(
-					GPOS_NEW(mp) CExpression
-								(
-								mp,
-								GPOS_NEW(mp) CLogicalLeftAntiSemiJoinNotIn(mp),
-								GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp)), // left child is a tree since we may need to push predicates down
-								GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)), // right child
-								GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))  // predicate is a tree since we may need to do clean-up of scalar expression
-								)
-					)
-			{}
+	};  // class CXformLeftAntiSemiJoinNotIn2CrossProduct
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftAntiSemiJoinNotIn2CrossProduct;
-			}
-
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftAntiSemiJoinNotIn2CrossProduct";
-			}
-
-	}; // class CXformLeftAntiSemiJoinNotIn2CrossProduct
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformLeftAntiSemiJoinNotIn2CrossProduct_H
+#endif  // !GPOPT_CXformLeftAntiSemiJoinNotIn2CrossProduct_H
 
 // EOF

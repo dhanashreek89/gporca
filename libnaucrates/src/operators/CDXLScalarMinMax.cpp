@@ -27,9 +27,7 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarMinMax::CDXLScalarMinMax(IMemoryPool *mp,
-								   IMDId *mdid_type,
-								   EdxlMinMaxType min_max_type)
+CDXLScalarMinMax::CDXLScalarMinMax(IMemoryPool *mp, IMDId *mdid_type, EdxlMinMaxType min_max_type)
 	: CDXLScalar(mp), m_mdid_type(mdid_type), m_min_max_type(min_max_type)
 {
 	GPOS_ASSERT(m_mdid_type->IsValid());

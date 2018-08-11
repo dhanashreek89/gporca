@@ -29,9 +29,7 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CDistributionSpecRandom::CDistributionSpecRandom()
-	:
-	m_is_duplicate_sensitive(false),
-	m_fSatisfiedBySingleton(true)
+	: m_is_duplicate_sensitive(false), m_fSatisfiedBySingleton(true)
 {
 	if (COptCtxt::PoctxtFromTLS()->FDMLQuery())
 	{
@@ -49,20 +47,15 @@ CDistributionSpecRandom::CDistributionSpecRandom()
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL 
-CDistributionSpecRandom::Matches
-	(
-	const CDistributionSpec *pds
-	) 
-	const
+BOOL
+CDistributionSpecRandom::Matches(const CDistributionSpec *pds) const
 {
 	if (Edt() != pds->Edt())
 	{
 		return false;
 	}
 
-	const CDistributionSpecRandom *pdsRandom =
-			dynamic_cast<const CDistributionSpecRandom*>(pds);
+	const CDistributionSpecRandom *pdsRandom = dynamic_cast<const CDistributionSpecRandom *>(pds);
 
 	return pdsRandom->IsDuplicateSensitive() == m_is_duplicate_sensitive;
 }
@@ -76,23 +69,20 @@ CDistributionSpecRandom::Matches
 //
 //---------------------------------------------------------------------------
 BOOL
-CDistributionSpecRandom::FSatisfies
-	(
-	const CDistributionSpec *pds
-	)
-	const
+CDistributionSpecRandom::FSatisfies(const CDistributionSpec *pds) const
 {
 	if (Matches(pds))
 	{
 		return true;
 	}
-	
-	if (EdtRandom == pds->Edt() && 
-			(IsDuplicateSensitive() || !CDistributionSpecRandom::PdsConvert(pds)->IsDuplicateSensitive()))
+
+	if (EdtRandom == pds->Edt() &&
+		(IsDuplicateSensitive() ||
+		 !CDistributionSpecRandom::PdsConvert(pds)->IsDuplicateSensitive()))
 	{
 		return true;
 	}
-	
+
 	return EdtAny == pds->Edt() || EdtNonSingleton == pds->Edt();
 }
 
@@ -105,18 +95,15 @@ CDistributionSpecRandom::FSatisfies
 //
 //---------------------------------------------------------------------------
 void
-CDistributionSpecRandom::AppendEnforcers
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &, // exprhdl
-	CReqdPropPlan *
+CDistributionSpecRandom::AppendEnforcers(IMemoryPool *mp,
+										 CExpressionHandle &,  // exprhdl
+										 CReqdPropPlan *
 #ifdef GPOS_DEBUG
-	prpp
-#endif // GPOS_DEBUG
-	,
-	CExpressionArray *pdrgpexpr,
-	CExpression *pexpr
-	)
+											 prpp
+#endif  // GPOS_DEBUG
+										 ,
+										 CExpressionArray *pdrgpexpr,
+										 CExpression *pexpr)
 {
 	GPOS_ASSERT(NULL != mp);
 	GPOS_ASSERT(NULL != prpp);
@@ -124,7 +111,7 @@ CDistributionSpecRandom::AppendEnforcers
 	GPOS_ASSERT(NULL != pexpr);
 	GPOS_ASSERT(!GPOS_FTRACE(EopttraceDisableMotions));
 	GPOS_ASSERT(this == prpp->Ped()->PdsRequired() &&
-	            "required plan properties don't match enforced distribution spec");
+				"required plan properties don't match enforced distribution spec");
 
 
 	if (GPOS_FTRACE(EopttraceDisableMotionRandom))
@@ -136,13 +123,9 @@ CDistributionSpecRandom::AppendEnforcers
 	// add a hashed distribution enforcer
 	AddRef();
 	pexpr->AddRef();
-	CExpression *pexprMotion = GPOS_NEW(mp) CExpression
-										(
-										mp,
-										GPOS_NEW(mp) CPhysicalMotionRandom(mp, this),
-										pexpr
-										);
-	pdrgpexpr->Append(pexprMotion);		
+	CExpression *pexprMotion =
+		GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPhysicalMotionRandom(mp, this), pexpr);
+	pdrgpexpr->Append(pexprMotion);
 }
 
 //---------------------------------------------------------------------------
@@ -154,14 +137,9 @@ CDistributionSpecRandom::AppendEnforcers
 //
 //---------------------------------------------------------------------------
 IOstream &
-CDistributionSpecRandom::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CDistributionSpecRandom::OsPrint(IOstream &os) const
 {
 	return os << this->SzId();
 }
 
 // EOF
-

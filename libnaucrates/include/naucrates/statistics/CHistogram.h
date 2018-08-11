@@ -115,15 +115,11 @@ namespace gpnaucrates
 
 		// less than or less than equal filter
 		CHistogram *MakeHistogramLessThanOrLessThanEqualFilter(
-			IMemoryPool *mp,
-			CStatsPred::EStatsCmpType stats_cmp_type,
-			CPoint *point) const;
+			IMemoryPool *mp, CStatsPred::EStatsCmpType stats_cmp_type, CPoint *point) const;
 
 		// greater than or greater than equal filter
 		CHistogram *MakeHistogramGreaterThanOrGreaterThanEqualFilter(
-			IMemoryPool *mp,
-			CStatsPred::EStatsCmpType stats_cmp_type,
-			CPoint *point) const;
+			IMemoryPool *mp, CStatsPred::EStatsCmpType stats_cmp_type, CPoint *point) const;
 
 		// equal filter
 		CHistogram *MakeHistogramEqualFilter(IMemoryPool *mp, CPoint *point) const;
@@ -146,8 +142,7 @@ namespace gpnaucrates
 															const CHistogram *histogram) const;
 
 		// construct a new histogram for an INDF join predicate
-		CHistogram *MakeJoinHistogramINDFFilter(IMemoryPool *mp,
-												const CHistogram *histogram) const;
+		CHistogram *MakeJoinHistogramINDFFilter(IMemoryPool *mp, const CHistogram *histogram) const;
 
 		// accessor for n-th bucket
 		CBucket *operator[](ULONG) const;
@@ -433,9 +428,7 @@ namespace gpnaucrates
 		static BOOL JoinPredCmpTypeIsSupported(CStatsPred::EStatsCmpType stats_cmp_type);
 
 		// create the default histogram for a given column reference
-		static CHistogram *MakeDefaultHistogram(IMemoryPool *mp,
-												CColRef *col_ref,
-												BOOL is_empty);
+		static CHistogram *MakeDefaultHistogram(IMemoryPool *mp, CColRef *col_ref, BOOL is_empty);
 
 		// create the default non empty histogram for a boolean column
 		static CHistogram *MakeDefaultBoolHistogram(IMemoryPool *mp);

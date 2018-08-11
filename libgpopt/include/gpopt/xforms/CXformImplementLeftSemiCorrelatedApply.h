@@ -28,49 +28,44 @@ namespace gpopt
 	//		correlated join
 	//
 	//-------------------------------------------------------------------------
-	class CXformImplementLeftSemiCorrelatedApply :
-		public CXformImplementCorrelatedApply<CLogicalLeftSemiCorrelatedApply, CPhysicalCorrelatedLeftSemiNLJoin>
+	class CXformImplementLeftSemiCorrelatedApply
+		: public CXformImplementCorrelatedApply<CLogicalLeftSemiCorrelatedApply,
+												CPhysicalCorrelatedLeftSemiNLJoin>
 	{
+	private:
+		// private copy ctor
+		CXformImplementLeftSemiCorrelatedApply(const CXformImplementLeftSemiCorrelatedApply &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementLeftSemiCorrelatedApply(IMemoryPool *mp)
+			: CXformImplementCorrelatedApply<CLogicalLeftSemiCorrelatedApply,
+											 CPhysicalCorrelatedLeftSemiNLJoin>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformImplementLeftSemiCorrelatedApply(const CXformImplementLeftSemiCorrelatedApply &);
+		// dtor
+		virtual ~CXformImplementLeftSemiCorrelatedApply()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementLeftSemiCorrelatedApply;
+		}
 
-			// ctor
-			explicit
-			CXformImplementLeftSemiCorrelatedApply
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformImplementCorrelatedApply<CLogicalLeftSemiCorrelatedApply, CPhysicalCorrelatedLeftSemiNLJoin>(mp)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementLeftSemiCorrelatedApply";
+		}
 
-			// dtor
-			virtual
-			~CXformImplementLeftSemiCorrelatedApply()
-			{}
+	};  // class CXformImplementLeftSemiCorrelatedApply
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementLeftSemiCorrelatedApply;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementLeftSemiCorrelatedApply";
-			}
-
-	}; // class CXformImplementLeftSemiCorrelatedApply
-
-}
-
-#endif // !GPOPT_CXformImplementLeftSemiCorrelatedApply_H
+#endif  // !GPOPT_CXformImplementLeftSemiCorrelatedApply_H
 
 // EOF

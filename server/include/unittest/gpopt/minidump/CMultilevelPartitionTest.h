@@ -27,25 +27,19 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CMultilevelPartitionTest
 	{
-		private:
+	private:
+		// counter used to mark last successful test
+		static ULONG m_ulMLPTTestCounter;
 
-			// counter used to mark last successful test
-			static
-			ULONG m_ulMLPTTestCounter;
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
 
-		public:
+		static GPOS_RESULT EresUnittest_RunTests();
 
-			// unittests
-			static
-			GPOS_RESULT EresUnittest();
+	};  // class CMultilevelPartitionTest
+}  // namespace gpopt
 
-			static
-			GPOS_RESULT EresUnittest_RunTests();
-
-	}; // class CMultilevelPartitionTest
-}
-
-#endif // !GPOPT_CMultilevelPartitionTest_H
+#endif  // !GPOPT_CMultilevelPartitionTest_H
 
 // EOF
-

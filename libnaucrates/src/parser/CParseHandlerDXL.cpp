@@ -42,8 +42,7 @@ XERCES_CPP_NAMESPACE_USE
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CParseHandlerDXL::CParseHandlerDXL(IMemoryPool *mp,
-								   CParseHandlerManager *parse_handler_mgr)
+CParseHandlerDXL::CParseHandlerDXL(IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr)
 	: CParseHandlerBase(mp, parse_handler_mgr, NULL),
 	  m_trace_flags_bitset(NULL),
 	  m_optimizer_config(NULL),
@@ -653,8 +652,7 @@ CParseHandlerDXL::ExtractMDRequest(CParseHandlerBase *parse_handler_base)
 	mdid_array->AddRef();
 	md_type_request_array->AddRef();
 
-	m_mdrequest =
-		GPOS_NEW(m_mp) CMDRequest(m_mp, mdid_array, md_type_request_array);
+	m_mdrequest = GPOS_NEW(m_mp) CMDRequest(m_mp, mdid_array, md_type_request_array);
 }
 
 

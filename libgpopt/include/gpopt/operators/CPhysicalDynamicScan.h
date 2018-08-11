@@ -9,7 +9,7 @@
 //		Base class for physical dynamic scan operators
 //
 //	@owner:
-//		
+//
 //
 //	@test:
 //
@@ -39,127 +39,127 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalDynamicScan : public CPhysicalScan
 	{
-		private:
-			// origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-			ULONG m_ulOriginOpId;
+	private:
+		// origin operator id -- gpos::ulong_max if operator was not generated via a transformation
+		ULONG m_ulOriginOpId;
 
-			// true iff it is a partial scan
-			BOOL m_is_partial;
+		// true iff it is a partial scan
+		BOOL m_is_partial;
 
-			// id of the dynamic scan
-			ULONG m_scan_id;
+		// id of the dynamic scan
+		ULONG m_scan_id;
 
-			// partition keys
-			CColRefArrays *m_pdrgpdrgpcrPart;
+		// partition keys
+		CColRefArrays *m_pdrgpdrgpcrPart;
 
-			// secondary scan id in case of partial scan
-			ULONG m_ulSecondaryScanId;
+		// secondary scan id in case of partial scan
+		ULONG m_ulSecondaryScanId;
 
-			// dynamic index part constraint
-			CPartConstraint *m_part_constraint;
+		// dynamic index part constraint
+		CPartConstraint *m_part_constraint;
 
-			// relation part constraint
-			CPartConstraint *m_ppartcnstrRel;
+		// relation part constraint
+		CPartConstraint *m_ppartcnstrRel;
 
-			// disable copy ctor
-			CPhysicalDynamicScan(const CPhysicalDynamicScan &);
+		// disable copy ctor
+		CPhysicalDynamicScan(const CPhysicalDynamicScan &);
 
-		public:
-			// ctor
-			CPhysicalDynamicScan
-				(
-				IMemoryPool *mp,
-				BOOL is_partial,
-				CTableDescriptor *ptabdesc,
-				ULONG ulOriginOpId,
-				const CName *pnameAlias,
-				ULONG scan_id,
-				CColRefArray *pdrgpcrOutput,
-				CColRefArrays *pdrgpdrgpcrParts,
-				ULONG ulSecondaryScanId,
-				CPartConstraint *ppartcnstr,
-				CPartConstraint *ppartcnstrRel
-				);
+	public:
+		// ctor
+		CPhysicalDynamicScan(IMemoryPool *mp,
+							 BOOL is_partial,
+							 CTableDescriptor *ptabdesc,
+							 ULONG ulOriginOpId,
+							 const CName *pnameAlias,
+							 ULONG scan_id,
+							 CColRefArray *pdrgpcrOutput,
+							 CColRefArrays *pdrgpdrgpcrParts,
+							 ULONG ulSecondaryScanId,
+							 CPartConstraint *ppartcnstr,
+							 CPartConstraint *ppartcnstrRel);
 
-			// dtor
-			virtual
-			~CPhysicalDynamicScan();
+		// dtor
+		virtual ~CPhysicalDynamicScan();
 
-			// origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-			ULONG UlOriginOpId() const
-			{
-				return m_ulOriginOpId;
-			}
+		// origin operator id -- gpos::ulong_max if operator was not generated via a transformation
+		ULONG
+		UlOriginOpId() const
+		{
+			return m_ulOriginOpId;
+		}
 
-			// true iff the scan is partial
-			BOOL IsPartial() const
-			{
-				return m_is_partial;
-			}
+		// true iff the scan is partial
+		BOOL
+		IsPartial() const
+		{
+			return m_is_partial;
+		}
 
-			// return scan id
-			ULONG ScanId() const
-			{
-				return m_scan_id;
-			}
+		// return scan id
+		ULONG
+		ScanId() const
+		{
+			return m_scan_id;
+		}
 
-			// partition keys
-			CColRefArrays *PdrgpdrgpcrPart() const
-			{
-				return m_pdrgpdrgpcrPart;
-			}
+		// partition keys
+		CColRefArrays *
+		PdrgpdrgpcrPart() const
+		{
+			return m_pdrgpdrgpcrPart;
+		}
 
-			// secondary scan id
-			ULONG UlSecondaryScanId() const
-			{
-				return m_ulSecondaryScanId;
-			}
+		// secondary scan id
+		ULONG
+		UlSecondaryScanId() const
+		{
+			return m_ulSecondaryScanId;
+		}
 
-			// dynamic index part constraint
-			CPartConstraint *Ppartcnstr() const
-			{
-				return m_part_constraint;
-			}
+		// dynamic index part constraint
+		CPartConstraint *
+		Ppartcnstr() const
+		{
+			return m_part_constraint;
+		}
 
-			// relation part constraint
-			CPartConstraint *PpartcnstrRel() const
-			{
-				return m_ppartcnstrRel;
-			}
+		// relation part constraint
+		CPartConstraint *
+		PpartcnstrRel() const
+		{
+			return m_ppartcnstrRel;
+		}
 
-			// sensitivity to order of inputs
-			virtual
-			BOOL FInputOrderSensitive() const
-			{
-				return true;
-			}
+		// sensitivity to order of inputs
+		virtual BOOL
+		FInputOrderSensitive() const
+		{
+			return true;
+		}
 
-			// operator specific hash function
-			virtual
-			ULONG HashValue() const;
+		// operator specific hash function
+		virtual ULONG HashValue() const;
 
-			// derive partition index map
-			virtual
-			CPartIndexMap *PpimDerive(IMemoryPool *mp, CExpressionHandle &exprhdl, CDrvdPropCtxt *pdpctxt) const;
+		// derive partition index map
+		virtual CPartIndexMap *PpimDerive(IMemoryPool *mp,
+										  CExpressionHandle &exprhdl,
+										  CDrvdPropCtxt *pdpctxt) const;
 
-			// return true if operator is dynamic scan
-			virtual
-			BOOL FDynamicScan() const
-			{
-				return true;
-			}
+		// return true if operator is dynamic scan
+		virtual BOOL
+		FDynamicScan() const
+		{
+			return true;
+		}
 
-			// debug print
-			virtual
-			IOstream &OsPrint(IOstream &) const;
+		// debug print
+		virtual IOstream &OsPrint(IOstream &) const;
 
-			// conversion function
-			static
-			CPhysicalDynamicScan *PopConvert(COperator *pop);
-
+		// conversion function
+		static CPhysicalDynamicScan *PopConvert(COperator *pop);
 	};
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CPhysicalDynamicScan_H
+#endif  // !GPOPT_CPhysicalDynamicScan_H
 
 // EOF

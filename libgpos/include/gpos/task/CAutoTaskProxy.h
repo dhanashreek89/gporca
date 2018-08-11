@@ -76,9 +76,7 @@ namespace gpos
 
 	public:
 		// ctor
-		CAutoTaskProxy(IMemoryPool *mp,
-					   CWorkerPoolManager *m_pwpm,
-					   BOOL propagate_error = true);
+		CAutoTaskProxy(IMemoryPool *mp, CWorkerPoolManager *m_pwpm, BOOL propagate_error = true);
 
 		// dtor
 		~CAutoTaskProxy();

@@ -40,9 +40,7 @@ namespace gpdxl
 
 	public:
 		// ctor
-		CDXLPhysicalCTEConsumer(IMemoryPool *mp,
-								ULONG id,
-								ULongPtrArray *output_colids_array);
+		CDXLPhysicalCTEConsumer(IMemoryPool *mp, ULONG id, ULongPtrArray *output_colids_array);
 
 		// dtor
 		virtual ~CDXLPhysicalCTEConsumer();

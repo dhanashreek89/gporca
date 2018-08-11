@@ -62,13 +62,12 @@ CMDTypeInt8GPDB::CMDTypeInt8GPDB(IMemoryPool *mp) : m_mp(mp)
 	m_mdid_sum = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT8_AGG_SUM);
 	m_mdid_count = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT8_AGG_COUNT);
 
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+	m_dxl_str =
+		CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
 
 	GPOS_ASSERT(GPDB_INT8_OID == CMDIdGPDB::CastMdid(m_mdid)->Oid());
 	m_mdid->AddRef();
-	m_datum_null =
-		GPOS_NEW(mp) CDatumInt8GPDB(m_mdid, 1 /* value */, true /* is_null */);
+	m_datum_null = GPOS_NEW(mp) CDatumInt8GPDB(m_mdid, 1 /* value */, true /* is_null */);
 }
 
 //---------------------------------------------------------------------------
@@ -231,8 +230,7 @@ CMDTypeInt8GPDB::GetDatumForDXLConstVal(const CDXLScalarConstValue *dxl_op) cons
 	CDXLDatumInt8 *dxl_datum = CDXLDatumInt8::Cast(const_cast<CDXLDatum *>(dxl_op->GetDatumVal()));
 	GPOS_ASSERT(dxl_datum->IsPassedByValue());
 
-	return GPOS_NEW(m_mp)
-		CDatumInt8GPDB(m_mdid->Sysid(), dxl_datum->Value(), dxl_datum->IsNull());
+	return GPOS_NEW(m_mp) CDatumInt8GPDB(m_mdid->Sysid(), dxl_datum->Value(), dxl_datum->IsNull());
 }
 
 //---------------------------------------------------------------------------
@@ -269,8 +267,7 @@ CMDTypeInt8GPDB::GetDatumVal(IMemoryPool *mp, IDatum *datum) const
 	CDatumInt8GPDB *int8_datum = dynamic_cast<CDatumInt8GPDB *>(datum);
 
 	m_mdid->AddRef();
-	return GPOS_NEW(mp)
-		CDXLDatumInt8(mp, m_mdid, int8_datum->IsNull(), int8_datum->Value());
+	return GPOS_NEW(mp) CDXLDatumInt8(mp, m_mdid, int8_datum->IsNull(), int8_datum->Value());
 }
 
 //---------------------------------------------------------------------------
@@ -287,8 +284,8 @@ CMDTypeInt8GPDB::GetDXLOpScConst(IMemoryPool *mp, IDatum *datum) const
 	CDatumInt8GPDB *int8gpdb_datum = dynamic_cast<CDatumInt8GPDB *>(datum);
 
 	m_mdid->AddRef();
-	CDXLDatumInt8 *dxl_datum = GPOS_NEW(mp)
-		CDXLDatumInt8(mp, m_mdid, int8gpdb_datum->IsNull(), int8gpdb_datum->Value());
+	CDXLDatumInt8 *dxl_datum =
+		GPOS_NEW(mp) CDXLDatumInt8(mp, m_mdid, int8gpdb_datum->IsNull(), int8gpdb_datum->Value());
 
 	return GPOS_NEW(mp) CDXLScalarConstValue(mp, dxl_datum);
 }

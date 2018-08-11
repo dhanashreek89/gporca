@@ -26,13 +26,7 @@ using namespace gpopt;
 //		Ctor - for pattern
 //
 //---------------------------------------------------------------------------
-CLogicalCTEAnchor::CLogicalCTEAnchor
-	(
-	IMemoryPool *mp
-	)
-	:
-	CLogical(mp),
-	m_id(0)
+CLogicalCTEAnchor::CLogicalCTEAnchor(IMemoryPool *mp) : CLogical(mp), m_id(0)
 {
 	m_fPattern = true;
 }
@@ -45,15 +39,9 @@ CLogicalCTEAnchor::CLogicalCTEAnchor
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalCTEAnchor::CLogicalCTEAnchor
-	(
-	IMemoryPool *mp,
-	ULONG id
-	)
-	:
-	CLogical(mp),
-	m_id(id)
-{}
+CLogicalCTEAnchor::CLogicalCTEAnchor(IMemoryPool *mp, ULONG id) : CLogical(mp), m_id(id)
+{
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -64,11 +52,8 @@ CLogicalCTEAnchor::CLogicalCTEAnchor
 //
 //---------------------------------------------------------------------------
 CColRefSet *
-CLogicalCTEAnchor::PcrsDeriveOutput
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
+CLogicalCTEAnchor::PcrsDeriveOutput(IMemoryPool *,  // mp
+									CExpressionHandle &exprhdl)
 {
 	return PcrsDeriveOutputPassThru(exprhdl);
 }
@@ -82,12 +67,8 @@ CLogicalCTEAnchor::PcrsDeriveOutput
 //
 //---------------------------------------------------------------------------
 CKeyCollection *
-CLogicalCTEAnchor::PkcDeriveKeys
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CLogicalCTEAnchor::PkcDeriveKeys(IMemoryPool *,  // mp
+								 CExpressionHandle &exprhdl) const
 {
 	return PkcDeriveKeysPassThru(exprhdl, 0 /* ulChild */);
 }
@@ -101,19 +82,15 @@ CLogicalCTEAnchor::PkcDeriveKeys
 //
 //---------------------------------------------------------------------------
 CPartInfo *
-CLogicalCTEAnchor::PpartinfoDerive
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl
-	)
-	const
+CLogicalCTEAnchor::PpartinfoDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const
 {
 	CPartInfo *ppartinfoChild = exprhdl.GetRelationalProperties(0 /*child_index*/)->Ppartinfo();
 	GPOS_ASSERT(NULL != ppartinfoChild);
 
 	CExpression *pexprProducer = COptCtxt::PoctxtFromTLS()->Pcteinfo()->PexprCTEProducer(m_id);
 	GPOS_ASSERT(NULL != pexprProducer);
-	CPartInfo *ppartinfoCTEProducer = CDrvdPropRelational::GetRelationalProperties(pexprProducer->PdpDerive())->Ppartinfo();
+	CPartInfo *ppartinfoCTEProducer =
+		CDrvdPropRelational::GetRelationalProperties(pexprProducer->PdpDerive())->Ppartinfo();
 
 	return CPartInfo::PpartinfoCombine(mp, ppartinfoChild, ppartinfoCTEProducer);
 }
@@ -127,12 +104,8 @@ CLogicalCTEAnchor::PpartinfoDerive
 //
 //---------------------------------------------------------------------------
 CMaxCard
-CLogicalCTEAnchor::Maxcard
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CLogicalCTEAnchor::Maxcard(IMemoryPool *,  // mp
+						   CExpressionHandle &exprhdl) const
 {
 	// pass on max card of first child
 	return exprhdl.GetRelationalProperties(0)->Maxcard();
@@ -147,11 +120,7 @@ CLogicalCTEAnchor::Maxcard
 //
 //---------------------------------------------------------------------------
 BOOL
-CLogicalCTEAnchor::Matches
-	(
-	COperator *pop
-	)
-	const
+CLogicalCTEAnchor::Matches(COperator *pop) const
 {
 	if (pop->Eopid() != Eopid())
 	{
@@ -186,11 +155,7 @@ CLogicalCTEAnchor::HashValue() const
 //
 //---------------------------------------------------------------------------
 CXformSet *
-CLogicalCTEAnchor::PxfsCandidates
-	(
-	IMemoryPool *mp
-	)
-	const
+CLogicalCTEAnchor::PxfsCandidates(IMemoryPool *mp) const
 {
 	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
 	(void) xform_set->ExchangeSet(CXform::ExfCTEAnchor2Sequence);
@@ -207,11 +172,7 @@ CLogicalCTEAnchor::PxfsCandidates
 //
 //---------------------------------------------------------------------------
 IOstream &
-CLogicalCTEAnchor::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CLogicalCTEAnchor::OsPrint(IOstream &os) const
 {
 	os << SzId() << " (";
 	os << m_id;

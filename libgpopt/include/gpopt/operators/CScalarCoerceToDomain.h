@@ -35,78 +35,67 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalarCoerceToDomain : public CScalarCoerceBase
 	{
+	private:
+		// does operator return NULL on NULL input?
+		BOOL m_returns_null_on_null_input;
 
-		private:
-			// does operator return NULL on NULL input?
-			BOOL m_returns_null_on_null_input;
+		// private copy ctor
+		CScalarCoerceToDomain(const CScalarCoerceToDomain &);
 
-			// private copy ctor
-			CScalarCoerceToDomain(const CScalarCoerceToDomain &);
+	public:
+		// ctor
+		CScalarCoerceToDomain(IMemoryPool *mp,
+							  IMDId *mdid_type,
+							  INT type_modifier,
+							  ECoercionForm dxl_coerce_format,
+							  INT location);
 
-		public:
+		// dtor
+		virtual ~CScalarCoerceToDomain()
+		{
+		}
 
-			// ctor
-			CScalarCoerceToDomain
-				(
-				IMemoryPool *mp,
-				IMDId *mdid_type,
-				INT type_modifier,
-				ECoercionForm dxl_coerce_format,
-				INT location
-				);
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopScalarCoerceToDomain;
+		}
 
-			// dtor
-			virtual
-			~CScalarCoerceToDomain()
-			{
-			}
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CScalarCoerceToDomain";
+		}
 
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopScalarCoerceToDomain;
-			}
+		// match function
+		virtual BOOL Matches(COperator *) const;
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CScalarCoerceToDomain";
-			}
+		// sensitivity to order of inputs
+		virtual BOOL
+		FInputOrderSensitive() const
+		{
+			return false;
+		}
 
-			// match function
-			virtual
-			BOOL Matches(COperator *) const;
+		// boolean expression evaluation
+		virtual EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const;
 
-			// sensitivity to order of inputs
-			virtual
-			BOOL FInputOrderSensitive() const
-			{
-				return false;
-			}
+		// conversion function
+		static CScalarCoerceToDomain *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopScalarCoerceToDomain == pop->Eopid());
 
-			// boolean expression evaluation
-			virtual
-			EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const;
+			return dynamic_cast<CScalarCoerceToDomain *>(pop);
+		}
 
-			// conversion function
-			static
-			CScalarCoerceToDomain *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopScalarCoerceToDomain == pop->Eopid());
+	};  // class CScalarCoerceToDomain
 
-				return dynamic_cast<CScalarCoerceToDomain*>(pop);
-			}
-
-	}; // class CScalarCoerceToDomain
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CScalarCoerceToDomain_H
+#endif  // !GPOPT_CScalarCoerceToDomain_H
 
 // EOF

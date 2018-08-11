@@ -31,12 +31,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalInnerNLJoin::CPhysicalInnerNLJoin
-	(
-	IMemoryPool *mp
-	)
-	:
-	CPhysicalNLJoin(mp)
+CPhysicalInnerNLJoin::CPhysicalInnerNLJoin(IMemoryPool *mp) : CPhysicalNLJoin(mp)
 {
 	// Inner NLJ creates two distribution requests for children:
 	// (0) Outer child is requested for ANY distribution, and inner child is requested for a Replicated (or a matching) distribution
@@ -55,7 +50,8 @@ CPhysicalInnerNLJoin::CPhysicalInnerNLJoin
 //
 //---------------------------------------------------------------------------
 CPhysicalInnerNLJoin::~CPhysicalInnerNLJoin()
-{}
+{
+}
 
 
 
@@ -76,16 +72,12 @@ CPhysicalInnerNLJoin::~CPhysicalInnerNLJoin()
 //
 //---------------------------------------------------------------------------
 CDistributionSpec *
-CPhysicalInnerNLJoin::PdsRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CDistributionSpec *pdsRequired,
-	ULONG child_index,
-	CDrvdPropArrays *pdrgpdpCtxt,
-	ULONG  ulOptReq
-	)
-	const
+CPhysicalInnerNLJoin::PdsRequired(IMemoryPool *mp,
+								  CExpressionHandle &exprhdl,
+								  CDistributionSpec *pdsRequired,
+								  ULONG child_index,
+								  CDrvdPropArrays *pdrgpdpCtxt,
+								  ULONG ulOptReq) const
 {
 	GPOS_ASSERT(2 > child_index);
 	GPOS_ASSERT(ulOptReq < UlDistrRequests());
@@ -108,7 +100,8 @@ CPhysicalInnerNLJoin::PdsRequired
 
 	if (GPOS_FTRACE(EopttraceDisableReplicateInnerNLJOuterChild) || 0 == ulOptReq)
 	{
-		return CPhysicalJoin::PdsRequired(mp, exprhdl, pdsRequired, child_index, pdrgpdpCtxt, ulOptReq);
+		return CPhysicalJoin::PdsRequired(
+			mp, exprhdl, pdsRequired, child_index, pdrgpdpCtxt, ulOptReq);
 	}
 	GPOS_ASSERT(1 == ulOptReq);
 
@@ -129,4 +122,3 @@ CPhysicalInnerNLJoin::PdsRequired
 }
 
 // EOF
-

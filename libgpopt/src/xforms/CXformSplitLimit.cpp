@@ -27,24 +27,20 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformSplitLimit::CXformSplitLimit
-	(
-	IMemoryPool *mp
-	)
-	:
-	CXformExploration
-		(
-		 // pattern
-		GPOS_NEW(mp) CExpression
-					(
-					mp,
-					GPOS_NEW(mp) CLogicalLimit(mp),
-					GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)), // relational child
-					GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // scalar child for offset
-					GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))  // scalar child for number of rows
-					)
-		)
-{}
+CXformSplitLimit::CXformSplitLimit(IMemoryPool *mp)
+	: CXformExploration(
+		  // pattern
+		  GPOS_NEW(mp) CExpression(
+			  mp,
+			  GPOS_NEW(mp) CLogicalLimit(mp),
+			  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // relational child
+			  GPOS_NEW(mp)
+				  CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // scalar child for offset
+			  GPOS_NEW(mp)
+				  CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))  // scalar child for number of rows
+			  ))
+{
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -55,11 +51,7 @@ CXformSplitLimit::CXformSplitLimit
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise
-CXformSplitLimit::Exfp
-	(
-	CExpressionHandle &exprhdl
-	)
-	const
+CXformSplitLimit::Exfp(CExpressionHandle &exprhdl) const
 {
 	if (0 < exprhdl.GetRelationalProperties()->PcrsOuter()->Size())
 	{
@@ -85,13 +77,7 @@ CXformSplitLimit::Exfp
 //
 //---------------------------------------------------------------------------
 void
-CXformSplitLimit::Transform
-	(
-	CXformContext *pxfctxt,
-	CXformResult *pxfres,
-	CExpression *pexpr
-	)
-	const
+CXformSplitLimit::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const
 {
 	GPOS_ASSERT(NULL != pxfctxt);
 	GPOS_ASSERT(NULL != pxfres);
@@ -107,8 +93,8 @@ CXformSplitLimit::Transform
 	COrderSpec *pos = popLimit->Pos();
 
 	// get relational properties
-	CDrvdPropRelational *pdprel =
-			CDrvdPropRelational::GetRelationalProperties(pexprRelational->Pdp(DrvdPropArray::EptRelational));
+	CDrvdPropRelational *pdprel = CDrvdPropRelational::GetRelationalProperties(
+		pexprRelational->Pdp(DrvdPropArray::EptRelational));
 
 	// TODO: , Feb 20, 2012, we currently only split limit with offset 0.
 	if (!CUtils::FHasZeroOffset(pexpr) || 0 < pdprel->PcrsOuter()->Size())
@@ -120,30 +106,24 @@ CXformSplitLimit::Transform
 	pexprRelational->AddRef();
 
 	// assemble local limit operator
-	CExpression *pexprLimitLocal = PexprLimit
-			(
-			mp,
-			pexprRelational,
-			pexprScalarStart,
-			pexprScalarRows,
-			pos,
-			false, // fGlobal
-			popLimit->FHasCount(),
-			popLimit->IsTopLimitUnderDMLorCTAS()
-			);
+	CExpression *pexprLimitLocal = PexprLimit(mp,
+											  pexprRelational,
+											  pexprScalarStart,
+											  pexprScalarRows,
+											  pos,
+											  false,  // fGlobal
+											  popLimit->FHasCount(),
+											  popLimit->IsTopLimitUnderDMLorCTAS());
 
 	// assemble global limit operator
-	CExpression *pexprLimitGlobal = PexprLimit
-			(
-			mp,
-			pexprLimitLocal,
-			pexprScalarStart,
-			pexprScalarRows,
-			pos,
-			true, // fGlobal
-			popLimit->FHasCount(),
-			popLimit->IsTopLimitUnderDMLorCTAS()
-			);
+	CExpression *pexprLimitGlobal = PexprLimit(mp,
+											   pexprLimitLocal,
+											   pexprScalarStart,
+											   pexprScalarRows,
+											   pos,
+											   true,  // fGlobal
+											   popLimit->FHasCount(),
+											   popLimit->IsTopLimitUnderDMLorCTAS());
 
 	pxfres->Add(pexprLimitGlobal);
 }
@@ -158,32 +138,26 @@ CXformSplitLimit::Transform
 //
 //---------------------------------------------------------------------------
 CExpression *
-CXformSplitLimit::PexprLimit
-	(
-	IMemoryPool *mp,
-	CExpression *pexprRelational,
-	CExpression *pexprScalarStart,
-	CExpression *pexprScalarRows,
-	COrderSpec *pos,
-	BOOL fGlobal,
-	BOOL fHasCount,
-	BOOL fTopLimitUnderDML
-	)
-	const
+CXformSplitLimit::PexprLimit(IMemoryPool *mp,
+							 CExpression *pexprRelational,
+							 CExpression *pexprScalarStart,
+							 CExpression *pexprScalarRows,
+							 COrderSpec *pos,
+							 BOOL fGlobal,
+							 BOOL fHasCount,
+							 BOOL fTopLimitUnderDML) const
 {
 	pexprScalarStart->AddRef();
 	pexprScalarRows->AddRef();
 	pos->AddRef();
 
 	// assemble global limit operator
-	CExpression *pexprLimit = GPOS_NEW(mp) CExpression
-			(
-			mp,
-			GPOS_NEW(mp) CLogicalLimit(mp, pos, fGlobal, fHasCount, fTopLimitUnderDML),
-			pexprRelational,
-			pexprScalarStart,
-			pexprScalarRows
-			);
+	CExpression *pexprLimit = GPOS_NEW(mp)
+		CExpression(mp,
+					GPOS_NEW(mp) CLogicalLimit(mp, pos, fGlobal, fHasCount, fTopLimitUnderDML),
+					pexprRelational,
+					pexprScalarStart,
+					pexprScalarRows);
 
 	return pexprLimit;
 }

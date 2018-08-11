@@ -64,9 +64,7 @@ namespace gpdxl
 
 	public:
 		// ctor
-		CDXLPhysicalAgg(IMemoryPool *mp,
-						EdxlAggStrategy dxl_agg_strategy,
-						BOOL stream_safe);
+		CDXLPhysicalAgg(IMemoryPool *mp, EdxlAggStrategy dxl_agg_strategy, BOOL stream_safe);
 
 		// dtor
 		virtual ~CDXLPhysicalAgg();

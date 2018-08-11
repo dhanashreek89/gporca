@@ -26,22 +26,17 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CXformLeftOuterJoin2NLJoin::CXformLeftOuterJoin2NLJoin
-	(
-	IMemoryPool *mp
-	)
-	:
-	// pattern
-	CXformImplementation
-		(
-		GPOS_NEW(mp) CExpression
-					(mp, 
-					 GPOS_NEW(mp) CLogicalLeftOuterJoin(mp),
-					 GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)), // left child
-					 GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)), // right child
-					 GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))) // predicate
-		)
-{}
+CXformLeftOuterJoin2NLJoin::CXformLeftOuterJoin2NLJoin(IMemoryPool *mp)
+	:  // pattern
+	  CXformImplementation(GPOS_NEW(mp) CExpression(
+		  mp,
+		  GPOS_NEW(mp) CLogicalLeftOuterJoin(mp),
+		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // left child
+		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // right child
+		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)))  // predicate
+	  )
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -53,11 +48,7 @@ CXformLeftOuterJoin2NLJoin::CXformLeftOuterJoin2NLJoin
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise
-CXformLeftOuterJoin2NLJoin::Exfp
-	(
-	CExpressionHandle &exprhdl
-	)
-	const
+CXformLeftOuterJoin2NLJoin::Exfp(CExpressionHandle &exprhdl) const
 {
 	return CXformUtils::ExfpLogicalJoin2PhysicalJoin(exprhdl);
 }
@@ -72,13 +63,9 @@ CXformLeftOuterJoin2NLJoin::Exfp
 //
 //---------------------------------------------------------------------------
 void
-CXformLeftOuterJoin2NLJoin::Transform
-	(
-	CXformContext *pxfctxt,
-	CXformResult *pxfres,
-	CExpression *pexpr
-	)
-	const
+CXformLeftOuterJoin2NLJoin::Transform(CXformContext *pxfctxt,
+									  CXformResult *pxfres,
+									  CExpression *pexpr) const
 {
 	GPOS_ASSERT(NULL != pxfctxt);
 	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
@@ -86,7 +73,6 @@ CXformLeftOuterJoin2NLJoin::Transform
 
 	CXformUtils::ImplementNLJoin<CPhysicalLeftOuterNLJoin>(pxfctxt, pxfres, pexpr);
 }
-	
+
 
 // EOF
-

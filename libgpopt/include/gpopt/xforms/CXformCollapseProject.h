@@ -28,48 +28,43 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformCollapseProject : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformCollapseProject(const CXformCollapseProject &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformCollapseProject(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformCollapseProject(const CXformCollapseProject &);
+		// dtor
+		virtual ~CXformCollapseProject()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfCollapseProject;
+		}
 
-			// ctor
-			explicit
-			CXformCollapseProject(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformCollapseProject";
+		}
 
-			// dtor
-			virtual
-			~CXformCollapseProject()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfCollapseProject;
-			}
+		// actual transform
+		void Transform(CXformContext *, CXformResult *, CExpression *) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformCollapseProject";
-			}
+	};  // class CXformCollapseProject
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp (CExpressionHandle &exprhdl) const;
+}  // namespace gpopt
 
-			// actual transform
-			void Transform(CXformContext *, CXformResult *, CExpression *) const;
-
-	}; // class CXformCollapseProject
-
-}
-
-#endif // !GPOPT_CXformCollapseProject_H
+#endif  // !GPOPT_CXformCollapseProject_H
 
 // EOF

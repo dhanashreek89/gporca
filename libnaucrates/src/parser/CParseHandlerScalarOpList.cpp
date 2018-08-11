@@ -66,8 +66,7 @@ CParseHandlerScalarOpList::StartElement(const XMLCh *const element_uri,
 		// create the list
 		m_dxl_op_list_type = dxl_op_list_type;
 		m_dxlnode = GPOS_NEW(m_mp)
-			CDXLNode(m_mp,
-					 GPOS_NEW(m_mp) CDXLScalarOpList(m_mp, m_dxl_op_list_type));
+			CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarOpList(m_mp, m_dxl_op_list_type));
 	}
 	else
 	{

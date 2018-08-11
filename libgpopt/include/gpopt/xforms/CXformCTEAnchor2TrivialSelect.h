@@ -28,53 +28,44 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformCTEAnchor2TrivialSelect : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformCTEAnchor2TrivialSelect(const CXformCTEAnchor2TrivialSelect &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformCTEAnchor2TrivialSelect(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformCTEAnchor2TrivialSelect(const CXformCTEAnchor2TrivialSelect &);
+		// dtor
+		virtual ~CXformCTEAnchor2TrivialSelect()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfCTEAnchor2TrivialSelect;
+		}
 
-			// ctor
-			explicit
-			CXformCTEAnchor2TrivialSelect(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformCTEAnchor2TrivialSelect";
+		}
 
-			// dtor
-			virtual
-			~CXformCTEAnchor2TrivialSelect() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfCTEAnchor2TrivialSelect;
-			}
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformCTEAnchor2TrivialSelect";
-			}
+	};  // class CXformCTEAnchor2TrivialSelect
+}  // namespace gpopt
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			virtual
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformCTEAnchor2TrivialSelect
-}
-
-#endif // !GPOPT_CXformCTEAnchor2TrivialSelect_H
+#endif  // !GPOPT_CXformCTEAnchor2TrivialSelect_H
 
 // EOF

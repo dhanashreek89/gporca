@@ -42,104 +42,89 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalarSwitch : public CScalar
 	{
+	private:
+		// return type
+		IMDId *m_mdid_type;
 
-		private:
+		// is operator return type BOOL?
+		BOOL m_fBoolReturnType;
 
-			// return type
-			IMDId *m_mdid_type;
+		// private copy ctor
+		CScalarSwitch(const CScalarSwitch &);
 
-			// is operator return type BOOL?
-			BOOL m_fBoolReturnType;
+	public:
+		// ctor
+		CScalarSwitch(IMemoryPool *mp, IMDId *mdid_type);
 
-			// private copy ctor
-			CScalarSwitch(const CScalarSwitch &);
+		// dtor
+		virtual ~CScalarSwitch();
 
-		public:
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopScalarSwitch;
+		}
 
-			// ctor
-			CScalarSwitch(IMemoryPool *mp, IMDId *mdid_type);
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CScalarSwitch";
+		}
 
-			// dtor
-			virtual
-			~CScalarSwitch();
+		// the type of the scalar expression
+		virtual IMDId *
+		MDIdType() const
+		{
+			return m_mdid_type;
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopScalarSwitch;
-			}
+		// operator specific hash function
+		virtual ULONG HashValue() const;
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CScalarSwitch";
-			}
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// the type of the scalar expression
-			virtual
-			IMDId *MDIdType() const
-			{
-				return m_mdid_type;
-			}
+		// sensitivity to order of inputs
+		virtual BOOL
+		FInputOrderSensitive() const
+		{
+			return true;
+		}
 
-			// operator specific hash function
-			virtual
-			ULONG HashValue() const;
+		// return a copy of the operator with remapped columns
+		virtual COperator *
+		PopCopyWithRemappedColumns(IMemoryPool *,		//mp,
+								   UlongToColRefMap *,  //colref_mapping,
+								   BOOL					//must_exist
+		)
+		{
+			return PopCopyDefault();
+		}
 
-			// match function
-			virtual BOOL
-			Matches(COperator *pop) const;
+		// boolean expression evaluation
+		virtual EBoolEvalResult
+		Eber(ULongPtrArray *pdrgpulChildren) const
+		{
+			return EberNullOnAllNullChildren(pdrgpulChildren);
+		}
 
-			// sensitivity to order of inputs
-			virtual
-			BOOL FInputOrderSensitive() const
-			{
-				return true;
-			}
+		// conversion function
+		static CScalarSwitch *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopScalarSwitch == pop->Eopid());
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *, //mp,
-						UlongToColRefMap *, //colref_mapping,
-						BOOL //must_exist
-						)
-			{
-				return PopCopyDefault();
-			}
+			return dynamic_cast<CScalarSwitch *>(pop);
+		}
 
-			// boolean expression evaluation
-			virtual
-			EBoolEvalResult Eber
-				(
-				ULongPtrArray *pdrgpulChildren
-				)
-				const
-			{
-				return EberNullOnAllNullChildren(pdrgpulChildren);
-			}
+	};  // class CScalarSwitch
 
-			// conversion function
-			static
-			CScalarSwitch *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopScalarSwitch == pop->Eopid());
-
-				return dynamic_cast<CScalarSwitch*>(pop);
-			}
-
-	}; // class CScalarSwitch
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CScalarSwitch_H
+#endif  // !GPOPT_CScalarSwitch_H
 
 // EOF

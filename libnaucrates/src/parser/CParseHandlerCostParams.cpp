@@ -32,8 +32,7 @@ using namespace gpopt;
 CParseHandlerCostParams::CParseHandlerCostParams(IMemoryPool *mp,
 												 CParseHandlerManager *parse_handler_mgr,
 												 CParseHandlerBase *parse_handler_root)
-	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root),
-	  m_cost_model_params(NULL)
+	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root), m_cost_model_params(NULL)
 {
 }
 

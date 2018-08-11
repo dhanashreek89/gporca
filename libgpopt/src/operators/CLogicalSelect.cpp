@@ -34,12 +34,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalSelect::CLogicalSelect
-	(
-	IMemoryPool *mp
-	)
-	:
-	CLogicalUnary(mp)
+CLogicalSelect::CLogicalSelect(IMemoryPool *mp) : CLogicalUnary(mp)
 {
 	m_phmPexprPartPred = GPOS_NEW(mp) ExprPredToExprPredPartMap(mp);
 }
@@ -57,11 +52,8 @@ CLogicalSelect::~CLogicalSelect()
 //
 //---------------------------------------------------------------------------
 CColRefSet *
-CLogicalSelect::PcrsDeriveOutput
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
+CLogicalSelect::PcrsDeriveOutput(IMemoryPool *,  // mp
+								 CExpressionHandle &exprhdl)
 {
 	return PcrsDeriveOutputPassThru(exprhdl);
 }
@@ -76,12 +68,8 @@ CLogicalSelect::PcrsDeriveOutput
 //
 //---------------------------------------------------------------------------
 CKeyCollection *
-CLogicalSelect::PkcDeriveKeys
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CLogicalSelect::PkcDeriveKeys(IMemoryPool *,  // mp
+							  CExpressionHandle &exprhdl) const
 {
 	return PkcDeriveKeysPassThru(exprhdl, 0 /* ulChild */);
 }
@@ -96,11 +84,7 @@ CLogicalSelect::PkcDeriveKeys
 //
 //---------------------------------------------------------------------------
 CXformSet *
-CLogicalSelect::PxfsCandidates
-	(
-	IMemoryPool *mp
-	) 
-	const
+CLogicalSelect::PxfsCandidates(IMemoryPool *mp) const
 {
 	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
 
@@ -128,12 +112,8 @@ CLogicalSelect::PxfsCandidates
 //
 //---------------------------------------------------------------------------
 CMaxCard
-CLogicalSelect::Maxcard
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CLogicalSelect::Maxcard(IMemoryPool *,  // mp
+						CExpressionHandle &exprhdl) const
 {
 	// in case of a false condition or a contradiction, maxcard should be zero
 	CExpression *pexprScalar = exprhdl.PexprScalarChild(1);
@@ -157,13 +137,9 @@ CLogicalSelect::Maxcard
 //
 //---------------------------------------------------------------------------
 IStatistics *
-CLogicalSelect::PstatsDerive
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	IStatisticsArray *stats_ctxt
-	)
-	const
+CLogicalSelect::PstatsDerive(IMemoryPool *mp,
+							 CExpressionHandle &exprhdl,
+							 IStatisticsArray *stats_ctxt) const
 {
 	GPOS_ASSERT(Esp(exprhdl) > EspNone);
 	IStatistics *child_stats = exprhdl.Pstats(0);
@@ -177,7 +153,8 @@ CLogicalSelect::PstatsDerive
 
 	// remove implied predicates from selection condition to avoid cardinality under-estimation
 	CExpression *pexprScalar = exprhdl.PexprScalarChild(1 /*child_index*/);
-	CExpression *pexprPredicate = CPredicateUtils::PexprRemoveImpliedConjuncts(mp, pexprScalar, exprhdl);
+	CExpression *pexprPredicate =
+		CPredicateUtils::PexprRemoveImpliedConjuncts(mp, pexprScalar, exprhdl);
 
 
 	// split selection predicate into local predicate and predicate involving outer references
@@ -187,10 +164,12 @@ CLogicalSelect::PstatsDerive
 	// get outer references from expression handle
 	CColRefSet *outer_refs = exprhdl.GetRelationalProperties()->PcrsOuter();
 
-	CPredicateUtils::SeparateOuterRefs(mp, pexprPredicate, outer_refs, &local_expr, &expr_with_outer_refs);
+	CPredicateUtils::SeparateOuterRefs(
+		mp, pexprPredicate, outer_refs, &local_expr, &expr_with_outer_refs);
 	pexprPredicate->Release();
 
-	IStatistics *stats = CFilterStatsProcessor::MakeStatsFilterForScalarExpr(mp, exprhdl, child_stats, local_expr, expr_with_outer_refs, stats_ctxt);
+	IStatistics *stats = CFilterStatsProcessor::MakeStatsFilterForScalarExpr(
+		mp, exprhdl, child_stats, local_expr, expr_with_outer_refs, stats_ctxt);
 	local_expr->Release();
 	expr_with_outer_refs->Release();
 
@@ -217,17 +196,14 @@ CLogicalSelect::PstatsDerive
 //	|--CScalarIdent "value_date" (0)
 //	+--CScalarConst (559094400000000.000)
 CExpression *
-CLogicalSelect::PexprPartPred
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CExpression *, //pexprInput
-	ULONG
+CLogicalSelect::PexprPartPred(IMemoryPool *mp,
+							  CExpressionHandle &exprhdl,
+							  CExpression *,  //pexprInput
+							  ULONG
 #ifdef GPOS_DEBUG
-	child_index
-#endif //GPOS_DEBUG
-	)
-	const
+								  child_index
+#endif  //GPOS_DEBUG
+							  ) const
 {
 	GPOS_ASSERT(0 == child_index);
 
@@ -266,14 +242,13 @@ CLogicalSelect::PexprPartPred
 	const ULONG ulKeySets = pdrgppartkeys->Size();
 	for (ULONG ul = 0; NULL == pexprPredOnPartKey && ul < ulKeySets; ul++)
 	{
-		pexprPredOnPartKey = CPredicateUtils::PexprExtractPredicatesOnPartKeys
-												(
-												mp,
-												pexprScalar,
-												(*pdrgppartkeys)[ul]->Pdrgpdrgpcr(),
-												NULL, //pcrsAllowedRefs
-												true //fUseConstraints
-												);
+		pexprPredOnPartKey =
+			CPredicateUtils::PexprExtractPredicatesOnPartKeys(mp,
+															  pexprScalar,
+															  (*pdrgppartkeys)[ul]->Pdrgpdrgpcr(),
+															  NULL,  //pcrsAllowedRefs
+															  true   //fUseConstraints
+			);
 	}
 
 	if (pexprPredOnPartKey != NULL)
@@ -289,4 +264,3 @@ CLogicalSelect::PexprPartPred
 }
 
 // EOF
-

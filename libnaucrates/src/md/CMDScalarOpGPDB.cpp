@@ -54,8 +54,8 @@ CMDScalarOpGPDB::CMDScalarOpGPDB(IMemoryPool *mp,
 	  m_mdid_op_classes_array(mdid_op_classes_array)
 {
 	GPOS_ASSERT(NULL != mdid_op_classes_array);
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+	m_dxl_str =
+		CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
 }
 
 

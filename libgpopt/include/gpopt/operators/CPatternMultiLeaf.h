@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPatternMultiLeaf
@@ -29,54 +29,47 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPatternMultiLeaf : public CPattern
 	{
+	private:
+		// private copy ctor
+		CPatternMultiLeaf(const CPatternMultiLeaf &);
 
-		private:
+	public:
+		// ctor
+		explicit CPatternMultiLeaf(IMemoryPool *mp) : CPattern(mp)
+		{
+		}
 
-			// private copy ctor
-			CPatternMultiLeaf(const CPatternMultiLeaf &);
+		// dtor
+		virtual ~CPatternMultiLeaf()
+		{
+		}
 
-		public:
-		
-			// ctor
-			explicit
-			CPatternMultiLeaf
-				(
-				IMemoryPool *mp
-				)
-				: 
-				CPattern(mp)
-			{}
+		// check if operator is a pattern leaf
+		virtual BOOL
+		FLeaf() const
+		{
+			return true;
+		}
 
-			// dtor
-			virtual 
-			~CPatternMultiLeaf() {}
-			
-			// check if operator is a pattern leaf
-			virtual
-			BOOL FLeaf() const
-			{
-				return true;
-			}
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPatternMultiLeaf;
+		}
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopPatternMultiLeaf;
-			}
-			
-			// return a string for operator name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CPatternMultiLeaf";
-			}		
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPatternMultiLeaf";
+		}
 
-	}; // class CPatternMultiLeaf
+	};  // class CPatternMultiLeaf
 
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CPatternMultiLeaf_H
+#endif  // !GPOPT_CPatternMultiLeaf_H
 
 // EOF

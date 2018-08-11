@@ -29,8 +29,8 @@ using namespace gpdxl;
 CDXLScalarDistinctComp::CDXLScalarDistinctComp(IMemoryPool *mp, IMDId *mdid_op)
 	: CDXLScalarComp(mp,
 					 mdid_op,
-					 GPOS_NEW(mp) CWStringConst(
-						 mp, CDXLTokens::GetDXLTokenStr(EdxltokenEq)->GetBuffer()))
+					 GPOS_NEW(mp)
+						 CWStringConst(mp, CDXLTokens::GetDXLTokenStr(EdxltokenEq)->GetBuffer()))
 {
 }
 

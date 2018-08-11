@@ -13,20 +13,16 @@ namespace gpopt
 {
 	class CColConstraintsArrayMapper : public IColConstraintsMapper
 	{
-		public:
-			CColConstraintsArrayMapper
-				(
-				gpos::IMemoryPool *mp,
-				CConstraintArray *pdrgpcnstr
-				);
-			virtual CConstraintArray *PdrgPcnstrLookup(CColRef *colref);
+	public:
+		CColConstraintsArrayMapper(gpos::IMemoryPool *mp, CConstraintArray *pdrgpcnstr);
+		virtual CConstraintArray *PdrgPcnstrLookup(CColRef *colref);
 
-			virtual ~CColConstraintsArrayMapper();
+		virtual ~CColConstraintsArrayMapper();
 
-		private:
-			gpos::IMemoryPool *m_mp;
-			CConstraintArray *m_pdrgpcnstr;
+	private:
+		gpos::IMemoryPool *m_mp;
+		CConstraintArray *m_pdrgpcnstr;
 	};
-}
+}  // namespace gpopt
 
-#endif //GPOPT_CColConstraintsArrayMapper_H
+#endif  //GPOPT_CColConstraintsArrayMapper_H

@@ -18,7 +18,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CXformImplementation
@@ -29,35 +29,30 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformImplementation : public CXform
 	{
+	private:
+		// private copy ctor
+		CXformImplementation(const CXformImplementation &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementation(CExpression *);
 
-			// private copy ctor
-			CXformImplementation(const CXformImplementation &);
+		// dtor
+		virtual ~CXformImplementation();
 
-		public:
-		
-			// ctor
-			explicit
-			CXformImplementation(CExpression *);
+		// type of operator
+		virtual BOOL
+		FImplementation() const
+		{
+			GPOS_ASSERT(!FSubstitution() && !FExploration());
+			return true;
+		}
 
-			// dtor
-			virtual 
-			~CXformImplementation();
+	};  // class CXformImplementation
 
-			// type of operator
-			virtual
-			BOOL FImplementation() const
-			{
-				GPOS_ASSERT(!FSubstitution() && !FExploration());
-				return true;
-			}
-
-	}; // class CXformImplementation
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformImplementation_H
+#endif  // !GPOPT_CXformImplementation_H
 
 // EOF

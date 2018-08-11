@@ -19,7 +19,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPrintPrefix
@@ -30,36 +30,33 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPrintPrefix
 	{
-		private:
+	private:
+		// previous prefix; usually in the previous stack frame
+		const CPrintPrefix *m_ppfx;
 
-			// previous prefix; usually in the previous stack frame
-			const CPrintPrefix *m_ppfx;
-			
-			// actual string
-			const CHAR *m_sz;
+		// actual string
+		const CHAR *m_sz;
 
-		public:
-		
-			// ctor
-			explicit
-			CPrintPrefix(const CPrintPrefix *, const CHAR *);
-		
-			// print
-			IOstream &OsPrint(IOstream &os) const;
+	public:
+		// ctor
+		explicit CPrintPrefix(const CPrintPrefix *, const CHAR *);
 
-	}; // class CPrintPrefix
+		// print
+		IOstream &OsPrint(IOstream &os) const;
+
+	};  // class CPrintPrefix
 
 
 	// shorthand for printing
-	inline
-	IOstream &operator << (IOstream &os, CPrintPrefix &pfx)
+	inline IOstream &
+	operator<<(IOstream &os, CPrintPrefix &pfx)
 	{
 		return pfx.OsPrint(os);
 	}
 
-}
+}  // namespace gpopt
 
-#endif // !GPOS_CPrintPrefix_H
+#endif  // !GPOS_CPrintPrefix_H
 
 
 // EOF

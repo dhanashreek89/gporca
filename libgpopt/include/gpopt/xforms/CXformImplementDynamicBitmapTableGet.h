@@ -9,7 +9,7 @@
 //		Implement DynamicBitmapTableGet
 //
 //	@owner:
-//		
+//
 //
 //	@test:
 //
@@ -34,51 +34,48 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformImplementDynamicBitmapTableGet : public CXformImplementation
 	{
-		private:
-			// disable copy ctor
-			CXformImplementDynamicBitmapTableGet(const CXformImplementDynamicBitmapTableGet &);
+	private:
+		// disable copy ctor
+		CXformImplementDynamicBitmapTableGet(const CXformImplementDynamicBitmapTableGet &);
 
-		public:
-			// ctor
-			explicit
-			CXformImplementDynamicBitmapTableGet(IMemoryPool *mp);
+	public:
+		// ctor
+		explicit CXformImplementDynamicBitmapTableGet(IMemoryPool *mp);
 
-			// dtor
-			virtual
-			~CXformImplementDynamicBitmapTableGet()
-			{}
+		// dtor
+		virtual ~CXformImplementDynamicBitmapTableGet()
+		{
+		}
 
-			// identifier
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementDynamicBitmapTableGet;
-			}
+		// identifier
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementDynamicBitmapTableGet;
+		}
 
-			// xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementDynamicBitmapTableGet";
-			}
+		// xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementDynamicBitmapTableGet";
+		}
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp
-				(
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{
-				return CXform::ExfpHigh;
-			}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise
+		Exfp(CExpressionHandle &  // exprhdl
+			 ) const
+		{
+			return CXform::ExfpHigh;
+		}
 
-			// actual transform
-			virtual
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
 	};  // class CXformImplementDynamicBitmapTableGet
-}
+}  // namespace gpopt
 
 #endif  // !GPOPT_CXformImplementDynamicBitmapTableGet_H
 

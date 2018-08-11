@@ -47,8 +47,7 @@ CBitSet::CBitSetLink::CBitSetLink(IMemoryPool *mp, ULONG offset, ULONG vector_si
 //		copy ctor
 //
 //---------------------------------------------------------------------------
-CBitSet::CBitSetLink::CBitSetLink(IMemoryPool *mp, const CBitSetLink &bsl)
-	: m_offset(bsl.m_offset)
+CBitSet::CBitSetLink::CBitSetLink(IMemoryPool *mp, const CBitSetLink &bsl) : m_offset(bsl.m_offset)
 {
 	m_vec = GPOS_NEW(mp) CBitVector(mp, *bsl.GetVec());
 }
@@ -262,8 +261,7 @@ CBitSet::ExchangeSet(ULONG pos)
 	CBitSetLink *bsl = FindLinkByOffset(offset);
 	if (NULL == bsl || bsl->GetOffset() != offset)
 	{
-		CBitSetLink *pbsl_new =
-			GPOS_NEW(m_mp) CBitSetLink(m_mp, offset, m_vector_size);
+		CBitSetLink *pbsl_new = GPOS_NEW(m_mp) CBitSetLink(m_mp, offset, m_vector_size);
 		if (NULL == bsl)
 		{
 			m_bsllist.Prepend(pbsl_new);

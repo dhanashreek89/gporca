@@ -65,10 +65,8 @@ CJoinStatsProcessor::JoinHistograms(
 	{
 		// use Cartesian product as scale factor
 		*scale_factor = num_rows1 * num_rows2;
-		*result_hist1 =
-			GPOS_NEW(mp) CHistogram(GPOS_NEW(mp) CBucketArray(mp));
-		*result_hist2 =
-			GPOS_NEW(mp) CHistogram(GPOS_NEW(mp) CBucketArray(mp));
+		*result_hist1 = GPOS_NEW(mp) CHistogram(GPOS_NEW(mp) CBucketArray(mp));
+		*result_hist2 = GPOS_NEW(mp) CHistogram(GPOS_NEW(mp) CBucketArray(mp));
 
 		return;
 	}
@@ -236,8 +234,7 @@ CJoinStatsProcessor::SetResultingJoinStats(IMemoryPool *mp,
 	const CStatistics *inner_side_stats = dynamic_cast<const CStatistics *>(inner_stats_input);
 
 	// create hash map from colid -> histogram for resultant structure
-	UlongToHistogramMap *result_col_hist_mapping =
-		GPOS_NEW(mp) UlongToHistogramMap(mp);
+	UlongToHistogramMap *result_col_hist_mapping = GPOS_NEW(mp) UlongToHistogramMap(mp);
 
 	// build a bitset with all join columns
 	CBitSet *join_colids = GPOS_NEW(mp) CBitSet(mp);
@@ -257,8 +254,7 @@ CJoinStatsProcessor::SetResultingJoinStats(IMemoryPool *mp,
 	outer_stats->AddNotExcludedHistograms(mp, join_colids, result_col_hist_mapping);
 	if (!semi_join)
 	{
-		inner_side_stats->AddNotExcludedHistograms(
-			mp, join_colids, result_col_hist_mapping);
+		inner_side_stats->AddNotExcludedHistograms(mp, join_colids, result_col_hist_mapping);
 	}
 
 	CDoubleArray *join_conds_scale_factors = GPOS_NEW(mp) CDoubleArray(mp);
@@ -304,8 +300,7 @@ CJoinStatsProcessor::SetResultingJoinStats(IMemoryPool *mp,
 											outer_histogram_after,
 											join_type);
 
-		CStatisticsUtils::AddHistogram(
-			mp, colid1, outer_histogram_after, result_col_hist_mapping);
+		CStatisticsUtils::AddHistogram(mp, colid1, outer_histogram_after, result_col_hist_mapping);
 		if (!semi_join)
 		{
 			CStatisticsUtils::AddHistogram(
@@ -339,13 +334,12 @@ CJoinStatsProcessor::SetResultingJoinStats(IMemoryPool *mp,
 	}
 
 	// create an output stats object
-	CStatistics *join_stats =
-		GPOS_NEW(mp) CStatistics(mp,
-										  result_col_hist_mapping,
-										  col_width_mapping_result,
-										  num_join_rows,
-										  output_is_empty,
-										  outer_stats->GetNumberOfPredicates());
+	CStatistics *join_stats = GPOS_NEW(mp) CStatistics(mp,
+													   result_col_hist_mapping,
+													   col_width_mapping_result,
+													   num_join_rows,
+													   output_is_empty,
+													   outer_stats->GetNumberOfPredicates());
 
 	// In the output statistics object, the upper bound source cardinality of the join column
 	// cannot be greater than the upper bound source cardinality information maintained in the input
@@ -564,8 +558,8 @@ CJoinStatsProcessor::DeriveStatsWithOuterRefs(
 		exprhdl  // handle attached to the logical expression we want to derive stats for
 #endif			 // GPOS_DEBUG
 	,
-	CExpression *expr,			  // scalar condition to be used for stats derivation
-	IStatistics *stats,			  // statistics object of the attached expression
+	CExpression *expr,					// scalar condition to be used for stats derivation
+	IStatistics *stats,					// statistics object of the attached expression
 	IStatisticsArray *all_outer_stats,  // array of stats objects where outer references are defined
 	IStatistics::EStatsJoinType join_type)
 {
@@ -592,8 +586,7 @@ CJoinStatsProcessor::DeriveStatsWithOuterRefs(
 	statistics_array->Release();
 
 	// scale result using cardinality of outer stats and set number of rebinds of returned stats
-	IStatistics *result_stats =
-		result_join_stats->ScaleStats(mp, CDouble(1.0 / num_rows_outer));
+	IStatistics *result_stats = result_join_stats->ScaleStats(mp, CDouble(1.0 / num_rows_outer));
 	result_stats->SetRebinds(num_rows_outer);
 	result_join_stats->Release();
 

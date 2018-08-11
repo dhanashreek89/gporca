@@ -157,7 +157,8 @@ CDXLScalarIdent::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *
 BOOL
 CDXLScalarIdent::HasBoolResult(CMDAccessor *md_accessor) const
 {
-	return (IMDType::EtiBool == md_accessor->RetrieveType(m_dxl_colref->MDIdType())->GetDatumType());
+	return (IMDType::EtiBool ==
+			md_accessor->RetrieveType(m_dxl_colref->MDIdType())->GetDatumType());
 }
 
 #ifdef GPOS_DEBUG

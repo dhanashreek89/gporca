@@ -35,82 +35,77 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CStatisticsConfig : public CRefCount
 	{
+	private:
+		// shared memory pool
+		IMemoryPool *m_mp;
 
-		private:
+		// damping factor for filter
+		CDouble m_damping_factor_filter;
 
-			// shared memory pool
-			IMemoryPool *m_mp;
+		// damping factor for join
+		CDouble m_damping_factor_join;
 
-			// damping factor for filter
-			CDouble m_damping_factor_filter;
+		// damping factor for group by
+		CDouble m_damping_factor_groupby;
 
-			// damping factor for join
-			CDouble m_damping_factor_join;
+		// hash set of md ids for columns with missing statistics
+		MdidHashSet *m_phsmdidcolinfo;
 
-			// damping factor for group by
-			CDouble m_damping_factor_groupby;
+		// mutex for locking entry when accessing / changing missing statistics column info
+		CMutex m_mutexMissingColStats;
 
-			// hash set of md ids for columns with missing statistics
-			MdidHashSet *m_phsmdidcolinfo;
+	public:
+		// ctor
+		CStatisticsConfig(IMemoryPool *mp,
+						  CDouble damping_factor_filter,
+						  CDouble damping_factor_join,
+						  CDouble damping_factor_groupby);
 
-			// mutex for locking entry when accessing / changing missing statistics column info
-			CMutex m_mutexMissingColStats;
+		// dtor
+		~CStatisticsConfig();
 
-		public:
+		// damping factor for filter
+		CDouble
+		DDampingFactorFilter() const
+		{
+			return m_damping_factor_filter;
+		}
 
-			// ctor
-			CStatisticsConfig
-				(
-				IMemoryPool *mp,
-				CDouble damping_factor_filter,
-				CDouble damping_factor_join,
-				CDouble damping_factor_groupby
-				);
+		// damping factor for join
+		CDouble
+		DDampingFactorJoin() const
+		{
+			return m_damping_factor_join;
+		}
 
-			// dtor
-			~CStatisticsConfig();
+		// damping factor for group by
+		CDouble
+		DDampingFactorGroupBy() const
+		{
+			return m_damping_factor_groupby;
+		}
 
-			// damping factor for filter
-			CDouble DDampingFactorFilter() const
-			{
-				return m_damping_factor_filter;
-			}
+		// add the information about the column with the missing statistics
+		void AddMissingStatsColumn(CMDIdColStats *pmdidCol);
 
-			// damping factor for join
-			CDouble DDampingFactorJoin() const
-			{
-				return m_damping_factor_join;
-			}
+		// collect the missing statistics columns
+		void CollectMissingStatsColumns(IMdIdArray *pdrgmdid);
 
-			// damping factor for group by
-			CDouble DDampingFactorGroupBy() const
-			{
-				return m_damping_factor_groupby;
-			}
-
-			// add the information about the column with the missing statistics
-			void AddMissingStatsColumn(CMDIdColStats *pmdidCol);
-
-			// collect the missing statistics columns
-			void CollectMissingStatsColumns(IMdIdArray *pdrgmdid);
-
-			// generate default optimizer configurations
-			static
-			CStatisticsConfig *PstatsconfDefault(IMemoryPool *mp)
-			{
-				return GPOS_NEW(mp) CStatisticsConfig
-									(
-									mp,
-									0.75 /* damping_factor_filter */,
-									0.01 /* damping_factor_join */,
-									0.75 /* damping_factor_groupby */
-									);
-			}
+		// generate default optimizer configurations
+		static CStatisticsConfig *
+		PstatsconfDefault(IMemoryPool *mp)
+		{
+			return GPOS_NEW(mp) CStatisticsConfig(mp,
+												  0.75 /* damping_factor_filter */,
+												  0.01 /* damping_factor_join */,
+												  0.75 /* damping_factor_groupby */
+			);
+		}
 
 
-	}; // class CStatisticsConfig
-}
+	};  // class CStatisticsConfig
+}  // namespace gpopt
 
-#endif // !GPOPT_CStatisticsConfig_H
+#endif  // !GPOPT_CStatisticsConfig_H
 
 // EOF

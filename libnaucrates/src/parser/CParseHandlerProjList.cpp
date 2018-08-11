@@ -57,8 +57,7 @@ CParseHandlerProjList::StartElement(const XMLCh *const element_uri,
 									  element_local_name))
 	{
 		// start the proj list
-		m_dxlnode = GPOS_NEW(m_mp)
-			CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarProjList(m_mp));
+		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarProjList(m_mp));
 	}
 	else if (0 == XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenScalarProjElem),
 										   element_local_name))
@@ -67,11 +66,8 @@ CParseHandlerProjList::StartElement(const XMLCh *const element_uri,
 		GPOS_ASSERT(NULL != m_dxlnode);
 
 		// start new project element
-		CParseHandlerBase *parse_handler_proj_element =
-			CParseHandlerFactory::GetParseHandler(m_mp,
-												  CDXLTokens::XmlstrToken(EdxltokenScalarProjElem),
-												  m_parse_handler_mgr,
-												  this);
+		CParseHandlerBase *parse_handler_proj_element = CParseHandlerFactory::GetParseHandler(
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarProjElem), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(parse_handler_proj_element);
 
 		// store parse handler

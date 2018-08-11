@@ -17,9 +17,8 @@
 
 namespace gpopt
 {
-
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CScalarSubqueryAny
@@ -31,62 +30,54 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalarSubqueryAny : public CScalarSubqueryQuantified
 	{
-		
-		private:
+	private:
+		// private copy ctor
+		CScalarSubqueryAny(const CScalarSubqueryAny &);
 
-			// private copy ctor
-			CScalarSubqueryAny(const CScalarSubqueryAny &);
-		
-		public:
-		
-			// ctor
-			CScalarSubqueryAny
-				(
-				IMemoryPool *mp, 
-				IMDId *scalar_op_mdid, 
-				const CWStringConst *pstrScalarOp,
-				const CColRef *colref
-				);
+	public:
+		// ctor
+		CScalarSubqueryAny(IMemoryPool *mp,
+						   IMDId *scalar_op_mdid,
+						   const CWStringConst *pstrScalarOp,
+						   const CColRef *colref);
 
-			// dtor
-			virtual 
-			~CScalarSubqueryAny()
-			{}
+		// dtor
+		virtual ~CScalarSubqueryAny()
+		{
+		}
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopScalarSubqueryAny;
-			}
-			
-			// return a string for scalar subquery
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CScalarSubqueryAny";
-			}
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopScalarSubqueryAny;
+		}
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+		// return a string for scalar subquery
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CScalarSubqueryAny";
+		}
 
-			// conversion function
-			static
-			CScalarSubqueryAny *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopScalarSubqueryAny == pop->Eopid());
-				
-				return reinterpret_cast<CScalarSubqueryAny*>(pop);
-			}
+		// return a copy of the operator with remapped columns
+		virtual COperator *PopCopyWithRemappedColumns(IMemoryPool *mp,
+													  UlongToColRefMap *colref_mapping,
+													  BOOL must_exist);
 
-	}; // class CScalarSubqueryAny
-}
+		// conversion function
+		static CScalarSubqueryAny *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopScalarSubqueryAny == pop->Eopid());
 
-#endif // !GPOPT_CScalarSubqueryAny_H
+			return reinterpret_cast<CScalarSubqueryAny *>(pop);
+		}
+
+	};  // class CScalarSubqueryAny
+}  // namespace gpopt
+
+#endif  // !GPOPT_CScalarSubqueryAny_H
 
 // EOF

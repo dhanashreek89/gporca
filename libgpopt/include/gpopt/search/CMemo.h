@@ -29,10 +29,15 @@ namespace gpopt
 	class COptimizationContext;
 
 	// memo tree map definition
-	typedef CTreeMap<CCostContext, CExpression, CDrvdPropCtxtPlan, CCostContext::HashValue, CCostContext::Equals> MemoTreeMap;
+	typedef CTreeMap<CCostContext,
+					 CExpression,
+					 CDrvdPropCtxtPlan,
+					 CCostContext::HashValue,
+					 CCostContext::Equals>
+		MemoTreeMap;
 
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CMemo
@@ -43,149 +48,154 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CMemo
 	{
-		private:
-		
-			// definition of hash table key accessor
-			typedef
-					CSyncHashtableAccessByKey<
-						CGroupExpression, // entry
-						CGroupExpression, // search key
-						CSpinlockMemo> ShtAcc;
+	private:
+		// definition of hash table key accessor
+		typedef CSyncHashtableAccessByKey<CGroupExpression,  // entry
+										  CGroupExpression,  // search key
+										  CSpinlockMemo>
+			ShtAcc;
 
-			// definition of hash table iterator
-			typedef
-					CSyncHashtableIter<
-						CGroupExpression, // entry
-						CGroupExpression, // search key
-						CSpinlockMemo> ShtIter;
+		// definition of hash table iterator
+		typedef CSyncHashtableIter<CGroupExpression,  // entry
+								   CGroupExpression,  // search key
+								   CSpinlockMemo>
+			ShtIter;
 
-			// definition of hash table iterator accessor
-			typedef
-					CSyncHashtableAccessByIter<
-						CGroupExpression, // entry
-						CGroupExpression, // search key
-						CSpinlockMemo> ShtAccIter;
+		// definition of hash table iterator accessor
+		typedef CSyncHashtableAccessByIter<CGroupExpression,  // entry
+										   CGroupExpression,  // search key
+										   CSpinlockMemo>
+			ShtAccIter;
 
-			// memory pool
-			IMemoryPool *m_mp;
-		
-			// id counter for groups
-			CAtomicULONG m_aul;
+		// memory pool
+		IMemoryPool *m_mp;
 
-			// root group
-			CGroup *m_pgroupRoot;
+		// id counter for groups
+		CAtomicULONG m_aul;
 
-			// number of groups
-			volatile ULONG_PTR m_ulpGrps;
+		// root group
+		CGroup *m_pgroupRoot;
 
-			// tree map of member group expressions
-			MemoTreeMap *m_pmemotmap;
+		// number of groups
+		volatile ULONG_PTR m_ulpGrps;
 
-			// list of groups
-			CSyncList<CGroup> m_listGroups;
+		// tree map of member group expressions
+		MemoTreeMap *m_pmemotmap;
 
-			// hashtable of all group expressions
-			CSyncHashtable<
-				CGroupExpression, // entry
-				CGroupExpression, // search key
-				CSpinlockMemo> m_sht;
+		// list of groups
+		CSyncList<CGroup> m_listGroups;
 
-			// add new group
-			void Add(CGroup *pgroup, CExpression *pexprOrigin);
+		// hashtable of all group expressions
+		CSyncHashtable<CGroupExpression,  // entry
+					   CGroupExpression,  // search key
+					   CSpinlockMemo>
+			m_sht;
 
-			// rehash all group expressions after group merge - not thread-safe
-			BOOL FRehash();
+		// add new group
+		void Add(CGroup *pgroup, CExpression *pexprOrigin);
 
-			// helper for inserting group expression in target group
-			CGroup *PgroupInsert(CGroup *pgroupTarget, CGroupExpression *pgexpr, CExpression *pexprOrigin, BOOL fNewGroup);
+		// rehash all group expressions after group merge - not thread-safe
+		BOOL FRehash();
 
-			// helper to check if a new group needs to be created
-			BOOL FNewGroup(CGroup **ppgroupTarget, CGroupExpression *pgexpr, BOOL fScalar);
+		// helper for inserting group expression in target group
+		CGroup *PgroupInsert(CGroup *pgroupTarget,
+							 CGroupExpression *pgexpr,
+							 CExpression *pexprOrigin,
+							 BOOL fNewGroup);
 
-			// private copy ctor
-			CMemo(const CMemo &);
-						
-		public:
-		
-			// ctor
-			explicit
-			CMemo(IMemoryPool *mp);
-			
-			// dtor
-			~CMemo();
-			
-			// return root group
-			CGroup *PgroupRoot() const
-			{
-				return m_pgroupRoot;
-			}
+		// helper to check if a new group needs to be created
+		BOOL FNewGroup(CGroup **ppgroupTarget, CGroupExpression *pgexpr, BOOL fScalar);
 
-			// return number of groups
-			ULONG_PTR UlpGroups() const
-			{
-				return m_ulpGrps;
-			}
+		// private copy ctor
+		CMemo(const CMemo &);
 
-			// return total number of group expressions
-			ULONG UlGrpExprs();
+	public:
+		// ctor
+		explicit CMemo(IMemoryPool *mp);
 
-			// return number of duplicate groups
-			ULONG UlDuplicateGroups();
+		// dtor
+		~CMemo();
 
-			// mark groups as duplicates
-			void MarkDuplicates(CGroup *pgroupFst, CGroup *pgroupSnd);
+		// return root group
+		CGroup *
+		PgroupRoot() const
+		{
+			return m_pgroupRoot;
+		}
 
-			// return tree map
-			MemoTreeMap *Pmemotmap() const
-			{
-				return m_pmemotmap;
-			}
+		// return number of groups
+		ULONG_PTR
+		UlpGroups() const
+		{
+			return m_ulpGrps;
+		}
 
-			// set root group
-			void SetRoot(CGroup *pgroup);
+		// return total number of group expressions
+		ULONG UlGrpExprs();
 
-			// insert group expression into hash table
-			CGroup *PgroupInsert(CGroup *pgroupTarget, CExpression *pexprOrigin, CGroupExpression *pgexpr);
+		// return number of duplicate groups
+		ULONG UlDuplicateGroups();
 
-			// extract a plan that delivers the given required properties
-			CExpression *PexprExtractPlan(IMemoryPool *mp, CGroup *pgroupRoot, CReqdPropPlan *prppInput, ULONG ulSearchStages);
+		// mark groups as duplicates
+		void MarkDuplicates(CGroup *pgroupFst, CGroup *pgroupSnd);
 
-			// merge duplicate groups
-			void GroupMerge();
+		// return tree map
+		MemoTreeMap *
+		Pmemotmap() const
+		{
+			return m_pmemotmap;
+		}
 
-			// reset states of all memo groups
-			void ResetGroupStates();
+		// set root group
+		void SetRoot(CGroup *pgroup);
 
-			// reset statistics of memo groups
-			void ResetStats();
+		// insert group expression into hash table
+		CGroup *PgroupInsert(CGroup *pgroupTarget,
+							 CExpression *pexprOrigin,
+							 CGroupExpression *pgexpr);
 
-			// print driver
-			IOstream &OsPrint(IOstream &os);
+		// extract a plan that delivers the given required properties
+		CExpression *PexprExtractPlan(IMemoryPool *mp,
+									  CGroup *pgroupRoot,
+									  CReqdPropPlan *prppInput,
+									  ULONG ulSearchStages);
 
-			// derive stats when no stats not present for the group
-			void DeriveStatsIfAbsent(IMemoryPool *mp);
+		// merge duplicate groups
+		void GroupMerge();
 
-			// build tree map
-			void BuildTreeMap(COptimizationContext *poc);
+		// reset states of all memo groups
+		void ResetGroupStates();
 
-			// reset tree map
-			void ResetTreeMap();
+		// reset statistics of memo groups
+		void ResetStats();
 
-			// print memo to output logger
-			void Trace();
+		// print driver
+		IOstream &OsPrint(IOstream &os);
+
+		// derive stats when no stats not present for the group
+		void DeriveStatsIfAbsent(IMemoryPool *mp);
+
+		// build tree map
+		void BuildTreeMap(COptimizationContext *poc);
+
+		// reset tree map
+		void ResetTreeMap();
+
+		// print memo to output logger
+		void Trace();
 
 #ifdef GPOS_DEBUG
-			// get group by id
-			CGroup *Pgroup(ULONG id);
+		// get group by id
+		CGroup *Pgroup(ULONG id);
 
-			// debug print for interactive debugging sessions only
-			void DbgPrint();
-#endif // GPOS_DEBUG
+		// debug print for interactive debugging sessions only
+		void DbgPrint();
+#endif  // GPOS_DEBUG
 
-	}; // class CMemo
-	
-}
+	};  // class CMemo
 
-#endif // !GPOPT_CMemo_H
+}  // namespace gpopt
+
+#endif  // !GPOPT_CMemo_H
 
 // EOF

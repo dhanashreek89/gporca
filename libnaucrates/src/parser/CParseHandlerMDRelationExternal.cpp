@@ -37,9 +37,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerMDRelationExternal::CParseHandlerMDRelationExternal(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerMDRelation(mp, parse_handler_mgr, parse_handler_root),
 	  m_reject_limit(GPDXL_DEFAULT_REJLIMIT),
 	  m_is_rej_limit_in_rows(false),
@@ -167,19 +165,19 @@ CParseHandlerMDRelationExternal::EndElement(const XMLCh *const,  // element_uri,
 	mdid_check_constraint_array->AddRef();
 
 	m_imd_obj = GPOS_NEW(m_mp) CMDRelationExternalGPDB(m_mp,
-																m_mdid,
-																m_mdname,
-																m_rel_distr_policy,
-																md_col_array,
-																m_distr_col_array,
-																m_convert_hash_to_random,
-																m_key_sets_arrays,
-																md_index_info_array,
-																mdid_triggers_array,
-																mdid_check_constraint_array,
-																m_reject_limit,
-																m_is_rej_limit_in_rows,
-																m_mdid_fmt_err_table);
+													   m_mdid,
+													   m_mdname,
+													   m_rel_distr_policy,
+													   md_col_array,
+													   m_distr_col_array,
+													   m_convert_hash_to_random,
+													   m_key_sets_arrays,
+													   md_index_info_array,
+													   mdid_triggers_array,
+													   mdid_check_constraint_array,
+													   m_reject_limit,
+													   m_is_rej_limit_in_rows,
+													   m_mdid_fmt_err_table);
 
 	// deactivate handler
 	m_parse_handler_mgr->DeactivateHandler();

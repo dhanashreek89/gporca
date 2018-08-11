@@ -42,8 +42,7 @@ XERCES_CPP_NAMESPACE_USE
 CParseHandlerMDRelationCtas::CParseHandlerMDRelationCtas(IMemoryPool *mp,
 														 CParseHandlerManager *parse_handler_mgr,
 														 CParseHandlerBase *parse_handler_root)
-	: CParseHandlerMDRelation(mp, parse_handler_mgr, parse_handler_root),
-	  m_vartypemod_array(NULL)
+	: CParseHandlerMDRelation(mp, parse_handler_mgr, parse_handler_root), m_vartypemod_array(NULL)
 {
 }
 
@@ -119,11 +118,8 @@ CParseHandlerMDRelationCtas::StartElement(const XMLCh *const,  // element_uri,
 	m_parse_handler_mgr->ActivateParseHandler(ctas_options_parse_handler);
 
 	// parse handler for the columns
-	CParseHandlerBase *columns_parse_handler =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenMetadataColumns),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *columns_parse_handler = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenMetadataColumns), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(columns_parse_handler);
 
 	// store parse handlers
@@ -169,18 +165,18 @@ CParseHandlerMDRelationCtas::EndElement(const XMLCh *const,  // element_uri,
 	dxl_ctas_storage_options->AddRef();
 
 	m_imd_obj = GPOS_NEW(m_mp) CMDRelationCtasGPDB(m_mp,
-															m_mdid,
-															m_mdname_schema,
-															m_mdname,
-															m_is_temp_table,
-															m_has_oids,
-															m_rel_storage_type,
-															m_rel_distr_policy,
-															md_col_array,
-															m_distr_col_array,
-															m_key_sets_arrays,
-															dxl_ctas_storage_options,
-															m_vartypemod_array);
+												   m_mdid,
+												   m_mdname_schema,
+												   m_mdname,
+												   m_is_temp_table,
+												   m_has_oids,
+												   m_rel_storage_type,
+												   m_rel_distr_policy,
+												   md_col_array,
+												   m_distr_col_array,
+												   m_key_sets_arrays,
+												   dxl_ctas_storage_options,
+												   m_vartypemod_array);
 
 	// deactivate handler
 	m_parse_handler_mgr->DeactivateHandler();

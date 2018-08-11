@@ -6,7 +6,7 @@
 //		CParseHandlerNLJIndexParam.h
 //
 //	@doc:
-//		
+//
 //		SAX parse handler class for parsing a single NLJ index param
 //---------------------------------------------------------------------------
 
@@ -32,53 +32,43 @@ namespace gpdxl
 	//---------------------------------------------------------------------------
 	class CParseHandlerNLJIndexParam : public CParseHandlerBase
 	{
-		private:
-	
-			// column reference
-			CDXLColRef *m_nest_param_colref_dxl;
+	private:
+		// column reference
+		CDXLColRef *m_nest_param_colref_dxl;
 
-			// private copy ctor
-			CParseHandlerNLJIndexParam(const CParseHandlerNLJIndexParam &);
-	
-			// process the start of an element
-			void StartElement
-					(
-					const XMLCh* const element_uri, 		// URI of element's namespace
-					const XMLCh* const element_local_name,	// local part of element's name
-					const XMLCh* const element_qname,		// element's qname
-					const Attributes& attr				// element's attributes
-					);
-	
-			// process the end of an element
-			void EndElement
-					(
-					const XMLCh* const element_uri, 		// URI of element's namespace
-					const XMLCh* const element_local_name,	// local part of element's name
-					const XMLCh* const element_qname		// element's qname
-					);
-	
-		public:
-			// ctor/dtor
-			CParseHandlerNLJIndexParam
-					(
-					IMemoryPool *mp,
-					CParseHandlerManager *parse_handler_manager,
-					CParseHandlerBase *parse_handler_root
-					);
+		// private copy ctor
+		CParseHandlerNLJIndexParam(const CParseHandlerNLJIndexParam &);
 
-			virtual
-			~CParseHandlerNLJIndexParam();
+		// process the start of an element
+		void StartElement(const XMLCh *const element_uri,		  // URI of element's namespace
+						  const XMLCh *const element_local_name,  // local part of element's name
+						  const XMLCh *const element_qname,		  // element's qname
+						  const Attributes &attr				  // element's attributes
+		);
 
-			// return column reference
-			CDXLColRef *GetNestParamColRefDxl(void)
-			const
-			{
-				return m_nest_param_colref_dxl;
-			}
+		// process the end of an element
+		void EndElement(const XMLCh *const element_uri,			// URI of element's namespace
+						const XMLCh *const element_local_name,  // local part of element's name
+						const XMLCh *const element_qname		// element's qname
+		);
 
+	public:
+		// ctor/dtor
+		CParseHandlerNLJIndexParam(IMemoryPool *mp,
+								   CParseHandlerManager *parse_handler_manager,
+								   CParseHandlerBase *parse_handler_root);
+
+		virtual ~CParseHandlerNLJIndexParam();
+
+		// return column reference
+		CDXLColRef *
+		GetNestParamColRefDxl(void) const
+		{
+			return m_nest_param_colref_dxl;
+		}
 	};
 
-}
-#endif // GPDXL_CParseHandlerNLJIndexParam_H
+}  // namespace gpdxl
+#endif  // GPDXL_CParseHandlerNLJIndexParam_H
 
 //EOF

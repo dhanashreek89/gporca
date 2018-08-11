@@ -121,10 +121,10 @@ CParseHandlerWindowFrame::EndElement(const XMLCh *const,  // element_uri,
 	dxlnode_leading->AddRef();
 
 	m_window_frame = GPOS_NEW(m_mp) CDXLWindowFrame(m_mp,
-															 m_dxl_win_frame_spec,
-															 m_dxl_frame_exclusion_strategy,
-															 dxlnode_leading,
-															 dxlnode_trailing);
+													m_dxl_win_frame_spec,
+													m_dxl_frame_exclusion_strategy,
+													dxlnode_leading,
+													dxlnode_trailing);
 
 	// deactivate handler
 	m_parse_handler_mgr->DeactivateHandler();

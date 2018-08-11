@@ -20,14 +20,11 @@ namespace gpopt
 	// it creates a random distribution.
 	class CStrictHashedDistributions : public CDistributionSpecArray
 	{
-		public:
-			CStrictHashedDistributions
-			(
-			IMemoryPool *mp,
-			CColRefArray *pdrgpcrOutput,
-			CColRefArrays *pdrgpdrgpcrInput
-			);
+	public:
+		CStrictHashedDistributions(IMemoryPool *mp,
+								   CColRefArray *pdrgpcrOutput,
+								   CColRefArrays *pdrgpdrgpcrInput);
 	};
-}
+}  // namespace gpopt
 
-#endif //GPOPT_CHashedDistributions_H
+#endif  //GPOPT_CHashedDistributions_H

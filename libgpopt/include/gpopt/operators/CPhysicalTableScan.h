@@ -16,7 +16,6 @@
 
 namespace gpopt
 {
-	
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalTableScan
@@ -27,96 +26,82 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalTableScan : public CPhysicalScan
 	{
+	private:
+		// private copy ctor
+		CPhysicalTableScan(const CPhysicalTableScan &);
 
-		private:
+	public:
+		// ctors
+		explicit CPhysicalTableScan(IMemoryPool *mp);
+		CPhysicalTableScan(IMemoryPool *, const CName *, CTableDescriptor *, CColRefArray *);
 
-			// private copy ctor
-			CPhysicalTableScan(const CPhysicalTableScan&);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalTableScan;
+		}
 
-		public:
-		
-			// ctors
-			explicit
-			CPhysicalTableScan(IMemoryPool *mp);
-			CPhysicalTableScan(IMemoryPool *, const CName *, CTableDescriptor *, CColRefArray *);
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalTableScan";
+		}
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalTableScan;
-			}
-			
-			// return a string for operator name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CPhysicalTableScan";
-			}
-			
-			// operator specific hash function
-			virtual ULONG HashValue() const;
-			
-			// match function
-			BOOL Matches(COperator *) const;
-		
-			// derive partition index map
-			virtual
-			CPartIndexMap *PpimDerive
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &, // exprhdl
-				CDrvdPropCtxt * //pdpctxt
-				)
-				const
-			{
-				return GPOS_NEW(mp) CPartIndexMap(mp);
-			}
+		// operator specific hash function
+		virtual ULONG HashValue() const;
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+		// match function
+		BOOL Matches(COperator *) const;
 
-			// debug print
-			virtual 
-			IOstream &OsPrint(IOstream &) const;
+		// derive partition index map
+		virtual CPartIndexMap *
+		PpimDerive(IMemoryPool *mp,
+				   CExpressionHandle &,  // exprhdl
+				   CDrvdPropCtxt *		 //pdpctxt
+				   ) const
+		{
+			return GPOS_NEW(mp) CPartIndexMap(mp);
+		}
+
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+
+		// debug print
+		virtual IOstream &OsPrint(IOstream &) const;
 
 
-			// conversion function
-			static
-			CPhysicalTableScan *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopPhysicalTableScan == pop->Eopid() ||
-							EopPhysicalExternalScan == pop->Eopid());
+		// conversion function
+		static CPhysicalTableScan *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopPhysicalTableScan == pop->Eopid() ||
+						EopPhysicalExternalScan == pop->Eopid());
 
-				return reinterpret_cast<CPhysicalTableScan*>(pop);
-			}
+			return reinterpret_cast<CPhysicalTableScan *>(pop);
+		}
 
-			// statistics derivation during costing
-			virtual
-			IStatistics *PstatsDerive
-				(
-				IMemoryPool *, // mp
-				CExpressionHandle &, // exprhdl
-				CReqdPropPlan *, // prpplan
-				IStatisticsArray * //stats_ctxt
-				)
-				const
-			{
-				GPOS_ASSERT(!"stats derivation during costing for table scan is invalid");
+		// statistics derivation during costing
+		virtual IStatistics *
+		PstatsDerive(IMemoryPool *,		   // mp
+					 CExpressionHandle &,  // exprhdl
+					 CReqdPropPlan *,	  // prpplan
+					 IStatisticsArray *	//stats_ctxt
+					 ) const
+		{
+			GPOS_ASSERT(!"stats derivation during costing for table scan is invalid");
 
-				return NULL;
-			}
+			return NULL;
+		}
 
 
-	}; // class CPhysicalTableScan
+	};  // class CPhysicalTableScan
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CPhysicalTableScan_H
+#endif  // !GPOPT_CPhysicalTableScan_H
 
 // EOF

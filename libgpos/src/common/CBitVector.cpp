@@ -45,8 +45,7 @@ CBitVector::Clear()
 //		ctor -- allocates actual vector, clears it
 //
 //---------------------------------------------------------------------------
-CBitVector::CBitVector(IMemoryPool *mp, ULONG nbits)
-	: m_nbits(nbits), m_len(0), m_vec(NULL)
+CBitVector::CBitVector(IMemoryPool *mp, ULONG nbits) : m_nbits(nbits), m_len(0), m_vec(NULL)
 {
 	// determine units needed to represent the number
 	m_len = m_nbits / BITS_PER_UNIT;

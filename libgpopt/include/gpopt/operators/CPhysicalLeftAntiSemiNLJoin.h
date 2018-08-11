@@ -16,7 +16,6 @@
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalLeftAntiSemiNLJoin
@@ -27,69 +26,58 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalLeftAntiSemiNLJoin : public CPhysicalNLJoin
 	{
+	private:
+		// private copy ctor
+		CPhysicalLeftAntiSemiNLJoin(const CPhysicalLeftAntiSemiNLJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CPhysicalLeftAntiSemiNLJoin(IMemoryPool *mp);
 
-			// private copy ctor
-			CPhysicalLeftAntiSemiNLJoin(const CPhysicalLeftAntiSemiNLJoin &);
+		// dtor
+		virtual ~CPhysicalLeftAntiSemiNLJoin();
 
-		public:
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalLeftAntiSemiNLJoin;
+		}
 
-			// ctor
-			explicit
-			CPhysicalLeftAntiSemiNLJoin(IMemoryPool *mp);
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalLeftAntiSemiNLJoin";
+		}
 
-			// dtor
-			virtual
-			~CPhysicalLeftAntiSemiNLJoin();
+		// check if required columns are included in output columns
+		virtual BOOL FProvidesReqdCols(CExpressionHandle &exprhdl,
+									   CColRefSet *pcrsRequired,
+									   ULONG ulOptReq) const;
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalLeftAntiSemiNLJoin;
-			}
+		// compute required partition propagation of the n-th child
+		virtual CPartitionPropagationSpec *PppsRequired(IMemoryPool *mp,
+														CExpressionHandle &exprhdl,
+														CPartitionPropagationSpec *pppsRequired,
+														ULONG child_index,
+														CDrvdPropArrays *pdrgpdpCtxt,
+														ULONG ulOptReq);
 
-			 // return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CPhysicalLeftAntiSemiNLJoin";
-			}
+		// conversion function
+		static CPhysicalLeftAntiSemiNLJoin *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(EopPhysicalLeftAntiSemiNLJoin == pop->Eopid());
 
-			// check if required columns are included in output columns
-			virtual
-			BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const;
-
-			// compute required partition propagation of the n-th child
-			virtual
-			CPartitionPropagationSpec *PppsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CPartitionPropagationSpec *pppsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				);
-			
-			// conversion function
-			static
-			CPhysicalLeftAntiSemiNLJoin *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(EopPhysicalLeftAntiSemiNLJoin == pop->Eopid());
-
-				return dynamic_cast<CPhysicalLeftAntiSemiNLJoin*>(pop);
-			}
+			return dynamic_cast<CPhysicalLeftAntiSemiNLJoin *>(pop);
+		}
 
 
-	}; // class CPhysicalLeftAntiSemiNLJoin
+	};  // class CPhysicalLeftAntiSemiNLJoin
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CPhysicalLeftAntiSemiNLJoin_H
+#endif  // !GPOPT_CPhysicalLeftAntiSemiNLJoin_H
 
 // EOF

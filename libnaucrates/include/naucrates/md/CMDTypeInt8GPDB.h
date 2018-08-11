@@ -115,9 +115,7 @@ namespace gpmd
 		virtual ~CMDTypeInt8GPDB();
 
 		// factory method for creating Int8 datums
-		virtual IDatumInt8 *CreateInt8Datum(IMemoryPool *mp,
-											LINT value,
-											BOOL is_null) const;
+		virtual IDatumInt8 *CreateInt8Datum(IMemoryPool *mp, LINT value, BOOL is_null) const;
 
 		// accessors
 		virtual const CWStringDynamic *
@@ -209,8 +207,7 @@ namespace gpmd
 		virtual IDatum *GetDatumForDXLConstVal(const CDXLScalarConstValue *dxl_op) const;
 
 		// create typed datum from DXL datum
-		virtual IDatum *GetDatumForDXLDatum(IMemoryPool *mp,
-											const CDXLDatum *dxl_datum) const;
+		virtual IDatum *GetDatumForDXLDatum(IMemoryPool *mp, const CDXLDatum *dxl_datum) const;
 
 		// generate the DXL datum from IDatum
 		virtual CDXLDatum *GetDatumVal(IMemoryPool *mp, IDatum *datum) const;
@@ -219,8 +216,7 @@ namespace gpmd
 		virtual CDXLDatum *GetDXLDatumNull(IMemoryPool *mp) const;
 
 		// generate the DXL scalar constant from IDatum
-		virtual CDXLScalarConstValue *GetDXLOpScConst(IMemoryPool *mp,
-													  IDatum *datum) const;
+		virtual CDXLScalarConstValue *GetDXLOpScConst(IMemoryPool *mp, IDatum *datum) const;
 
 #ifdef GPOS_DEBUG
 		// debug print of the type in the provided stream

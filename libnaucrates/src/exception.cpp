@@ -40,12 +40,11 @@ gpdxl::EresExceptionInit(IMemoryPool *mp)
 				 1,  // elemname
 				 GPOS_WSZ_WSZLEN("Unexpected tag encountered during parsing;")),
 
-		CMessage(
-			CException(gpdxl::ExmaDXL, gpdxl::ExmiDXLMissingAttribute),
-			CException::ExsevError,
-			GPOS_WSZ_WSZLEN("Missing attribute value for attribute %ls in element %ls"),
-			2,  // # params: attrname, elemname
-			GPOS_WSZ_WSZLEN("Missing attribute value")),
+		CMessage(CException(gpdxl::ExmaDXL, gpdxl::ExmiDXLMissingAttribute),
+				 CException::ExsevError,
+				 GPOS_WSZ_WSZLEN("Missing attribute value for attribute %ls in element %ls"),
+				 2,  // # params: attrname, elemname
+				 GPOS_WSZ_WSZLEN("Missing attribute value")),
 
 		CMessage(CException(gpdxl::ExmaDXL, gpdxl::ExmiDXLInvalidAttributeValue),
 				 CException::ExsevError,

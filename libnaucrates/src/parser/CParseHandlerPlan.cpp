@@ -101,10 +101,7 @@ CParseHandlerPlan::StartElement(const XMLCh *const element_uri,
 	{
 		GPOS_ASSERT(0 < this->Length());
 		CParseHandlerBase *direct_dispatch_parse_handler = CParseHandlerFactory::GetParseHandler(
-			m_mp,
-			CDXLTokens::XmlstrToken(EdxltokenDirectDispatchInfo),
-			m_parse_handler_mgr,
-			this);
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenDirectDispatchInfo), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(direct_dispatch_parse_handler);
 
 		// store parse handler

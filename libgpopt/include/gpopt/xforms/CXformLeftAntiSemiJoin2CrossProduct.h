@@ -28,58 +28,47 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformLeftAntiSemiJoin2CrossProduct : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformLeftAntiSemiJoin2CrossProduct(const CXformLeftAntiSemiJoin2CrossProduct &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformLeftAntiSemiJoin2CrossProduct(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformLeftAntiSemiJoin2CrossProduct(const CXformLeftAntiSemiJoin2CrossProduct &);
+		// ctor
+		explicit CXformLeftAntiSemiJoin2CrossProduct(CExpression *pexprPattern);
 
-		public:
+		// dtor
+		virtual ~CXformLeftAntiSemiJoin2CrossProduct()
+		{
+		}
 
-			// ctor
-			explicit
-			CXformLeftAntiSemiJoin2CrossProduct(IMemoryPool *mp);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftAntiSemiJoin2CrossProduct;
+		}
 
-			// ctor
-			explicit
-			CXformLeftAntiSemiJoin2CrossProduct(CExpression *pexprPattern);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftAntiSemiJoin2CrossProduct";
+		}
 
-			// dtor
-			virtual
-			~CXformLeftAntiSemiJoin2CrossProduct() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftAntiSemiJoin2CrossProduct;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftAntiSemiJoin2CrossProduct";
-			}
+	};  // class CXformLeftAntiSemiJoin2CrossProduct
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			void Transform
-					(
-					CXformContext *pxfctxt,
-					CXformResult *pxfres,
-					CExpression *pexpr
-					)
-					const;
-
-	}; // class CXformLeftAntiSemiJoin2CrossProduct
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformLeftAntiSemiJoin2CrossProduct_H
+#endif  // !GPOPT_CXformLeftAntiSemiJoin2CrossProduct_H
 
 // EOF

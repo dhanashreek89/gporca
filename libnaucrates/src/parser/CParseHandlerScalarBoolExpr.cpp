@@ -34,8 +34,7 @@ XERCES_CPP_NAMESPACE_USE
 CParseHandlerScalarBoolExpr::CParseHandlerScalarBoolExpr(IMemoryPool *mp,
 														 CParseHandlerManager *parse_handler_mgr,
 														 CParseHandlerBase *parse_handler_root)
-	: CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root),
-	  m_dxl_bool_type(Edxland)
+	: CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root), m_dxl_bool_type(Edxland)
 {
 }
 
@@ -85,10 +84,7 @@ CParseHandlerScalarBoolExpr::StartElement(const XMLCh *const element_uri,
 		{
 			// This is to support nested BoolExpr. TODO:  - create a separate xml tag for boolean expression
 			CParseHandlerBase *bool_expr_parse_handler = CParseHandlerFactory::GetParseHandler(
-				m_mp,
-				CDXLTokens::XmlstrToken(EdxltokenScalarBoolOr),
-				m_parse_handler_mgr,
-				this);
+				m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarBoolOr), m_parse_handler_mgr, this);
 			m_parse_handler_mgr->ActivateParseHandler(bool_expr_parse_handler);
 
 			// store parse handlers

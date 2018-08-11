@@ -182,11 +182,10 @@ CParseHandlerMDIndex::EndElement(const XMLCh *const,  // element_uri,
 		CParseHandlerScalarOp *pphPartCnstr = dynamic_cast<CParseHandlerScalarOp *>((*this)[1]);
 		CDXLNode *pdxlnPartConstraint = pphPartCnstr->CreateDXLNode();
 		pdxlnPartConstraint->AddRef();
-		m_part_constraint =
-			GPOS_NEW(m_mp) CMDPartConstraintGPDB(m_mp,
-														  m_level_with_default_part_array,
-														  m_part_constraint_unbounded,
-														  pdxlnPartConstraint);
+		m_part_constraint = GPOS_NEW(m_mp) CMDPartConstraintGPDB(m_mp,
+																 m_level_with_default_part_array,
+																 m_part_constraint_unbounded,
+																 pdxlnPartConstraint);
 		return;
 	}
 
@@ -203,15 +202,15 @@ CParseHandlerMDIndex::EndElement(const XMLCh *const,  // element_uri,
 	mdid_op_classes_array->AddRef();
 
 	m_imd_obj = GPOS_NEW(m_mp) CMDIndexGPDB(m_mp,
-													 m_mdid,
-													 m_mdname,
-													 m_clustered,
-													 m_index_type,
-													 m_mdid_item_type,
-													 m_index_key_cols_array,
-													 m_included_cols_array,
-													 mdid_op_classes_array,
-													 m_part_constraint);
+											m_mdid,
+											m_mdname,
+											m_clustered,
+											m_index_type,
+											m_mdid_item_type,
+											m_index_key_cols_array,
+											m_included_cols_array,
+											mdid_op_classes_array,
+											m_part_constraint);
 
 	// deactivate handler
 	m_parse_handler_mgr->DeactivateHandler();

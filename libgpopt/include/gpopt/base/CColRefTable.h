@@ -36,101 +36,95 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CColRefTable : public CColRef
 	{
-		private:
+	private:
+		// private copy ctor
+		CColRefTable(const CColRefTable &);
 
-			// private copy ctor
-			CColRefTable(const CColRefTable &);
-			
-			// attno from catalog
-			INT m_iAttno;
-			
-			// does column allow null values
-			BOOL m_is_nullable;
+		// attno from catalog
+		INT m_iAttno;
 
-			// id of the operator which is the source of this column reference
-			// not owned
-			ULONG m_ulSourceOpId;
+		// does column allow null values
+		BOOL m_is_nullable;
 
-			// width of the column, for instance  char(10) column has width 10
-			ULONG m_width;
+		// id of the operator which is the source of this column reference
+		// not owned
+		ULONG m_ulSourceOpId;
 
-		public:
-		
-			// ctors
-			CColRefTable
-				(
-				const CColumnDescriptor *pcd,
-				ULONG id,
-				const CName *pname,
-				ULONG ulOpSource
-				);
+		// width of the column, for instance  char(10) column has width 10
+		ULONG m_width;
 
-			CColRefTable
-				(
-				const IMDType *pmdtype,
-				INT type_modifier,
-				INT attno,
-				BOOL is_nullable,
-				ULONG id,
-				const CName *pname,
-				ULONG ulOpSource,
-				ULONG ulWidth = gpos::ulong_max
-				);
+	public:
+		// ctors
+		CColRefTable(const CColumnDescriptor *pcd, ULONG id, const CName *pname, ULONG ulOpSource);
 
-			// dtor
-			virtual ~CColRefTable();
-			
-			// accessor of column reference type
-			virtual
-			CColRef::Ecolreftype Ecrt() const
-			{
-				return CColRef::EcrtTable;
-			}
+		CColRefTable(const IMDType *pmdtype,
+					 INT type_modifier,
+					 INT attno,
+					 BOOL is_nullable,
+					 ULONG id,
+					 const CName *pname,
+					 ULONG ulOpSource,
+					 ULONG ulWidth = gpos::ulong_max);
 
-			// accessor of attribute number
-			INT AttrNum() const
-			{
-				return m_iAttno;
-			}
+		// dtor
+		virtual ~CColRefTable();
 
-			// does column allow null values?
-			BOOL IsNullable() const
-			{
-				return m_is_nullable;
-			}
+		// accessor of column reference type
+		virtual CColRef::Ecolreftype
+		Ecrt() const
+		{
+			return CColRef::EcrtTable;
+		}
 
-			// is column a system column?
-			BOOL FSystemCol() const
-			{
-				// TODO-  04/13/2012, make this check system independent
-				// using MDAccessor
-				return 0 >= m_iAttno;
-			}
+		// accessor of attribute number
+		INT
+		AttrNum() const
+		{
+			return m_iAttno;
+		}
 
-			// width of the column
-			ULONG Width() const
-			{
-				return m_width;
-			}
+		// does column allow null values?
+		BOOL
+		IsNullable() const
+		{
+			return m_is_nullable;
+		}
 
-			// id of source operator
-			ULONG UlSourceOpId() const
-			{
-				return m_ulSourceOpId;
-			}
+		// is column a system column?
+		BOOL
+		FSystemCol() const
+		{
+			// TODO-  04/13/2012, make this check system independent
+			// using MDAccessor
+			return 0 >= m_iAttno;
+		}
 
-			// conversion
-			static
-			CColRefTable *PcrConvert(CColRef *cr)
-			{
-				GPOS_ASSERT(cr->Ecrt() == CColRef::EcrtTable);
-				return dynamic_cast<CColRefTable*>(cr);
-			}
+		// width of the column
+		ULONG
+		Width() const
+		{
+			return m_width;
+		}
+
+		// id of source operator
+		ULONG
+		UlSourceOpId() const
+		{
+			return m_ulSourceOpId;
+		}
+
+		// conversion
+		static CColRefTable *
+		PcrConvert(CColRef *cr)
+		{
+			GPOS_ASSERT(cr->Ecrt() == CColRef::EcrtTable);
+			return dynamic_cast<CColRefTable *>(cr);
+		}
 
 
-	}; // class CColRefTable
-}
+	};  // class CColRefTable
+}  // namespace gpopt
 
-#endif // !GPOS_CColRefTable_H
+#endif  // !GPOS_CColRefTable_H
 
 // EOF

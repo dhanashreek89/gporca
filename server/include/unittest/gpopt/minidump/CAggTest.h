@@ -25,25 +25,19 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CAggTest
 	{
-		private:
+	private:
+		// counter used to mark last successful test
+		static gpos::ULONG m_ulAggTestCounter;
 
-			// counter used to mark last successful test
-			static
-			gpos::ULONG m_ulAggTestCounter;
+	public:
+		// unittests
+		static gpos::GPOS_RESULT EresUnittest();
 
-		public:
+		static gpos::GPOS_RESULT EresUnittest_RunTests();
 
-			// unittests
-			static
-			gpos::GPOS_RESULT EresUnittest();
+	};  // class CAggTest
+}  // namespace gpopt
 
-			static
-			gpos::GPOS_RESULT EresUnittest_RunTests();
-
-	}; // class CAggTest
-}
-
-#endif // !GPOPT_CAggTest_H
+#endif  // !GPOPT_CAggTest_H
 
 // EOF
-

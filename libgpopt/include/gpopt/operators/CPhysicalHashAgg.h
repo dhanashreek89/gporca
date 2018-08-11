@@ -18,7 +18,7 @@ namespace gpopt
 {
 	// fwd declaration
 	class CDistributionSpec;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalHashAgg
@@ -29,105 +29,85 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalHashAgg : public CPhysicalAgg
 	{
-		private:
+	private:
+		// private copy ctor
+		CPhysicalHashAgg(const CPhysicalHashAgg &);
 
-			// private copy ctor
-			CPhysicalHashAgg(const CPhysicalHashAgg &);
+	public:
+		// ctor
+		CPhysicalHashAgg(IMemoryPool *mp,
+						 CColRefArray *colref_array,
+						 CColRefArray *pdrgpcrMinimal,
+						 COperator::EGbAggType egbaggtype,
+						 BOOL fGeneratesDuplicates,
+						 CColRefArray *pdrgpcrArgDQA,
+						 BOOL fMultiStage);
 
-		public:
-
-			// ctor
-			CPhysicalHashAgg
-				(
-				IMemoryPool *mp,
-				CColRefArray *colref_array,
-				CColRefArray *pdrgpcrMinimal,
-				COperator::EGbAggType egbaggtype,
-				BOOL fGeneratesDuplicates,
-				CColRefArray *pdrgpcrArgDQA,
-				BOOL fMultiStage
-				);
-
-			// dtor
-			virtual
-			~CPhysicalHashAgg();
+		// dtor
+		virtual ~CPhysicalHashAgg();
 
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalHashAgg;
-			}
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalHashAgg;
+		}
 
-			// return a string for operator name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CPhysicalHashAgg";
-			}
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalHashAgg";
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Required Plan Properties
-			//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		// Required Plan Properties
+		//-------------------------------------------------------------------------------------
 
-			// compute required sort columns of the n-th child
-			virtual
-			COrderSpec *PosRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				COrderSpec *posRequired,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				)
-				const;
-		
-			//-------------------------------------------------------------------------------------
-			// Derived Plan Properties
-			//-------------------------------------------------------------------------------------
+		// compute required sort columns of the n-th child
+		virtual COrderSpec *PosRequired(IMemoryPool *mp,
+										CExpressionHandle &exprhdl,
+										COrderSpec *posRequired,
+										ULONG child_index,
+										CDrvdPropArrays *pdrgpdpCtxt,
+										ULONG ulOptReq) const;
 
-			// derive sort order
-			virtual
-			COrderSpec *PosDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		//-------------------------------------------------------------------------------------
+		// Derived Plan Properties
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			// Enforced Properties
-			//-------------------------------------------------------------------------------------
+		// derive sort order
+		virtual COrderSpec *PosDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// return order property enforcing type for this operator
-			virtual
-			CEnfdProp::EPropEnforcingType EpetOrder
-				(
-				CExpressionHandle &exprhdl,
-				const CEnfdOrder *peo
-				) 
-				const;
+		//-------------------------------------------------------------------------------------
+		// Enforced Properties
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+		// return order property enforcing type for this operator
+		virtual CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl,
+														const CEnfdOrder *peo) const;
 
-			// conversion function
-			static
-			CPhysicalHashAgg *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopPhysicalHashAgg == pop->Eopid() ||
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+
+		// conversion function
+		static CPhysicalHashAgg *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopPhysicalHashAgg == pop->Eopid() ||
 						EopPhysicalHashAggDeduplicate == pop->Eopid());
 
-				return reinterpret_cast<CPhysicalHashAgg*>(pop);
-			}
-		
-	}; // class CPhysicalHashAgg
+			return reinterpret_cast<CPhysicalHashAgg *>(pop);
+		}
 
-}
+	};  // class CPhysicalHashAgg
+
+}  // namespace gpopt
 
 
-#endif // !GPOS_CPhysicalHashAgg_H
+#endif  // !GPOS_CPhysicalHashAgg_H
 
 // EOF

@@ -17,7 +17,6 @@
 
 namespace gpopt
 {
-
 	using namespace gpos;
 
 	//---------------------------------------------------------------------------
@@ -30,70 +29,57 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalarSubqueryExistential : public CScalar
 	{
-		private:
+	private:
+		// private copy ctor
+		CScalarSubqueryExistential(const CScalarSubqueryExistential &);
 
-			// private copy ctor
-			CScalarSubqueryExistential(const CScalarSubqueryExistential &);
+	public:
+		// ctor
+		CScalarSubqueryExistential(IMemoryPool *mp);
 
-		public:
+		// dtor
+		virtual ~CScalarSubqueryExistential();
 
-			// ctor
-			CScalarSubqueryExistential(IMemoryPool *mp);
+		// return the type of the scalar expression
+		virtual IMDId *MDIdType() const;
 
-			// dtor
-			virtual
-			~CScalarSubqueryExistential();
+		// match function
+		BOOL Matches(COperator *pop) const;
 
-			// return the type of the scalar expression
-			virtual 
-			IMDId *MDIdType() const;
+		// sensitivity to order of inputs
+		BOOL
+		FInputOrderSensitive() const
+		{
+			return true;
+		}
 
-			// match function
-			BOOL Matches(COperator *pop) const;
+		// return a copy of the operator with remapped columns
+		virtual COperator *
+		PopCopyWithRemappedColumns(IMemoryPool *,		//mp,
+								   UlongToColRefMap *,  //colref_mapping,
+								   BOOL					//must_exist
+		)
+		{
+			return PopCopyDefault();
+		}
 
-			// sensitivity to order of inputs
-			BOOL FInputOrderSensitive() const
-			{
-				return true;
-			}
+		// derive partition consumer info
+		virtual CPartInfo *PpartinfoDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *, //mp,
-						UlongToColRefMap *, //colref_mapping,
-						BOOL //must_exist
-						)
-			{
-				return PopCopyDefault();
-			}
-			
-			// derive partition consumer info
-			virtual
-			CPartInfo *PpartinfoDerive
-				(
-				IMemoryPool *mp, 
-				CExpressionHandle &exprhdl
-				) 
-				const;
+		// conversion function
+		static CScalarSubqueryExistential *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopScalarSubqueryExists == pop->Eopid() ||
+						EopScalarSubqueryNotExists == pop->Eopid());
 
-			// conversion function
-			static
-			CScalarSubqueryExistential *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopScalarSubqueryExists == pop->Eopid() || EopScalarSubqueryNotExists == pop->Eopid());
+			return dynamic_cast<CScalarSubqueryExistential *>(pop);
+		}
 
-				return dynamic_cast<CScalarSubqueryExistential*>(pop);
-			}
+	};  // class CScalarSubqueryExistential
+}  // namespace gpopt
 
-	}; // class CScalarSubqueryExistential
-}
-
-#endif // !GPOPT_CScalarSubqueryExistential_H
+#endif  // !GPOPT_CScalarSubqueryExistential_H
 
 // EOF

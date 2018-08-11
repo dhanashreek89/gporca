@@ -150,11 +150,8 @@ CParseHandlerPhysicalDML::StartElement(const XMLCh *const,  // element_uri,
 	m_parse_handler_mgr->ActivateParseHandler(proj_list_parse_handler);
 
 	//parse handler for the direct dispatch info
-	CParseHandlerBase *direct_dispatch_parse_handler =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenDirectDispatchInfo),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *direct_dispatch_parse_handler = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenDirectDispatchInfo), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(direct_dispatch_parse_handler);
 
 	//parse handler for the properties of the operator
@@ -222,17 +219,17 @@ CParseHandlerPhysicalDML::EndElement(const XMLCh *const,  // element_uri,
 		direct_dispatch_parse_handler->GetDXLDirectDispatchInfo();
 	dxl_direct_dispatch_info->AddRef();
 	CDXLPhysicalDML *dxl_op = GPOS_NEW(m_mp) CDXLPhysicalDML(m_mp,
-																	  m_dxl_dml_type,
-																	  table_descr,
-																	  m_src_colids_array,
-																	  m_action_colid,
-																	  m_oid_colid,
-																	  m_ctid_colid,
-																	  m_segid_colid,
-																	  m_preserve_oids,
-																	  m_tuple_oid_col_oid,
-																	  dxl_direct_dispatch_info,
-																	  m_input_sort_req);
+															 m_dxl_dml_type,
+															 table_descr,
+															 m_src_colids_array,
+															 m_action_colid,
+															 m_oid_colid,
+															 m_ctid_colid,
+															 m_segid_colid,
+															 m_preserve_oids,
+															 m_tuple_oid_col_oid,
+															 dxl_direct_dispatch_info,
+															 m_input_sort_req);
 	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, dxl_op);
 
 	// set statistics and physical properties

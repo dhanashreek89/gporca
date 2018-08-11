@@ -88,12 +88,8 @@ namespace gpos
 			GPOS_ASSERT(NULL != GetFactory() && "Cache factory has not been initialized");
 
 			IMemoryPool *mp = GetFactory()->Pmp();
-			CCache<T, K> *cache = GPOS_NEW(mp) CCache<T, K>(mp,
-																	 unique,
-																	 cache_quota,
-																	 CCACHE_GCLOCK_INIT_COUNTER,
-																	 hash_func,
-																	 equal_func);
+			CCache<T, K> *cache = GPOS_NEW(mp) CCache<T, K>(
+				mp, unique, cache_quota, CCACHE_GCLOCK_INIT_COUNTER, hash_func, equal_func);
 
 			return cache;
 		}

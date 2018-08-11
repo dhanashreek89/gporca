@@ -22,78 +22,64 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalSerialUnionAll : public CPhysicalUnionAll
 	{
+	private:
+		// private copy ctor
+		CPhysicalSerialUnionAll(const CPhysicalSerialUnionAll &);
 
-		private:
+	public:
+		// ctor
+		CPhysicalSerialUnionAll(IMemoryPool *mp,
+								CColRefArray *pdrgpcrOutput,
+								CColRefArrays *pdrgpdrgpcrInput,
+								ULONG ulScanIdPartialIndex);
 
-			// private copy ctor
-			CPhysicalSerialUnionAll(const CPhysicalSerialUnionAll &);
+		// dtor
+		virtual ~CPhysicalSerialUnionAll();
 
-		public:
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalSerialUnionAll;
+		}
 
-			// ctor
-			CPhysicalSerialUnionAll
-				(
-				IMemoryPool *mp,
-				CColRefArray *pdrgpcrOutput,
-				CColRefArrays *pdrgpdrgpcrInput,
-				ULONG ulScanIdPartialIndex
-				);
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalSerialUnionAll";
+		}
 
-			// dtor
-			virtual
-			~CPhysicalSerialUnionAll();
-
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
+		// distribution matching type
+		virtual CEnfdDistribution::EDistributionMatching
+		Edm(CReqdPropPlan *prppInput,
+			ULONG,				// child_index
+			CDrvdPropArrays *,  //pdrgpdpCtxt
+			ULONG ulOptReq)
+		{
+			if (0 == ulOptReq &&
+				CDistributionSpec::EdtHashed == prppInput->Ped()->PdsRequired()->Edt())
 			{
-				return EopPhysicalSerialUnionAll;
+				// use exact matching if optimizing first request
+				return CEnfdDistribution::EdmExact;
 			}
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CPhysicalSerialUnionAll";
-			}
-
-			// distribution matching type
-			virtual
-			CEnfdDistribution::EDistributionMatching Edm
-				(
-				CReqdPropPlan *prppInput,
-				ULONG , // child_index
-				CDrvdPropArrays *, //pdrgpdpCtxt
-				ULONG ulOptReq
-				)
-			{
-				if (0 == ulOptReq  && CDistributionSpec::EdtHashed == prppInput->Ped()->PdsRequired()->Edt())
-				{
-					// use exact matching if optimizing first request
-					return CEnfdDistribution::EdmExact;
-				}
-
-				// use relaxed matching if optimizing other requests
-				return CEnfdDistribution::EdmSatisfy;
-			}
+			// use relaxed matching if optimizing other requests
+			return CEnfdDistribution::EdmSatisfy;
+		}
 
 
-			// compute required distribution of the n-th child
-			virtual
-			CDistributionSpec *PdsRequired
-				(
-					IMemoryPool *mp,
-					CExpressionHandle &exprhdl,
-					CDistributionSpec *pdsRequired,
-					ULONG child_index,
-					CDrvdPropArrays *pdrgpdpCtxt,
-					ULONG ulOptReq
-				)
-				const;
+		// compute required distribution of the n-th child
+		virtual CDistributionSpec *PdsRequired(IMemoryPool *mp,
+											   CExpressionHandle &exprhdl,
+											   CDistributionSpec *pdsRequired,
+											   ULONG child_index,
+											   CDrvdPropArrays *pdrgpdpCtxt,
+											   ULONG ulOptReq) const;
 
-	}; // class CPhysicalSerialUnionAll
+	};  // class CPhysicalSerialUnionAll
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CPhysicalSerialUnionAll_H
+#endif  // !GPOPT_CPhysicalSerialUnionAll_H
 
 // EOF

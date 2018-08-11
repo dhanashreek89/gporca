@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPattern
@@ -28,92 +28,72 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPattern : public COperator
 	{
+	private:
+		// private copy ctor
+		CPattern(const CPattern &);
 
-		private:
+	public:
+		// ctor
+		explicit CPattern(IMemoryPool *mp) : COperator(mp)
+		{
+		}
 
-			// private copy ctor
-			CPattern(const CPattern &);
+		// dtor
+		virtual ~CPattern()
+		{
+		}
 
-		public:
-		
-			// ctor
-			explicit
-			CPattern
-				(
-				IMemoryPool *mp
-				)
-				: 
-				COperator(mp)
-			{}
+		// type of operator
+		virtual BOOL
+		FPattern() const
+		{
+			GPOS_ASSERT(!FPhysical() && !FScalar() && !FLogical());
+			return true;
+		}
 
-			// dtor
-			virtual 
-			~CPattern() {}
+		// create derived properties container
+		virtual DrvdPropArray *PdpCreate(IMemoryPool *mp) const;
 
-			// type of operator
-			virtual
-			BOOL FPattern() const
-			{
-				GPOS_ASSERT(!FPhysical() && !FScalar() && !FLogical());
-				return true;
-			}
+		// create required properties container
+		virtual CReqdProp *PrpCreate(IMemoryPool *mp) const;
 
-			// create derived properties container
-			virtual
-			DrvdPropArray *PdpCreate(IMemoryPool *mp) const;
+		// match function
+		BOOL Matches(COperator *) const;
 
-			// create required properties container
-			virtual
-			CReqdProp *PrpCreate(IMemoryPool *mp) const;
-						
-			// match function
-			BOOL Matches(COperator *) const;
-			
-			// sensitivity to order of inputs
-			BOOL FInputOrderSensitive() const;
+		// sensitivity to order of inputs
+		BOOL FInputOrderSensitive() const;
 
-			// check if operator is a pattern leaf
-			virtual
-			BOOL FLeaf() const = 0;
-			
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *mp,
-						UlongToColRefMap *colref_mapping,
-						BOOL must_exist
-						);
+		// check if operator is a pattern leaf
+		virtual BOOL FLeaf() const = 0;
 
-			// conversion function
-			static
-			CPattern *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(pop->FPattern());
+		// return a copy of the operator with remapped columns
+		virtual COperator *PopCopyWithRemappedColumns(IMemoryPool *mp,
+													  UlongToColRefMap *colref_mapping,
+													  BOOL must_exist);
 
-				return reinterpret_cast<CPattern*>(pop);
-			}
+		// conversion function
+		static CPattern *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(pop->FPattern());
 
-			// helper to check multi-node pattern
-			static
-			BOOL FMultiNode
-				(
-				COperator *pop
-				)
-			{
-				return COperator::EopPatternMultiLeaf == pop->Eopid() ||
-					COperator::EopPatternMultiTree == pop->Eopid();
-			}
+			return reinterpret_cast<CPattern *>(pop);
+		}
 
-	}; // class CPattern
+		// helper to check multi-node pattern
+		static BOOL
+		FMultiNode(COperator *pop)
+		{
+			return COperator::EopPatternMultiLeaf == pop->Eopid() ||
+				   COperator::EopPatternMultiTree == pop->Eopid();
+		}
 
-}
+	};  // class CPattern
+
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CPattern_H
+#endif  // !GPOPT_CPattern_H
 
 // EOF

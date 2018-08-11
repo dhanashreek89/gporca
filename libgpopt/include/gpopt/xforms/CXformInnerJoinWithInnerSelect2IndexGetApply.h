@@ -33,45 +33,52 @@ namespace gpopt
 	//		Transform Inner Join with Select on the inner branch to IndexGet Apply
 	//
 	//---------------------------------------------------------------------------
-	class CXformInnerJoinWithInnerSelect2IndexGetApply : public CXformJoin2IndexApplyBase
-		<CLogicalInnerJoin, CLogicalIndexApply, CLogicalGet,
-		true /*fWithSelect*/, false /*is_partial*/, IMDIndex::EmdindBtree>
+	class CXformInnerJoinWithInnerSelect2IndexGetApply
+		: public CXformJoin2IndexApplyBase<CLogicalInnerJoin,
+										   CLogicalIndexApply,
+										   CLogicalGet,
+										   true /*fWithSelect*/,
+										   false /*is_partial*/,
+										   IMDIndex::EmdindBtree>
 	{
-		private:
-			// private copy ctor
-			CXformInnerJoinWithInnerSelect2IndexGetApply(const CXformInnerJoinWithInnerSelect2IndexGetApply &);
+	private:
+		// private copy ctor
+		CXformInnerJoinWithInnerSelect2IndexGetApply(
+			const CXformInnerJoinWithInnerSelect2IndexGetApply &);
 
-		public:
-			// ctor
-			explicit
-			CXformInnerJoinWithInnerSelect2IndexGetApply(IMemoryPool *mp)
-				: CXformJoin2IndexApplyBase
-				 <CLogicalInnerJoin, CLogicalIndexApply, CLogicalGet,
-				 true /*fWithSelect*/, false /*is_partial*/, IMDIndex::EmdindBtree>
-				(mp)
-			{}
+	public:
+		// ctor
+		explicit CXformInnerJoinWithInnerSelect2IndexGetApply(IMemoryPool *mp)
+			: CXformJoin2IndexApplyBase<CLogicalInnerJoin,
+										CLogicalIndexApply,
+										CLogicalGet,
+										true /*fWithSelect*/,
+										false /*is_partial*/,
+										IMDIndex::EmdindBtree>(mp)
+		{
+		}
 
-			// dtor
-			virtual
-			~CXformInnerJoinWithInnerSelect2IndexGetApply()
-			{}
+		// dtor
+		virtual ~CXformInnerJoinWithInnerSelect2IndexGetApply()
+		{
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfInnerJoinWithInnerSelect2IndexGetApply;
-			}
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfInnerJoinWithInnerSelect2IndexGetApply;
+		}
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformInnerJoinWithInnerSelect2IndexGetApply";
-			}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformInnerJoinWithInnerSelect2IndexGetApply";
+		}
 	};
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformInnerJoinWithInnerSelect2IndexGetApply_H
+#endif  // !GPOPT_CXformInnerJoinWithInnerSelect2IndexGetApply_H
 
 // EOF

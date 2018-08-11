@@ -26,8 +26,7 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalBroadcastMotion::CDXLPhysicalBroadcastMotion(IMemoryPool *mp)
-	: CDXLPhysicalMotion(mp)
+CDXLPhysicalBroadcastMotion::CDXLPhysicalBroadcastMotion(IMemoryPool *mp) : CDXLPhysicalMotion(mp)
 {
 }
 

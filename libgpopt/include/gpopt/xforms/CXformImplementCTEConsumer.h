@@ -28,52 +28,42 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformImplementCTEConsumer : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformImplementCTEConsumer(const CXformImplementCTEConsumer &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementCTEConsumer(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformImplementCTEConsumer(const CXformImplementCTEConsumer &);
+		// dtor
+		virtual ~CXformImplementCTEConsumer()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementCTEConsumer;
+		}
 
-			// ctor
-			explicit
-			CXformImplementCTEConsumer(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementCTEConsumer";
+		}
 
-			// dtor
-			virtual
-			~CXformImplementCTEConsumer() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementCTEConsumer;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementCTEConsumer";
-			}
+	};  // class CXformImplementCTEConsumer
+}  // namespace gpopt
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformImplementCTEConsumer
-}
-
-#endif // !GPOPT_CXformImplementCTEConsumer_H
+#endif  // !GPOPT_CXformImplementCTEConsumer_H
 
 // EOF

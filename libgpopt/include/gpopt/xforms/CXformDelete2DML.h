@@ -28,53 +28,44 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformDelete2DML : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformDelete2DML(const CXformDelete2DML &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformDelete2DML(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformDelete2DML(const CXformDelete2DML &);
+		// dtor
+		virtual ~CXformDelete2DML()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfDelete2DML;
+		}
 
-			// ctor
-			explicit
-			CXformDelete2DML(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformDelete2DML";
+		}
 
-			// dtor
-			virtual
-			~CXformDelete2DML() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfDelete2DML;
-			}
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformDelete2DML";
-			}
+	};  // class CXformDelete2DML
+}  // namespace gpopt
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			virtual
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformDelete2DML
-}
-
-#endif // !GPOPT_CXformDelete2DML_H
+#endif  // !GPOPT_CXformDelete2DML_H
 
 // EOF

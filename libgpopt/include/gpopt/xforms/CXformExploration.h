@@ -28,69 +28,61 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformExploration : public CXform
 	{
+	private:
+		// private copy ctor
+		CXformExploration(const CXformExploration &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformExploration(CExpression *pexpr);
 
-			// private copy ctor
-			CXformExploration(const CXformExploration &);
+		// dtor
+		virtual ~CXformExploration();
 
-		public:
+		// type of operator
+		virtual BOOL
+		FExploration() const
+		{
+			GPOS_ASSERT(!FSubstitution() && !FImplementation());
+			return true;
+		}
 
-			// ctor
-			explicit
-			CXformExploration(CExpression *pexpr);
+		// is transformation a subquery unnesting (Subquery To Apply) xform?
+		virtual BOOL
+		FSubqueryUnnesting() const
+		{
+			return false;
+		}
 
-			// dtor
-			virtual
-			~CXformExploration();
+		// is transformation an Apply decorrelation (Apply To Join) xform?
+		virtual BOOL
+		FApplyDecorrelating() const
+		{
+			return false;
+		}
 
-			// type of operator
-			virtual
-			BOOL FExploration() const
-			{
-				GPOS_ASSERT(!FSubstitution() && !FImplementation());
-				return true;
-			}
+		// do stats need to be computed before applying xform?
+		virtual BOOL
+		FNeedsStats() const
+		{
+			return false;
+		}
 
-			// is transformation a subquery unnesting (Subquery To Apply) xform?
-			virtual
-			BOOL FSubqueryUnnesting() const
-			{
-				return false;
-			}
+		// conversion function
+		static CXformExploration *
+		Pxformexp(CXform *pxform)
+		{
+			GPOS_ASSERT(NULL != pxform);
+			GPOS_ASSERT(pxform->FExploration());
 
-			// is transformation an Apply decorrelation (Apply To Join) xform?
-			virtual
-			BOOL FApplyDecorrelating() const
-			{
-				return false;
-			}
+			return dynamic_cast<CXformExploration *>(pxform);
+		}
 
-			// do stats need to be computed before applying xform?
-			virtual
-			BOOL FNeedsStats() const
-			{
-				return false;
-			}
+	};  // class CXformExploration
 
-			// conversion function
-			static
-			CXformExploration *Pxformexp
-				(
-				CXform *pxform
-				)
-			{
-				GPOS_ASSERT(NULL != pxform);
-				GPOS_ASSERT(pxform->FExploration());
-
-				return dynamic_cast<CXformExploration*>(pxform);
-			}
-
-	}; // class CXformExploration
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformExploration_H
+#endif  // !GPOPT_CXformExploration_H
 
 // EOF

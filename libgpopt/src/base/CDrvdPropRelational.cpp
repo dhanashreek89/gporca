@@ -33,21 +33,20 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CDrvdPropRelational::CDrvdPropRelational
-	()
-	:
-	m_pcrsOutput(NULL),
-	m_pcrsOuter(NULL),
-	m_pcrsNotNull(NULL),
-	m_pcrsCorrelatedApply(NULL),
-	m_pkc(NULL),
-	m_pdrgpfd(NULL),
-	m_ulJoinDepth(0),
-	m_ppartinfo(NULL),
-	m_ppc(NULL),
-	m_pfp(NULL),
-	m_fHasPartialIndexes(false)
-{}
+CDrvdPropRelational::CDrvdPropRelational()
+	: m_pcrsOutput(NULL),
+	  m_pcrsOuter(NULL),
+	  m_pcrsNotNull(NULL),
+	  m_pcrsCorrelatedApply(NULL),
+	  m_pkc(NULL),
+	  m_pdrgpfd(NULL),
+	  m_ulJoinDepth(0),
+	  m_ppartinfo(NULL),
+	  m_ppc(NULL),
+	  m_pfp(NULL),
+	  m_fHasPartialIndexes(false)
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -76,7 +75,7 @@ CDrvdPropRelational::~CDrvdPropRelational()
 
 #ifdef GPOS_DEBUG
 	CWorker::Self()->ResetTimeSlice();
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 }
 
 
@@ -89,12 +88,10 @@ CDrvdPropRelational::~CDrvdPropRelational()
 //
 //---------------------------------------------------------------------------
 void
-CDrvdPropRelational::Derive
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CDrvdPropCtxt * // pdpctxt
-	)
+CDrvdPropRelational::Derive(IMemoryPool *mp,
+							CExpressionHandle &exprhdl,
+							CDrvdPropCtxt *  // pdpctxt
+)
 {
 	GPOS_CHECK_ABORT;
 
@@ -105,7 +102,7 @@ CDrvdPropRelational::Derive
 
 	// derive outer-references
 	m_pcrsOuter = popLogical->PcrsDeriveOuter(mp, exprhdl);
-	
+
 	// derive not null columns
 	m_pcrsNotNull = popLogical->PcrsDeriveNotNull(mp, exprhdl);
 
@@ -114,13 +111,13 @@ CDrvdPropRelational::Derive
 
 	// derive keys
 	m_pkc = popLogical->PkcDeriveKeys(mp, exprhdl);
-	
+
 	// derive constraint
 	m_ppc = popLogical->PpcDeriveConstraint(mp, exprhdl);
 
 	// compute max card
 	m_maxcard = popLogical->Maxcard(mp, exprhdl);
-	
+
 	// derive join depth
 	m_ulJoinDepth = popLogical->JoinDepth(mp, exprhdl);
 
@@ -131,7 +128,7 @@ CDrvdPropRelational::Derive
 	if (!FHasKey() && 1 == m_maxcard)
 	{
 		GPOS_ASSERT(NULL == m_pkc);
-		
+
 		if (0 < m_pcrsOutput->Size())
 		{
 			m_pcrsOutput->AddRef();
@@ -141,7 +138,7 @@ CDrvdPropRelational::Derive
 
 	// derive functional dependencies
 	m_pdrgpfd = Pdrgpfd(mp, exprhdl);
-	
+
 	// derive partition consumers
 	m_ppartinfo = popLogical->PpartinfoDerive(mp, exprhdl);
 	GPOS_ASSERT(NULL != m_ppartinfo);
@@ -152,12 +149,12 @@ CDrvdPropRelational::Derive
 	if (COperator::EopLogicalDynamicGet == op_id)
 	{
 		m_fHasPartialIndexes =
-				CLogicalDynamicGet::PopConvert(popLogical)->Ptabdesc()->FHasPartialIndexes();
+			CLogicalDynamicGet::PopConvert(popLogical)->Ptabdesc()->FHasPartialIndexes();
 	}
 	else if (COperator::EopLogicalSelect == op_id)
 	{
 		m_fHasPartialIndexes =
-				exprhdl.GetRelationalProperties(0 /*child_index*/)->FHasPartialIndexes();
+			exprhdl.GetRelationalProperties(0 /*child_index*/)->FHasPartialIndexes();
 	}
 }
 
@@ -171,11 +168,7 @@ CDrvdPropRelational::Derive
 //
 //---------------------------------------------------------------------------
 BOOL
-CDrvdPropRelational::FSatisfies
-	(
-	const CReqdPropPlan *prpp
-	)
-	const
+CDrvdPropRelational::FSatisfies(const CReqdPropPlan *prpp) const
 {
 	GPOS_ASSERT(NULL != prpp);
 	GPOS_ASSERT(NULL != prpp->PcrsRequired());
@@ -195,15 +188,12 @@ CDrvdPropRelational::FSatisfies
 //
 //---------------------------------------------------------------------------
 CDrvdPropRelational *
-CDrvdPropRelational::GetRelationalProperties
-	(
-	DrvdPropArray *pdp
-	)
+CDrvdPropRelational::GetRelationalProperties(DrvdPropArray *pdp)
 {
 	GPOS_ASSERT(NULL != pdp);
 	GPOS_ASSERT(EptRelational == pdp->Ept() && "This is not a relational properties container");
 
-	return dynamic_cast<CDrvdPropRelational*>(pdp);
+	return dynamic_cast<CDrvdPropRelational *>(pdp);
 }
 
 
@@ -216,21 +206,18 @@ CDrvdPropRelational::GetRelationalProperties
 //
 //---------------------------------------------------------------------------
 CFunctionalDependencyArray *
-CDrvdPropRelational::PdrgpfdChild
-	(
-	IMemoryPool *mp,
-	ULONG child_index,
-	CExpressionHandle &exprhdl
-	)
+CDrvdPropRelational::PdrgpfdChild(IMemoryPool *mp, ULONG child_index, CExpressionHandle &exprhdl)
 {
 	GPOS_ASSERT(child_index < exprhdl.Arity());
 	GPOS_ASSERT(!exprhdl.FScalarChild(child_index));
 
 	// get FD's of the child
-	CFunctionalDependencyArray *pdrgpfdChild = exprhdl.GetRelationalProperties(child_index)->Pdrgpfd();
+	CFunctionalDependencyArray *pdrgpfdChild =
+		exprhdl.GetRelationalProperties(child_index)->Pdrgpfd();
 
 	// get output columns of the parent
-	CColRefSet *pcrsOutput = CDrvdPropRelational::GetRelationalProperties(exprhdl.Pdp())->PcrsOutput();
+	CColRefSet *pcrsOutput =
+		CDrvdPropRelational::GetRelationalProperties(exprhdl.Pdp())->PcrsOutput();
 
 	// collect child FD's that are applicable to the parent
 	CFunctionalDependencyArray *pdrgpfd = GPOS_NEW(mp) CFunctionalDependencyArray(mp);
@@ -272,22 +259,18 @@ CDrvdPropRelational::PdrgpfdChild
 //
 //---------------------------------------------------------------------------
 CFunctionalDependencyArray *
-CDrvdPropRelational::PdrgpfdLocal
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl
-	)
+CDrvdPropRelational::PdrgpfdLocal(IMemoryPool *mp, CExpressionHandle &exprhdl)
 {
 	CFunctionalDependencyArray *pdrgpfd = GPOS_NEW(mp) CFunctionalDependencyArray(mp);
 
 	// get local key
 	CKeyCollection *pkc = CDrvdPropRelational::GetRelationalProperties(exprhdl.Pdp())->Pkc();
-	
+
 	if (NULL == pkc)
 	{
 		return pdrgpfd;
 	}
-	
+
 	ULONG ulKeys = pkc->Keys();
 	for (ULONG ul = 0; ul < ulKeys; ul++)
 	{
@@ -296,7 +279,8 @@ CDrvdPropRelational::PdrgpfdLocal
 		pcrsKey->Include(pdrgpcrKey);
 
 		// get output columns
-		CColRefSet *pcrsOutput = CDrvdPropRelational::GetRelationalProperties(exprhdl.Pdp())->PcrsOutput();
+		CColRefSet *pcrsOutput =
+			CDrvdPropRelational::GetRelationalProperties(exprhdl.Pdp())->PcrsOutput();
 		CColRefSet *pcrsDetermined = GPOS_NEW(mp) CColRefSet(mp);
 		pcrsDetermined->Include(pcrsOutput);
 		pcrsDetermined->Exclude(pcrsKey);
@@ -306,7 +290,8 @@ CDrvdPropRelational::PdrgpfdLocal
 			// add FD between key and the rest of output columns
 			pcrsKey->AddRef();
 			pcrsDetermined->AddRef();
-			CFunctionalDependency *pfdLocal = GPOS_NEW(mp) CFunctionalDependency(pcrsKey, pcrsDetermined);
+			CFunctionalDependency *pfdLocal =
+				GPOS_NEW(mp) CFunctionalDependency(pcrsKey, pcrsDetermined);
 			pdrgpfd->Append(pfdLocal);
 		}
 
@@ -328,11 +313,7 @@ CDrvdPropRelational::PdrgpfdLocal
 //
 //---------------------------------------------------------------------------
 CFunctionalDependencyArray *
-CDrvdPropRelational::Pdrgpfd
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl
-	)
+CDrvdPropRelational::Pdrgpfd(IMemoryPool *mp, CExpressionHandle &exprhdl)
 {
 	GPOS_ASSERT(exprhdl.Pop()->FLogical());
 
@@ -367,16 +348,12 @@ CDrvdPropRelational::Pdrgpfd
 //
 //---------------------------------------------------------------------------
 IOstream &
-CDrvdPropRelational::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CDrvdPropRelational::OsPrint(IOstream &os) const
 {
-	os	<<	"Output Cols: [" << *m_pcrsOutput << "]"
-		<<	", Outer Refs: [" << *m_pcrsOuter << "]"
-		<<	", Not Null Cols: [" << *m_pcrsNotNull << "]"
-		<< ", Corr. Apply Cols: [" << *m_pcrsCorrelatedApply <<"]";
+	os << "Output Cols: [" << *m_pcrsOutput << "]"
+	   << ", Outer Refs: [" << *m_pcrsOuter << "]"
+	   << ", Not Null Cols: [" << *m_pcrsNotNull << "]"
+	   << ", Corr. Apply Cols: [" << *m_pcrsCorrelatedApply << "]";
 
 	if (NULL == m_pkc)
 	{
@@ -386,7 +363,7 @@ CDrvdPropRelational::OsPrint
 	{
 		os << ", " << *m_pkc;
 	}
-	
+
 	os << ", Max Card: " << m_maxcard;
 
 	os << ", Join Depth: " << m_ulJoinDepth;
@@ -394,7 +371,7 @@ CDrvdPropRelational::OsPrint
 	os << ", Constraint Property: [" << *m_ppc << "]";
 
 	const ULONG ulFDs = m_pdrgpfd->Size();
-	
+
 	os << ", FDs: [";
 	for (ULONG ul = 0; ul < ulFDs; ul++)
 	{
@@ -402,14 +379,14 @@ CDrvdPropRelational::OsPrint
 		os << *pfd;
 	}
 	os << "]";
-	
+
 	os << ", Function Properties: [" << *m_pfp << "]";
 
 	os << ", Part Info: [" << *m_ppartinfo << "]";
 
 	if (m_fHasPartialIndexes)
 	{
-		os <<", Has Partial Indexes";
+		os << ", Has Partial Indexes";
 	}
 	return os;
 }

@@ -19,15 +19,12 @@ namespace gpopt
 
 	class CWindowTest
 	{
-		public:
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
+	};  // class CWindowTest
+}  // namespace gpopt
 
-			// unittests
-			static 
-			GPOS_RESULT EresUnittest();
-	}; // class CWindowTest
-}
-
-#endif // !GPOPT_CWindowTest_H
+#endif  // !GPOPT_CWindowTest_H
 
 // EOF
-

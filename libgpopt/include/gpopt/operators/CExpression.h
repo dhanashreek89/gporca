@@ -30,7 +30,7 @@
 namespace gpopt
 {
 	// cleanup function for arrays
-	class CExpression;	
+	class CExpression;
 	typedef CDynamicPtrArray<CExpression, CleanupRelease> CExpressionArray;
 
 	// array of arrays of expression pointers
@@ -43,7 +43,7 @@ namespace gpopt
 
 	using namespace gpos;
 	using namespace gpnaucrates;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CExpression
@@ -54,294 +54,273 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CExpression : public CRefCount
 	{
-		private:
-		
-			// memory pool
-			IMemoryPool *m_mp;
-			
-			// operator class
-			COperator *m_pop;
-			
-			// array of children
-			CExpressionArray *m_pdrgpexpr;
+	private:
+		// memory pool
+		IMemoryPool *m_mp;
 
-			// derived relational properties
-			CDrvdPropRelational *m_pdprel;
+		// operator class
+		COperator *m_pop;
 
-			// derived stats
-			IStatistics *m_pstats;
+		// array of children
+		CExpressionArray *m_pdrgpexpr;
 
-			// required plan properties
-			CReqdPropPlan *m_prpp;
+		// derived relational properties
+		CDrvdPropRelational *m_pdprel;
 
-			// derived physical properties
-			CDrvdPropPlan *m_pdpplan;
+		// derived stats
+		IStatistics *m_pstats;
 
-			// derived scalar properties
-			CDrvdPropScalar *m_pdpscalar;
+		// required plan properties
+		CReqdPropPlan *m_prpp;
 
-			// group reference to Memo
-			CGroupExpression *m_pgexpr;
+		// derived physical properties
+		CDrvdPropPlan *m_pdpplan;
 
-			// cost of physical expression node when copied out of the memo
-			CCost m_cost;
+		// derived scalar properties
+		CDrvdPropScalar *m_pdpscalar;
 
-			// id of origin group, used for debugging expressions extracted from memo
-			ULONG m_ulOriginGrpId;
+		// group reference to Memo
+		CGroupExpression *m_pgexpr;
 
-			// id of origin group expression, used for debugging expressions extracted from memo
-			ULONG m_ulOriginGrpExprId;
+		// cost of physical expression node when copied out of the memo
+		CCost m_cost;
 
-			// set expression's derivable property
-			void SetPdp(DrvdPropArray *pdp, const DrvdPropArray::EPropType ept);
+		// id of origin group, used for debugging expressions extracted from memo
+		ULONG m_ulOriginGrpId;
 
-#ifdef GPOS_DEBUG
+		// id of origin group expression, used for debugging expressions extracted from memo
+		ULONG m_ulOriginGrpExprId;
 
-			// assert valid property derivation
-			void AssertValidPropDerivation(const DrvdPropArray::EPropType ept);
-
-			// print expression properties
-			void PrintProperties(IOstream &os, CPrintPrefix &pfx) const;
-
-#endif // GPOS_DEBUG
-
-			// check if the expression satisfies partition enforcer condition
-			BOOL FValidPartEnforcers(CDrvdPropCtxtPlan *pdpctxtplan);
-
-			// check if the distributions of all children are compatible
-			BOOL FValidChildrenDistribution(CDrvdPropCtxtPlan *pdpctxtplan);
-
-			// copy group properties and stats to expression
-			void CopyGroupPropsAndStats(IStatistics *input_stats);
-
-			// decorate expression tree with required plan properties
-			CReqdPropPlan* PrppDecorate(IMemoryPool *mp, CReqdPropPlan *prppInput);
-
-			// private copy ctor
-			CExpression(const CExpression &);
-						
-		public:
-		
-			// ctor's with different arity
-
-			// ctor for leaf nodes
-			CExpression
-				(
-				IMemoryPool *mp,
-				COperator *pop,
-				CGroupExpression *pgexpr = NULL
-				);
-
-			// ctor for unary expressions
-			CExpression
-				(
-				IMemoryPool *mp,
-				COperator *pop,
-				CExpression *pexpr
-				);
-
-			// ctor for binary expressions
-			CExpression
-				(
-				IMemoryPool *mp,
-				COperator *pop,
-				CExpression *pexprChildFirst,
-				CExpression *pexprChildSecond
-				);
-
-			// ctor for ternary expressions
-			CExpression
-				(
-				IMemoryPool *mp,
-				COperator *pop,
-				CExpression *pexprChildFirst,
-				CExpression *pexprChildSecond,
-				CExpression *pexprChildThird
-				);
-
-			// ctor n-ary expressions
-			CExpression
-				(
-				IMemoryPool *mp,
-				COperator *pop,
-				CExpressionArray *pdrgpexpr
-				);
-			
-			// ctor for n-ary expression with origin group expression
-			CExpression
-				(
-				IMemoryPool *mp,
-				COperator *pop,
-				CGroupExpression *pgexpr,
-				CExpressionArray *pdrgpexpr,
-				IStatistics *input_stats,
-				CCost cost = GPOPT_INVALID_COST
-				);
-
-			// ctor for expression with derived properties
-			CExpression
-				(
-				IMemoryPool *mp,
-				DrvdPropArray *pdprop
-				);
-			
-			// dtor
-			~CExpression();
-			
-			// shorthand to access children
-			CExpression *operator [] 
-				(
-				ULONG ulPos
-				)
-			const
-			{
-				GPOS_ASSERT(NULL != m_pdrgpexpr);
-				return (*m_pdrgpexpr)[ulPos];
-			};
-	
-			// arity function
-			ULONG Arity() const
-			{
-				return m_pdrgpexpr == NULL ? 0 : m_pdrgpexpr->Size();
-			}
-			
-			// accessor for operator
-			COperator *Pop() const
-			{
-				GPOS_ASSERT(NULL != m_pop);
-				return m_pop;
-			}
-		
-			// accessor of children array
-			CExpressionArray *PdrgPexpr() const
-			{
-				return m_pdrgpexpr;
-			}
-
-			// accessor for origin group expression
-			CGroupExpression *Pgexpr() const
-			{
-				return m_pgexpr;
-			}
-
-			// accessor for computed required plan props
-			CReqdPropPlan *Prpp() const
-			{
-				return m_prpp;
-			}
-
-			// get expression's derived property given its type
-			DrvdPropArray *Pdp(const DrvdPropArray::EPropType ept) const;
-
-			// get derived statistics object
-			const IStatistics *Pstats() const
-			{
-				return m_pstats;
-			}
-
-			// cost accessor
-			CCost Cost() const
-			{
-				return m_cost;
-			}
-
-			// get the suitable derived property type based on operator
-			DrvdPropArray::EPropType Ept() const;
-
-			// derive properties, determine the suitable derived property type internally
-			DrvdPropArray *PdpDerive(CDrvdPropCtxt *pdpctxt = NULL);
-
-			// derive statistics
-			IStatistics *PstatsDerive(CReqdPropRelational *prprel, IStatisticsArray *stats_ctxt);
-
-			// reset a derived property
-			void ResetDerivedProperty(DrvdPropArray::EPropType ept);
-
-			// reset all derived properties
-			void ResetDerivedProperties();
-
-			// reset expression stats
-			void ResetStats();
-
-			// compute required plan properties of all expression nodes
-			CReqdPropPlan* PrppCompute(IMemoryPool *mp, CReqdPropPlan *prppInput);
-
-			// check for outer references
-			BOOL HasOuterRefs();
-
-			// print driver
-			IOstream &OsPrint
-						(
-						IOstream &os,
-						const CPrintPrefix * = NULL,
-						BOOL fLast = true
-						)
-						const;
-			
-			// match with group expression
-			BOOL FMatchPattern(CGroupExpression *pgexpr) const;
-			
-			// return a copy of the expression with remapped columns
-			CExpression *PexprCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) const;
-
-			// compare entire expression rooted here
-			BOOL Matches(CExpression *pexpr) const;
+		// set expression's derivable property
+		void SetPdp(DrvdPropArray *pdp, const DrvdPropArray::EPropType ept);
 
 #ifdef GPOS_DEBUG
-			// match against given pattern
-			BOOL FMatchPattern(CExpression *pexpr) const;
-			
-			// match children against given pattern
-			BOOL FMatchPatternChildren(CExpression *pexpr) const;
-			
-			// compare entire expression rooted here
-			BOOL FMatchDebug(CExpression *pexpr) const;
 
-			// debug print; for interactive debugging sessions only
-			void DbgPrint() const;
+		// assert valid property derivation
+		void AssertValidPropDerivation(const DrvdPropArray::EPropType ept);
 
-			// debug print; for interactive debugging sessions only
-			// prints expression properties as well
-			void DbgPrintWithProperties() const;
-#endif // GPOS_DEBUG
+		// print expression properties
+		void PrintProperties(IOstream &os, CPrintPrefix &pfx) const;
 
-			// check if the expression satisfies given required properties
-			BOOL FValidPlan(const CReqdPropPlan *prpp, CDrvdPropCtxtPlan *pdpctxtplan);
+#endif  // GPOS_DEBUG
 
-			// static hash function
-			static
-			ULONG HashValue(const CExpression *pexpr);
+		// check if the expression satisfies partition enforcer condition
+		BOOL FValidPartEnforcers(CDrvdPropCtxtPlan *pdpctxtplan);
 
-			// static hash function
-			static
-			ULONG UlHashDedup(const CExpression *pexpr);
+		// check if the distributions of all children are compatible
+		BOOL FValidChildrenDistribution(CDrvdPropCtxtPlan *pdpctxtplan);
 
-			// rehydrate expression from a given cost context and child expressions
-			static
-			CExpression *PexprRehydrate(IMemoryPool *mp, CCostContext *pcc, CExpressionArray *pdrgpexpr, CDrvdPropCtxtPlan *pdpctxtplan);
+		// copy group properties and stats to expression
+		void CopyGroupPropsAndStats(IStatistics *input_stats);
+
+		// decorate expression tree with required plan properties
+		CReqdPropPlan *PrppDecorate(IMemoryPool *mp, CReqdPropPlan *prppInput);
+
+		// private copy ctor
+		CExpression(const CExpression &);
+
+	public:
+		// ctor's with different arity
+
+		// ctor for leaf nodes
+		CExpression(IMemoryPool *mp, COperator *pop, CGroupExpression *pgexpr = NULL);
+
+		// ctor for unary expressions
+		CExpression(IMemoryPool *mp, COperator *pop, CExpression *pexpr);
+
+		// ctor for binary expressions
+		CExpression(IMemoryPool *mp,
+					COperator *pop,
+					CExpression *pexprChildFirst,
+					CExpression *pexprChildSecond);
+
+		// ctor for ternary expressions
+		CExpression(IMemoryPool *mp,
+					COperator *pop,
+					CExpression *pexprChildFirst,
+					CExpression *pexprChildSecond,
+					CExpression *pexprChildThird);
+
+		// ctor n-ary expressions
+		CExpression(IMemoryPool *mp, COperator *pop, CExpressionArray *pdrgpexpr);
+
+		// ctor for n-ary expression with origin group expression
+		CExpression(IMemoryPool *mp,
+					COperator *pop,
+					CGroupExpression *pgexpr,
+					CExpressionArray *pdrgpexpr,
+					IStatistics *input_stats,
+					CCost cost = GPOPT_INVALID_COST);
+
+		// ctor for expression with derived properties
+		CExpression(IMemoryPool *mp, DrvdPropArray *pdprop);
+
+		// dtor
+		~CExpression();
+
+		// shorthand to access children
+		CExpression *operator[](ULONG ulPos) const
+		{
+			GPOS_ASSERT(NULL != m_pdrgpexpr);
+			return (*m_pdrgpexpr)[ulPos];
+		};
+
+		// arity function
+		ULONG
+		Arity() const
+		{
+			return m_pdrgpexpr == NULL ? 0 : m_pdrgpexpr->Size();
+		}
+
+		// accessor for operator
+		COperator *
+		Pop() const
+		{
+			GPOS_ASSERT(NULL != m_pop);
+			return m_pop;
+		}
+
+		// accessor of children array
+		CExpressionArray *
+		PdrgPexpr() const
+		{
+			return m_pdrgpexpr;
+		}
+
+		// accessor for origin group expression
+		CGroupExpression *
+		Pgexpr() const
+		{
+			return m_pgexpr;
+		}
+
+		// accessor for computed required plan props
+		CReqdPropPlan *
+		Prpp() const
+		{
+			return m_prpp;
+		}
+
+		// get expression's derived property given its type
+		DrvdPropArray *Pdp(const DrvdPropArray::EPropType ept) const;
+
+		// get derived statistics object
+		const IStatistics *
+		Pstats() const
+		{
+			return m_pstats;
+		}
+
+		// cost accessor
+		CCost
+		Cost() const
+		{
+			return m_cost;
+		}
+
+		// get the suitable derived property type based on operator
+		DrvdPropArray::EPropType Ept() const;
+
+		// derive properties, determine the suitable derived property type internally
+		DrvdPropArray *PdpDerive(CDrvdPropCtxt *pdpctxt = NULL);
+
+		// derive statistics
+		IStatistics *PstatsDerive(CReqdPropRelational *prprel, IStatisticsArray *stats_ctxt);
+
+		// reset a derived property
+		void ResetDerivedProperty(DrvdPropArray::EPropType ept);
+
+		// reset all derived properties
+		void ResetDerivedProperties();
+
+		// reset expression stats
+		void ResetStats();
+
+		// compute required plan properties of all expression nodes
+		CReqdPropPlan *PrppCompute(IMemoryPool *mp, CReqdPropPlan *prppInput);
+
+		// check for outer references
+		BOOL HasOuterRefs();
+
+		// print driver
+		IOstream &OsPrint(IOstream &os, const CPrintPrefix * = NULL, BOOL fLast = true) const;
+
+		// match with group expression
+		BOOL FMatchPattern(CGroupExpression *pgexpr) const;
+
+		// return a copy of the expression with remapped columns
+		CExpression *PexprCopyWithRemappedColumns(IMemoryPool *mp,
+												  UlongToColRefMap *colref_mapping,
+												  BOOL must_exist) const;
+
+		// compare entire expression rooted here
+		BOOL Matches(CExpression *pexpr) const;
+
+#ifdef GPOS_DEBUG
+		// match against given pattern
+		BOOL FMatchPattern(CExpression *pexpr) const;
+
+		// match children against given pattern
+		BOOL FMatchPatternChildren(CExpression *pexpr) const;
+
+		// compare entire expression rooted here
+		BOOL FMatchDebug(CExpression *pexpr) const;
+
+		// debug print; for interactive debugging sessions only
+		void DbgPrint() const;
+
+		// debug print; for interactive debugging sessions only
+		// prints expression properties as well
+		void DbgPrintWithProperties() const;
+#endif  // GPOS_DEBUG
+
+		// check if the expression satisfies given required properties
+		BOOL FValidPlan(const CReqdPropPlan *prpp, CDrvdPropCtxtPlan *pdpctxtplan);
+
+		// static hash function
+		static ULONG HashValue(const CExpression *pexpr);
+
+		// static hash function
+		static ULONG UlHashDedup(const CExpression *pexpr);
+
+		// rehydrate expression from a given cost context and child expressions
+		static CExpression *PexprRehydrate(IMemoryPool *mp,
+										   CCostContext *pcc,
+										   CExpressionArray *pdrgpexpr,
+										   CDrvdPropCtxtPlan *pdpctxtplan);
 
 
-	}; // class CExpression
+	};  // class CExpression
 
 
 	// shorthand for printing
-	inline
-	IOstream &operator << (IOstream &os, CExpression &expr)
+	inline IOstream &
+	operator<<(IOstream &os, CExpression &expr)
 	{
 		return expr.OsPrint(os);
 	}
 
 	// hash map from ULONG to expression
-	typedef CHashMap<ULONG, CExpression, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-					CleanupDelete<ULONG>, CleanupRelease<CExpression> > UlongToExprMap;
+	typedef CHashMap<ULONG,
+					 CExpression,
+					 gpos::HashValue<ULONG>,
+					 gpos::Equals<ULONG>,
+					 CleanupDelete<ULONG>,
+					 CleanupRelease<CExpression> >
+		UlongToExprMap;
 
 	// map iterator
-	typedef CHashMapIter<ULONG, CExpression, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-					CleanupDelete<ULONG>, CleanupRelease<CExpression> > UlongToExprMapIter;
+	typedef CHashMapIter<ULONG,
+						 CExpression,
+						 gpos::HashValue<ULONG>,
+						 gpos::Equals<ULONG>,
+						 CleanupDelete<ULONG>,
+						 CleanupRelease<CExpression> >
+		UlongToExprMapIter;
 
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CExpression_H
+#endif  // !GPOPT_CExpression_H
 
 // EOF

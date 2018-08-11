@@ -75,11 +75,8 @@ CParseHandlerLogicalJoin::StartElement(const XMLCh *const element_uri,
 		else
 		{
 			// This is to support nested join.
-			CParseHandlerBase *lg_join_parse_handler =
-				CParseHandlerFactory::GetParseHandler(m_mp,
-													  CDXLTokens::XmlstrToken(EdxltokenLogicalJoin),
-													  m_parse_handler_mgr,
-													  this);
+			CParseHandlerBase *lg_join_parse_handler = CParseHandlerFactory::GetParseHandler(
+				m_mp, CDXLTokens::XmlstrToken(EdxltokenLogicalJoin), m_parse_handler_mgr, this);
 			m_parse_handler_mgr->ActivateParseHandler(lg_join_parse_handler);
 
 			// store parse handlers

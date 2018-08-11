@@ -16,7 +16,6 @@
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalLeftAntiSemiNLJoinNotIn
@@ -27,54 +26,43 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalLeftAntiSemiNLJoinNotIn : public CPhysicalLeftAntiSemiNLJoin
 	{
+	private:
+		// private copy ctor
+		CPhysicalLeftAntiSemiNLJoinNotIn(const CPhysicalLeftAntiSemiNLJoinNotIn &);
 
-		private:
+	public:
+		// ctor
+		explicit CPhysicalLeftAntiSemiNLJoinNotIn(IMemoryPool *mp) : CPhysicalLeftAntiSemiNLJoin(mp)
+		{
+		}
 
-			// private copy ctor
-			CPhysicalLeftAntiSemiNLJoinNotIn(const CPhysicalLeftAntiSemiNLJoinNotIn &);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalLeftAntiSemiNLJoinNotIn;
+		}
 
-		public:
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalLeftAntiSemiNLJoinNotIn";
+		}
 
-			// ctor
-			explicit
-			CPhysicalLeftAntiSemiNLJoinNotIn
-				(
-				IMemoryPool *mp
-				)
-				:
-				CPhysicalLeftAntiSemiNLJoin(mp)
-			{}
+		// conversion function
+		static CPhysicalLeftAntiSemiNLJoinNotIn *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(EopPhysicalLeftAntiSemiNLJoinNotIn == pop->Eopid());
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalLeftAntiSemiNLJoinNotIn;
-			}
+			return dynamic_cast<CPhysicalLeftAntiSemiNLJoinNotIn *>(pop);
+		}
 
-			 // return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CPhysicalLeftAntiSemiNLJoinNotIn";
-			}
+	};  // class CPhysicalLeftAntiSemiNLJoinNotIn
 
-			// conversion function
-			static
-			CPhysicalLeftAntiSemiNLJoinNotIn *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(EopPhysicalLeftAntiSemiNLJoinNotIn == pop->Eopid());
+}  // namespace gpopt
 
-				return dynamic_cast<CPhysicalLeftAntiSemiNLJoinNotIn*>(pop);
-			}
-
-	}; // class CPhysicalLeftAntiSemiNLJoinNotIn
-
-}
-
-#endif // !GPOPT_CPhysicalLeftAntiSemiNLJoinNotIn_H
+#endif  // !GPOPT_CPhysicalLeftAntiSemiNLJoinNotIn_H
 
 // EOF

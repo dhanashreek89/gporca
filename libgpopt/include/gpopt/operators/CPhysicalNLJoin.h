@@ -17,7 +17,6 @@
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalNLJoin
@@ -28,142 +27,111 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalNLJoin : public CPhysicalJoin
 	{
+	private:
+		// private copy ctor
+		CPhysicalNLJoin(const CPhysicalNLJoin &);
 
-		private:
+	protected:
+		// helper function for computing the required partition propagation
+		// spec for the children of a nested loop join
+		CPartitionPropagationSpec *PppsRequiredNLJoinChild(IMemoryPool *mp,
+														   CExpressionHandle &exprhdl,
+														   CPartitionPropagationSpec *pppsRequired,
+														   ULONG child_index,
+														   CDrvdPropArrays *pdrgpdpCtxt,
+														   ULONG ulOptReq);
 
-			// private copy ctor
-			CPhysicalNLJoin(const CPhysicalNLJoin &);
+	public:
+		// ctor
+		explicit CPhysicalNLJoin(IMemoryPool *mp);
 
-		protected:
-			
-			// helper function for computing the required partition propagation 
-			// spec for the children of a nested loop join
-			CPartitionPropagationSpec *PppsRequiredNLJoinChild
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CPartitionPropagationSpec *pppsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				);
-			
-		public:
+		// dtor
+		virtual ~CPhysicalNLJoin();
 
-			// ctor
-			explicit
-			CPhysicalNLJoin(IMemoryPool *mp);
+		//-------------------------------------------------------------------------------------
+		// Required Plan Properties
+		//-------------------------------------------------------------------------------------
 
-			// dtor
-			virtual
-			~CPhysicalNLJoin();
+		// compute required sort order of the n-th child
+		virtual COrderSpec *PosRequired(IMemoryPool *mp,
+										CExpressionHandle &exprhdl,
+										COrderSpec *posInput,
+										ULONG child_index,
+										CDrvdPropArrays *pdrgpdpCtxt,
+										ULONG ulOptReq) const;
 
-			//-------------------------------------------------------------------------------------
-			// Required Plan Properties
-			//-------------------------------------------------------------------------------------
+		// compute required rewindability of the n-th child
+		virtual CRewindabilitySpec *PrsRequired(IMemoryPool *mp,
+												CExpressionHandle &exprhdl,
+												CRewindabilitySpec *prsRequired,
+												ULONG child_index,
+												CDrvdPropArrays *pdrgpdpCtxt,
+												ULONG ulOptReq) const;
 
-			// compute required sort order of the n-th child
-			virtual
-			COrderSpec *PosRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				COrderSpec *posInput,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				)
-				const;
+		// compute required output columns of the n-th child
+		virtual CColRefSet *PcrsRequired(IMemoryPool *mp,
+										 CExpressionHandle &exprhdl,
+										 CColRefSet *pcrsRequired,
+										 ULONG child_index,
+										 CDrvdPropArrays *,  // pdrgpdpCtxt
+										 ULONG				 // ulOptReq
+		);
 
-			// compute required rewindability of the n-th child
-			virtual
-			CRewindabilitySpec *PrsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CRewindabilitySpec *prsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				)
-				const;
+		// compute required partition propagation of the n-th child
+		virtual CPartitionPropagationSpec *
+		PppsRequired(IMemoryPool *mp,
+					 CExpressionHandle &exprhdl,
+					 CPartitionPropagationSpec *pppsRequired,
+					 ULONG child_index,
+					 CDrvdPropArrays *pdrgpdpCtxt,
+					 ULONG ulOptReq)
+		{
+			GPOS_ASSERT(ulOptReq < UlPartPropagateRequests());
 
-			// compute required output columns of the n-th child
-			virtual
-			CColRefSet *PcrsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CColRefSet *pcrsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *, // pdrgpdpCtxt
-				ULONG // ulOptReq
-				);
-			
-			// compute required partition propagation of the n-th child
-			virtual
-			CPartitionPropagationSpec *PppsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CPartitionPropagationSpec *pppsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				)
-			{
-				GPOS_ASSERT(ulOptReq < UlPartPropagateRequests());
+			return PppsRequiredNLJoinChild(
+				mp, exprhdl, pppsRequired, child_index, pdrgpdpCtxt, ulOptReq);
+		}
 
-				return PppsRequiredNLJoinChild(mp, exprhdl, pppsRequired, child_index, pdrgpdpCtxt, ulOptReq);
-			}
+		//-------------------------------------------------------------------------------------
+		// Enforced Properties
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			// Enforced Properties
-			//-------------------------------------------------------------------------------------
+		// return order property enforcing type for this operator
+		virtual CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl,
+														const CEnfdOrder *peo) const;
 
-			// return order property enforcing type for this operator
-			virtual
-			CEnfdProp::EPropEnforcingType EpetOrder
-				(
-				CExpressionHandle &exprhdl,
-				const CEnfdOrder *peo
-				) const;
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+		// return true if operator is a correlated NL Join
+		virtual BOOL
+		FCorrelated() const
+		{
+			return false;
+		}
 
-			// return true if operator is a correlated NL Join
-			virtual
-			BOOL FCorrelated() const
-			{
-				return false;
-			}
+		// return required inner columns -- overloaded by correlated join children
+		virtual CColRefArray *
+		PdrgPcrInner() const
+		{
+			return NULL;
+		}
 
-			// return required inner columns -- overloaded by correlated join children
-			virtual
-			CColRefArray *PdrgPcrInner() const
-			{
-				return NULL;
-			}
+		// conversion function
+		static CPhysicalNLJoin *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(CUtils::FNLJoin(pop));
 
-			// conversion function
-			static
-			CPhysicalNLJoin *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(CUtils::FNLJoin(pop));
-
-				return dynamic_cast<CPhysicalNLJoin*>(pop);
-			}
+			return dynamic_cast<CPhysicalNLJoin *>(pop);
+		}
 
 
-	}; // class CPhysicalNLJoin
+	};  // class CPhysicalNLJoin
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CPhysicalNLJoin_H
+#endif  // !GPOPT_CPhysicalNLJoin_H
 
 // EOF

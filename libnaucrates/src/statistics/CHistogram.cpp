@@ -189,10 +189,10 @@ CHistogram::MakeHistogramLessThanOrLessThanEqualFilter(IMemoryPool *mp,
 	}
 
 	return GPOS_NEW(mp) CHistogram(new_buckets,
-											true,		   // is_well_defined
-											CDouble(0.0),  // fNullFreq
-											distinct_remaining,
-											freq_remaining);
+								   true,		  // is_well_defined
+								   CDouble(0.0),  // fNullFreq
+								   distinct_remaining,
+								   freq_remaining);
 }
 
 // return an array buckets after applying non equality filter on the histogram buckets
@@ -241,10 +241,10 @@ CHistogram::MakeHistogramInequalityFilter(IMemoryPool *mp, CPoint *point) const
 	CDouble null_freq(0.0);
 
 	return GPOS_NEW(mp) CHistogram(histogram_buckets,
-											true /*is_well_defined*/,
-											null_freq,
-											m_distinct_remaining,
-											m_freq_remaining);
+								   true /*is_well_defined*/,
+								   null_freq,
+								   m_distinct_remaining,
+								   m_freq_remaining);
 }
 
 // construct new histogram with IDF filter
@@ -262,10 +262,10 @@ CHistogram::MakeHistogramIDFFilter(IMemoryPool *mp, CPoint *point) const
 	}
 
 	return GPOS_NEW(mp) CHistogram(histogram_buckets,
-											true /*is_well_defined*/,
-											null_freq,
-											m_distinct_remaining,
-											m_freq_remaining);
+								   true /*is_well_defined*/,
+								   null_freq,
+								   m_distinct_remaining,
+								   m_freq_remaining);
 }
 
 // return an array buckets after applying equality filter on the histogram buckets
@@ -317,10 +317,10 @@ CHistogram::MakeHistogramEqualFilter(IMemoryPool *mp, CPoint *point) const
 	if (point->GetDatum()->IsNull())
 	{
 		return GPOS_NEW(mp) CHistogram(GPOS_NEW(mp) CBucketArray(mp),
-												true /* is_well_defined */,
-												m_null_freq,
-												DefaultNDVRemain,
-												DefaultNDVFreqRemain);
+									   true /* is_well_defined */,
+									   m_null_freq,
+									   DefaultNDVRemain,
+									   DefaultNDVFreqRemain);
 	}
 
 	CBucketArray *histogram_buckets = MakeBucketsWithEqualityFilter(mp, point);
@@ -369,10 +369,10 @@ CHistogram::MakeHistogramINDFFilter(IMemoryPool *mp, CPoint *point) const
 	}
 
 	return GPOS_NEW(mp) CHistogram(histogram_buckets,
-											true /* is_well_defined */,
-											null_freq,
-											CHistogram::DefaultNDVRemain,
-											CHistogram::DefaultNDVFreqRemain);
+								   true /* is_well_defined */,
+								   null_freq,
+								   CHistogram::DefaultNDVRemain,
+								   CHistogram::DefaultNDVFreqRemain);
 }
 
 // construct new histogram with greater than or greater than equal filter
@@ -433,10 +433,10 @@ CHistogram::MakeHistogramGreaterThanOrGreaterThanEqualFilter(
 	}
 
 	return GPOS_NEW(mp) CHistogram(new_buckets,
-											true,		   // is_well_defined
-											CDouble(0.0),  // fNullFreq
-											distinct_remaining,
-											freq_remaining);
+								   true,		  // is_well_defined
+								   CDouble(0.0),  // fNullFreq
+								   distinct_remaining,
+								   freq_remaining);
 }
 
 // sum of frequencies from buckets.
@@ -554,8 +554,8 @@ CHistogram::MakeHistogramFilterNormalize(IMemoryPool *mp,
 	// if histogram is not well-defined, then result is not well defined
 	if (!IsWellDefined())
 	{
-		CHistogram *result_histogram = GPOS_NEW(mp)
-			CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+		CHistogram *result_histogram =
+			GPOS_NEW(mp) CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
 		*scale_factor = CDouble(1.0) / CHistogram::DefaultSelectivity;
 		return result_histogram;
 	}
@@ -597,8 +597,7 @@ CHistogram::MakeJoinHistogramNormalize(IMemoryPool *mp,
 		if (CStatsPred::EstatscmptNEq == stats_cmp_type ||
 			CStatsPred::EstatscmptIDF == stats_cmp_type)
 		{
-			*scale_factor =
-				GetInequalityJoinScaleFactor(mp, rows, other_histogram, rows_other);
+			*scale_factor = GetInequalityJoinScaleFactor(mp, rows, other_histogram, rows_other);
 		}
 
 		return MakeJoinHistogram(mp, stats_cmp_type, other_histogram);
@@ -607,8 +606,8 @@ CHistogram::MakeJoinHistogramNormalize(IMemoryPool *mp,
 	// if either histogram is not well-defined, the result is not well defined
 	if (!IsWellDefined() || !other_histogram->IsWellDefined())
 	{
-		CHistogram *result_histogram = GPOS_NEW(mp)
-			CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+		CHistogram *result_histogram =
+			GPOS_NEW(mp) CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
 		(*scale_factor) = CDouble(std::min(rows.Get(), rows_other.Get()));
 
 		return result_histogram;
@@ -696,8 +695,8 @@ CHistogram::MakeLASJHistogramNormalize(IMemoryPool *mp,
 	// if either histogram is not well-defined, the result is not well defined
 	if (!IsWellDefined() || !other_histogram->IsWellDefined())
 	{
-		CHistogram *result_histogram = GPOS_NEW(mp)
-			CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+		CHistogram *result_histogram =
+			GPOS_NEW(mp) CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
 		(*scale_factor) = CDouble(1.0);
 
 		return result_histogram;
@@ -761,8 +760,8 @@ CHistogram::MakeHistogramFilter(IMemoryPool *mp,
 		case CStatsPred::EstatscmptG:
 		case CStatsPred::EstatscmptGEq:
 		{
-			result_histogram = MakeHistogramGreaterThanOrGreaterThanEqualFilter(
-				mp, stats_cmp_type, point);
+			result_histogram =
+				MakeHistogramGreaterThanOrGreaterThanEqualFilter(mp, stats_cmp_type, point);
 			break;
 		}
 		case CStatsPred::EstatscmptNEq:
@@ -803,8 +802,7 @@ CHistogram::MakeJoinHistogram(IMemoryPool *mp,
 	}
 
 	// TODO:  Feb 24 2014, We currently only support creation of histogram for equi join
-	return GPOS_NEW(mp)
-		CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+	return GPOS_NEW(mp) CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
 }
 
 // construct new histogram by LASJ with another histogram, no normalization
@@ -857,8 +855,7 @@ CHistogram::MakeLASJHistogram(IMemoryPool *mp,
 		lower_split_bucket = NULL;
 		upper_split_bucket = NULL;
 
-		candidate_bucket->Difference(
-			mp, bucket2, &lower_split_bucket, &upper_split_bucket);
+		candidate_bucket->Difference(mp, bucket2, &lower_split_bucket, &upper_split_bucket);
 
 		if (NULL != lower_split_bucket)
 		{
@@ -981,8 +978,7 @@ CHistogram::JoinPredCmpTypeIsSupported(CStatsPred::EStatsCmpType stats_cmp_type)
 
 // construct a new histogram with equality join
 CHistogram *
-CHistogram::MakeJoinHistogramEqualityFilter(IMemoryPool *mp,
-											const CHistogram *histogram) const
+CHistogram::MakeJoinHistogramEqualityFilter(IMemoryPool *mp, const CHistogram *histogram) const
 {
 	ULONG idx1 = 0;  // index on buckets from this histogram
 	ULONG idx2 = 0;  // index on buckets from other histogram
@@ -1015,8 +1011,8 @@ CHistogram::MakeJoinHistogramEqualityFilter(IMemoryPool *mp,
 			CDouble freq_intersect1(0.0);
 			CDouble freq_intersect2(0.0);
 
-			CBucket *new_bucket = bucket1->MakeBucketIntersect(
-				mp, bucket2, &freq_intersect1, &freq_intersect2);
+			CBucket *new_bucket =
+				bucket1->MakeBucketIntersect(mp, bucket2, &freq_intersect1, &freq_intersect2);
 			join_buckets->Append(new_bucket);
 
 			hist1_buckets_freq = hist1_buckets_freq + freq_intersect1;
@@ -1060,10 +1056,10 @@ CHistogram::MakeJoinHistogramEqualityFilter(IMemoryPool *mp,
 							 &freq_remaining);
 
 	return GPOS_NEW(mp) CHistogram(join_buckets,
-											true /*is_well_defined*/,
-											0.0 /*null_freq*/,
-											distinct_remaining,
-											freq_remaining);
+								   true /*is_well_defined*/,
+								   0.0 /*null_freq*/,
+								   distinct_remaining,
+								   freq_remaining);
 }
 
 // construct a new histogram for NDV based cardinality estimation
@@ -1113,10 +1109,10 @@ CHistogram::MakeNDVBasedJoinHistogramEqualityFilter(IMemoryPool *mp,
 	}
 
 	return GPOS_NEW(mp) CHistogram(join_buckets,
-											true /*is_well_defined*/,
-											0.0 /*null_freq*/,
-											distinct_remaining,
-											freq_remaining);
+								   true /*is_well_defined*/,
+								   0.0 /*null_freq*/,
+								   distinct_remaining,
+								   freq_remaining);
 }
 
 // construct a new histogram for an INDF join predicate
@@ -1261,8 +1257,8 @@ CHistogram::MakeGroupByHistogramNormalize(IMemoryPool *mp,
 	// if either histogram is not well-defined, the result is not well defined
 	if (!IsWellDefined())
 	{
-		CHistogram *result_histogram = GPOS_NEW(mp)
-			CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+		CHistogram *result_histogram =
+			GPOS_NEW(mp) CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
 		*result_distinct_values = MinDistinct / CHistogram::DefaultSelectivity;
 		return result_histogram;
 	}
@@ -1287,11 +1283,11 @@ CHistogram::MakeGroupByHistogramNormalize(IMemoryPool *mp,
 			is_upper_closed = true;
 		}
 		CBucket *new_bucket = GPOS_NEW(mp) CBucket(lower_bound,
-															upper_bound,
-															true /* fClosedLower */,
-															is_upper_closed,
-															bucket->GetNumDistinct() / distinct,
-															bucket->GetNumDistinct());
+												   upper_bound,
+												   true /* fClosedLower */,
+												   is_upper_closed,
+												   bucket->GetNumDistinct() / distinct,
+												   bucket->GetNumDistinct());
 		new_buckets->Append(new_bucket);
 	}
 
@@ -1347,8 +1343,7 @@ CHistogram::MakeUnionAllHistogramNormalize(IMemoryPool *mp,
 		}
 		else if (bucket2->IsBefore(bucket1))
 		{
-			new_buckets->Append(
-				bucket2->MakeBucketUpdateFrequency(mp, rows_other, rows_new));
+			new_buckets->Append(bucket2->MakeBucketUpdateFrequency(mp, rows_other, rows_new));
 			CleanupResidualBucket(bucket2, bucket2_is_residual);
 			idx2++;
 			bucket2 = (*histogram)[idx2];
@@ -1387,13 +1382,8 @@ CHistogram::MakeUnionAllHistogramNormalize(IMemoryPool *mp,
 	CleanupResidualBucket(bucket2, bucket2_is_residual);
 
 	// add any leftover buckets from other histogram
-	AddBuckets(mp,
-			   histogram->m_histogram_buckets,
-			   new_buckets,
-			   rows_other,
-			   rows_new,
-			   idx2,
-			   buckets2);
+	AddBuckets(
+		mp, histogram->m_histogram_buckets, new_buckets, rows_other, rows_new, idx2, buckets2);
 
 	// add any leftover buckets from this histogram
 	AddBuckets(mp, m_histogram_buckets, new_buckets, rows, rows_new, idx1, buckets1);
@@ -1425,8 +1415,7 @@ CHistogram::AddResidualUnionAllBucket(IMemoryPool *mp,
 
 	if (bucket_is_residual)
 	{
-		histogram_buckets->Append(
-			bucket->MakeBucketUpdateFrequency(mp, rows_old, rows_new));
+		histogram_buckets->Append(bucket->MakeBucketUpdateFrequency(mp, rows_old, rows_new));
 		return index + 1;
 	}
 
@@ -1517,8 +1506,7 @@ CHistogram::MakeUnionHistogramNormalize(IMemoryPool *mp,
 		if (bucket1->IsBefore(bucket2))
 		{
 			histogram_buckets->Append(bucket1->MakeBucketCopy(mp));
-			num_tuples_per_bucket->Append(GPOS_NEW(mp)
-											  CDouble(bucket1->GetFrequency() * rows));
+			num_tuples_per_bucket->Append(GPOS_NEW(mp) CDouble(bucket1->GetFrequency() * rows));
 			CleanupResidualBucket(bucket1, bucket1_is_residual);
 			idx1++;
 			bucket1 = (*this)[idx1];
@@ -1541,13 +1529,8 @@ CHistogram::MakeUnionHistogramNormalize(IMemoryPool *mp,
 			CBucket *bucket2_new = NULL;
 			CBucket *merge_bucket = NULL;
 
-			merge_bucket = bucket1->MakeBucketMerged(mp,
-													 bucket2,
-													 rows,
-													 rows_other,
-													 &bucket1_new,
-													 &bucket2_new,
-													 false /* is_union_all */
+			merge_bucket = bucket1->MakeBucketMerged(
+				mp, bucket2, rows, rows_other, &bucket1_new, &bucket2_new, false /* is_union_all */
 			);
 
 			// add the estimated number of rows in the merged bucket
@@ -1577,13 +1560,8 @@ CHistogram::MakeUnionHistogramNormalize(IMemoryPool *mp,
 								  bucket1_is_residual,
 								  idx1,
 								  num_tuples_per_bucket);
-	idx2 = AddResidualUnionBucket(mp,
-								  histogram_buckets,
-								  bucket2,
-								  rows,
-								  bucket2_is_residual,
-								  idx2,
-								  num_tuples_per_bucket);
+	idx2 = AddResidualUnionBucket(
+		mp, histogram_buckets, bucket2, rows, bucket2_is_residual, idx2, num_tuples_per_bucket);
 
 	CleanupResidualBucket(bucket1, bucket1_is_residual);
 	CleanupResidualBucket(bucket2, bucket2_is_residual);
@@ -1598,13 +1576,8 @@ CHistogram::MakeUnionHistogramNormalize(IMemoryPool *mp,
 			   buckets2);
 
 	// add any leftover buckets from this histogram
-	AddBuckets(mp,
-			   m_histogram_buckets,
-			   histogram_buckets,
-			   rows,
-			   num_tuples_per_bucket,
-			   idx1,
-			   buckets1);
+	AddBuckets(
+		mp, m_histogram_buckets, histogram_buckets, rows, num_tuples_per_bucket, idx1, buckets1);
 
 	// compute the total number of null values from both histograms
 	CDouble num_null_rows =
@@ -1669,11 +1642,11 @@ CHistogram::MakeHistogramUpdateFreq(IMemoryPool *mp,
 		CDouble frequency = rows / *result_num_rows_output;
 
 		CBucket *new_bucket = GPOS_NEW(mp) CBucket(bucket->GetLowerBound(),
-															bucket->GetUpperBound(),
-															bucket->IsLowerClosed(),
-															bucket->IsUpperClosed(),
-															frequency,
-															bucket->GetNumDistinct());
+												   bucket->GetUpperBound(),
+												   bucket->IsLowerClosed(),
+												   bucket->IsUpperClosed(),
+												   frequency,
+												   bucket->GetNumDistinct());
 
 		new_buckets->Append(new_bucket);
 	}
@@ -1682,11 +1655,11 @@ CHistogram::MakeHistogramUpdateFreq(IMemoryPool *mp,
 	CDouble NDV_remain_freq = NDV_remain_num_rows / *result_num_rows_output;
 
 	return GPOS_NEW(mp) CHistogram(new_buckets,
-											true /* is_well_defined */,
-											null_freq,
-											num_NDV_remain,
-											NDV_remain_freq,
-											false /* is_col_stats_missing */
+								   true /* is_well_defined */,
+								   null_freq,
+								   num_NDV_remain,
+								   NDV_remain_freq,
+								   false /* is_col_stats_missing */
 	);
 }
 
@@ -1755,8 +1728,7 @@ CHistogram::TranslateToDXLDerivedColumnStats(IMemoryPool *mp,
 											 ULONG colid,
 											 CDouble width) const
 {
-	CDXLBucketArray *dxl_stats_bucket_array =
-		GPOS_NEW(mp) CDXLBucketArray(mp);
+	CDXLBucketArray *dxl_stats_bucket_array = GPOS_NEW(mp) CDXLBucketArray(mp);
 
 	const ULONG num_of_buckets = m_histogram_buckets->Size();
 	for (ULONG ul = 0; ul < num_of_buckets; ul++)
@@ -1770,11 +1742,11 @@ CHistogram::TranslateToDXLDerivedColumnStats(IMemoryPool *mp,
 		CDXLDatum *dxl_datum_upper = bucket->GetUpperBound()->GetDatumVal(mp, md_accessor);
 
 		CDXLBucket *dxl_bucket = GPOS_NEW(mp) CDXLBucket(dxl_datum_lower,
-																  dxl_datum_upper,
-																  bucket->IsLowerClosed(),
-																  bucket->IsUpperClosed(),
-																  freq,
-																  distinct);
+														 dxl_datum_upper,
+														 bucket->IsLowerClosed(),
+														 bucket->IsUpperClosed(),
+														 freq,
+														 distinct);
 
 		dxl_stats_bucket_array->Append(dxl_bucket);
 	}
@@ -1877,8 +1849,7 @@ CHistogram::MakeDefaultHistogram(IMemoryPool *mp, CColRef *col_ref, BOOL is_empt
 		return CHistogram::MakeDefaultBoolHistogram(mp);
 	}
 
-	return GPOS_NEW(mp)
-		CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+	return GPOS_NEW(mp) CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
 }
 
 
@@ -1894,11 +1865,11 @@ CHistogram::MakeDefaultBoolHistogram(IMemoryPool *mp)
 	CDouble null_freq = CDouble(0.0);
 
 	return GPOS_NEW(mp) CHistogram(buckets,
-											true /* is_well_defined */,
-											null_freq,
-											distinct_remaining,
-											freq_remaining,
-											true /*is_col_stats_missing */
+								   true /* is_well_defined */,
+								   null_freq,
+								   distinct_remaining,
+								   freq_remaining,
+								   true /*is_col_stats_missing */
 	);
 }
 
@@ -1982,8 +1953,7 @@ CHistogram::AddDummyHistogramAndWidthInfo(IMemoryPool *mp,
 		output_histograms->Insert(GPOS_NEW(mp) ULONG(colid), histogram);
 
 		CDouble width = CStatisticsUtils::DefaultColumnWidth(col_ref->RetrieveType());
-		output_col_widths->Insert(GPOS_NEW(mp) ULONG(colid),
-								  GPOS_NEW(mp) CDouble(width));
+		output_col_widths->Insert(GPOS_NEW(mp) ULONG(colid), GPOS_NEW(mp) CDouble(width));
 	}
 }
 
@@ -2002,8 +1972,8 @@ CHistogram::AddEmptyHistogram(IMemoryPool *mp,
 		ULONG colid = *(col_hist_mapping.Key());
 
 		// empty histogram
-		CHistogram *histogram = GPOS_NEW(mp)
-			CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
+		CHistogram *histogram =
+			GPOS_NEW(mp) CHistogram(GPOS_NEW(mp) CBucketArray(mp), false /* is_well_defined */);
 		output_histograms->Insert(GPOS_NEW(mp) ULONG(colid), histogram);
 	}
 }

@@ -71,8 +71,7 @@ CUpperBoundNDVs *
 CUpperBoundNDVs::CopyUpperBoundNDVs(IMemoryPool *mp, CDouble upper_bound_ndv) const
 {
 	m_column_refset->AddRef();
-	CUpperBoundNDVs *ndv_copy =
-		GPOS_NEW(mp) CUpperBoundNDVs(m_column_refset, upper_bound_ndv);
+	CUpperBoundNDVs *ndv_copy = GPOS_NEW(mp) CUpperBoundNDVs(m_column_refset, upper_bound_ndv);
 
 	return ndv_copy;
 }

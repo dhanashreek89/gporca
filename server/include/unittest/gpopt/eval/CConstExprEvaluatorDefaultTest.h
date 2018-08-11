@@ -9,7 +9,7 @@
 //		Unit tests for CConstExprEvaluatorDefault
 //
 //	@owner:
-//		
+//
 //
 //	@test:
 //
@@ -34,12 +34,12 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CConstExprEvaluatorDefaultTest
 	{
-		public:
-			// run unittests
-			static GPOS_RESULT EresUnittest();
+	public:
+		// run unittests
+		static GPOS_RESULT EresUnittest();
 	};
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CConstExprEvaluatorDefaultTest_H
+#endif  // !GPOPT_CConstExprEvaluatorDefaultTest_H
 
 // EOF

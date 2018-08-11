@@ -40,10 +40,9 @@ namespace gpopt
 
 	// spinlock used in hashtable for cost contexts
 	typedef CSpinlockRanked<260> CSpinlockCC;
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_spinlock_H
+#endif  // !GPOPT_spinlock_H
 
 
 // EOF
-

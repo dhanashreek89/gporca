@@ -36,9 +36,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerRedistributeMotion::CParseHandlerRedistributeMotion(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerPhysicalOp(mp, parse_handler_mgr, parse_handler_root), m_dxl_op(NULL)
 {
 }
@@ -79,19 +77,13 @@ CParseHandlerRedistributeMotion::StartElement(const XMLCh *const,  // element_ur
 	m_parse_handler_mgr->ActivateParseHandler(child_parse_handler);
 
 	// parse handler for hash expr list
-	CParseHandlerBase *hash_expr_list_parse_handler =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenScalarHashExprList),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *hash_expr_list_parse_handler = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarHashExprList), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(hash_expr_list_parse_handler);
 
 	// parse handler for the sorting column list
-	CParseHandlerBase *sort_col_list_parse_handler =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenScalarSortColList),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *sort_col_list_parse_handler = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarSortColList), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(sort_col_list_parse_handler);
 
 	// parse handler for the filter

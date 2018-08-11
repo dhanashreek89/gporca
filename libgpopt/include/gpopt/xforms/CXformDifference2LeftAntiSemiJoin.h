@@ -9,7 +9,7 @@
 //		Class to transform logical difference into an aggregate over left anti-semi join
 //
 //	@owner:
-//		
+//
 //
 //	@test:
 //
@@ -35,54 +35,47 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformDifference2LeftAntiSemiJoin : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformDifference2LeftAntiSemiJoin(const CXformDifference2LeftAntiSemiJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformDifference2LeftAntiSemiJoin(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformDifference2LeftAntiSemiJoin(const CXformDifference2LeftAntiSemiJoin &);
+		// dtor
+		virtual ~CXformDifference2LeftAntiSemiJoin()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfDifference2LeftAntiSemiJoin;
+		}
 
-			// ctor
-			explicit
-			CXformDifference2LeftAntiSemiJoin(IMemoryPool *mp);
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformDifference2LeftAntiSemiJoin";
+		}
 
-			// dtor
-			virtual
-			~CXformDifference2LeftAntiSemiJoin()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise
+		Exfp(CExpressionHandle &  // exprhdl
+			 ) const
+		{
+			return CXform::ExfpHigh;
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfDifference2LeftAntiSemiJoin;
-			}
+		// actual transform
+		void Transform(CXformContext *, CXformResult *, CExpression *) const;
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformDifference2LeftAntiSemiJoin";
-			}
+	};  // class CXformDifference2LeftAntiSemiJoin
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp
-				(
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{
-				return CXform::ExfpHigh;
-			}
+}  // namespace gpopt
 
-			// actual transform
-			void Transform(CXformContext *, CXformResult *, CExpression *) const;
-
-	}; // class CXformDifference2LeftAntiSemiJoin
-
-}
-
-#endif // !GPOPT_CXformDifference2DifferenceAll_H
+#endif  // !GPOPT_CXformDifference2DifferenceAll_H
 
 // EOF

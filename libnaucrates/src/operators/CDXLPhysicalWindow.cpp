@@ -137,8 +137,7 @@ CDXLPhysicalWindow::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNod
 	xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 
 	// serialize partition keys
-	CWStringDynamic *part_by_cols_str =
-		CDXLUtils::Serialize(m_mp, m_part_by_colid_array);
+	CWStringDynamic *part_by_cols_str = CDXLUtils::Serialize(m_mp, m_part_by_colid_array);
 	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenPartKeys), part_by_cols_str);
 	GPOS_DELETE(part_by_cols_str);
 

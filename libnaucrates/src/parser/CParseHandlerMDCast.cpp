@@ -108,13 +108,13 @@ CParseHandlerMDCast::StartElement(const XMLCh *const,  // element_uri,
 		);
 
 	m_imd_obj = GPOS_NEW(m_mp) CMDCastGPDB(m_mp,
-													mdid,
-													mdname,
-													mdid_src,
-													mdid_dest,
-													is_binary_coercible,
-													mdid_cast_func,
-													coerce_path_type);
+										   mdid,
+										   mdname,
+										   mdid_src,
+										   mdid_dest,
+										   is_binary_coercible,
+										   mdid_cast_func,
+										   coerce_path_type);
 }
 
 //---------------------------------------------------------------------------

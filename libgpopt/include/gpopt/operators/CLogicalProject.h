@@ -20,7 +20,7 @@ namespace gpopt
 {
 	// fwd declaration
 	class CColRefSet;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CLogicalProject
@@ -31,108 +31,89 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalProject : public CLogicalUnary
 	{
-		private:
+	private:
+		// private copy ctor
+		CLogicalProject(const CLogicalProject &);
 
-			// private copy ctor
-			CLogicalProject(const CLogicalProject &);
+		// return equivalence class from scalar ident project element
+		static CColRefSetArray *PdrgpcrsEquivClassFromScIdent(IMemoryPool *mp,
+															  CExpression *pexprPrEl);
 
-			// return equivalence class from scalar ident project element
-			static
-			CColRefSetArray *PdrgpcrsEquivClassFromScIdent(IMemoryPool *mp, CExpression *pexprPrEl);
+		// extract constraint from scalar constant project element
+		static void ExtractConstraintFromScConst(IMemoryPool *mp,
+												 CExpression *pexprPrEl,
+												 CConstraintArray *pdrgpcnstr,
+												 CColRefSetArray *pdrgpcrs);
 
-			// extract constraint from scalar constant project element
-			static
-			void ExtractConstraintFromScConst
-					(
-					IMemoryPool *mp,
-					CExpression *pexprPrEl,
-					CConstraintArray *pdrgpcnstr,
-					CColRefSetArray *pdrgpcrs
-					);
+	public:
+		// ctor
+		explicit CLogicalProject(IMemoryPool *mp);
 
-		public:
+		// dtor
+		virtual ~CLogicalProject()
+		{
+		}
 
-			// ctor
-			explicit
-			CLogicalProject(IMemoryPool *mp);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalProject;
+		}
 
-			// dtor
-			virtual
-			~CLogicalProject()
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalProject";
+		}
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopLogicalProject;
-			}
-			
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CLogicalProject";
-			}
+		//-------------------------------------------------------------------------------------
+		// Derived Relational Properties
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			// Derived Relational Properties
-			//-------------------------------------------------------------------------------------
+		// derive output columns
+		virtual CColRefSet *PcrsDeriveOutput(IMemoryPool *mp, CExpressionHandle &exprhdl);
 
-			// derive output columns
-			virtual
-			CColRefSet *PcrsDeriveOutput(IMemoryPool *mp, CExpressionHandle &exprhdl);
-			
-			// dervive keys
-			virtual 
-			CKeyCollection *PkcDeriveKeys(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
-					
-			// derive max card
-			virtual
-			CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// dervive keys
+		virtual CKeyCollection *PkcDeriveKeys(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// derive constraint property
-			virtual
-			CPropConstraint *PpcDeriveConstraint(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// derive max card
+		virtual CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			//-------------------------------------------------------------------------------------
-			// Transformations
-			//-------------------------------------------------------------------------------------
+		// derive constraint property
+		virtual CPropConstraint *PpcDeriveConstraint(IMemoryPool *mp,
+													 CExpressionHandle &exprhdl) const;
 
-			// candidate set of xforms
-			virtual
-			CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+		//-------------------------------------------------------------------------------------
+		// Transformations
+		//-------------------------------------------------------------------------------------
 
-			// derive statistics
-			virtual
-			IStatistics *PstatsDerive
-						(
-						IMemoryPool *mp,
-						CExpressionHandle &exprhdl,
-						IStatisticsArray *stats_ctxt
-						)
-						const;
+		// candidate set of xforms
+		virtual CXformSet *PxfsCandidates(IMemoryPool *mp) const;
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+		// derive statistics
+		virtual IStatistics *PstatsDerive(IMemoryPool *mp,
+										  CExpressionHandle &exprhdl,
+										  IStatisticsArray *stats_ctxt) const;
 
-			// conversion function
-			static
-			CLogicalProject *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalProject == pop->Eopid());
-				
-				return dynamic_cast<CLogicalProject*>(pop);
-			}
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
 
-	}; // class CLogicalProject
+		// conversion function
+		static CLogicalProject *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalProject == pop->Eopid());
 
-}
+			return dynamic_cast<CLogicalProject *>(pop);
+		}
 
-#endif // !GPOS_CLogicalProject_H
+	};  // class CLogicalProject
+
+}  // namespace gpopt
+
+#endif  // !GPOS_CLogicalProject_H
 
 // EOF

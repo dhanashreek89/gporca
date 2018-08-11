@@ -58,11 +58,8 @@ CParseHandlerResult::SetupInitialHandlers()
 		m_parse_handler_mgr->GetDXLMemoryManager());
 
 	// parse handler for the one-time filter
-	CParseHandlerBase *one_time_filter_parse_handler =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenScalarOneTimeFilter),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *one_time_filter_parse_handler = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarOneTimeFilter), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(one_time_filter_parse_handler);
 
 	// parse handler for the filter

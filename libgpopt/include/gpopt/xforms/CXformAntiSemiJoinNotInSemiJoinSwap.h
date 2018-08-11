@@ -28,58 +28,49 @@ namespace gpopt
 	//		Swap cascaded anti semi-join (NotIn) and semi-join
 	//
 	//---------------------------------------------------------------------------
-	class CXformAntiSemiJoinNotInSemiJoinSwap : public CXformJoinSwap<CLogicalLeftAntiSemiJoinNotIn, CLogicalLeftSemiJoin>
+	class CXformAntiSemiJoinNotInSemiJoinSwap
+		: public CXformJoinSwap<CLogicalLeftAntiSemiJoinNotIn, CLogicalLeftSemiJoin>
 	{
+	private:
+		// private copy ctor
+		CXformAntiSemiJoinNotInSemiJoinSwap(const CXformAntiSemiJoinNotInSemiJoinSwap &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformAntiSemiJoinNotInSemiJoinSwap(IMemoryPool *mp)
+			: CXformJoinSwap<CLogicalLeftAntiSemiJoinNotIn, CLogicalLeftSemiJoin>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformAntiSemiJoinNotInSemiJoinSwap(const CXformAntiSemiJoinNotInSemiJoinSwap &);
+		// dtor
+		virtual ~CXformAntiSemiJoinNotInSemiJoinSwap()
+		{
+		}
 
-		public:
+		// Compatibility function
+		virtual BOOL
+		FCompatible(CXform::EXformId exfid)
+		{
+			return ExfSemiJoinAntiSemiJoinNotInSwap != exfid;
+		}
 
-			// ctor
-			explicit
-			CXformAntiSemiJoinNotInSemiJoinSwap
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformJoinSwap<CLogicalLeftAntiSemiJoinNotIn, CLogicalLeftSemiJoin>(mp)
-			{}
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfAntiSemiJoinNotInSemiJoinSwap;
+		}
 
-			// dtor
-			virtual
-			~CXformAntiSemiJoinNotInSemiJoinSwap()
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformAntiSemiJoinNotInSemiJoinSwap";
+		}
 
-			// Compatibility function
-			virtual
-			BOOL FCompatible
-				(
-				CXform::EXformId exfid
-				)
-			{
-				return ExfSemiJoinAntiSemiJoinNotInSwap != exfid;
-			}
+	};  // class CXformAntiSemiJoinNotInSemiJoinSwap
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfAntiSemiJoinNotInSemiJoinSwap;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformAntiSemiJoinNotInSemiJoinSwap";
-			}
-
-	}; // class CXformAntiSemiJoinNotInSemiJoinSwap
-
-}
-
-#endif // !GPOPT_CXformAntiSemiJoinNotInSemiJoinSwap_H
+#endif  // !GPOPT_CXformAntiSemiJoinNotInSemiJoinSwap_H
 
 // EOF

@@ -29,9 +29,7 @@ namespace gpdxl
 
 	public:
 		// ctor
-		CDXLScalarPartListNullTest(IMemoryPool *mp,
-								   ULONG partitioning_level,
-								   BOOL is_null);
+		CDXLScalarPartListNullTest(IMemoryPool *mp, ULONG partitioning_level, BOOL is_null);
 
 		// operator type
 		virtual Edxlopid GetDXLOperator() const;

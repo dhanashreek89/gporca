@@ -28,58 +28,49 @@ namespace gpopt
 	//		Swap cascaded anti semi-join and semi-join
 	//
 	//---------------------------------------------------------------------------
-	class CXformAntiSemiJoinSemiJoinSwap : public CXformJoinSwap<CLogicalLeftAntiSemiJoin, CLogicalLeftSemiJoin>
+	class CXformAntiSemiJoinSemiJoinSwap
+		: public CXformJoinSwap<CLogicalLeftAntiSemiJoin, CLogicalLeftSemiJoin>
 	{
+	private:
+		// private copy ctor
+		CXformAntiSemiJoinSemiJoinSwap(const CXformAntiSemiJoinSemiJoinSwap &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformAntiSemiJoinSemiJoinSwap(IMemoryPool *mp)
+			: CXformJoinSwap<CLogicalLeftAntiSemiJoin, CLogicalLeftSemiJoin>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformAntiSemiJoinSemiJoinSwap(const CXformAntiSemiJoinSemiJoinSwap &);
+		// dtor
+		virtual ~CXformAntiSemiJoinSemiJoinSwap()
+		{
+		}
 
-		public:
+		// Compatibility function
+		virtual BOOL
+		FCompatible(CXform::EXformId exfid)
+		{
+			return ExfSemiJoinAntiSemiJoinSwap != exfid;
+		}
 
-			// ctor
-			explicit
-			CXformAntiSemiJoinSemiJoinSwap
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformJoinSwap<CLogicalLeftAntiSemiJoin, CLogicalLeftSemiJoin>(mp)
-			{}
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfAntiSemiJoinSemiJoinSwap;
+		}
 
-			// dtor
-			virtual
-			~CXformAntiSemiJoinSemiJoinSwap()
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformAntiSemiJoinSemiJoinSwap";
+		}
 
-			// Compatibility function
-			virtual
-			BOOL FCompatible
-				(
-				CXform::EXformId exfid
-				)
-			{
-				return ExfSemiJoinAntiSemiJoinSwap != exfid;
-			}
+	};  // class CXformAntiSemiJoinSemiJoinSwap
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfAntiSemiJoinSemiJoinSwap;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformAntiSemiJoinSemiJoinSwap";
-			}
-
-	}; // class CXformAntiSemiJoinSemiJoinSwap
-
-}
-
-#endif // !GPOPT_CXformAntiSemiJoinSemiJoinSwap_H
+#endif  // !GPOPT_CXformAntiSemiJoinSemiJoinSwap_H
 
 // EOF

@@ -16,7 +16,6 @@
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalLeftAntiSemiHashJoin
@@ -27,73 +26,60 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalLeftAntiSemiHashJoin : public CPhysicalHashJoin
 	{
+	private:
+		// private copy ctor
+		CPhysicalLeftAntiSemiHashJoin(const CPhysicalLeftAntiSemiHashJoin &);
 
-		private:
+	public:
+		// ctor
+		CPhysicalLeftAntiSemiHashJoin(IMemoryPool *mp,
+									  CExpressionArray *pdrgpexprOuterKeys,
+									  CExpressionArray *pdrgpexprInnerKeys);
 
-			// private copy ctor
-			CPhysicalLeftAntiSemiHashJoin(const CPhysicalLeftAntiSemiHashJoin &);
+		// dtor
+		virtual ~CPhysicalLeftAntiSemiHashJoin();
 
-		public:
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalLeftAntiSemiHashJoin;
+		}
 
-			// ctor
-			CPhysicalLeftAntiSemiHashJoin
-				(
-				IMemoryPool *mp,
-				CExpressionArray *pdrgpexprOuterKeys,
-				CExpressionArray *pdrgpexprInnerKeys
-				);
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalLeftAntiSemiHashJoin";
+		}
 
-			// dtor
-			virtual
-			~CPhysicalLeftAntiSemiHashJoin();
+		// check if required columns are included in output columns
+		virtual BOOL FProvidesReqdCols(CExpressionHandle &exprhdl,
+									   CColRefSet *pcrsRequired,
+									   ULONG ulOptReq) const;
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalLeftAntiSemiHashJoin;
-			}
+		// compute required partition propagation spec
+		virtual CPartitionPropagationSpec *PppsRequired(IMemoryPool *mp,
+														CExpressionHandle &exprhdl,
+														CPartitionPropagationSpec *pppsRequired,
+														ULONG child_index,
+														CDrvdPropArrays *pdrgpdpCtxt,
+														ULONG ulOptReq);
 
-			 // return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CPhysicalLeftAntiSemiHashJoin";
-			}
+		// conversion function
+		static CPhysicalLeftAntiSemiHashJoin *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(EopPhysicalLeftAntiSemiHashJoin == pop->Eopid());
 
-			// check if required columns are included in output columns
-			virtual
-			BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const;
-
-			// compute required partition propagation spec
-			virtual
-			CPartitionPropagationSpec *PppsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CPartitionPropagationSpec *pppsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				);
-			
-			// conversion function
-			static
-			CPhysicalLeftAntiSemiHashJoin *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(EopPhysicalLeftAntiSemiHashJoin == pop->Eopid());
-
-				return dynamic_cast<CPhysicalLeftAntiSemiHashJoin*>(pop);
-			}
+			return dynamic_cast<CPhysicalLeftAntiSemiHashJoin *>(pop);
+		}
 
 
-	}; // class CPhysicalLeftAntiSemiHashJoin
+	};  // class CPhysicalLeftAntiSemiHashJoin
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CPhysicalLeftAntiSemiHashJoin_H
+#endif  // !GPOPT_CPhysicalLeftAntiSemiHashJoin_H
 
 // EOF

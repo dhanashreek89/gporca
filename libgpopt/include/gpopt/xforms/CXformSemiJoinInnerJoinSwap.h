@@ -28,48 +28,42 @@ namespace gpopt
 	//		Swap cascaded semi-join and inner join
 	//
 	//---------------------------------------------------------------------------
-	class CXformSemiJoinInnerJoinSwap : public CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalInnerJoin>
+	class CXformSemiJoinInnerJoinSwap
+		: public CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalInnerJoin>
 	{
+	private:
+		// private copy ctor
+		CXformSemiJoinInnerJoinSwap(const CXformSemiJoinInnerJoinSwap &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformSemiJoinInnerJoinSwap(IMemoryPool *mp)
+			: CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalInnerJoin>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformSemiJoinInnerJoinSwap(const CXformSemiJoinInnerJoinSwap &);
+		// dtor
+		virtual ~CXformSemiJoinInnerJoinSwap()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfSemiJoinInnerJoinSwap;
+		}
 
-			// ctor
-			explicit
-			CXformSemiJoinInnerJoinSwap
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalInnerJoin>(mp)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformSemiJoinInnerJoinSwap";
+		}
 
-			// dtor
-			virtual
-			~CXformSemiJoinInnerJoinSwap()
-			{}
+	};  // class CXformSemiJoinInnerJoinSwap
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfSemiJoinInnerJoinSwap;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformSemiJoinInnerJoinSwap";
-			}
-
-	}; // class CXformSemiJoinInnerJoinSwap
-
-}
-
-#endif // !GPOPT_CXformSemiJoinInnerJoinSwap_H
+#endif  // !GPOPT_CXformSemiJoinInnerJoinSwap_H
 
 // EOF

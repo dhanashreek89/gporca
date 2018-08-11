@@ -28,9 +28,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerCtasStorageOptions::CParseHandlerCtasStorageOptions(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root),
 	  m_mdname_tablespace(NULL),
 	  m_dxl_ctas_storage_option(NULL),
@@ -102,9 +100,8 @@ CParseHandlerCtasStorageOptions::StartElement(const XMLCh *const,  // element_ur
 			m_ctas_storage_option_array =
 				GPOS_NEW(m_mp) CDXLCtasStorageOptions::CDXLCtasOptionArray(m_mp);
 		}
-		m_ctas_storage_option_array->Append(
-			GPOS_NEW(m_mp) CDXLCtasStorageOptions::CDXLCtasOption(
-				ctas_option_type, ctas_option_name, ctas_option_val, is_null));
+		m_ctas_storage_option_array->Append(GPOS_NEW(m_mp) CDXLCtasStorageOptions::CDXLCtasOption(
+			ctas_option_type, ctas_option_name, ctas_option_val, is_null));
 	}
 	else
 	{

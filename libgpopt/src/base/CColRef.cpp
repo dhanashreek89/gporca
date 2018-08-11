@@ -15,7 +15,7 @@
 #ifdef GPOS_DEBUG
 #include "gpopt/base/COptCtxt.h"
 #include "gpos/error/CAutoTrace.h"
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 using namespace gpopt;
 
@@ -31,18 +31,8 @@ const ULONG CColRef::m_ulInvalid = gpos::ulong_max;
 //		takes ownership of string; verify string is properly formatted
 //
 //---------------------------------------------------------------------------
-CColRef::CColRef
-	(
-	const IMDType *pmdtype,
-	const INT type_modifier,
-	ULONG id,
-	const CName *pname
-	)
-	:
-	m_pmdtype(pmdtype),
-	m_type_modifier(type_modifier),
-	m_pname(pname),
-	m_id(id)
+CColRef::CColRef(const IMDType *pmdtype, const INT type_modifier, ULONG id, const CName *pname)
+	: m_pmdtype(pmdtype), m_type_modifier(type_modifier), m_pname(pname), m_id(id)
 {
 	GPOS_ASSERT(NULL != pmdtype);
 	GPOS_ASSERT(pmdtype->MDId()->IsValid());
@@ -60,7 +50,7 @@ CColRef::CColRef
 //---------------------------------------------------------------------------
 CColRef::~CColRef()
 {
-	// we own the name 
+	// we own the name
 	GPOS_DELETE(m_pname);
 }
 
@@ -74,10 +64,7 @@ CColRef::~CColRef()
 //
 //---------------------------------------------------------------------------
 ULONG
-CColRef::HashValue
-	(
-	const ULONG &ulptr
-	)
+CColRef::HashValue(const ULONG &ulptr)
 {
 	return gpos::HashValue<ULONG>(&ulptr);
 }
@@ -91,10 +78,7 @@ CColRef::HashValue
 //
 //---------------------------------------------------------------------------
 ULONG
-CColRef::HashValue
-	(
-	const CColRef *colref
-	)
+CColRef::HashValue(const CColRef *colref)
 {
 	ULONG id = colref->Id();
 	return gpos::HashValue<ULONG>(&id);
@@ -110,15 +94,11 @@ CColRef::HashValue
 //
 //---------------------------------------------------------------------------
 IOstream &
-CColRef::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CColRef::OsPrint(IOstream &os) const
 {
 	m_pname->OsPrint(os);
 	os << " (" << Id() << ")";
-	
+
 	return os;
 }
 
@@ -131,11 +111,7 @@ CColRef::OsPrint
 //
 //---------------------------------------------------------------------------
 ULongPtrArray *
-CColRef::Pdrgpul
-	(
-	IMemoryPool *mp,
-	CColRefArray *colref_array
-	)
+CColRef::Pdrgpul(IMemoryPool *mp, CColRefArray *colref_array)
 {
 	ULongPtrArray *pdrgpul = GPOS_NEW(mp) ULongPtrArray(mp);
 	const ULONG length = colref_array->Size();
@@ -157,15 +133,11 @@ CColRef::Pdrgpul
 //
 //---------------------------------------------------------------------------
 BOOL
-CColRef::Equals
-	(
-	const CColRefArray *pdrgpcr1,
-	const CColRefArray *pdrgpcr2
-	)
+CColRef::Equals(const CColRefArray *pdrgpcr1, const CColRefArray *pdrgpcr2)
 {
 	if (NULL == pdrgpcr1 || NULL == pdrgpcr2)
 	{
-		return  (NULL == pdrgpcr1 && NULL == pdrgpcr2);
+		return (NULL == pdrgpcr1 && NULL == pdrgpcr2);
 	}
 
 	return pdrgpcr1->Equals(pdrgpcr2);
@@ -174,11 +146,7 @@ CColRef::Equals
 // check if the the array of column references are equal. Note that since we have unique
 // copy of the column references, we can compare pointers.
 BOOL
-CColRef::Equals
-	(
-	const CColRefArrays *pdrgdrgpcr1,
-	const CColRefArrays *pdrgdrgpcr2
-	)
+CColRef::Equals(const CColRefArrays *pdrgdrgpcr1, const CColRefArrays *pdrgdrgpcr2)
 {
 	ULONG ulLen1 = (pdrgdrgpcr1 == NULL) ? 0 : pdrgdrgpcr1->Size();
 	ULONG ulLen2 = (pdrgdrgpcr2 == NULL) ? 0 : pdrgdrgpcr2->Size();
@@ -208,7 +176,6 @@ CColRef::DbgPrint() const
 	CAutoTrace at(pmp);
 	(void) this->OsPrint(at.Os());
 }
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF
-

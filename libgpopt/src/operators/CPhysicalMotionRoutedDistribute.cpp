@@ -25,15 +25,9 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalMotionRoutedDistribute::CPhysicalMotionRoutedDistribute
-	(
-	IMemoryPool *mp,
-	CDistributionSpecRouted *pdsRouted
-	)
-	:
-	CPhysicalMotion(mp),
-	m_pdsRouted(pdsRouted),
-	m_pcrsRequiredLocal(NULL)
+CPhysicalMotionRoutedDistribute::CPhysicalMotionRoutedDistribute(IMemoryPool *mp,
+																 CDistributionSpecRouted *pdsRouted)
+	: CPhysicalMotion(mp), m_pdsRouted(pdsRouted), m_pcrsRequiredLocal(NULL)
 {
 	GPOS_ASSERT(NULL != pdsRouted);
 
@@ -66,20 +60,16 @@ CPhysicalMotionRoutedDistribute::~CPhysicalMotionRoutedDistribute()
 //
 //---------------------------------------------------------------------------
 BOOL
-CPhysicalMotionRoutedDistribute::Matches
-	(
-	COperator *pop
-	)
-	const
+CPhysicalMotionRoutedDistribute::Matches(COperator *pop) const
 {
 	if (Eopid() != pop->Eopid())
 	{
 		return false;
 	}
-	
-	CPhysicalMotionRoutedDistribute *popRoutedDistribute = 
-			CPhysicalMotionRoutedDistribute::PopConvert(pop);
-	
+
+	CPhysicalMotionRoutedDistribute *popRoutedDistribute =
+		CPhysicalMotionRoutedDistribute::PopConvert(pop);
+
 	return m_pdsRouted->Matches(popRoutedDistribute->m_pdsRouted);
 }
 
@@ -92,23 +82,20 @@ CPhysicalMotionRoutedDistribute::Matches
 //
 //---------------------------------------------------------------------------
 CColRefSet *
-CPhysicalMotionRoutedDistribute::PcrsRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CColRefSet *pcrsRequired,
-	ULONG child_index,
-	CDrvdPropArrays *, // pdrgpdpCtxt
-	ULONG // ulOptReq
-	)
+CPhysicalMotionRoutedDistribute::PcrsRequired(IMemoryPool *mp,
+											  CExpressionHandle &exprhdl,
+											  CColRefSet *pcrsRequired,
+											  ULONG child_index,
+											  CDrvdPropArrays *,  // pdrgpdpCtxt
+											  ULONG				  // ulOptReq
+)
 {
 	GPOS_ASSERT(0 == child_index);
 
 	CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, *m_pcrsRequiredLocal);
 	pcrs->Union(pcrsRequired);
 
-	CColRefSet *pcrsChildReqd =
-		PcrsChildReqd(mp, exprhdl, pcrs, child_index, gpos::ulong_max);
+	CColRefSet *pcrsChildReqd = PcrsChildReqd(mp, exprhdl, pcrs, child_index, gpos::ulong_max);
 	pcrs->Release();
 
 	return pcrsChildReqd;
@@ -123,13 +110,10 @@ CPhysicalMotionRoutedDistribute::PcrsRequired
 //
 //---------------------------------------------------------------------------
 BOOL
-CPhysicalMotionRoutedDistribute::FProvidesReqdCols
-	(
-	CExpressionHandle &exprhdl,
-	CColRefSet *pcrsRequired,
-	ULONG // ulOptReq
-	)
-	const
+CPhysicalMotionRoutedDistribute::FProvidesReqdCols(CExpressionHandle &exprhdl,
+												   CColRefSet *pcrsRequired,
+												   ULONG  // ulOptReq
+												   ) const
 {
 	return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
 }
@@ -143,12 +127,9 @@ CPhysicalMotionRoutedDistribute::FProvidesReqdCols
 //
 //---------------------------------------------------------------------------
 CEnfdProp::EPropEnforcingType
-CPhysicalMotionRoutedDistribute::EpetOrder
-	(
-	CExpressionHandle &, // exprhdl
-	const CEnfdOrder * // peo
-	)
-	const
+CPhysicalMotionRoutedDistribute::EpetOrder(CExpressionHandle &,  // exprhdl
+										   const CEnfdOrder *	// peo
+										   ) const
 {
 	return CEnfdProp::EpetRequired;
 }
@@ -163,20 +144,17 @@ CPhysicalMotionRoutedDistribute::EpetOrder
 //
 //---------------------------------------------------------------------------
 COrderSpec *
-CPhysicalMotionRoutedDistribute::PosRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &, // exprhdl
-	COrderSpec *,//posInput
-	ULONG 
+CPhysicalMotionRoutedDistribute::PosRequired(IMemoryPool *mp,
+											 CExpressionHandle &,  // exprhdl
+											 COrderSpec *,		   //posInput
+											 ULONG
 #ifdef GPOS_DEBUG
-	child_index
-#endif // GPOS_DEBUG
-	,
-	CDrvdPropArrays *, // pdrgpdpCtxt
-	ULONG // ulOptReq
-	)
-	const
+												 child_index
+#endif  // GPOS_DEBUG
+											 ,
+											 CDrvdPropArrays *,  // pdrgpdpCtxt
+											 ULONG				 // ulOptReq
+											 ) const
 {
 	GPOS_ASSERT(0 == child_index);
 
@@ -192,12 +170,9 @@ CPhysicalMotionRoutedDistribute::PosRequired
 //
 //---------------------------------------------------------------------------
 COrderSpec *
-CPhysicalMotionRoutedDistribute::PosDerive
-	(
-	IMemoryPool *mp,
-	CExpressionHandle & // exprhdl
-	)
-	const
+CPhysicalMotionRoutedDistribute::PosDerive(IMemoryPool *mp,
+										   CExpressionHandle &  // exprhdl
+										   ) const
 {
 	return GPOS_NEW(mp) COrderSpec(mp);
 }
@@ -212,11 +187,7 @@ CPhysicalMotionRoutedDistribute::PosDerive
 //
 //---------------------------------------------------------------------------
 IOstream &
-CPhysicalMotionRoutedDistribute::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CPhysicalMotionRoutedDistribute::OsPrint(IOstream &os) const
 {
 	os << SzId() << " ";
 
@@ -233,16 +204,12 @@ CPhysicalMotionRoutedDistribute::OsPrint
 //
 //---------------------------------------------------------------------------
 CPhysicalMotionRoutedDistribute *
-CPhysicalMotionRoutedDistribute::PopConvert
-	(
-	COperator *pop
-	)
+CPhysicalMotionRoutedDistribute::PopConvert(COperator *pop)
 {
 	GPOS_ASSERT(NULL != pop);
 	GPOS_ASSERT(EopPhysicalMotionRoutedDistribute == pop->Eopid());
-	
-	return dynamic_cast<CPhysicalMotionRoutedDistribute*>(pop);
-}			
+
+	return dynamic_cast<CPhysicalMotionRoutedDistribute *>(pop);
+}
 
 // EOF
-

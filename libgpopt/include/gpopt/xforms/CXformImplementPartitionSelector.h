@@ -28,56 +28,48 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformImplementPartitionSelector : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformImplementPartitionSelector(const CXformImplementPartitionSelector &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementPartitionSelector(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformImplementPartitionSelector(const CXformImplementPartitionSelector &);
+		// dtor
+		virtual ~CXformImplementPartitionSelector()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementPartitionSelector;
+		}
 
-			// ctor
-			explicit
-			CXformImplementPartitionSelector(IMemoryPool *mp);
+		// xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementPartitionSelector";
+		}
 
-			// dtor
-			virtual
-			~CXformImplementPartitionSelector()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise
+		Exfp(CExpressionHandle &  //exprhdl
+			 ) const
+		{
+			return CXform::ExfpHigh;
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementPartitionSelector;
-			}
+		// actual transform
+		virtual void Transform(CXformContext *, CXformResult *, CExpression *) const;
 
-			// xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementPartitionSelector";
-			}
+	};  // class CXformImplementPartitionSelector
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp
-				(
-				CExpressionHandle & //exprhdl
-				)
-				const
-			{
-				return CXform::ExfpHigh;
-			}
+}  // namespace gpopt
 
-			// actual transform
-			virtual
-			void Transform(CXformContext *, CXformResult *, CExpression *) const;
-
-	}; // class CXformImplementPartitionSelector
-
-}
-
-#endif // !GPOPT_CXformImplementPartitionSelector_H
+#endif  // !GPOPT_CXformImplementPartitionSelector_H
 
 // EOF

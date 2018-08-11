@@ -31,74 +31,69 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CFunctionProp : public CRefCount
 	{
-		private:
+	private:
+		// function stability
+		IMDFunction::EFuncStbl m_efs;
 
-			// function stability
-			IMDFunction::EFuncStbl m_efs;
+		// function data access
+		IMDFunction::EFuncDataAcc m_efda;
 
-			// function data access
-			IMDFunction::EFuncDataAcc m_efda;
+		// does this expression have a volatile Function Scan
+		BOOL m_fHasVolatileFunctionScan;
 
-			// does this expression have a volatile Function Scan
-			BOOL m_fHasVolatileFunctionScan;
+		// is this function used as a scan operator
+		BOOL m_fScan;
 
-			// is this function used as a scan operator
-			BOOL m_fScan;
+		// hidden copy ctor
+		CFunctionProp(const CFunctionProp &);
 
-			// hidden copy ctor
-			CFunctionProp(const CFunctionProp&);
+	public:
+		// ctor
+		CFunctionProp(IMDFunction::EFuncStbl func_stability,
+					  IMDFunction::EFuncDataAcc func_data_access,
+					  BOOL fHasVolatileFunctionScan,
+					  BOOL fScan);
 
-		public:
+		// dtor
+		virtual ~CFunctionProp();
 
-			// ctor
-			CFunctionProp
-				(
-				IMDFunction::EFuncStbl func_stability,
-				IMDFunction::EFuncDataAcc func_data_access,
-				BOOL fHasVolatileFunctionScan,
-				BOOL fScan
-				);
+		// function stability
+		IMDFunction::EFuncStbl
+		Efs() const
+		{
+			return m_efs;
+		}
 
-			// dtor
-			virtual
-			~CFunctionProp();
+		// function data access
+		virtual IMDFunction::EFuncDataAcc
+		Efda() const
+		{
+			return m_efda;
+		}
 
-			// function stability
-			IMDFunction::EFuncStbl Efs() const
-			{
-				return m_efs;
-			}
+		// does this expression have a volatile Function Scan
+		virtual BOOL
+		FHasVolatileFunctionScan() const
+		{
+			return m_fHasVolatileFunctionScan;
+		}
 
-			// function data access
-			virtual
-			IMDFunction::EFuncDataAcc Efda() const
-			{
-				return m_efda;
-			}
+		// check if must execute on the master
+		BOOL FMasterOnly() const;
 
-			// does this expression have a volatile Function Scan
-			virtual
-			BOOL FHasVolatileFunctionScan() const
-			{
-				return m_fHasVolatileFunctionScan;
-			}
+		// print
+		IOstream &OsPrint(IOstream &os) const;
 
-			// check if must execute on the master
-			BOOL FMasterOnly() const;
+	};  // class CFunctionProp
 
-			// print
-			IOstream &OsPrint(IOstream &os) const;
-
-	}; // class CFunctionProp
-
- 	// shorthand for printing
-	inline
-	IOstream &operator << (IOstream &os, CFunctionProp &fp)
+	// shorthand for printing
+	inline IOstream &
+	operator<<(IOstream &os, CFunctionProp &fp)
 	{
 		return fp.OsPrint(os);
 	}
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CFunctionProp_H
+#endif  // !GPOPT_CFunctionProp_H
 
 // EOF

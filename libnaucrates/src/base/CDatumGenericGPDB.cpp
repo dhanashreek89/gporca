@@ -253,13 +253,13 @@ CDatumGenericGPDB::MakeCopy(IMemoryPool *mp) const
 
 	// CDatumGenericGPDB makes a copy of the buffer
 	return GPOS_NEW(mp) CDatumGenericGPDB(mp,
-												   m_mdid,
-												   m_type_modifier,
-												   m_bytearray_value,
-												   m_size,
-												   m_is_null,
-												   m_stats_comp_val_int,
-												   m_stats_comp_val_double);
+										  m_mdid,
+										  m_type_modifier,
+										  m_bytearray_value,
+										  m_size,
+										  m_is_null,
+										  m_stats_comp_val_int,
+										  m_stats_comp_val_double);
 }
 
 
@@ -451,16 +451,15 @@ CDatumGenericGPDB::MakePaddedDatum(IMemoryPool *mp, ULONG col_len) const
 
 		// create a new datum
 		this->MDId()->AddRef();
-		CDatumGenericGPDB *datum_new =
-			GPOS_NEW(m_mp) CDatumGenericGPDB(mp,
-													  this->MDId(),
-													  this->TypeModifier(),
-													  dest,
-													  adjusted_col_width,
-													  this->IsNull(),
-													  this->GetLINTMapping(),
-													  0 /* dValue */
-			);
+		CDatumGenericGPDB *datum_new = GPOS_NEW(m_mp) CDatumGenericGPDB(mp,
+																		this->MDId(),
+																		this->TypeModifier(),
+																		dest,
+																		adjusted_col_width,
+																		this->IsNull(),
+																		this->GetLINTMapping(),
+																		0 /* dValue */
+		);
 
 		// clean up the input byte array as the constructor creates a copy
 		GPOS_DELETE_ARRAY(dest);

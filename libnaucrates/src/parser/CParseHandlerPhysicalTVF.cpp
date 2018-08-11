@@ -85,11 +85,8 @@ CParseHandlerPhysicalTVF::StartElement(const XMLCh *const element_uri,
 			EdxltokenPhysicalTVF);
 
 		// parse handler for the proj list
-		CParseHandlerBase *proj_list_parse_handler =
-			CParseHandlerFactory::GetParseHandler(m_mp,
-												  CDXLTokens::XmlstrToken(EdxltokenScalarProjList),
-												  m_parse_handler_mgr,
-												  this);
+		CParseHandlerBase *proj_list_parse_handler = CParseHandlerFactory::GetParseHandler(
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarProjList), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(proj_list_parse_handler);
 
 		//parse handler for the properties of the operator
@@ -137,8 +134,8 @@ CParseHandlerPhysicalTVF::EndElement(const XMLCh *const,  // element_uri,
 		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, str->GetBuffer());
 	}
 
-	CDXLPhysicalTVF *dxl_op = GPOS_NEW(m_mp)
-		CDXLPhysicalTVF(m_mp, m_func_mdid, m_return_type_mdid, m_pstr);
+	CDXLPhysicalTVF *dxl_op =
+		GPOS_NEW(m_mp) CDXLPhysicalTVF(m_mp, m_func_mdid, m_return_type_mdid, m_pstr);
 	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, dxl_op);
 
 	CParseHandlerProperties *prop_parse_handler =

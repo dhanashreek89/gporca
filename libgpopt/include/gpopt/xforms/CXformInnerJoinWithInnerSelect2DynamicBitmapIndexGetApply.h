@@ -35,55 +35,59 @@ namespace gpopt
 	//		to dynamic Bitmap IndexGet Apply
 	//
 	//---------------------------------------------------------------------------
-	class CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply : public CXformJoin2IndexApplyBase
-		<CLogicalInnerJoin, CLogicalIndexApply, CLogicalDynamicGet,
-		true /*fWithSelect*/, false /*is_partial*/, IMDIndex::EmdindBitmap>
+	class CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply
+		: public CXformJoin2IndexApplyBase<CLogicalInnerJoin,
+										   CLogicalIndexApply,
+										   CLogicalDynamicGet,
+										   true /*fWithSelect*/,
+										   false /*is_partial*/,
+										   IMDIndex::EmdindBitmap>
 	{
-		private:
-			// private copy ctor
-			CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply
-				(
-				const CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply &
-				);
+	private:
+		// private copy ctor
+		CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply(
+			const CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply &);
 
-		public:
-			// ctor
-			explicit
-			CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply(IMemoryPool *mp)
-				: CXformJoin2IndexApplyBase
-				 <CLogicalInnerJoin, CLogicalIndexApply, CLogicalDynamicGet,
-				 true /*fWithSelect*/, false /*is_partial*/, IMDIndex::EmdindBitmap>
-				(mp)
-			{}
+	public:
+		// ctor
+		explicit CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply(IMemoryPool *mp)
+			: CXformJoin2IndexApplyBase<CLogicalInnerJoin,
+										CLogicalIndexApply,
+										CLogicalDynamicGet,
+										true /*fWithSelect*/,
+										false /*is_partial*/,
+										IMDIndex::EmdindBitmap>(mp)
+		{
+		}
 
-			// dtor
-			virtual
-			~CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply()
-			{}
+		// dtor
+		virtual ~CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply()
+		{
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply;
-			}
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply;
+		}
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply";
-			}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply";
+		}
 
-			// return true if xform should be applied only once
-			virtual
-			BOOL IsApplyOnce()
-			{
-				return true;
-			}
+		// return true if xform should be applied only once
+		virtual BOOL
+		IsApplyOnce()
+		{
+			return true;
+		}
 
-	}; // class CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply
-}
+	};  // class CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply
+}  // namespace gpopt
 
-#endif // !GPOPT_CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply_H
+#endif  // !GPOPT_CXformInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply_H
 
 // EOF

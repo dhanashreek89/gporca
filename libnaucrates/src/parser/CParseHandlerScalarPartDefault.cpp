@@ -30,9 +30,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerScalarPartDefault::CParseHandlerScalarPartDefault(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root)
 {
 }
@@ -64,9 +62,8 @@ CParseHandlerScalarPartDefault::StartElement(const XMLCh *const,  // element_uri
 		attrs,
 		EdxltokenPartLevel,
 		EdxltokenScalarPartDefault);
-	m_dxlnode = GPOS_NEW(m_mp)
-		CDXLNode(m_mp,
-				 GPOS_NEW(m_mp) CDXLScalarPartDefault(m_mp, partition_level));
+	m_dxlnode =
+		GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarPartDefault(m_mp, partition_level));
 }
 
 //---------------------------------------------------------------------------

@@ -28,70 +28,66 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CStateMachineTest
 	{
+	public:
+		enum EStates
+		{
+			esOne = 0,
+			esTwo,
+			esThree,
+
+			esSentinel
+		};
+
+		enum EEvents
+		{
+			eeOne = 0,
+			eeTwo,
+			eeThree,
+
+			eeSentinel
+		};
+
+		// unittests
+		static GPOS_RESULT EresUnittest();
+		static GPOS_RESULT EresUnittest_Basics();
+
+		//---------------------------------------------------------------------------
+		//	@class:
+		//		CTestMachine
+		//
+		//	@doc:
+		//		The tested state machine definition;
+		//		Implements a 3 states/3 events FSM with simple transition graph;
+		//
+		//---------------------------------------------------------------------------
+		class CTestMachine
+		{
+		private:
+			// shorthand for state machine
+			typedef CStateMachine<EStates, esSentinel, EEvents, eeSentinel> SM;
+
+			// state machine
+			SM m_sm;
 
 		public:
+			// ctor
+			CTestMachine();
 
-			enum EStates
+			// dtor
+			~CTestMachine(){};
+
+			// state machine accessor
+			SM *
+			Psm()
 			{
-				esOne = 0,
-				esTwo,
-				esThree,
-				
-				esSentinel
-			};
-			
-			enum EEvents
-			{
-				eeOne = 0,
-				eeTwo,
-				eeThree,
-				
-				eeSentinel
-			};
-		
-			// unittests
-			static GPOS_RESULT EresUnittest();
-			static GPOS_RESULT EresUnittest_Basics();
+				return &m_sm;
+			}
+		};
 
-			//---------------------------------------------------------------------------
-			//	@class:
-			//		CTestMachine
-			//
-			//	@doc:
-			//		The tested state machine definition;
-			//		Implements a 3 states/3 events FSM with simple transition graph;
-			//
-			//---------------------------------------------------------------------------
-			class CTestMachine
-			{
-				private:
+	};  // class CStateMachineTest
+}  // namespace gpopt
 
-					// shorthand for state machine
-					typedef CStateMachine<EStates, esSentinel, EEvents, eeSentinel> SM;
-
-					// state machine
-					SM m_sm;
-			
-				public:
-				
-					// ctor
-					CTestMachine();
-					
-					// dtor
-					~CTestMachine()
-					{};
-
-					// state machine accessor
-					SM *Psm()
-					{
-						return &m_sm;
-					}
-			};
-
-	}; // class CStateMachineTest
-}
-
-#endif // !GPOPT_CStateMachineTest_H
+#endif  // !GPOPT_CStateMachineTest_H
 
 
 // EOF

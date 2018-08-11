@@ -3,7 +3,7 @@
 
 #include "unittest/dxl/CParseHandlerOptimizerConfigSerializeTest.h"
 #include "naucrates/dxl/xml/CXMLSerializer.h"
- #include "unittest/gpopt/CTestUtils.h"
+#include "unittest/gpopt/CTestUtils.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
 #include "naucrates/dxl/CDXLUtils.h"
 
@@ -11,52 +11,51 @@ namespace
 {
 	class Fixture
 	{
-		private:
-			const CAutoMemoryPool m_amp;
-			CAutoRg<CHAR> m_szDXL;
-		public:
-			Fixture():
-					m_amp(),
-					m_szDXL(NULL)
+	private:
+		const CAutoMemoryPool m_amp;
+		CAutoRg<CHAR> m_szDXL;
+
+	public:
+		Fixture() : m_amp(), m_szDXL(NULL)
+		{
+		}
+
+		IMemoryPool *
+		Pmp() const
+		{
+			return m_amp.Pmp();
+		}
+
+		const CHAR *
+		SzValidationPath(BOOL fValidate)
+		{
+			if (fValidate)
 			{
+				return CTestUtils::m_szXSDPath;
 			}
-
-			IMemoryPool *Pmp() const
+			else
 			{
-				return m_amp.Pmp();
+				return NULL;
 			}
+		}
 
-			const CHAR *SzValidationPath(BOOL fValidate)
-			{
-				if (fValidate)
-				{
-					return CTestUtils::m_szXSDPath;
-				}
-				else
-				{
-					return NULL;
-				}
-			}
+		const CHAR *
+		SzDxl(const CHAR *dxl_filename)
+		{
+			m_szDXL = CDXLUtils::Read(Pmp(), dxl_filename);
 
-			const CHAR *SzDxl(const CHAR *dxl_filename)
-			{
-				m_szDXL = CDXLUtils::Read(Pmp(), dxl_filename);
+			GPOS_CHECK_ABORT;
 
-				GPOS_CHECK_ABORT;
-
-				return m_szDXL.Rgt();
-			}
+			return m_szDXL.Rgt();
+		}
 	};
-}
+}  // namespace
 
 static void
-SerializeOptimizerConfig
-		(
-		IMemoryPool *mp,
-		COptimizerConfig *optimizer_config,
-		COstream &oos,
-		BOOL indentation
-		)
+SerializeOptimizerConfig(IMemoryPool *mp,
+						 COptimizerConfig *optimizer_config,
+						 COstream &oos,
+						 BOOL indentation)
 {
 	GPOS_ASSERT(NULL != mp);
 	GPOS_ASSERT(NULL != optimizer_config);
@@ -85,7 +84,8 @@ namespace gpdxl
 
 	// Parse an optimizer config and verify correctness of serialization.
 	// Serialization of COptimizerConfig is only done for writing to a DXL file as part of creating a minidump
-	GPOS_RESULT CParseHandlerOptimizerConfigSerializeTest::EresUnittest()
+	GPOS_RESULT
+	CParseHandlerOptimizerConfigSerializeTest::EresUnittest()
 	{
 		BOOL fValidate = false;
 		Fixture f;
@@ -100,7 +100,8 @@ namespace gpdxl
 		CWStringDynamic str(mp);
 		COstreamString oss(&str);
 
-		COptimizerConfig *poc = CDXLUtils::ParseDXLToOptimizerConfig(mp, dxl_string, szValidationPath);
+		COptimizerConfig *poc =
+			CDXLUtils::ParseDXLToOptimizerConfig(mp, dxl_string, szValidationPath);
 
 		GPOS_ASSERT(NULL != poc);
 
@@ -121,6 +122,6 @@ namespace gpdxl
 
 		return GPOS_OK;
 	}
-}
+}  // namespace gpdxl
 
 // EOF

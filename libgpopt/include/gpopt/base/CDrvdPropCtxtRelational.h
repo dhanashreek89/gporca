@@ -33,89 +33,69 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CDrvdPropCtxtRelational : public CDrvdPropCtxt
 	{
+	private:
+		// private copy ctor
+		CDrvdPropCtxtRelational(const CDrvdPropCtxtRelational &);
 
-		private:
+	protected:
+		// copy function
+		virtual CDrvdPropCtxt *
+		PdpctxtCopy(IMemoryPool *mp) const
+		{
+			return GPOS_NEW(mp) CDrvdPropCtxtRelational(mp);
+		}
 
-			// private copy ctor
-			CDrvdPropCtxtRelational(const CDrvdPropCtxtRelational &);
+		// add props to context
+		virtual void
+		AddProps(DrvdPropArray *  // pdp
+		)
+		{
+			// derived relational context is currently empty
+		}
 
-		protected:
+	public:
+		// ctor
+		CDrvdPropCtxtRelational(IMemoryPool *mp) : CDrvdPropCtxt(mp)
+		{
+		}
 
-			// copy function
-			virtual
-			CDrvdPropCtxt *PdpctxtCopy
-				(
-				IMemoryPool *mp
-				)
-				const
-			{
-				return GPOS_NEW(mp) CDrvdPropCtxtRelational(mp);
-			}
+		// dtor
+		virtual ~CDrvdPropCtxtRelational()
+		{
+		}
 
-			// add props to context
-			virtual
-			void AddProps
-				(
-				DrvdPropArray* // pdp
-				)
-			{
-				// derived relational context is currently empty
-			}
-
-		public:
-
-			// ctor
-			CDrvdPropCtxtRelational
-				(
-				IMemoryPool *mp
-				)
-				:
-				CDrvdPropCtxt(mp)
-			{}
-
-			// dtor
-			virtual
-			~CDrvdPropCtxtRelational() {}
-
-			// print
-			virtual
-			IOstream &OsPrint
-				(
-				IOstream &os
-				)
-				const
-			{
-				return os;
-			}
+		// print
+		virtual IOstream &
+		OsPrint(IOstream &os) const
+		{
+			return os;
+		}
 
 #ifdef GPOS_DEBUG
 
-			// is it a relational property context?
-			virtual
-			BOOL FRelational() const
-			{
-				return true;
-			}
+		// is it a relational property context?
+		virtual BOOL
+		FRelational() const
+		{
+			return true;
+		}
 
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
-			// conversion function
-			static
-			CDrvdPropCtxtRelational *PdpctxtrelConvert
-				(
-				CDrvdPropCtxt *pdpctxt
-				)
-			{
-				GPOS_ASSERT(NULL != pdpctxt);
+		// conversion function
+		static CDrvdPropCtxtRelational *
+		PdpctxtrelConvert(CDrvdPropCtxt *pdpctxt)
+		{
+			GPOS_ASSERT(NULL != pdpctxt);
 
-				return reinterpret_cast<CDrvdPropCtxtRelational*>(pdpctxt);
-			}
+			return reinterpret_cast<CDrvdPropCtxtRelational *>(pdpctxt);
+		}
 
-	}; // class CDrvdPropCtxtRelational
+	};  // class CDrvdPropCtxtRelational
 
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CDrvdPropCtxtRelational_H
+#endif  // !GPOPT_CDrvdPropCtxtRelational_H
 
 // EOF

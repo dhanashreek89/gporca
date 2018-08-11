@@ -29,87 +29,75 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalarCaseTest : public CScalar
 	{
+	private:
+		// type id
+		IMDId *m_mdid_type;
 
-		private:
+		// private copy ctor
+		CScalarCaseTest(const CScalarCaseTest &);
 
-			// type id
-			IMDId *m_mdid_type;
+	public:
+		// ctor
+		CScalarCaseTest(IMemoryPool *mp, IMDId *mdid_type);
 
-			// private copy ctor
-			CScalarCaseTest(const CScalarCaseTest &);
+		// dtor
+		virtual ~CScalarCaseTest();
 
-		public:
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopScalarCaseTest;
+		}
 
-			// ctor
-			CScalarCaseTest(IMemoryPool *mp, IMDId *mdid_type);
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CScalarCaseTest";
+		}
 
-			// dtor
-			virtual
-			~CScalarCaseTest();
+		// the type of the scalar expression
+		virtual IMDId *
+		MDIdType() const
+		{
+			return m_mdid_type;
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopScalarCaseTest;
-			}
+		// operator specific hash function
+		virtual ULONG HashValue() const;
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CScalarCaseTest";
-			}
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// the type of the scalar expression
-			virtual
-			IMDId *MDIdType() const
-			{
-				return m_mdid_type;
-			}
+		// sensitivity to order of inputs
+		virtual BOOL FInputOrderSensitive() const;
 
-			// operator specific hash function
-			virtual
-			ULONG HashValue() const;
+		// return a copy of the operator with remapped columns
+		virtual COperator *
+		PopCopyWithRemappedColumns(IMemoryPool *,		//mp,
+								   UlongToColRefMap *,  //colref_mapping,
+								   BOOL					//must_exist
+		)
+		{
+			return PopCopyDefault();
+		}
 
-			// match function
-			virtual BOOL
-			Matches(COperator *pop) const;
+		// conversion function
+		static CScalarCaseTest *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopScalarCaseTest == pop->Eopid());
 
-			// sensitivity to order of inputs
-			virtual
-			BOOL FInputOrderSensitive() const;
+			return dynamic_cast<CScalarCaseTest *>(pop);
+		}
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *, //mp,
-						UlongToColRefMap *, //colref_mapping,
-						BOOL //must_exist
-						)
-			{
-				return PopCopyDefault();
-			}
+	};  // class CScalarCaseTest
 
-			// conversion function
-			static
-			CScalarCaseTest *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopScalarCaseTest == pop->Eopid());
-
-				return dynamic_cast<CScalarCaseTest*>(pop);
-			}
-
-	}; // class CScalarCaseTest
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CScalarCaseTest_H
+#endif  // !GPOPT_CScalarCaseTest_H
 
 // EOF

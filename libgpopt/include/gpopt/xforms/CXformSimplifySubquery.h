@@ -30,92 +30,74 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformSimplifySubquery : public CXformExploration
 	{
+	private:
+		// definition of simplification function
+		typedef BOOL(FnSimplify)(IMemoryPool *mp, CExpression *, CExpression **);
 
-		private:
+		// definition of matching function
+		typedef BOOL(FnMatch)(COperator *);
 
-			// definition of simplification function
-			typedef BOOL(FnSimplify) (IMemoryPool *mp, CExpression *, CExpression **);
+		//---------------------------------------------------------------------------
+		//	@struct:
+		//		SSimplifySubqueryMapping
+		//
+		//	@doc:
+		//		Mapping of a simplify function to matching function
+		//
+		//---------------------------------------------------------------------------
+		struct SSimplifySubqueryMapping
+		{
+			// simplification function
+			FnSimplify *m_pfnsimplify;
 
-			// definition of matching function
-			typedef BOOL(FnMatch) (COperator *);
+			// matching function
+			FnMatch *m_pfnmatch;
 
-			//---------------------------------------------------------------------------
-			//	@struct:
-			//		SSimplifySubqueryMapping
-			//
-			//	@doc:
-			//		Mapping of a simplify function to matching function
-			//
-			//---------------------------------------------------------------------------
-			struct SSimplifySubqueryMapping
-			{
-				// simplification function
-				FnSimplify *m_pfnsimplify;
+		};  // struct SSimplifySubqueryMapping
 
-				// matching function
-				FnMatch *m_pfnmatch;
+		// array of mappings
+		static const SSimplifySubqueryMapping m_rgssm[];
 
-			}; // struct SSimplifySubqueryMapping
+		// transform existential subqueries to count(*) subqueries
+		static BOOL FSimplifyExistential(IMemoryPool *mp,
+										 CExpression *pexprScalar,
+										 CExpression **ppexprNewScalar);
 
-			// array of mappings
-			static
-			const SSimplifySubqueryMapping m_rgssm[];
+		// transform quantified subqueries to count(*) subqueries
+		static BOOL FSimplifyQuantified(IMemoryPool *mp,
+										CExpression *pexprScalar,
+										CExpression **ppexprNewScalar);
 
-			// transform existential subqueries to count(*) subqueries
-			static
-			BOOL FSimplifyExistential
-				(
-				IMemoryPool *mp,
-				CExpression *pexprScalar,
-				CExpression **ppexprNewScalar
-				);
+		// main driver, transform existential/quantified subqueries to count(*) subqueries
+		static BOOL FSimplify(IMemoryPool *mp,
+							  CExpression *pexprScalar,
+							  CExpression **ppexprNewScalar,
+							  FnSimplify *pfnsimplify,
+							  FnMatch *pfnmatch);
 
-			// transform quantified subqueries to count(*) subqueries
-			static
-			BOOL FSimplifyQuantified
-				(
-				IMemoryPool *mp,
-				CExpression *pexprScalar,
-				CExpression **ppexprNewScalar
-				);
+		// private copy ctor
+		CXformSimplifySubquery(const CXformSimplifySubquery &);
 
-			// main driver, transform existential/quantified subqueries to count(*) subqueries
-			static
-			BOOL FSimplify
-				(
-				IMemoryPool *mp,
-				CExpression *pexprScalar,
-				CExpression **ppexprNewScalar,
-				FnSimplify *pfnsimplify,
-				FnMatch *pfnmatch
-				);
+	public:
+		// ctor
+		explicit CXformSimplifySubquery(CExpression *pexprPattern);
 
-			// private copy ctor
-			CXformSimplifySubquery(const CXformSimplifySubquery &);
+		// dtor
+		virtual ~CXformSimplifySubquery()
+		{
+		}
 
-		public:
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ctor
-			explicit
-			CXformSimplifySubquery(CExpression *pexprPattern);
-
-			// dtor
-			virtual
-			~CXformSimplifySubquery()
-			{}
-
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl)const;
-
-			// actual transform
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
 
-	}; // class CXformSimplifySubquery
+	};  // class CXformSimplifySubquery
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CXformSimplifySubquery_H
+#endif  // !GPOPT_CXformSimplifySubquery_H
 
 // EOF

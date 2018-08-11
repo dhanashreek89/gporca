@@ -271,9 +271,7 @@ CBucket::MakeBucketGreaterThan(IMemoryPool *mp, CPoint *point) const
 //
 //---------------------------------------------------------------------------
 CBucket *
-CBucket::MakeBucketScaleUpper(IMemoryPool *mp,
-							  CPoint *point_upper_new,
-							  BOOL include_upper) const
+CBucket::MakeBucketScaleUpper(IMemoryPool *mp, CPoint *point_upper_new, BOOL include_upper) const
 {
 	GPOS_ASSERT(mp);
 	GPOS_ASSERT(point_upper_new);
@@ -308,11 +306,11 @@ CBucket::MakeBucketScaleUpper(IMemoryPool *mp,
 	point_upper_new->AddRef();
 
 	return GPOS_NEW(mp) CBucket(this->m_bucket_lower_bound,
-										 point_upper_new,
-										 this->m_is_lower_closed,
-										 include_upper,
-										 frequency_new,
-										 distinct_new);
+								point_upper_new,
+								this->m_is_lower_closed,
+								include_upper,
+								frequency_new,
+								distinct_new);
 }
 
 //---------------------------------------------------------------------------
@@ -325,9 +323,7 @@ CBucket::MakeBucketScaleUpper(IMemoryPool *mp,
 //
 //---------------------------------------------------------------------------
 CBucket *
-CBucket::MakeBucketScaleLower(IMemoryPool *mp,
-							  CPoint *point_lower_new,
-							  BOOL include_lower) const
+CBucket::MakeBucketScaleLower(IMemoryPool *mp, CPoint *point_lower_new, BOOL include_lower) const
 {
 	GPOS_ASSERT(mp);
 	GPOS_ASSERT(point_lower_new);
@@ -355,11 +351,11 @@ CBucket::MakeBucketScaleLower(IMemoryPool *mp,
 	point_lower_new->AddRef();
 
 	return GPOS_NEW(mp) CBucket(point_lower_new,
-										 this->m_bucket_upper_bound,
-										 include_lower,
-										 this->m_is_upper_closed,
-										 frequency_new,
-										 distinct_new);
+								this->m_bucket_upper_bound,
+								include_lower,
+								this->m_is_upper_closed,
+								frequency_new,
+								distinct_new);
 }
 
 //---------------------------------------------------------------------------
@@ -390,11 +386,11 @@ CBucket::MakeBucketSingleton(IMemoryPool *mp, CPoint *point_singleton) const
 	point_singleton->AddRef();
 
 	return GPOS_NEW(mp) CBucket(point_singleton,
-										 point_singleton,
-										 true /* is_lower_closed */,
-										 true /* is_upper_closed */,
-										 frequency_new,
-										 distinct_new);
+								point_singleton,
+								true /* is_lower_closed */,
+								true /* is_upper_closed */,
+								frequency_new,
+								distinct_new);
 }
 
 //---------------------------------------------------------------------------
@@ -413,11 +409,11 @@ CBucket::MakeBucketCopy(IMemoryPool *mp)
 	m_bucket_upper_bound->AddRef();
 
 	return GPOS_NEW(mp) CBucket(m_bucket_lower_bound,
-										 m_bucket_upper_bound,
-										 m_is_lower_closed,
-										 m_is_upper_closed,
-										 m_frequency,
-										 m_distinct);
+								m_bucket_upper_bound,
+								m_is_lower_closed,
+								m_is_upper_closed,
+								m_frequency,
+								m_distinct);
 }
 
 //---------------------------------------------------------------------------
@@ -438,11 +434,11 @@ CBucket::MakeBucketUpdateFrequency(IMemoryPool *mp, CDouble rows_old, CDouble ro
 	CDouble frequency_new = (this->m_frequency * rows_old) / rows_new;
 
 	return GPOS_NEW(mp) CBucket(m_bucket_lower_bound,
-										 m_bucket_upper_bound,
-										 m_is_lower_closed,
-										 m_is_upper_closed,
-										 frequency_new,
-										 m_distinct);
+								m_bucket_upper_bound,
+								m_is_lower_closed,
+								m_is_upper_closed,
+								frequency_new,
+								m_distinct);
 }
 
 //---------------------------------------------------------------------------
@@ -743,11 +739,11 @@ CBucket::MakeBucketIntersect(IMemoryPool *mp,
 	*result_freq_intersect2 = freq_intersect2;
 
 	return GPOS_NEW(mp) CBucket(lower_new,
-										 upper_new,
-										 lower_new_is_closed,
-										 upper_new_is_closed,
-										 frequency_new,
-										 distinct_new);
+								upper_new,
+								lower_new_is_closed,
+								upper_new_is_closed,
+								frequency_new,
+								distinct_new);
 }
 
 //---------------------------------------------------------------------------
@@ -919,8 +915,7 @@ CBucket::MakeBucketMerged(IMemoryPool *mp,
 
 	if (result_upper_new->IsLessThan(this->GetUpperBound()))
 	{
-		*result_bucket_new1 =
-			this->MakeBucketScaleLower(mp, result_upper_new, !is_upper_closed);
+		*result_bucket_new1 = this->MakeBucketScaleLower(mp, result_upper_new, !is_upper_closed);
 	}
 
 	if (result_upper_new->IsLessThan(bucket_other->GetUpperBound()))
@@ -933,11 +928,11 @@ CBucket::MakeBucketMerged(IMemoryPool *mp,
 	result_upper_new->AddRef();
 
 	return GPOS_NEW(mp) CBucket(result_lower_new,
-										 result_upper_new,
-										 true /* is_lower_closed */,
-										 is_upper_closed,
-										 frequency,
-										 distinct);
+								result_upper_new,
+								true /* is_lower_closed */,
+								is_upper_closed,
+								frequency,
+								distinct);
 }
 
 //---------------------------------------------------------------------------
@@ -989,11 +984,11 @@ CBucket::MakeBucketSingleton(IMemoryPool *mp, IDatum *datum)
 	datum->AddRef();
 
 	return GPOS_NEW(mp) CBucket(GPOS_NEW(mp) CPoint(datum),
-										 GPOS_NEW(mp) CPoint(datum),
-										 true /* is_lower_closed */,
-										 true /* is_upper_closed */,
-										 CDouble(1.0),
-										 CDouble(1.0));
+								GPOS_NEW(mp) CPoint(datum),
+								true /* is_lower_closed */,
+								true /* is_upper_closed */,
+								CDouble(1.0),
+								CDouble(1.0));
 }
 
 

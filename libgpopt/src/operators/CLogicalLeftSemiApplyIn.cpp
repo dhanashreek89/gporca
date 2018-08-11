@@ -24,11 +24,7 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CXformSet *
-CLogicalLeftSemiApplyIn::PxfsCandidates
-	(
-	IMemoryPool *mp
-	)
-	const
+CLogicalLeftSemiApplyIn::PxfsCandidates(IMemoryPool *mp) const
 {
 	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
 	(void) xform_set->ExchangeSet(CXform::ExfLeftSemiApplyIn2LeftSemiJoin);
@@ -47,17 +43,14 @@ CLogicalLeftSemiApplyIn::PxfsCandidates
 //
 //---------------------------------------------------------------------------
 COperator *
-CLogicalLeftSemiApplyIn::PopCopyWithRemappedColumns
-	(
-	IMemoryPool *mp,
-	UlongToColRefMap *colref_mapping,
-	BOOL must_exist
-	)
+CLogicalLeftSemiApplyIn::PopCopyWithRemappedColumns(IMemoryPool *mp,
+													UlongToColRefMap *colref_mapping,
+													BOOL must_exist)
 {
-	CColRefArray *pdrgpcrInner = CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
+	CColRefArray *pdrgpcrInner =
+		CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
 
 	return GPOS_NEW(mp) CLogicalLeftSemiApplyIn(mp, pdrgpcrInner, m_eopidOriginSubq);
 }
 
 // EOF
-

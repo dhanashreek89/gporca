@@ -60,11 +60,8 @@ namespace gpmd
 
 	public:
 		// ctor
-		CMDCheckConstraintGPDB(IMemoryPool *mp,
-							   IMDId *mdid,
-							   CMDName *mdname,
-							   IMDId *rel_mdid,
-							   CDXLNode *dxlnode);
+		CMDCheckConstraintGPDB(
+			IMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *rel_mdid, CDXLNode *dxlnode);
 
 		// dtor
 		virtual ~CMDCheckConstraintGPDB();

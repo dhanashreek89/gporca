@@ -49,120 +49,113 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CQueryContext
 	{
+	private:
+		// memory pool
+		IMemoryPool *m_mp;
 
-		private:
+		// required plan properties in optimizer's produced plan
+		CReqdPropPlan *m_prpp;
 
-			// memory pool
-			IMemoryPool *m_mp;
+		// required array of output columns
+		CColRefArray *m_pdrgpcr;
 
-			// required plan properties in optimizer's produced plan
-			CReqdPropPlan *m_prpp;
+		// required system columns, collected from of output columns
+		CColRefArray *m_pdrgpcrSystemCols;
 
-			// required array of output columns
-			CColRefArray *m_pdrgpcr;
+		// array of output column names
+		CMDNameArray *m_pdrgpmdname;
 
-			// required system columns, collected from of output columns
-			CColRefArray *m_pdrgpcrSystemCols;
+		// logical expression tree to be optimized
+		CExpression *m_pexpr;
 
-			// array of output column names
-			CMDNameArray *m_pdrgpmdname;
+		// should statistics derivation take place
+		BOOL m_fDeriveStats;
 
-			// logical expression tree to be optimized
-			CExpression *m_pexpr;
+		// collect system columns from output columns
+		void SetSystemCols(IMemoryPool *mp);
 
-			// should statistics derivation take place
-			BOOL m_fDeriveStats;
+		// return top level operator in the given expression
+		static COperator *PopTop(CExpression *pexpr);
 
-			// collect system columns from output columns
-			void SetSystemCols(IMemoryPool *mp);
+		// private copy ctor
+		CQueryContext(const CQueryContext &);
 
-			// return top level operator in the given expression
-			static
-			COperator *PopTop(CExpression *pexpr);
+	public:
+		// ctor
+		CQueryContext(IMemoryPool *mp,
+					  CExpression *pexpr,
+					  CReqdPropPlan *prpp,
+					  CColRefArray *colref_array,
+					  CMDNameArray *pdrgpmdname,
+					  BOOL fDeriveStats);
 
-			// private copy ctor
-			CQueryContext(const CQueryContext &);
+		// dtor
+		virtual ~CQueryContext();
 
-		public:
+		BOOL
+		FDeriveStats() const
+		{
+			return m_fDeriveStats;
+		}
 
-			// ctor
-			CQueryContext
-				(
-				IMemoryPool *mp,
-				CExpression *pexpr,
-				CReqdPropPlan *prpp,
-				CColRefArray *colref_array,
-				CMDNameArray *pdrgpmdname,
-				BOOL fDeriveStats
-				);
+		// expression accessor
+		CExpression *
+		Pexpr() const
+		{
+			return m_pexpr;
+		}
 
-			// dtor
-			virtual
-			~CQueryContext();
+		// required plan properties accessor
+		CReqdPropPlan *
+		Prpp() const
+		{
+			return m_prpp;
+		}
 
-			BOOL FDeriveStats() const
-			{
-				return m_fDeriveStats;
-			}
+		// return the array of output column references
+		CColRefArray *
+		PdrgPcr() const
+		{
+			return m_pdrgpcr;
+		}
 
-			// expression accessor
-			CExpression *Pexpr() const
-			{
-				return m_pexpr;
-			}
+		// system columns
+		CColRefArray *
+		PdrgpcrSystemCols() const
+		{
+			return m_pdrgpcrSystemCols;
+		}
 
-			// required plan properties accessor
-			CReqdPropPlan *Prpp() const
-			{
-				return m_prpp;
-			}
-			
-			// return the array of output column references
-			CColRefArray *PdrgPcr() const
-			{
-				return m_pdrgpcr;
-			}
+		// return the array of output column names
+		CMDNameArray *
+		Pdrgpmdname() const
+		{
+			return m_pdrgpmdname;
+		}
 
-			// system columns
-			CColRefArray *PdrgpcrSystemCols() const
-			{
-				return m_pdrgpcrSystemCols;
-			}
-
-			// return the array of output column names
-			CMDNameArray *Pdrgpmdname() const
-			{
-				return m_pdrgpmdname;
-			}
-
-			// generate the query context for the given expression and array of output column ref ids
-			static
-			CQueryContext *PqcGenerate
-							(
-							IMemoryPool *mp, // memory pool
-							CExpression *pexpr, // expression representing the query
-							ULongPtrArray *pdrgpulQueryOutputColRefId, // array of output column reference id
-							CMDNameArray *pdrgpmdname, // array of output column names
-							BOOL fDeriveStats
-							);
+		// generate the query context for the given expression and array of output column ref ids
+		static CQueryContext *PqcGenerate(
+			IMemoryPool *mp,							// memory pool
+			CExpression *pexpr,							// expression representing the query
+			ULongPtrArray *pdrgpulQueryOutputColRefId,  // array of output column reference id
+			CMDNameArray *pdrgpmdname,					// array of output column names
+			BOOL fDeriveStats);
 
 #ifdef GPOS_DEBUG
-			// debug print
-			virtual
-			IOstream &OsPrint(IOstream &) const;
+		// debug print
+		virtual IOstream &OsPrint(IOstream &) const;
 
-			void DbgPrint() const;
-#endif // GPOS_DEBUG
+		void DbgPrint() const;
+#endif  // GPOS_DEBUG
 
-			// walk the expression and add the mapping between computed column
-			// and their corresponding used column(s)
-			static
-			void MapComputedToUsedCols(CColumnFactory *col_factory, CExpression *pexpr);
+		// walk the expression and add the mapping between computed column
+		// and their corresponding used column(s)
+		static void MapComputedToUsedCols(CColumnFactory *col_factory, CExpression *pexpr);
 
-	}; // class CQueryContext
-}
+	};  // class CQueryContext
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CQueryContext_H
+#endif  // !GPOPT_CQueryContext_H
 
 // EOF

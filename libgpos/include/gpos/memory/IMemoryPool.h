@@ -247,10 +247,7 @@ namespace gpos
 // built-in 'new', and is used only when placement-new is invoked with the
 // specific type signature defined below.
 inline void *
-operator new(gpos::SIZE_T size,
-			 gpos::IMemoryPool *mp,
-			 const gpos::CHAR *filename,
-			 gpos::ULONG line)
+operator new(gpos::SIZE_T size, gpos::IMemoryPool *mp, const gpos::CHAR *filename, gpos::ULONG line)
 {
 	return mp->NewImpl(size, filename, line, gpos::IMemoryPool::EatSingleton);
 }
@@ -281,8 +278,7 @@ operator delete(void *ptr, gpos::IMemoryPool *, const gpos::CHAR *, gpos::ULONG)
 // arrays, because when we do so the C++ compiler adds its own book-keeping
 // information to the allocation in a non-portable way such that we can not
 // recover GPOS' own book-keeping information reliably.
-#define GPOS_NEW_ARRAY(mp, datatype, count) \
-	mp->NewArrayImpl<datatype>(count, __FILE__, __LINE__)
+#define GPOS_NEW_ARRAY(mp, datatype, count) mp->NewArrayImpl<datatype>(count, __FILE__, __LINE__)
 
 // Delete a singleton object allocated by GPOS_NEW().
 template <typename T>

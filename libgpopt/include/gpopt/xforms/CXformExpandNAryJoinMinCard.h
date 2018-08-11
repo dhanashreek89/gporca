@@ -30,61 +30,51 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformExpandNAryJoinMinCard : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformExpandNAryJoinMinCard(const CXformExpandNAryJoinMinCard &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformExpandNAryJoinMinCard(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformExpandNAryJoinMinCard(const CXformExpandNAryJoinMinCard &);
+		// dtor
+		virtual ~CXformExpandNAryJoinMinCard()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfExpandNAryJoinMinCard;
+		}
 
-			// ctor
-			explicit
-			CXformExpandNAryJoinMinCard(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformExpandNAryJoinMinCard";
+		}
 
-			// dtor
-			virtual
-			~CXformExpandNAryJoinMinCard()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfExpandNAryJoinMinCard;
-			}
+		// do stats need to be computed before applying xform?
+		virtual BOOL
+		FNeedsStats() const
+		{
+			return true;
+		}
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformExpandNAryJoinMinCard";
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+	};  // class CXformExpandNAryJoinMinCard
 
-			// do stats need to be computed before applying xform?
-			virtual
-			BOOL FNeedsStats() const
-			{
-				return true;
-			}
-
-			// actual transform
-			void Transform
-					(
-					CXformContext *pxfctxt,
-					CXformResult *pxfres,
-					CExpression *pexpr
-					) const;
-
-	}; // class CXformExpandNAryJoinMinCard
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformExpandNAryJoinMinCard_H
+#endif  // !GPOPT_CXformExpandNAryJoinMinCard_H
 
 // EOF

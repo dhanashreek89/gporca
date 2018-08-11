@@ -20,7 +20,6 @@
 
 namespace gpnaucrates
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CCardinalityTestUtils
@@ -31,72 +30,60 @@ namespace gpnaucrates
 	//---------------------------------------------------------------------------
 	class CCardinalityTestUtils
 	{
-		public:
+	public:
+		// create a bucket with integer bounds, and lower bound is closed
+		static CBucket *PbucketIntegerClosedLowerBound(
+			IMemoryPool *mp, INT iLower, INT iUpper, CDouble, CDouble);
 
-			// create a bucket with integer bounds, and lower bound is closed
-			static
-			CBucket *PbucketIntegerClosedLowerBound(IMemoryPool *mp, INT iLower, INT iUpper, CDouble, CDouble);
+		// create a singleton bucket containing a boolean value
+		static CBucket *PbucketSingletonBoolVal(IMemoryPool *mp, BOOL fValue, CDouble frequency);
 
-			// create a singleton bucket containing a boolean value
-			static
-			CBucket *PbucketSingletonBoolVal(IMemoryPool *mp, BOOL fValue, CDouble frequency);
+		// create an integer bucket with the provider upper/lower bound, frequency and NDV information
+		static CBucket *PbucketInteger(IMemoryPool *mp,
+									   INT iLower,
+									   INT iUpper,
+									   BOOL is_lower_closed,
+									   BOOL is_upper_closed,
+									   CDouble frequency,
+									   CDouble distinct);
 
-			// create an integer bucket with the provider upper/lower bound, frequency and NDV information
-			static
-			CBucket *PbucketInteger
-				(
-				IMemoryPool *mp,
-				INT iLower,
-				INT iUpper,
-				BOOL is_lower_closed,
-				BOOL is_upper_closed,
-				CDouble frequency,
-				CDouble distinct
-				);
+		// helper function to generate integer histogram based on the NDV and bucket information provided
+		static CHistogram *PhistInt4Remain(IMemoryPool *mp,
+										   ULONG num_of_buckets,
+										   CDouble dNDVPerBucket,
+										   BOOL fNullFreq,
+										   CDouble num_NDV_remain);
 
-			// helper function to generate integer histogram based on the NDV and bucket information provided
-			static
-			CHistogram* PhistInt4Remain
-				(
-				IMemoryPool *mp,
-				ULONG num_of_buckets,
-				CDouble dNDVPerBucket,
-				BOOL fNullFreq,
-				CDouble num_NDV_remain
-				);
+		// helper function to generate an example integer histogram
+		static CHistogram *PhistExampleInt4(IMemoryPool *mp);
 
-			// helper function to generate an example integer histogram
-			static
-			CHistogram* PhistExampleInt4(IMemoryPool *mp);
+		// helper function to generate an example boolean histogram
+		static CHistogram *PhistExampleBool(IMemoryPool *mp);
 
-			// helper function to generate an example boolean histogram
-			static
-			CHistogram* PhistExampleBool(IMemoryPool *mp);
+		// helper function to generate a point from an encoded value of specific datatype
+		static CPoint *PpointGeneric(IMemoryPool *mp,
+									 OID oid,
+									 CWStringDynamic *pstrValueEncoded,
+									 LINT value);
 
-			// helper function to generate a point from an encoded value of specific datatype
-			static
-			CPoint *PpointGeneric(IMemoryPool *mp, OID oid, CWStringDynamic *pstrValueEncoded, LINT value);
+		// helper function to generate a point of numeric datatype
+		static CPoint *PpointNumeric(IMemoryPool *mp,
+									 CWStringDynamic *pstrEncodedValue,
+									 CDouble value);
 
-			// helper function to generate a point of numeric datatype
-			static
-			CPoint *PpointNumeric(IMemoryPool *mp, CWStringDynamic *pstrEncodedValue, CDouble value);
+		// helper method to print statistics object
+		static void PrintStats(IMemoryPool *mp, const CStatistics *stats);
 
-			// helper method to print statistics object
-			static
-			void PrintStats(IMemoryPool *mp, const CStatistics *stats);
+		// helper method to print histogram object
+		static void PrintHist(IMemoryPool *mp, const char *pcPrefix, const CHistogram *histogram);
 
-			// helper method to print histogram object
-			static
-			void PrintHist(IMemoryPool *mp, const char *pcPrefix, const CHistogram *histogram);
+		// helper method to print bucket object
+		static void PrintBucket(IMemoryPool *mp, const char *pcPrefix, const CBucket *bucket);
 
-			// helper method to print bucket object
-			static
-			void PrintBucket(IMemoryPool *mp, const char *pcPrefix, const CBucket *bucket);
+	};  // class CCardinalityTestUtils
+}  // namespace gpnaucrates
 
-	}; // class CCardinalityTestUtils
-}
-
-#endif // !GPNAUCRATES_CCardinalityTestUtils_H
+#endif  // !GPNAUCRATES_CCardinalityTestUtils_H
 
 
 // EOF

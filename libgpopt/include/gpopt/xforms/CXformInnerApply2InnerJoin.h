@@ -28,55 +28,48 @@ namespace gpopt
 	//		Transform Apply into Join by decorrelating the inner side
 	//
 	//---------------------------------------------------------------------------
-	class CXformInnerApply2InnerJoin : public CXformApply2Join<CLogicalInnerApply, CLogicalInnerJoin>
+	class CXformInnerApply2InnerJoin
+		: public CXformApply2Join<CLogicalInnerApply, CLogicalInnerJoin>
 	{
+	private:
+		// private copy ctor
+		CXformInnerApply2InnerJoin(const CXformInnerApply2InnerJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformInnerApply2InnerJoin(IMemoryPool *mp)
+			: CXformApply2Join<CLogicalInnerApply, CLogicalInnerJoin>(mp, true /*fDeepTree*/)
+		{
+		}
 
-			// private copy ctor
-			CXformInnerApply2InnerJoin(const CXformInnerApply2InnerJoin &);
+		// dtor
+		virtual ~CXformInnerApply2InnerJoin()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfInnerApply2InnerJoin;
+		}
 
-			// ctor
-			explicit
-			CXformInnerApply2InnerJoin
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformApply2Join<CLogicalInnerApply, CLogicalInnerJoin>(mp, true /*fDeepTree*/)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformInnerApply2InnerJoin";
+		}
 
-			// dtor
-			virtual
-			~CXformInnerApply2InnerJoin()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfInnerApply2InnerJoin;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformInnerApply2InnerJoin";
-			}
+	};  // class CXformInnerApply2InnerJoin
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+}  // namespace gpopt
 
-			// actual transform
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
-
-	}; // class CXformInnerApply2InnerJoin
-
-}
-
-#endif // !GPOPT_CXformInnerApply2InnerJoin_H
+#endif  // !GPOPT_CXformInnerApply2InnerJoin_H
 
 // EOF

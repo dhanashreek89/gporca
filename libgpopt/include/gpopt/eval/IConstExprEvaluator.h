@@ -9,7 +9,7 @@
 //		Interface for constant expression evaluator in the optimizer
 //
 //	@owner:
-//		
+//
 //
 //	@test:
 //
@@ -39,23 +39,21 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class IConstExprEvaluator : public CRefCount
 	{
-		public:
-			// dtor
-			virtual
-			~IConstExprEvaluator()
-			{}
+	public:
+		// dtor
+		virtual ~IConstExprEvaluator()
+		{
+		}
 
-			// evaluate the given expression and return the result as a new expression
-			// caller takes ownership of returned expression
-			virtual
-			CExpression *PexprEval(CExpression *pexpr) = 0;
+		// evaluate the given expression and return the result as a new expression
+		// caller takes ownership of returned expression
+		virtual CExpression *PexprEval(CExpression *pexpr) = 0;
 
-			// returns true iff the evaluator can evaluate constant expressions without subqueries
-			virtual
-			BOOL FCanEvalExpressions() = 0;
+		// returns true iff the evaluator can evaluate constant expressions without subqueries
+		virtual BOOL FCanEvalExpressions() = 0;
 	};
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_IConstExprEvaluator_H
+#endif  // !GPOPT_IConstExprEvaluator_H
 
 // EOF

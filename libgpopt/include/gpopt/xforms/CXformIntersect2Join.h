@@ -28,61 +28,48 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformIntersect2Join : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformIntersect2Join(const CXformIntersect2Join &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformIntersect2Join(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformIntersect2Join(const CXformIntersect2Join &);
+		// dtor
+		virtual ~CXformIntersect2Join()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfIntersect2Join;
+		}
 
-			// ctor
-			explicit
-			CXformIntersect2Join(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformIntersect2Join";
+		}
 
-			// dtor
-			virtual
-			~CXformIntersect2Join()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise
+		Exfp(CExpressionHandle &  // exprhdl
+			 ) const
+		{
+			return CXform::ExfpHigh;
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfIntersect2Join;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformIntersect2Join";
-			}
+	};  // class CXformIntersect2Join
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp
-				(
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{
-				return CXform::ExfpHigh;
-			}
+}  // namespace gpopt
 
-			// actual transform
-			void Transform
-					(
-					CXformContext *pxfctxt,
-					CXformResult *pxfres,
-					CExpression *pexpr
-					)
-			const;
-
-	}; // class CXformIntersect2Join
-
-}
-
-#endif // !GPOPT_CXformIntersect2Join_H
+#endif  // !GPOPT_CXformIntersect2Join_H
 
 // EOF

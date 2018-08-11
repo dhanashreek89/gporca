@@ -33,7 +33,7 @@ namespace gpopt
 	class CPartIndexMap;
 	class CPropConstraint;
 	class CPartInfo;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CDrvdPropRelational
@@ -49,175 +49,181 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CDrvdPropRelational : public DrvdPropArray
 	{
+	private:
+		// output columns
+		CColRefSet *m_pcrsOutput;
 
-		private:
+		// columns not defined in the underlying operator tree
+		CColRefSet *m_pcrsOuter;
 
-			// output columns
-			CColRefSet *m_pcrsOutput;
+		// output columns that do not allow null values
+		CColRefSet *m_pcrsNotNull;
 
-			// columns not defined in the underlying operator tree
-			CColRefSet *m_pcrsOuter;
-			
-			// output columns that do not allow null values
-			CColRefSet *m_pcrsNotNull;
+		// columns from the inner child of a correlated-apply expression that can be used above the apply expression
+		CColRefSet *m_pcrsCorrelatedApply;
 
-			// columns from the inner child of a correlated-apply expression that can be used above the apply expression
-			CColRefSet *m_pcrsCorrelatedApply;
+		// key collection
+		CKeyCollection *m_pkc;
 
-			// key collection
-			CKeyCollection *m_pkc;
-			
-			// functional dependencies
-			CFunctionalDependencyArray *m_pdrgpfd;
-			
-			// max card
-			CMaxCard m_maxcard;
-			
-			// join depth (number of relations in underlying tree)
-			ULONG m_ulJoinDepth;
+		// functional dependencies
+		CFunctionalDependencyArray *m_pdrgpfd;
 
-			// partition table consumers
-			CPartInfo *m_ppartinfo;
+		// max card
+		CMaxCard m_maxcard;
 
-			// constraint property
-			CPropConstraint *m_ppc;
+		// join depth (number of relations in underlying tree)
+		ULONG m_ulJoinDepth;
 
-			// function properties
-			CFunctionProp *m_pfp;
+		// partition table consumers
+		CPartInfo *m_ppartinfo;
 
-			// true if all logical operators in the group are of type CLogicalDynamicGet,
-			// and the dynamic get has partial indexes
-			BOOL m_fHasPartialIndexes;
+		// constraint property
+		CPropConstraint *m_ppc;
 
-			// private copy ctor
-			CDrvdPropRelational(const CDrvdPropRelational &);
+		// function properties
+		CFunctionProp *m_pfp;
 
-			// helper for getting applicable FDs from child
-			static
-			CFunctionalDependencyArray *PdrgpfdChild(IMemoryPool *mp, ULONG child_index, CExpressionHandle &exprhdl);
+		// true if all logical operators in the group are of type CLogicalDynamicGet,
+		// and the dynamic get has partial indexes
+		BOOL m_fHasPartialIndexes;
 
-			// helper for creating local FDs
-			static
-			CFunctionalDependencyArray *PdrgpfdLocal(IMemoryPool *mp, CExpressionHandle &exprhdl);
+		// private copy ctor
+		CDrvdPropRelational(const CDrvdPropRelational &);
 
-			// helper for deriving FD's
-			static
-			CFunctionalDependencyArray *Pdrgpfd(IMemoryPool *mp, CExpressionHandle &exprhdl);
+		// helper for getting applicable FDs from child
+		static CFunctionalDependencyArray *PdrgpfdChild(IMemoryPool *mp,
+														ULONG child_index,
+														CExpressionHandle &exprhdl);
 
-		public:
+		// helper for creating local FDs
+		static CFunctionalDependencyArray *PdrgpfdLocal(IMemoryPool *mp,
+														CExpressionHandle &exprhdl);
 
-			// ctor
-			CDrvdPropRelational();
+		// helper for deriving FD's
+		static CFunctionalDependencyArray *Pdrgpfd(IMemoryPool *mp, CExpressionHandle &exprhdl);
 
-			// dtor
-			virtual 
-			~CDrvdPropRelational();
+	public:
+		// ctor
+		CDrvdPropRelational();
 
-			// type of properties
-			virtual
-			EPropType Ept()
-			{
-				return EptRelational;
-			}
+		// dtor
+		virtual ~CDrvdPropRelational();
 
-			// derivation function
-			void Derive(IMemoryPool *mp, CExpressionHandle &exprhdl, CDrvdPropCtxt *pdpctxt);
+		// type of properties
+		virtual EPropType
+		Ept()
+		{
+			return EptRelational;
+		}
 
-			// output columns
-			CColRefSet *PcrsOutput() const
-			{
-				return m_pcrsOutput;
-			}
+		// derivation function
+		void Derive(IMemoryPool *mp, CExpressionHandle &exprhdl, CDrvdPropCtxt *pdpctxt);
 
-			// outer references
-			CColRefSet *PcrsOuter() const
-			{
-				return m_pcrsOuter;
-			}
-			
-			// nullable columns
-			CColRefSet *PcrsNotNull() const
-			{
-				return m_pcrsNotNull;
-			}
+		// output columns
+		CColRefSet *
+		PcrsOutput() const
+		{
+			return m_pcrsOutput;
+		}
 
-			// columns from the inner child of a correlated-apply expression that can be used above the apply expression
-			CColRefSet *PcrsCorrelatedApply() const
-			{
-				return m_pcrsCorrelatedApply;
-			}
+		// outer references
+		CColRefSet *
+		PcrsOuter() const
+		{
+			return m_pcrsOuter;
+		}
 
-			// key collection
-			CKeyCollection *Pkc() const
-			{
-				return m_pkc;
-			}
-		
-			// functional dependencies
-			CFunctionalDependencyArray *Pdrgpfd() const
-			{
-				return m_pdrgpfd;
-			}
+		// nullable columns
+		CColRefSet *
+		PcrsNotNull() const
+		{
+			return m_pcrsNotNull;
+		}
 
-			// check if relation has a key
-			BOOL FHasKey() const
-			{
-				return NULL != m_pkc;
-			}
+		// columns from the inner child of a correlated-apply expression that can be used above the apply expression
+		CColRefSet *
+		PcrsCorrelatedApply() const
+		{
+			return m_pcrsCorrelatedApply;
+		}
 
-			// max cardinality
-			CMaxCard Maxcard() const
-			{
-				return m_maxcard;
-			}
+		// key collection
+		CKeyCollection *
+		Pkc() const
+		{
+			return m_pkc;
+		}
 
-			// join depth
-			ULONG JoinDepth() const
-			{
-				return m_ulJoinDepth;
-			}
+		// functional dependencies
+		CFunctionalDependencyArray *
+		Pdrgpfd() const
+		{
+			return m_pdrgpfd;
+		}
 
-			// partition consumers
-			CPartInfo *Ppartinfo() const
-			{
-				return m_ppartinfo;
-			}
+		// check if relation has a key
+		BOOL
+		FHasKey() const
+		{
+			return NULL != m_pkc;
+		}
 
-			// constraint property
-			CPropConstraint *Ppc() const
-			{
-				return m_ppc;
-			}
+		// max cardinality
+		CMaxCard
+		Maxcard() const
+		{
+			return m_maxcard;
+		}
 
-			// function properties
-			CFunctionProp *Pfp() const
-			{
-				return m_pfp;
-			}
+		// join depth
+		ULONG
+		JoinDepth() const
+		{
+			return m_ulJoinDepth;
+		}
 
-			// has partial indexes
-			BOOL FHasPartialIndexes() const
-			{
-				return m_fHasPartialIndexes;
-			}
+		// partition consumers
+		CPartInfo *
+		Ppartinfo() const
+		{
+			return m_ppartinfo;
+		}
 
-			// shorthand for conversion
-			static
-			CDrvdPropRelational *GetRelationalProperties(DrvdPropArray *pdp);
+		// constraint property
+		CPropConstraint *
+		Ppc() const
+		{
+			return m_ppc;
+		}
 
-			// check for satisfying required plan properties
-			virtual
-			BOOL FSatisfies(const CReqdPropPlan *prpp) const;
+		// function properties
+		CFunctionProp *
+		Pfp() const
+		{
+			return m_pfp;
+		}
 
-			// print function
-			virtual
-			IOstream &OsPrint(IOstream &os) const;
+		// has partial indexes
+		BOOL
+		FHasPartialIndexes() const
+		{
+			return m_fHasPartialIndexes;
+		}
 
-	}; // class CDrvdPropRelational
+		// shorthand for conversion
+		static CDrvdPropRelational *GetRelationalProperties(DrvdPropArray *pdp);
 
-}
+		// check for satisfying required plan properties
+		virtual BOOL FSatisfies(const CReqdPropPlan *prpp) const;
+
+		// print function
+		virtual IOstream &OsPrint(IOstream &os) const;
+
+	};  // class CDrvdPropRelational
+
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CDrvdPropRelational_H
+#endif  // !GPOPT_CDrvdPropRelational_H
 
 // EOF

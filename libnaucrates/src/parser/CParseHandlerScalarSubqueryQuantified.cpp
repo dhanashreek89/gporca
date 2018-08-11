@@ -30,9 +30,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerScalarSubqueryQuantified::CParseHandlerScalarSubqueryQuantified(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root), m_dxl_op(NULL)
 {
 }
@@ -88,13 +86,11 @@ CParseHandlerScalarSubqueryQuantified::StartElement(const XMLCh *const,  // elem
 
 	if (EdxltokenScalarSubqueryAny == dxl_token)
 	{
-		m_dxl_op = GPOS_NEW(m_mp)
-			CDXLScalarSubqueryAny(m_mp, mdid_op, md_op_name, colid);
+		m_dxl_op = GPOS_NEW(m_mp) CDXLScalarSubqueryAny(m_mp, mdid_op, md_op_name, colid);
 	}
 	else
 	{
-		m_dxl_op = GPOS_NEW(m_mp)
-			CDXLScalarSubqueryAll(m_mp, mdid_op, md_op_name, colid);
+		m_dxl_op = GPOS_NEW(m_mp) CDXLScalarSubqueryAll(m_mp, mdid_op, md_op_name, colid);
 	}
 
 	// parse handler for the child nodes

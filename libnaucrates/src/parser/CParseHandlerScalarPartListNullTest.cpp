@@ -20,9 +20,7 @@ XERCES_CPP_NAMESPACE_USE
 
 // Ctor
 CParseHandlerScalarPartListNullTest::CParseHandlerScalarPartListNullTest(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root)
 {
 }
@@ -54,9 +52,7 @@ CParseHandlerScalarPartListNullTest::StartElement(const XMLCh *const,  // elemen
 		EdxltokenScalarPartListNullTest);
 
 	m_dxlnode = GPOS_NEW(m_mp)
-		CDXLNode(m_mp,
-				 GPOS_NEW(m_mp)
-					 CDXLScalarPartListNullTest(m_mp, partition_level, is_null));
+		CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarPartListNullTest(m_mp, partition_level, is_null));
 }
 
 // Invoked by Xerces to process a closing tag

@@ -27,44 +27,43 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformSelect2BitmapBoolOp : public CXformExploration
 	{
-		private:
-			// disable copy ctor
-			CXformSelect2BitmapBoolOp(const CXformSelect2BitmapBoolOp &);
+	private:
+		// disable copy ctor
+		CXformSelect2BitmapBoolOp(const CXformSelect2BitmapBoolOp &);
 
-		public:
-			// ctor
-			explicit
-			CXformSelect2BitmapBoolOp(IMemoryPool *mp);
+	public:
+		// ctor
+		explicit CXformSelect2BitmapBoolOp(IMemoryPool *mp);
 
-			// dtor
-			virtual
-			~CXformSelect2BitmapBoolOp()
-			{}
+		// dtor
+		virtual ~CXformSelect2BitmapBoolOp()
+		{
+		}
 
-			// identifier
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfSelect2BitmapBoolOp;
-			}
+		// identifier
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfSelect2BitmapBoolOp;
+		}
 
-			// xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformSelect2BitmapBoolOp";
-			}
+		// xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformSelect2BitmapBoolOp";
+		}
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle & exprhdl) const;
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// actual transform
-			virtual
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
 	};  // class CXformSelect2BitmapBoolOp
-}
+}  // namespace gpopt
 
 #endif  // !GPOPT_CXformSelect2BitmapBoolOp_H
 

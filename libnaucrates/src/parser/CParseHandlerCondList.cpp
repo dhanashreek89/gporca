@@ -55,15 +55,13 @@ CParseHandlerCondList::StartElement(const XMLCh *const element_uri,
 									  element_local_name))
 	{
 		// start the hash cond list
-		m_dxlnode = GPOS_NEW(m_mp)
-			CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarHashCondList(m_mp));
+		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarHashCondList(m_mp));
 	}
 	else if (0 == XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenScalarMergeCondList),
 										   element_local_name))
 	{
 		// start the merge cond list
-		m_dxlnode = GPOS_NEW(m_mp)
-			CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarMergeCondList(m_mp));
+		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarMergeCondList(m_mp));
 	}
 	else
 	{

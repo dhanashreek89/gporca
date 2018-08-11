@@ -20,7 +20,6 @@
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CWindowOids
@@ -31,31 +30,28 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CWindowOids : public CRefCount
 	{
-		private:
+	private:
+		// oid of window operation "row_number" function
+		OID m_oidRowNumber;
 
-			// oid of window operation "row_number" function
-			OID m_oidRowNumber;
+		// oid of window operation "rank" function
+		OID m_oidRank;
 
-			// oid of window operation "rank" function
-			OID m_oidRank;
+	public:
+		CWindowOids(OID row_number_oid, OID rank_oid);
 
-		public:
+		// accessor of oid value of "row_number" function
+		OID OidRowNumber() const;
 
-			CWindowOids(OID row_number_oid, OID rank_oid);
+		// accessor of oid value of "rank" function
+		OID OidRank() const;
 
-			// accessor of oid value of "row_number" function
-			OID OidRowNumber() const;
+		// generate default window oids
+		static CWindowOids *GetWindowOids(IMemoryPool *mp);
 
-			// accessor of oid value of "rank" function
-			OID OidRank() const;
+	};  // class CWindowOids
+}  // namespace gpopt
 
-			// generate default window oids
-			static
-			CWindowOids *GetWindowOids(IMemoryPool *mp);
-
-	}; // class CWindowOids
-}
-
-#endif // !GPOPT_CWindowOids_H
+#endif  // !GPOPT_CWindowOids_H
 
 // EOF

@@ -16,7 +16,6 @@
 
 namespace gpopt
 {
-
 	using namespace gpos;
 
 	//---------------------------------------------------------------------------
@@ -29,109 +28,97 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalarNullIf : public CScalar
 	{
+	private:
+		// operator id
+		IMDId *m_mdid_op;
 
-		private:
+		// return type
+		IMDId *m_mdid_type;
 
-			// operator id
-			IMDId *m_mdid_op;
+		// does operator return NULL on NULL input?
+		BOOL m_returns_null_on_null_input;
 
-			// return type
-			IMDId *m_mdid_type;
+		// is operator return type BOOL?
+		BOOL m_fBoolReturnType;
 
-			// does operator return NULL on NULL input?
-			BOOL m_returns_null_on_null_input;
+		// private copy ctor
+		CScalarNullIf(const CScalarNullIf &);
 
-			// is operator return type BOOL?
-			BOOL m_fBoolReturnType;
+	public:
+		// ctor
+		CScalarNullIf(IMemoryPool *mp, IMDId *mdid_op, IMDId *mdid_type);
 
-			// private copy ctor
-			CScalarNullIf(const CScalarNullIf &);
+		// dtor
+		virtual ~CScalarNullIf();
 
-		public:
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopScalarNullIf;
+		}
 
-			// ctor
-			CScalarNullIf(IMemoryPool *mp, IMDId *mdid_op, IMDId *mdid_type);
+		// operator id
+		virtual IMDId *
+		MdIdOp() const
+		{
+			return m_mdid_op;
+		}
 
-			// dtor
-			virtual
-			~CScalarNullIf();
+		// return type
+		virtual IMDId *
+		MDIdType() const
+		{
+			return m_mdid_type;
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopScalarNullIf;
-			}
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CScalarNullIf";
+		}
 
-			// operator id
-			virtual
-			IMDId *MdIdOp() const
-			{
-				return m_mdid_op;
-			}
+		// operator specific hash function
+		virtual ULONG HashValue() const;
 
-			// return type
-			virtual
-			IMDId *MDIdType() const
-			{
-				return m_mdid_type;
-			}
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CScalarNullIf";
-			}
+		// sensitivity to order of inputs
+		virtual BOOL
+		FInputOrderSensitive() const
+		{
+			return true;
+		}
 
-			// operator specific hash function
-			virtual
-			ULONG HashValue() const;
+		// return a copy of the operator with remapped columns
+		virtual COperator *
+		PopCopyWithRemappedColumns(IMemoryPool *,		//mp,
+								   UlongToColRefMap *,  //colref_mapping,
+								   BOOL					//must_exist
+		)
+		{
+			return PopCopyDefault();
+		}
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
+		// boolean expression evaluation
+		virtual EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const;
 
-			// sensitivity to order of inputs
-			virtual
-			BOOL FInputOrderSensitive() const
-			{
-				return true;
-			}
+		// conversion function
+		static CScalarNullIf *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopScalarNullIf == pop->Eopid());
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *, //mp,
-						UlongToColRefMap *, //colref_mapping,
-						BOOL //must_exist
-						)
-			{
-				return PopCopyDefault();
-			}
+			return reinterpret_cast<CScalarNullIf *>(pop);
+		}
 
-			// boolean expression evaluation
-			virtual
-			EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const;
+	};  // class CScalarNullIf
 
-			// conversion function
-			static
-			CScalarNullIf *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopScalarNullIf == pop->Eopid());
+}  // namespace gpopt
 
-				return reinterpret_cast<CScalarNullIf*>(pop);
-			}
-
-	}; // class CScalarNullIf
-
-}
-
-#endif // !GPOPT_CScalarNullIf_H
+#endif  // !GPOPT_CScalarNullIf_H
 
 // EOF

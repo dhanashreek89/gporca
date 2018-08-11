@@ -28,52 +28,42 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformImplementSplit : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformImplementSplit(const CXformImplementSplit &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementSplit(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformImplementSplit(const CXformImplementSplit &);
+		// dtor
+		virtual ~CXformImplementSplit()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementSplit;
+		}
 
-			// ctor
-			explicit
-			CXformImplementSplit(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementSplit";
+		}
 
-			// dtor
-			virtual
-			~CXformImplementSplit() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementSplit;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementSplit";
-			}
+	};  // class CXformImplementSplit
+}  // namespace gpopt
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformImplementSplit
-}
-
-#endif // !GPOPT_CXformImplementSplit_H
+#endif  // !GPOPT_CXformImplementSplit_H
 
 // EOF

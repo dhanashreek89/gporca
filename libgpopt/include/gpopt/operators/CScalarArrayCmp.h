@@ -21,10 +21,9 @@
 
 namespace gpopt
 {
-
 	using namespace gpos;
 	using namespace gpmd;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CScalarArrayCmp
@@ -35,141 +34,126 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalarArrayCmp : public CScalar
 	{
-		public:
-		
-			// type of array comparison
-			enum EArrCmpType
-			{
-				EarrcmpAny,
-				EarrcmpAll,
-				EarrcmpSentinel
-			};
-			
-		private:
+	public:
+		// type of array comparison
+		enum EArrCmpType
+		{
+			EarrcmpAny,
+			EarrcmpAll,
+			EarrcmpSentinel
+		};
 
-			// compare operator mdid
-			IMDId *m_mdid_op;
+	private:
+		// compare operator mdid
+		IMDId *m_mdid_op;
 
-			// comparison operator name
-			const CWStringConst *m_pscOp;
-			
-			// array compare type
-			EArrCmpType m_earrccmpt;
-			
-			// does operator return NULL on NULL input?
-			BOOL m_returns_null_on_null_input;
+		// comparison operator name
+		const CWStringConst *m_pscOp;
 
-			// private copy ctor
-			CScalarArrayCmp(const CScalarArrayCmp &);
-			
-			// names of array compare types
-			static
-			const CHAR m_rgszCmpType[EarrcmpSentinel][10];
+		// array compare type
+		EArrCmpType m_earrccmpt;
 
-		public:
-		
-			// ctor
-			CScalarArrayCmp
-				(
-				IMemoryPool *mp,
-				IMDId *mdid_op,
-				const CWStringConst *pstrOp,
-				EArrCmpType earrcmpt
-				);
+		// does operator return NULL on NULL input?
+		BOOL m_returns_null_on_null_input;
 
-			// dtor
-			virtual 
-			~CScalarArrayCmp()
-			{
-				m_mdid_op->Release();
-				GPOS_DELETE(m_pscOp);
-			}
+		// private copy ctor
+		CScalarArrayCmp(const CScalarArrayCmp &);
+
+		// names of array compare types
+		static const CHAR m_rgszCmpType[EarrcmpSentinel][10];
+
+	public:
+		// ctor
+		CScalarArrayCmp(IMemoryPool *mp,
+						IMDId *mdid_op,
+						const CWStringConst *pstrOp,
+						EArrCmpType earrcmpt);
+
+		// dtor
+		virtual ~CScalarArrayCmp()
+		{
+			m_mdid_op->Release();
+			GPOS_DELETE(m_pscOp);
+		}
 
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopScalarArrayCmp;
-			}
-			
-			// comparison type
-			EArrCmpType Earrcmpt() const
-			{
-				return m_earrccmpt;
-			}
-			
-			// return a string for operator name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CScalarArrayCmp";
-			}
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopScalarArrayCmp;
+		}
+
+		// comparison type
+		EArrCmpType
+		Earrcmpt() const
+		{
+			return m_earrccmpt;
+		}
+
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CScalarArrayCmp";
+		}
 
 
-			// operator specific hash function
-			ULONG HashValue() const;
-			
-			// match function
-			BOOL Matches(COperator *pop) const;
-			
-			// sensitivity to order of inputs
-			BOOL FInputOrderSensitive() const
-			{
-				return true;
-			}
-			
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *, //mp,
-						UlongToColRefMap *, //colref_mapping,
-						BOOL //must_exist
-						)
-			{
-				return PopCopyDefault();
-			}
+		// operator specific hash function
+		ULONG HashValue() const;
 
-			// conversion function
-			static
-			CScalarArrayCmp *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopScalarArrayCmp == pop->Eopid());
-				
-				return reinterpret_cast<CScalarArrayCmp*>(pop);
-			}
+		// match function
+		BOOL Matches(COperator *pop) const;
 
-			// name of the comparison operator
-			const CWStringConst *Pstr() const;
+		// sensitivity to order of inputs
+		BOOL
+		FInputOrderSensitive() const
+		{
+			return true;
+		}
 
-			// operator mdid
-			IMDId *MdIdOp() const;
-			
-			// the type of the scalar expression
-			virtual 
-			IMDId *MDIdType() const;
+		// return a copy of the operator with remapped columns
+		virtual COperator *
+		PopCopyWithRemappedColumns(IMemoryPool *,		//mp,
+								   UlongToColRefMap *,  //colref_mapping,
+								   BOOL					//must_exist
+		)
+		{
+			return PopCopyDefault();
+		}
 
-			// boolean expression evaluation
-			virtual
-			EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const;
+		// conversion function
+		static CScalarArrayCmp *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopScalarArrayCmp == pop->Eopid());
 
-			// print
-			virtual 
-			IOstream &OsPrint(IOstream &os) const;
+			return reinterpret_cast<CScalarArrayCmp *>(pop);
+		}
 
-			// expand array comparison expression into a conjunctive/disjunctive expression
-			static
-			CExpression *PexprExpand(IMemoryPool *mp, CExpression *pexprArrayCmp);
+		// name of the comparison operator
+		const CWStringConst *Pstr() const;
 
-	}; // class CScalarArrayCmp
+		// operator mdid
+		IMDId *MdIdOp() const;
 
-}
+		// the type of the scalar expression
+		virtual IMDId *MDIdType() const;
 
-#endif // !GPOPT_CScalarArrayCmp_H
+		// boolean expression evaluation
+		virtual EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const;
+
+		// print
+		virtual IOstream &OsPrint(IOstream &os) const;
+
+		// expand array comparison expression into a conjunctive/disjunctive expression
+		static CExpression *PexprExpand(IMemoryPool *mp, CExpression *pexprArrayCmp);
+
+	};  // class CScalarArrayCmp
+
+}  // namespace gpopt
+
+#endif  // !GPOPT_CScalarArrayCmp_H
 
 // EOF

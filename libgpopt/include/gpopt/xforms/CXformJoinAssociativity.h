@@ -28,63 +28,50 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformJoinAssociativity : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformJoinAssociativity(const CXformJoinAssociativity &);
 
-		private:
+		// helper function for creating the new join predicate
+		void CreatePredicates(IMemoryPool *mp,
+							  CExpression *pexpr,
+							  CExpressionArray *pdrgpexprLower,
+							  CExpressionArray *pdrgpexprUpper) const;
 
-			// private copy ctor
-			CXformJoinAssociativity(const CXformJoinAssociativity &);
+	public:
+		// ctor
+		explicit CXformJoinAssociativity(IMemoryPool *mp);
 
-			// helper function for creating the new join predicate
-			void CreatePredicates
-				(
-				IMemoryPool *mp,
-				CExpression *pexpr,
-				CExpressionArray *pdrgpexprLower,
-				CExpressionArray *pdrgpexprUpper
-				) 
-				const;
+		// dtor
+		virtual ~CXformJoinAssociativity()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfJoinAssociativity;
+		}
 
-			// ctor
-			explicit
-			CXformJoinAssociativity(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformJoinAssociativity";
+		}
 
-			// dtor
-			virtual
-			~CXformJoinAssociativity() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfJoinAssociativity;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformJoinAssociativity";
-			}
+	};  // class CXformJoinAssociativity
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp (CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			void Transform
-					(
-					CXformContext *pxfctxt,
-					CXformResult *pxfres,
-					CExpression *pexpr
-					) const;
-
-	}; // class CXformJoinAssociativity
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformJoinAssociativity_H
+#endif  // !GPOPT_CXformJoinAssociativity_H
 
 // EOF

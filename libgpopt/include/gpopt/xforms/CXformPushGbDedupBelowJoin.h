@@ -28,40 +28,36 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformPushGbDedupBelowJoin : public CXformPushGbBelowJoin
 	{
+	private:
+		// private copy ctor
+		CXformPushGbDedupBelowJoin(const CXformPushGbDedupBelowJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformPushGbDedupBelowJoin(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformPushGbDedupBelowJoin(const CXformPushGbDedupBelowJoin &);
+		// dtor
+		virtual ~CXformPushGbDedupBelowJoin()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfPushGbDedupBelowJoin;
+		}
 
-			// ctor
-			explicit
-			CXformPushGbDedupBelowJoin(IMemoryPool *mp);
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformPushGbDedupBelowJoin";
+		}
 
-			// dtor
-			virtual
-			~CXformPushGbDedupBelowJoin()
-			{}
+	};  // class CXformPushGbDedupBelowJoin
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfPushGbDedupBelowJoin;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformPushGbDedupBelowJoin";
-			}
-
-	}; // class CXformPushGbDedupBelowJoin
-
-}
-
-#endif // !GPOPT_CXformPushGbDedupBelowJoin_H
+#endif  // !GPOPT_CXformPushGbDedupBelowJoin_H
 
 // EOF

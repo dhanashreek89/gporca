@@ -37,24 +37,19 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CJoinOrderGreedy::CJoinOrderGreedy
-	(
-	IMemoryPool *pmp,
-	CExpressionArray *pdrgpexprComponents,
-	CExpressionArray *pdrgpexprConjuncts
-	)
-	:
-	CJoinOrder(pmp, pdrgpexprComponents, pdrgpexprConjuncts),
-	m_pcompResult(NULL)
+CJoinOrderGreedy::CJoinOrderGreedy(IMemoryPool *pmp,
+								   CExpressionArray *pdrgpexprComponents,
+								   CExpressionArray *pdrgpexprConjuncts)
+	: CJoinOrder(pmp, pdrgpexprComponents, pdrgpexprConjuncts), m_pcompResult(NULL)
 {
 	m_ulNumUsedEdges = m_ulEdges;
 #ifdef GPOS_DEBUG
 	for (ULONG ul = 0; ul < m_ulComps; ul++)
 	{
 		GPOS_ASSERT(NULL != m_rgpcomp[ul]->m_pexpr->Pstats() &&
-				"stats were not derived on input component");
+					"stats were not derived on input component");
 	}
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 }
 
 
@@ -94,7 +89,7 @@ CJoinOrderGreedy::MarkUsedEdges()
 		return;
 	}
 
-	CExpression *pexprScalar = (*pexpr) [pexpr->Arity() - 1];
+	CExpression *pexprScalar = (*pexpr)[pexpr->Arity() - 1];
 	CExpressionArray *pdrgpexpr = CPredicateUtils::PdrgpexprConjuncts(m_mp, pexprScalar);
 	const ULONG ulSize = pdrgpexpr->Size();
 
@@ -123,7 +118,6 @@ CJoinOrderGreedy::MarkUsedEdges()
 CJoinOrder::SComponent *
 CJoinOrderGreedy::GetStartingJoins()
 {
-
 	CDouble dMinRows(0.0);
 	ULONG ul1Counter = 0;
 	ULONG ul2Counter = 0;
@@ -131,11 +125,11 @@ CJoinOrderGreedy::GetStartingJoins()
 
 	for (ULONG ul1 = 0; ul1 < m_ulComps; ul1++)
 	{
-		for (ULONG ul2 = ul1+1; ul2 < m_ulComps; ul2++)
+		for (ULONG ul2 = ul1 + 1; ul2 < m_ulComps; ul2++)
 		{
 			CJoinOrder::SComponent *pcompTemp = PcompCombine(m_rgpcomp[ul1], m_rgpcomp[ul2]);
 			// exclude cross joins to be considered as late as possible in the join order
-			if(CUtils::FCrossJoin(pcompTemp->m_pexpr))
+			if (CUtils::FCrossJoin(pcompTemp->m_pexpr))
 			{
 				pcompTemp->Release();
 				continue;
@@ -155,7 +149,7 @@ CJoinOrderGreedy::GetStartingJoins()
 		}
 	}
 
-	if((ul1Counter == 0) && (ul2Counter==0))
+	if ((ul1Counter == 0) && (ul2Counter == 0))
 	{
 		pcompBest->Release();
 		return NULL;
@@ -168,7 +162,6 @@ CJoinOrderGreedy::GetStartingJoins()
 	pcompBest->m_fUsed = true;
 
 	return pcompBest;
-
 }
 
 
@@ -188,7 +181,7 @@ CJoinOrderGreedy::PexprExpand()
 	ULONG ulCoveredComps = 0;
 	m_pcompResult = GetStartingJoins();
 
-	if(NULL != m_pcompResult)
+	if (NULL != m_pcompResult)
 	{
 		ulCoveredComps = 2;
 		MarkUsedEdges();
@@ -201,8 +194,8 @@ CJoinOrderGreedy::PexprExpand()
 	while (ulCoveredComps < m_ulComps)
 	{
 		CDouble dMinRows(0.0);
-		SComponent *pcompBest = NULL; // best component to be added to current result
-		SComponent *pcompBestResult = NULL; // result after adding best component
+		SComponent *pcompBest = NULL;		 // best component to be added to current result
+		SComponent *pcompBestResult = NULL;  // result after adding best component
 
 		for (ULONG ul = 0; ul < m_ulComps; ul++)
 		{
@@ -215,7 +208,7 @@ CJoinOrderGreedy::PexprExpand()
 
 			// combine component with current result and derive stats
 			CJoinOrder::SComponent *pcompTemp = PcompCombine(m_pcompResult, pcompCurrent);
-			if(CUtils::FCrossJoin(pcompTemp->m_pexpr) && 1 < m_ulNumUsedEdges)
+			if (CUtils::FCrossJoin(pcompTemp->m_pexpr) && 1 < m_ulNumUsedEdges)
 			{
 				pcompTemp->Release();
 				continue;

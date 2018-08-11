@@ -95,11 +95,7 @@ namespace gpos
 	public:
 		// ctor
 		CCacheEntry(IMemoryPool *mp, K key, T val, ULONG g_clock_counter)
-			: m_mp(mp),
-			  m_val(val),
-			  m_deleted(false),
-			  m_g_clock_counter(g_clock_counter),
-			  m_key(key)
+			: m_mp(mp), m_val(val), m_deleted(false), m_g_clock_counter(g_clock_counter), m_key(key)
 		{
 			// CCache entry has the ownership now. So ideally any time ref count can't go lesser than 1.
 			// In destructor, we decrease it from 1 to 0.

@@ -35,117 +35,97 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalarConst : public CScalar
 	{
+	private:
+		// constant
+		IDatum *m_pdatum;
 
-		private:
+		// private copy ctor
+		CScalarConst(const CScalarConst &);
 
-			// constant
-			IDatum *m_pdatum;
+	public:
+		// ctor
+		CScalarConst(IMemoryPool *mp, IDatum *datum);
 
-			// private copy ctor
-			CScalarConst(const CScalarConst &);
+		// dtor
+		virtual ~CScalarConst();
 
-		public:
+		// identity accessor
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopScalarConst;
+		}
 
-			// ctor
-			CScalarConst
-				(
-				IMemoryPool *mp,
-				IDatum *datum
-				);
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CScalarConst";
+		}
 
-			// dtor
-			virtual
-			~CScalarConst();
+		// accessor of contained constant
+		IDatum *
+		GetDatum() const
+		{
+			return m_pdatum;
+		}
 
-			// identity accessor
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopScalarConst;
-			}
+		// operator specific hash function
+		virtual ULONG HashValue() const;
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CScalarConst";
-			}
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// accessor of contained constant
-			IDatum *GetDatum() const
-			{
-				return m_pdatum;
-			}
+		// sensitivity to order of inputs
+		virtual BOOL
+		FInputOrderSensitive() const
+		{
+			return false;
+		}
 
-			// operator specific hash function
-			virtual
-			ULONG HashValue() const;
+		// return a copy of the operator with remapped columns
+		virtual COperator *
+		PopCopyWithRemappedColumns(IMemoryPool *,		//mp,
+								   UlongToColRefMap *,  //colref_mapping,
+								   BOOL					//must_exist
+		)
+		{
+			return PopCopyDefault();
+		}
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
+		// conversion function
+		static CScalarConst *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopScalarConst == pop->Eopid());
 
-			// sensitivity to order of inputs
-			virtual
-			BOOL FInputOrderSensitive() const
-			{
-				return false;
-			}
+			return reinterpret_cast<CScalarConst *>(pop);
+		}
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *, //mp,
-						UlongToColRefMap *, //colref_mapping,
-						BOOL //must_exist
-						)
-			{
-				return PopCopyDefault();
-			}
+		// the type of the scalar expression
+		virtual IMDId *MDIdType() const;
 
-			// conversion function
-			static
-			CScalarConst *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopScalarConst == pop->Eopid());
+		virtual INT TypeModifier() const;
 
-				return reinterpret_cast<CScalarConst*>(pop);
-			}
+		// boolean expression evaluation
+		virtual EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const;
 
-			// the type of the scalar expression
-			virtual 
-			IMDId *MDIdType() const;
+		// print
+		virtual IOstream &OsPrint(IOstream &) const;
 
-			virtual
-			INT TypeModifier() const;
+		// is the given expression a scalar cast of a constant
+		static BOOL FCastedConst(CExpression *pexpr);
 
-			// boolean expression evaluation
-			virtual
-			EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const;
+		// extract the constant from the given constant expression or a casted constant expression.
+		// Else return NULL.
+		static CScalarConst *PopExtractFromConstOrCastConst(CExpression *pexpr);
 
-			// print
-			virtual
-			IOstream &OsPrint(IOstream &) const;
+	};  // class CScalarConst
 
-			// is the given expression a scalar cast of a constant
-			static
-			BOOL FCastedConst(CExpression *pexpr);
-
-			// extract the constant from the given constant expression or a casted constant expression.
-			// Else return NULL.
-			static
-			CScalarConst *PopExtractFromConstOrCastConst(CExpression *pexpr);
-
-	}; // class CScalarConst
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CScalarConst_H
+#endif  // !GPOPT_CScalarConst_H
 
 // EOF

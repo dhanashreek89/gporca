@@ -30,42 +30,36 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CCTEConfig : public CRefCount
 	{
+	private:
+		// CTE inlining cut-off
+		ULONG m_ulCTEInliningCutoff;
 
-		private:
+		// private copy ctor
+		CCTEConfig(const CCTEConfig &);
 
-			// CTE inlining cut-off
-			ULONG m_ulCTEInliningCutoff;
+	public:
+		// ctor
+		CCTEConfig(ULONG cte_inlining_cut_off) : m_ulCTEInliningCutoff(cte_inlining_cut_off)
+		{
+		}
 
-			// private copy ctor
-			CCTEConfig(const CCTEConfig &);
+		// CTE inlining cut-off
+		ULONG
+		UlCTEInliningCutoff() const
+		{
+			return m_ulCTEInliningCutoff;
+		}
 
-		public:
+		// generate default optimizer configurations
+		static CCTEConfig *
+		PcteconfDefault(IMemoryPool *mp)
+		{
+			return GPOS_NEW(mp) CCTEConfig(0 /* cte_inlining_cut_off */);
+		}
 
-			// ctor
-			CCTEConfig
-				(
-				ULONG cte_inlining_cut_off
-				)
-				:
-				m_ulCTEInliningCutoff(cte_inlining_cut_off)
-			{}
+	};  // class CCTEConfig
+}  // namespace gpopt
 
-			// CTE inlining cut-off
-			ULONG UlCTEInliningCutoff() const
-			{
-				return m_ulCTEInliningCutoff;
-			}
-
-			// generate default optimizer configurations
-			static
-			CCTEConfig *PcteconfDefault(IMemoryPool *mp)
-			{
-				return GPOS_NEW(mp) CCTEConfig(0 /* cte_inlining_cut_off */);
-			}
-
-	}; // class CCTEConfig
-}
-
-#endif // !GPOPT_CCTEConfig_H
+#endif  // !GPOPT_CCTEConfig_H
 
 // EOF

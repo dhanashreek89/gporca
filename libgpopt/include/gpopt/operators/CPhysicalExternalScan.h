@@ -16,7 +16,6 @@
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalExternalScan
@@ -27,86 +26,71 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalExternalScan : public CPhysicalTableScan
 	{
+	private:
+		// private copy ctor
+		CPhysicalExternalScan(const CPhysicalExternalScan &);
 
-		private:
+	public:
+		// ctor
+		CPhysicalExternalScan(IMemoryPool *, const CName *, CTableDescriptor *, CColRefArray *);
 
-			// private copy ctor
-			CPhysicalExternalScan(const CPhysicalExternalScan&);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalExternalScan;
+		}
 
-		public:
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalExternalScan";
+		}
 
-			// ctor
-			CPhysicalExternalScan(IMemoryPool *, const CName *, CTableDescriptor *, CColRefArray *);
+		// match function
+		virtual BOOL Matches(COperator *) const;
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalExternalScan;
-			}
+		//-------------------------------------------------------------------------------------
+		// Derived Plan Properties
+		//-------------------------------------------------------------------------------------
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CPhysicalExternalScan";
-			}
+		// derive rewindability
+		virtual CRewindabilitySpec *
+		PrsDerive(IMemoryPool *mp,
+				  CExpressionHandle &  // exprhdl
+				  ) const
+		{
+			// external tables are not rewindable
+			return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtNone /*ert*/);
+		}
 
-			// match function
-			virtual
-			BOOL Matches(COperator *) const;
+		//-------------------------------------------------------------------------------------
+		// Enforced Properties
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			// Derived Plan Properties
-			//-------------------------------------------------------------------------------------
+		// return rewindability property enforcing type for this operator
+		virtual CEnfdProp::EPropEnforcingType EpetRewindability(
+			CExpressionHandle &exprhdl, const CEnfdRewindability *per) const;
 
-			// derive rewindability
-			virtual
-			CRewindabilitySpec *PrsDerive
-				(
-				IMemoryPool *mp,
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{
-				// external tables are not rewindable
-				return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtNone /*ert*/);
-			}
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			// Enforced Properties
-			//-------------------------------------------------------------------------------------
+		// conversion function
+		static CPhysicalExternalScan *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopPhysicalExternalScan == pop->Eopid());
 
-			// return rewindability property enforcing type for this operator
-			virtual
-			CEnfdProp::EPropEnforcingType EpetRewindability
-				(
-				CExpressionHandle &exprhdl,
-				const CEnfdRewindability *per
-				)
-				const;
-        
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+			return reinterpret_cast<CPhysicalExternalScan *>(pop);
+		}
 
-			// conversion function
-			static
-			CPhysicalExternalScan *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopPhysicalExternalScan == pop->Eopid());
+	};  // class CPhysicalExternalScan
 
-				return reinterpret_cast<CPhysicalExternalScan*>(pop);
-			}
+}  // namespace gpopt
 
-	}; // class CPhysicalExternalScan
-
-}
-
-#endif // !GPOPT_CPhysicalExternalScan_H
+#endif  // !GPOPT_CPhysicalExternalScan_H
 
 // EOF

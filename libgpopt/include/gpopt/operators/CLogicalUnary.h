@@ -35,133 +35,100 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalUnary : public CLogical
 	{
-		private:
+	private:
+		// private copy ctor
+		CLogicalUnary(const CLogicalUnary &);
 
-			// private copy ctor
-			CLogicalUnary(const CLogicalUnary &);
+	protected:
+		// derive statistics for projection operators
+		IStatistics *PstatsDeriveProject(IMemoryPool *mp,
+										 CExpressionHandle &exprhdl,
+										 UlongToIDatumMap *phmuldatum = NULL) const;
 
-		protected:
+	public:
+		// ctor
+		explicit CLogicalUnary(IMemoryPool *mp) : CLogical(mp)
+		{
+		}
 
-			// derive statistics for projection operators
-			IStatistics *PstatsDeriveProject
-							(
-							IMemoryPool *mp,
-							CExpressionHandle &exprhdl,
-							UlongToIDatumMap *phmuldatum = NULL
-							)
-							const;
+		// dtor
+		virtual ~CLogicalUnary()
+		{
+		}
 
-		public:
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// ctor
-			explicit
-			CLogicalUnary
-				(
-				IMemoryPool *mp
-				)
-				:
-				CLogical(mp)
-			{}
+		// sensitivity to order of inputs
+		virtual BOOL
+		FInputOrderSensitive() const
+		{
+			return true;
+		}
 
-			// dtor
-			virtual
-			~CLogicalUnary()
-			{}
+		// return a copy of the operator with remapped columns
+		virtual COperator *
+		PopCopyWithRemappedColumns(IMemoryPool *,		//mp,
+								   UlongToColRefMap *,  //colref_mapping,
+								   BOOL					//must_exist
+		)
+		{
+			return PopCopyDefault();
+		}
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
+		//-------------------------------------------------------------------------------------
+		// Derived Relational Properties
+		//-------------------------------------------------------------------------------------
 
-			// sensitivity to order of inputs
-			virtual
-			BOOL FInputOrderSensitive() const
-			{
-				return true;
-			}
+		// derive not nullable output columns
+		virtual CColRefSet *
+		PcrsDeriveNotNull(IMemoryPool *,  // mp
+						  CExpressionHandle &exprhdl) const
+		{
+			// TODO,  03/18/2012, derive nullability of columns computed by scalar child
+			return PcrsDeriveNotNullPassThruOuter(exprhdl);
+		}
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *, //mp,
-						UlongToColRefMap *, //colref_mapping,
-						BOOL //must_exist
-						)
-			{
-				return PopCopyDefault();
-			}
+		// derive partition consumer info
+		virtual CPartInfo *
+		PpartinfoDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const
+		{
+			return PpartinfoDeriveCombine(mp, exprhdl);
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Derived Relational Properties
-			//-------------------------------------------------------------------------------------
+		// derive function properties
+		virtual CFunctionProp *
+		PfpDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const
+		{
+			return PfpDeriveFromScalar(mp, exprhdl, 1 /*ulScalarIndex*/);
+		}
 
-			// derive not nullable output columns
-			virtual
-			CColRefSet *PcrsDeriveNotNull
-				(
-				IMemoryPool *,// mp
-				CExpressionHandle &exprhdl
-				)
-				const
-			{
-				// TODO,  03/18/2012, derive nullability of columns computed by scalar child
-				return PcrsDeriveNotNullPassThruOuter(exprhdl);
-			}
+		//-------------------------------------------------------------------------------------
+		// Derived Stats
+		//-------------------------------------------------------------------------------------
 
-			// derive partition consumer info
-			virtual
-			CPartInfo *PpartinfoDerive
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl
-				)
-				const
-			{
-				return PpartinfoDeriveCombine(mp, exprhdl);
-			}
-			
-			// derive function properties
-			virtual
-			CFunctionProp *PfpDerive
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl
-				)
-				const
-			{
-				return PfpDeriveFromScalar(mp, exprhdl, 1 /*ulScalarIndex*/);
-			}
+		// promise level for stat derivation
+		virtual EStatPromise Esp(CExpressionHandle &exprhdl) const;
 
-			//-------------------------------------------------------------------------------------
-			// Derived Stats
-			//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		// Required Relational Properties
+		//-------------------------------------------------------------------------------------
 
-			// promise level for stat derivation
-			virtual
-			EStatPromise Esp(CExpressionHandle &exprhdl) const;
+		// compute required stat columns of the n-th child
+		virtual CColRefSet *
+		PcrsStat(IMemoryPool *mp,
+				 CExpressionHandle &exprhdl,
+				 CColRefSet *pcrsInput,
+				 ULONG child_index) const
+		{
+			return PcrsReqdChildStats(
+				mp, exprhdl, pcrsInput, exprhdl.GetDrvdScalarProps(1)->PcrsUsed(), child_index);
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Required Relational Properties
-			//-------------------------------------------------------------------------------------
+	};  // class CLogicalUnary
 
-			// compute required stat columns of the n-th child
-			virtual
-			CColRefSet *PcrsStat
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CColRefSet *pcrsInput,
-				ULONG child_index
-				)
-				const
-			{
-				return PcrsReqdChildStats(mp, exprhdl, pcrsInput, exprhdl.GetDrvdScalarProps(1)->PcrsUsed(), child_index);
-			}
+}  // namespace gpopt
 
-	}; // class CLogicalUnary
-
-}
-
-#endif // !GPOS_CLogicalUnary_H
+#endif  // !GPOS_CLogicalUnary_H
 
 // EOF

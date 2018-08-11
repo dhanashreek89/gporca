@@ -27,30 +27,21 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformPushGbDedupBelowJoin::CXformPushGbDedupBelowJoin
-	(
-	IMemoryPool *mp
-	)
-	:
-	// pattern
-	CXformPushGbBelowJoin
-		(
-		GPOS_NEW(mp) CExpression
-			(
-			mp,
-			GPOS_NEW(mp) CLogicalGbAggDeduplicate(mp),
-			GPOS_NEW(mp) CExpression
-				(
-				mp,
-				GPOS_NEW(mp) CLogicalInnerJoin(mp),
-				GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // join outer child
-				GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)), // join inner child
-				GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp)) // join predicate
-				),
-				GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))	// scalar project list
-			)
-		)
-{}
+CXformPushGbDedupBelowJoin::CXformPushGbDedupBelowJoin(IMemoryPool *mp)
+	:  // pattern
+	  CXformPushGbBelowJoin(GPOS_NEW(mp) CExpression(
+		  mp,
+		  GPOS_NEW(mp) CLogicalGbAggDeduplicate(mp),
+		  GPOS_NEW(mp) CExpression(
+			  mp,
+			  GPOS_NEW(mp) CLogicalInnerJoin(mp),
+			  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // join outer child
+			  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // join inner child
+			  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))   // join predicate
+			  ),
+		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))  // scalar project list
+		  ))
+{
+}
 
 // EOF
-

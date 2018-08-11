@@ -17,7 +17,6 @@
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CTreeMapTest
@@ -28,7 +27,6 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CTreeMapTest
 	{
-
 		// fwd declaration
 		class CNode;
 		typedef CDynamicPtrArray<CNode, CleanupRelease<CNode> > CNodeArray;
@@ -36,72 +34,65 @@ namespace gpopt
 		// struct for resulting trees
 		class CNode : public CRefCount
 		{
-			private: 
-			
-				// element number
-				ULONG m_ulData;
-				
-				// children
-				CNodeArray *m_pdrgpnd;
-
-				// private copy ctor
-				CNode(const CNode &);
-
-			public:
-				
-				// ctor
-				CNode(IMemoryPool *mp, ULONG *pulData, CNodeArray *pdrgpnd);
-				
-				// dtor
-				~CNode();
-				
-				// debug print
-				IOstream &OsPrint(IOstream &os, ULONG ulIndent = 0) const;
-		};
-
-				
 		private:
+			// element number
+			ULONG m_ulData;
 
-			// counter used to mark last successful test
-			static
-			ULONG m_ulTestCounter;
+			// children
+			CNodeArray *m_pdrgpnd;
 
-			// factory function for result object
-			static
-			CNode *Pnd(IMemoryPool *mp, ULONG *pul, CNodeArray *pdrgpnd, BOOL *fTestTrue);
-		
-			// shorthand for tests
-			typedef CTreeMap<ULONG, CNode, BOOL, HashValue<ULONG>, Equals<ULONG> > TestMap;
-
-			// helper to generate loaded the tree map
-			static 
-			TestMap *PtmapLoad(IMemoryPool *mp);
+			// private copy ctor
+			CNode(const CNode &);
 
 		public:
+			// ctor
+			CNode(IMemoryPool *mp, ULONG *pulData, CNodeArray *pdrgpnd);
 
-			// unittests
-			static GPOS_RESULT EresUnittest();
-			static GPOS_RESULT EresUnittest_Basic();
-			static GPOS_RESULT EresUnittest_Count();
-			static GPOS_RESULT EresUnittest_Unrank();
-			static GPOS_RESULT EresUnittest_Memo();
-			
+			// dtor
+			~CNode();
+
+			// debug print
+			IOstream &OsPrint(IOstream &os, ULONG ulIndent = 0) const;
+		};
+
+
+	private:
+		// counter used to mark last successful test
+		static ULONG m_ulTestCounter;
+
+		// factory function for result object
+		static CNode *Pnd(IMemoryPool *mp, ULONG *pul, CNodeArray *pdrgpnd, BOOL *fTestTrue);
+
+		// shorthand for tests
+		typedef CTreeMap<ULONG, CNode, BOOL, HashValue<ULONG>, Equals<ULONG> > TestMap;
+
+		// helper to generate loaded the tree map
+		static TestMap *PtmapLoad(IMemoryPool *mp);
+
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
+		static GPOS_RESULT EresUnittest_Basic();
+		static GPOS_RESULT EresUnittest_Count();
+		static GPOS_RESULT EresUnittest_Unrank();
+		static GPOS_RESULT EresUnittest_Memo();
+
 #ifndef GPOS_DEBUG
-			// this test is run in optimized build because of long optimization time
-			static GPOS_RESULT EresUnittest_FailedPlanEnumerationTests();
-#endif // GPOS_DEBUG
+		// this test is run in optimized build because of long optimization time
+		static GPOS_RESULT EresUnittest_FailedPlanEnumerationTests();
+#endif  // GPOS_DEBUG
 
 
 
 #ifdef GPOS_DEBUG
-			static GPOS_RESULT EresUnittest_Cycle();
-#endif // GPOS_DEBUG
+		static GPOS_RESULT EresUnittest_Cycle();
+#endif  // GPOS_DEBUG
 
-	}; // CTreeMapTest
+	};  // CTreeMapTest
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CTreeMapTest_H
+#endif  // !GPOPT_CTreeMapTest_H
 
 
 // EOF

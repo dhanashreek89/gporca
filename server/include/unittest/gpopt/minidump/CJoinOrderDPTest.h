@@ -17,14 +17,12 @@ namespace gpopt
 {
 	class CJoinOrderDPTest
 	{
-		public:
+	public:
+		// unittests
+		static gpos::GPOS_RESULT EresUnittest();
+	};  // class CJoinOrderDPTest
+}  // namespace gpopt
 
-			// unittests
-			static
-			gpos::GPOS_RESULT EresUnittest();
-	}; // class CJoinOrderDPTest
-}
-
-#endif // !GPOPT_CJoinOrderDPTest_H
+#endif  // !GPOPT_CJoinOrderDPTest_H
 
 // EOF

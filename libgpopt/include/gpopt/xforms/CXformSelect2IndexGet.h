@@ -29,59 +29,50 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformSelect2IndexGet : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformSelect2IndexGet(const CXformSelect2IndexGet &);
 
-		private:
+		// return the column reference set of included / key columns
+		CColRefSet *GetColRefSet(IMemoryPool *mp,
+								 CLogicalGet *popGet,
+								 const IMDIndex *pmdindex,
+								 BOOL fIncludedColumns) const;
 
-			// private copy ctor
-			CXformSelect2IndexGet(const CXformSelect2IndexGet &);
+	public:
+		// ctor
+		explicit CXformSelect2IndexGet(IMemoryPool *mp);
 
-			// return the column reference set of included / key columns
-			CColRefSet *GetColRefSet
-				(
-				IMemoryPool *mp,
-				CLogicalGet *popGet,
-				const IMDIndex *pmdindex,
-				BOOL fIncludedColumns
-				)
-				const;
+		// dtor
+		virtual ~CXformSelect2IndexGet()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfSelect2IndexGet;
+		}
 
-			// ctor
-			explicit
-			CXformSelect2IndexGet(IMemoryPool *mp);
+		// xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformSelect2IndexGet";
+		}
 
-			// dtor
-			virtual
-			~CXformSelect2IndexGet()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfSelect2IndexGet;
-			}
-
-			// xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformSelect2IndexGet";
-			}
-
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
 
-	}; // class CXformSelect2IndexGet
+	};  // class CXformSelect2IndexGet
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CXformSelect2IndexGet_H
+#endif  // !GPOPT_CXformSelect2IndexGet_H
 
 // EOF

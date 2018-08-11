@@ -27,14 +27,14 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CContradictionTest
 	{
-		public:
-			// unittests
-			static GPOS_RESULT EresUnittest();
-			static GPOS_RESULT EresUnittest_Constraint();
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
+		static GPOS_RESULT EresUnittest_Constraint();
 
-	}; // class CContradictionTest
-}
+	};  // class CContradictionTest
+}  // namespace gpopt
 
-#endif // !GPOPT_CContradictionTest_H
+#endif  // !GPOPT_CContradictionTest_H
 
 // EOF

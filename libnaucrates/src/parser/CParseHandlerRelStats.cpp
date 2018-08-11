@@ -94,8 +94,8 @@ CParseHandlerRelStats::StartElement(const XMLCh *const,  // element_uri,
 														EdxltokenStatsDerivedRelation);
 	}
 
-	m_imd_obj = GPOS_NEW(m_mp)
-		CDXLRelStats(m_mp, CMDIdRelStats::CastMdid(mdid), mdname, rows, is_empty);
+	m_imd_obj =
+		GPOS_NEW(m_mp) CDXLRelStats(m_mp, CMDIdRelStats::CastMdid(mdid), mdname, rows, is_empty);
 }
 
 //---------------------------------------------------------------------------

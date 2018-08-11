@@ -28,53 +28,44 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformCTEAnchor2Sequence : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformCTEAnchor2Sequence(const CXformCTEAnchor2Sequence &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformCTEAnchor2Sequence(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformCTEAnchor2Sequence(const CXformCTEAnchor2Sequence &);
+		// dtor
+		virtual ~CXformCTEAnchor2Sequence()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfCTEAnchor2Sequence;
+		}
 
-			// ctor
-			explicit
-			CXformCTEAnchor2Sequence(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformCTEAnchor2Sequence";
+		}
 
-			// dtor
-			virtual
-			~CXformCTEAnchor2Sequence() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfCTEAnchor2Sequence;
-			}
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformCTEAnchor2Sequence";
-			}
+	};  // class CXformCTEAnchor2Sequence
+}  // namespace gpopt
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			virtual
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformCTEAnchor2Sequence
-}
-
-#endif // !GPOPT_CXformCTEAnchor2Sequence_H
+#endif  // !GPOPT_CXformCTEAnchor2Sequence_H
 
 // EOF

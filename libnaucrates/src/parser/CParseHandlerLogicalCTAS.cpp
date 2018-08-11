@@ -200,21 +200,20 @@ CParseHandlerLogicalCTAS::EndElement(const XMLCh *const,  // element_uri,
 		ctas_options_parse_handler->GetDxlCtasStorageOption();
 	dxl_ctas_storage_opt->AddRef();
 
-	m_dxlnode = GPOS_NEW(m_mp)
-		CDXLNode(m_mp,
-				 GPOS_NEW(m_mp) CDXLLogicalCTAS(m_mp,
-														 m_mdid,
-														 m_mdname_schema,
-														 m_mdname,
-														 dxl_column_descr_array,
-														 dxl_ctas_storage_opt,
-														 m_rel_distr_policy,
-														 m_distr_column_pos_array,
-														 m_is_temp_table,
-														 m_has_oids,
-														 m_rel_storage_type,
-														 m_src_colids_array,
-														 m_vartypemod_array));
+	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp,
+										GPOS_NEW(m_mp) CDXLLogicalCTAS(m_mp,
+																	   m_mdid,
+																	   m_mdname_schema,
+																	   m_mdname,
+																	   dxl_column_descr_array,
+																	   dxl_ctas_storage_opt,
+																	   m_rel_distr_policy,
+																	   m_distr_column_pos_array,
+																	   m_is_temp_table,
+																	   m_has_oids,
+																	   m_rel_storage_type,
+																	   m_src_colids_array,
+																	   m_vartypemod_array));
 
 	AddChildFromParseHandler(child_parse_handler);
 

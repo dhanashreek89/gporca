@@ -25,21 +25,12 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformImplementConstTableGet::CXformImplementConstTableGet
-	(
-	IMemoryPool *mp
-	)
-	:
-	CXformImplementation
-		(
-		 // pattern
-		GPOS_NEW(mp) CExpression
-				(
-				mp,
-				GPOS_NEW(mp) CLogicalConstTableGet(mp)
-				)
-		)
-{}
+CXformImplementConstTableGet::CXformImplementConstTableGet(IMemoryPool *mp)
+	: CXformImplementation(
+		  // pattern
+		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalConstTableGet(mp)))
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -51,13 +42,9 @@ CXformImplementConstTableGet::CXformImplementConstTableGet
 //
 //---------------------------------------------------------------------------
 void
-CXformImplementConstTableGet::Transform
-	(
-	CXformContext *pxfctxt,
-	CXformResult *pxfres,
-	CExpression *pexpr
-	)
-	const
+CXformImplementConstTableGet::Transform(CXformContext *pxfctxt,
+										CXformResult *pxfres,
+										CExpression *pexpr) const
 {
 	GPOS_ASSERT(NULL != pxfctxt);
 	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
@@ -69,25 +56,20 @@ CXformImplementConstTableGet::Transform
 	// create/extract components for alternative
 	CColumnDescriptorArray *pdrgpcoldesc = popConstTableGet->Pdrgpcoldesc();
 	pdrgpcoldesc->AddRef();
-	
+
 	IDatumArrays *pdrgpdrgpdatum = popConstTableGet->Pdrgpdrgpdatum();
 	pdrgpdrgpdatum->AddRef();
-	
+
 	CColRefArray *pdrgpcrOutput = popConstTableGet->PdrgpcrOutput();
 	pdrgpcrOutput->AddRef();
-		
+
 	// create alternative expression
-	CExpression *pexprAlt = 
-		GPOS_NEW(mp) CExpression
-			(
-			mp,
-			GPOS_NEW(mp) CPhysicalConstTableGet(mp, pdrgpcoldesc, pdrgpdrgpdatum, pdrgpcrOutput)
-			);
-	
+	CExpression *pexprAlt = GPOS_NEW(mp) CExpression(
+		mp, GPOS_NEW(mp) CPhysicalConstTableGet(mp, pdrgpcoldesc, pdrgpdrgpdatum, pdrgpcrOutput));
+
 	// add alternative to transformation result
 	pxfres->Add(pexprAlt);
 }
 
 
 // EOF
-

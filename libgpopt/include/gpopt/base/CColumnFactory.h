@@ -47,101 +47,83 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CColumnFactory
 	{
-		private:
+	private:
+		// MTS memory pool
+		IMemoryPool *m_mp;
 
-			// MTS memory pool
-			IMemoryPool *m_mp;
+		// mapping between column id of computed column and a set of used column references
+		ColRefToColRefSetMap *m_phmcrcrs;
 
-			// mapping between column id of computed column and a set of used column references
-			ColRefToColRefSetMap *m_phmcrcrs;
+		// id counter
+		CAtomicULONG m_aul;
 
-			// id counter
-			CAtomicULONG m_aul;
+		// hash table
+		CSyncHashtable<CColRef, ULONG, CSpinlockColumnFactory> m_sht;
 
-			// hash table
-			CSyncHashtable
-				<CColRef,
-				ULONG,
-				CSpinlockColumnFactory> m_sht;
+		// private copy ctor
+		CColumnFactory(const CColumnFactory &);
 
-			// private copy ctor
-			CColumnFactory(const CColumnFactory &);
+		// implementation of factory methods
+		CColRef *PcrCreate(const IMDType *pmdtype, INT type_modifier, ULONG id, const CName &name);
+		CColRef *PcrCreate(const CColumnDescriptor *pcoldesc,
+						   ULONG id,
+						   const CName &name,
+						   ULONG ulOpSource);
 
-			// implementation of factory methods
-			CColRef *PcrCreate(const IMDType *pmdtype, INT type_modifier, ULONG id, const CName &name);
-			CColRef *PcrCreate
-					(
-					const CColumnDescriptor *pcoldesc,
-					ULONG id,
-					const CName &name,
-					ULONG ulOpSource
-					);
+	public:
+		// ctor
+		CColumnFactory();
 
-		public:
+		// dtor
+		~CColumnFactory();
 
-			// ctor
-			CColumnFactory();
+		// initialize the hash map between computed column and used columns
+		void Initialize();
 
-			// dtor
-			~CColumnFactory();
+		// create a column reference given only its type and type modifier, used for computed columns
+		CColRef *PcrCreate(const IMDType *pmdtype, INT type_modifier);
 
-			// initialize the hash map between computed column and used columns
-			void Initialize();
+		// create column reference given its type, type modifier, and name
+		CColRef *PcrCreate(const IMDType *pmdtype, INT type_modifier, const CName &name);
 
-			// create a column reference given only its type and type modifier, used for computed columns
-			CColRef *PcrCreate(const IMDType *pmdtype, INT type_modifier);
+		// create a column reference given its descriptor and name
+		CColRef *PcrCreate(const CColumnDescriptor *pcoldescr, const CName &name, ULONG ulOpSource);
 
-			// create column reference given its type, type modifier, and name
-			CColRef *PcrCreate(const IMDType *pmdtype, INT type_modifier, const CName &name);
+		// create a column reference given its type, attno, nullability and name
+		CColRef *PcrCreate(const IMDType *pmdtype,
+						   INT type_modifier,
+						   INT attno,
+						   BOOL is_nullable,
+						   ULONG id,
+						   const CName &name,
+						   ULONG ulOpSource,
+						   ULONG ulWidth = gpos::ulong_max);
 
-			// create a column reference given its descriptor and name
-			CColRef *PcrCreate
-				(
-				const CColumnDescriptor *pcoldescr,
-				const CName &name,
-				ULONG ulOpSource
-				);
+		// create a column reference with the same type as passed column reference
+		CColRef *
+		PcrCreate(const CColRef *colref)
+		{
+			return PcrCreate(colref->RetrieveType(), colref->TypeModifier());
+		}
 
-			// create a column reference given its type, attno, nullability and name
-			CColRef *PcrCreate
-				(
-				const IMDType *pmdtype,
-				INT type_modifier,
-				INT attno,
-				BOOL is_nullable,
-				ULONG id,
-				const CName &name,
-				ULONG ulOpSource,
-				ULONG ulWidth = gpos::ulong_max
-				);
+		// add mapping between computed column to its used columns
+		void AddComputedToUsedColsMap(CExpression *pexpr);
 
-			// create a column reference with the same type as passed column reference
-			CColRef *PcrCreate
-				(
-				const CColRef *colref
-				)
-			{
-				return PcrCreate(colref->RetrieveType(), colref->TypeModifier());
-			}
+		// lookup the set of used column references (if any) based on id of computed column
+		const CColRefSet *PcrsUsedInComputedCol(const CColRef *pcrComputedCol);
 
-			// add mapping between computed column to its used columns
-			void AddComputedToUsedColsMap(CExpression *pexpr);
+		// create a copy of the given colref
+		CColRef *PcrCopy(const CColRef *colref);
 
-			// lookup the set of used column references (if any) based on id of computed column
-			const CColRefSet *PcrsUsedInComputedCol(const CColRef *pcrComputedCol);
+		// lookup by id
+		CColRef *LookupColRef(ULONG id);
 
-			// create a copy of the given colref
-			CColRef *PcrCopy(const CColRef* colref);
+		// destructor
+		void Destroy(CColRef *);
 
-			// lookup by id
-			CColRef *LookupColRef(ULONG id);
-			
-			// destructor
-			void Destroy(CColRef *);
+	};  // class CColumnFactory
+}  // namespace gpopt
 
-	}; // class CColumnFactory
-}
-
-#endif // !GPOPT_CColumnFactory_H
+#endif  // !GPOPT_CColumnFactory_H
 
 // EOF

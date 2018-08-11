@@ -26,12 +26,10 @@
 
 ULONG CJoinOrderTest::m_ulTestCounter = 0;  // start from first test
 
-	// minidump files
-const CHAR *rgszJoinOrderFileNames[] =
-{
+// minidump files
+const CHAR *rgszJoinOrderFileNames[] = {
 	"../data/dxl/minidump/JoinOptimizationLevelGreedyNonPartTblInnerJoin.mdp",
-	"../data/dxl/minidump/JoinOptimizationLevelQueryNonPartTblInnerJoin.mdp"
-};
+	"../data/dxl/minidump/JoinOptimizationLevelQueryNonPartTblInnerJoin.mdp"};
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -44,12 +42,8 @@ const CHAR *rgszJoinOrderFileNames[] =
 GPOS_RESULT
 CJoinOrderTest::EresUnittest()
 {
-
-	CUnittest rgut[] =
-		{
-		GPOS_UNITTEST_FUNC(EresUnittest_ExpandMinCard),
-		GPOS_UNITTEST_FUNC(EresUnittest_RunTests)
-		};
+	CUnittest rgut[] = {GPOS_UNITTEST_FUNC(EresUnittest_ExpandMinCard),
+						GPOS_UNITTEST_FUNC(EresUnittest_RunTests)};
 
 	return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
 }
@@ -70,8 +64,7 @@ CJoinOrderTest::EresUnittest_ExpandMinCard()
 	IMemoryPool *mp = amp.Pmp();
 
 	// array of relation names
-	CWStringConst rgscRel[] =
-	{
+	CWStringConst rgscRel[] = {
 		GPOS_WSZ_LIT("Rel10"),
 		GPOS_WSZ_LIT("Rel3"),
 		GPOS_WSZ_LIT("Rel4"),
@@ -90,8 +83,7 @@ CJoinOrderTest::EresUnittest_ExpandMinCard()
 	};
 
 	// array of relation IDs
-	ULONG rgulRel[] =
-	{
+	ULONG rgulRel[] = {
 		GPOPT_TEST_REL_OID10,
 		GPOPT_TEST_REL_OID3,
 		GPOPT_TEST_REL_OID4,
@@ -120,16 +112,13 @@ CJoinOrderTest::EresUnittest_ExpandMinCard()
 
 	{
 		// install opt context in TLS
-		CAutoOptCtxt aoc
-				(
-				mp,
-				&mda,
-				NULL,  /* pceeval */
-				CTestUtils::GetCostModel(mp)
-				);
+		CAutoOptCtxt aoc(mp,
+						 &mda,
+						 NULL, /* pceeval */
+						 CTestUtils::GetCostModel(mp));
 
 		CExpression *pexprNAryJoin =
-				CTestUtils::PexprLogicalNAryJoin(mp, rgscRel, rgulRel, ulRels, false /*fCrossProduct*/);
+			CTestUtils::PexprLogicalNAryJoin(mp, rgscRel, rgulRel, ulRels, false /*fCrossProduct*/);
 
 		// derive stats on input expression
 		CExpressionHandle exprhdl(mp);
@@ -143,7 +132,8 @@ CJoinOrderTest::EresUnittest_ExpandMinCard()
 			pexprChild->AddRef();
 			pdrgpexpr->Append(pexprChild);
 		}
-		CExpressionArray *pdrgpexprPred = CPredicateUtils::PdrgpexprConjuncts(mp, (*pexprNAryJoin)[ulRels]);
+		CExpressionArray *pdrgpexprPred =
+			CPredicateUtils::PdrgpexprConjuncts(mp, (*pexprNAryJoin)[ulRels]);
 		pdrgpexpr->AddRef();
 		pdrgpexprPred->AddRef();
 		CJoinOrderMinCard jomc(mp, pdrgpexpr, pdrgpexprPred);
@@ -166,11 +156,7 @@ CJoinOrderTest::EresUnittest_ExpandMinCard()
 GPOS_RESULT
 CJoinOrderTest::EresUnittest_RunTests()
 {
-	return CTestUtils::EresUnittest_RunTests
-	(
-	 rgszJoinOrderFileNames,
-	 &m_ulTestCounter,
-	 GPOS_ARRAY_SIZE(rgszJoinOrderFileNames)
-	 );
+	return CTestUtils::EresUnittest_RunTests(
+		rgszJoinOrderFileNames, &m_ulTestCounter, GPOS_ARRAY_SIZE(rgszJoinOrderFileNames));
 }
 // EOF

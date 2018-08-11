@@ -25,23 +25,16 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformGbAgg2Apply::CXformGbAgg2Apply
-	(
-	IMemoryPool *mp
-	)
-	:
-	// pattern
-	CXformSubqueryUnnest
-		(
-		GPOS_NEW(mp) CExpression
-				(
-				mp,
-				GPOS_NEW(mp) CLogicalGbAgg(mp),
-				GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),	// relational child
-				GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))	// project list
-				)
-		)
-{}
+CXformGbAgg2Apply::CXformGbAgg2Apply(IMemoryPool *mp)
+	:  // pattern
+	  CXformSubqueryUnnest(GPOS_NEW(mp) CExpression(
+		  mp,
+		  GPOS_NEW(mp) CLogicalGbAgg(mp),
+		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // relational child
+		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))   // project list
+		  ))
+{
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -53,11 +46,7 @@ CXformGbAgg2Apply::CXformGbAgg2Apply
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise
-CXformGbAgg2Apply::Exfp
-	(
-	CExpressionHandle &exprhdl
-	)
-	const
+CXformGbAgg2Apply::Exfp(CExpressionHandle &exprhdl) const
 {
 	CLogicalGbAgg *popGbAgg = CLogicalGbAgg::PopConvert(exprhdl.Pop());
 	if (popGbAgg->FGlobal() && exprhdl.GetDrvdScalarProps(1)->FHasSubquery())
@@ -70,4 +59,3 @@ CXformGbAgg2Apply::Exfp
 
 
 // EOF
-

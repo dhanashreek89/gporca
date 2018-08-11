@@ -27,17 +27,15 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CColRefSetIterTest
 	{
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
+		static GPOS_RESULT EresUnittest_Basics();
 
-		public:
+	};  // class CColRefSetIterTest
+}  // namespace gpopt
 
-			// unittests
-			static GPOS_RESULT EresUnittest();
-			static GPOS_RESULT EresUnittest_Basics();
-
-	}; // class CColRefSetIterTest
-}
-
-#endif // !GPOS_CColRefSetIterTest_H
+#endif  // !GPOS_CColRefSetIterTest_H
 
 
 // EOF

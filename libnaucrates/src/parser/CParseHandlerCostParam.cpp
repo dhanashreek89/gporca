@@ -80,8 +80,7 @@ CParseHandlerCostParam::StartElement(const XMLCh *const,  // element_uri,
 		CDXLOperatorFactory::ExtractAttrValue(attrs, EdxltokenName, EdxltokenCostParam);
 	CWStringDynamic *str_name = CDXLUtils::CreateDynamicStringFromXMLChArray(
 		m_parse_handler_mgr->GetDXLMemoryManager(), xmlstrName);
-	m_param_name =
-		CDXLUtils::CreateMultiByteCharStringFromWCString(m_mp, str_name->GetBuffer());
+	m_param_name = CDXLUtils::CreateMultiByteCharStringFromWCString(m_mp, str_name->GetBuffer());
 	GPOS_DELETE(str_name);
 
 	m_value = CDXLOperatorFactory::ExtractConvertAttrValueToDouble(

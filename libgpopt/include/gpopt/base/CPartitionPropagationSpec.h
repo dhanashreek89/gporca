@@ -21,7 +21,7 @@
 
 
 namespace gpopt
-{		
+{
 	using namespace gpos;
 
 	//---------------------------------------------------------------------------
@@ -34,131 +34,115 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPartitionPropagationSpec : public CPropSpec
 	{
+	private:
+		// unresolved partitions map
+		CPartIndexMap *m_ppim;
 
-		private:
+		// filter expressions indexed by the part index id
+		CPartFilterMap *m_ppfm;
 
-			// unresolved partitions map
-			CPartIndexMap *m_ppim;
-			
-			// filter expressions indexed by the part index id
-			CPartFilterMap *m_ppfm;		
+		// check if given part index id needs to be enforced on top of the given expression
+		BOOL FRequiresPartitionPropagation(IMemoryPool *mp,
+										   CExpression *pexpr,
+										   CExpressionHandle &exprhdl,
+										   ULONG part_idx_id) const;
 
-			// check if given part index id needs to be enforced on top of the given expression
-			BOOL FRequiresPartitionPropagation
-				(
-				IMemoryPool *mp, 
-				CExpression *pexpr, 
-				CExpressionHandle &exprhdl,
-				ULONG part_idx_id
-				)
-				const;
-			
-			// private copy ctor
-			CPartitionPropagationSpec(const CPartitionPropagationSpec&);
+		// private copy ctor
+		CPartitionPropagationSpec(const CPartitionPropagationSpec &);
 
-			// split the partition elimination predicates over the various levels
-			// as well as the residual predicate
-			void SplitPartPredicates
-				(
-				IMemoryPool *mp,
-				CExpression *pexprScalar,
-				CColRefArrays *pdrgpdrgpcrKeys,
-				UlongToExprMap *phmulexprEqFilter,
-				UlongToExprMap *phmulexprFilter,
-				CExpression **ppexprResidual
-				);
+		// split the partition elimination predicates over the various levels
+		// as well as the residual predicate
+		void SplitPartPredicates(IMemoryPool *mp,
+								 CExpression *pexprScalar,
+								 CColRefArrays *pdrgpdrgpcrKeys,
+								 UlongToExprMap *phmulexprEqFilter,
+								 UlongToExprMap *phmulexprFilter,
+								 CExpression **ppexprResidual);
 
-			// return a residual filter given an array of predicates and a bitset
-			// indicating which predicates have already been used
-			CExpression *PexprResidualFilter
-				(
-				IMemoryPool *mp,
-				CExpressionArray *pdrgpexpr,
-				CBitSet *pbsUsed
-				);
+		// return a residual filter given an array of predicates and a bitset
+		// indicating which predicates have already been used
+		CExpression *PexprResidualFilter(IMemoryPool *mp,
+										 CExpressionArray *pdrgpexpr,
+										 CBitSet *pbsUsed);
 
-			// return an array of predicates on the given partitioning key given
-			// an array of predicates on all keys
-			CExpressionArray *PdrgpexprPredicatesOnKey
-				(
-				IMemoryPool *mp,
-				CExpressionArray *pdrgpexpr,
-				CColRef *colref,
-				CColRefSet *pcrsKeys,
-				CBitSet **ppbs
-				);
+		// return an array of predicates on the given partitioning key given
+		// an array of predicates on all keys
+		CExpressionArray *PdrgpexprPredicatesOnKey(IMemoryPool *mp,
+												   CExpressionArray *pdrgpexpr,
+												   CColRef *colref,
+												   CColRefSet *pcrsKeys,
+												   CBitSet **ppbs);
 
-			// return a colrefset containing all the part keys
-			CColRefSet *PcrsKeys(IMemoryPool *mp, CColRefArrays *pdrgpdrgpcrKeys);
+		// return a colrefset containing all the part keys
+		CColRefSet *PcrsKeys(IMemoryPool *mp, CColRefArrays *pdrgpdrgpcrKeys);
 
-			// return the filter expression for the given Scan Id
-			CExpression *PexprFilter(IMemoryPool *mp, ULONG scan_id);
+		// return the filter expression for the given Scan Id
+		CExpression *PexprFilter(IMemoryPool *mp, ULONG scan_id);
 
-		public:
+	public:
+		// ctor
+		CPartitionPropagationSpec(CPartIndexMap *ppim, CPartFilterMap *ppfm);
 
-			// ctor
-			CPartitionPropagationSpec(CPartIndexMap *ppim, CPartFilterMap *ppfm);
+		// dtor
+		virtual ~CPartitionPropagationSpec();
 
-			// dtor
-			virtual
-			~CPartitionPropagationSpec();
+		// accessor of part index map
+		CPartIndexMap *
+		Ppim() const
+		{
+			return m_ppim;
+		}
 
-			// accessor of part index map
-			CPartIndexMap *Ppim() const
-			{
-				return m_ppim;
-			}
+		// accessor of part filter map
+		CPartFilterMap *
+		Ppfm() const
+		{
+			return m_ppfm;
+		}
 
-			// accessor of part filter map
-			CPartFilterMap *Ppfm() const
-			{
-				return m_ppfm;
-			}
+		// append enforcers to dynamic array for the given plan properties
+		virtual void AppendEnforcers(IMemoryPool *mp,
+									 CExpressionHandle &exprhdl,
+									 CReqdPropPlan *prpp,
+									 CExpressionArray *pdrgpexpr,
+									 CExpression *pexpr);
 
-			// append enforcers to dynamic array for the given plan properties
-			virtual
-			void AppendEnforcers(IMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prpp, CExpressionArray *pdrgpexpr, CExpression *pexpr);
+		// hash function
+		virtual ULONG HashValue() const;
 
-			// hash function
-			virtual
-			ULONG HashValue() const;
+		// extract columns used by the rewindability spec
+		virtual CColRefSet *
+		PcrsUsed(IMemoryPool *mp) const
+		{
+			// return an empty set
+			return GPOS_NEW(mp) CColRefSet(mp);
+		}
 
-			// extract columns used by the rewindability spec
-			virtual
-			CColRefSet *PcrsUsed
-				(
-				IMemoryPool *mp
-				)
-				const
-			{
-				// return an empty set
-				return GPOS_NEW(mp) CColRefSet(mp);
-			}
+		// property type
+		virtual EPropSpecType
+		Epst() const
+		{
+			return EpstPartPropagation;
+		}
 
-			// property type
-			virtual
-			EPropSpecType Epst() const
-			{
-				return EpstPartPropagation;
-			}
+		// equality function
+		BOOL Matches(const CPartitionPropagationSpec *ppps) const;
 
-			// equality function
-			BOOL Matches(const CPartitionPropagationSpec *ppps) const;
-			
-			// is partition propagation required
-			BOOL FPartPropagationReqd() const
-			{
-				return m_ppim->FContainsUnresolvedZeroPropagators();
-			}
+		// is partition propagation required
+		BOOL
+		FPartPropagationReqd() const
+		{
+			return m_ppim->FContainsUnresolvedZeroPropagators();
+		}
 
-			
-			// print
-			IOstream &OsPrint(IOstream &os) const;
 
-	}; // class CPartitionPropagationSpec
+		// print
+		IOstream &OsPrint(IOstream &os) const;
 
-}
+	};  // class CPartitionPropagationSpec
 
-#endif // !GPOPT_CPartitionPropagationSpec_H
+}  // namespace gpopt
+
+#endif  // !GPOPT_CPartitionPropagationSpec_H
 
 // EOF

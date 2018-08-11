@@ -31,8 +31,7 @@ CUnionAllStatsProcessor::CreateStatsForUnionAll(IMemoryPool *mp,
 	GPOS_ASSERT(output_colids->Size() == second_child_colids->Size());
 
 	// create hash map from colid -> histogram for resultant structure
-	UlongToHistogramMap *histograms_new =
-		GPOS_NEW(mp) UlongToHistogramMap(mp);
+	UlongToHistogramMap *histograms_new = GPOS_NEW(mp) UlongToHistogramMap(mp);
 
 	// column ids on which widths are to be computed
 	UlongToDoubleMap *column_to_width_map = GPOS_NEW(mp) UlongToDoubleMap(mp);
@@ -42,12 +41,8 @@ CUnionAllStatsProcessor::CreateStatsForUnionAll(IMemoryPool *mp,
 	CDouble unionall_rows = CStatistics::MinRows;
 	if (is_empty_unionall)
 	{
-		CHistogram::AddDummyHistogramAndWidthInfo(mp,
-												  col_factory,
-												  histograms_new,
-												  column_to_width_map,
-												  output_colids,
-												  true /*is_empty*/);
+		CHistogram::AddDummyHistogramAndWidthInfo(
+			mp, col_factory, histograms_new, column_to_width_map, output_colids, true /*is_empty*/);
 	}
 	else
 	{
@@ -73,8 +68,7 @@ CUnionAllStatsProcessor::CreateStatsForUnionAll(IMemoryPool *mp,
 						stats_first_child->Rows(),
 						second_child_histogram,
 						stats_second_child->Rows());
-				CStatisticsUtils::AddHistogram(
-					mp, output_colid, output_histogram, histograms_new);
+				CStatisticsUtils::AddHistogram(mp, output_colid, output_histogram, histograms_new);
 				GPOS_DELETE(output_histogram);
 			}
 			else
@@ -104,11 +98,11 @@ CUnionAllStatsProcessor::CreateStatsForUnionAll(IMemoryPool *mp,
 
 	// create an output stats object
 	CStatistics *unionall_stats = GPOS_NEW(mp) CStatistics(mp,
-																	histograms_new,
-																	column_to_width_map,
-																	unionall_rows,
-																	is_empty_unionall,
-																	0 /* m_num_predicates */
+														   histograms_new,
+														   column_to_width_map,
+														   unionall_rows,
+														   is_empty_unionall,
+														   0 /* m_num_predicates */
 	);
 
 	// In the output statistics object, the upper bound source cardinality of the UNION ALL column

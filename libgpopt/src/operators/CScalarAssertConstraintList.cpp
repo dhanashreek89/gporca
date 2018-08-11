@@ -26,12 +26,7 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarAssertConstraintList::CScalarAssertConstraintList
-	(
-	IMemoryPool *mp
-	)
-	:
-	CScalar(mp)
+CScalarAssertConstraintList::CScalarAssertConstraintList(IMemoryPool *mp) : CScalar(mp)
 {
 }
 
@@ -44,11 +39,7 @@ CScalarAssertConstraintList::CScalarAssertConstraintList
 //
 //---------------------------------------------------------------------------
 BOOL
-CScalarAssertConstraintList::Matches
-	(
-	COperator *pop
-	)
-	const
+CScalarAssertConstraintList::Matches(COperator *pop) const
 {
 	return pop->Eopid() == Eopid();
 }
@@ -71,4 +62,3 @@ CScalarAssertConstraintList::MDIdType() const
 
 
 // EOF
-

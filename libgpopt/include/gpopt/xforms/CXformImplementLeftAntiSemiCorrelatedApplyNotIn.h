@@ -28,49 +28,45 @@ namespace gpopt
 	//		to physical left anti semi correlated join
 	//
 	//-------------------------------------------------------------------------
-	class CXformImplementLeftAntiSemiCorrelatedApplyNotIn :
-		public CXformImplementCorrelatedApply<CLogicalLeftAntiSemiCorrelatedApplyNotIn, CPhysicalCorrelatedNotInLeftAntiSemiNLJoin>
+	class CXformImplementLeftAntiSemiCorrelatedApplyNotIn
+		: public CXformImplementCorrelatedApply<CLogicalLeftAntiSemiCorrelatedApplyNotIn,
+												CPhysicalCorrelatedNotInLeftAntiSemiNLJoin>
 	{
+	private:
+		// private copy ctor
+		CXformImplementLeftAntiSemiCorrelatedApplyNotIn(
+			const CXformImplementLeftAntiSemiCorrelatedApplyNotIn &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementLeftAntiSemiCorrelatedApplyNotIn(IMemoryPool *mp)
+			: CXformImplementCorrelatedApply<CLogicalLeftAntiSemiCorrelatedApplyNotIn,
+											 CPhysicalCorrelatedNotInLeftAntiSemiNLJoin>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformImplementLeftAntiSemiCorrelatedApplyNotIn(const CXformImplementLeftAntiSemiCorrelatedApplyNotIn &);
+		// dtor
+		virtual ~CXformImplementLeftAntiSemiCorrelatedApplyNotIn()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementLeftAntiSemiCorrelatedApplyNotIn;
+		}
 
-			// ctor
-			explicit
-			CXformImplementLeftAntiSemiCorrelatedApplyNotIn
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformImplementCorrelatedApply<CLogicalLeftAntiSemiCorrelatedApplyNotIn, CPhysicalCorrelatedNotInLeftAntiSemiNLJoin>(mp)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementLeftAntiSemiCorrelatedApplyNotIn";
+		}
 
-			// dtor
-			virtual
-			~CXformImplementLeftAntiSemiCorrelatedApplyNotIn()
-			{}
+	};  // class CXformImplementLeftAntiSemiCorrelatedApplyNotIn
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementLeftAntiSemiCorrelatedApplyNotIn;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementLeftAntiSemiCorrelatedApplyNotIn";
-			}
-
-	}; // class CXformImplementLeftAntiSemiCorrelatedApplyNotIn
-
-}
-
-#endif // !GPOPT_CXformImplementLeftAntiSemiCorrelatedApplyNotIn_H
+#endif  // !GPOPT_CXformImplementLeftAntiSemiCorrelatedApplyNotIn_H
 
 // EOF

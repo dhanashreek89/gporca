@@ -28,52 +28,42 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformImplementRowTrigger : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformImplementRowTrigger(const CXformImplementRowTrigger &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementRowTrigger(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformImplementRowTrigger(const CXformImplementRowTrigger &);
+		// dtor
+		virtual ~CXformImplementRowTrigger()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementRowTrigger;
+		}
 
-			// ctor
-			explicit
-			CXformImplementRowTrigger(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementRowTrigger";
+		}
 
-			// dtor
-			virtual
-			~CXformImplementRowTrigger() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementRowTrigger;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementRowTrigger";
-			}
+	};  // class CXformImplementRowTrigger
+}  // namespace gpopt
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformImplementRowTrigger
-}
-
-#endif // !GPOPT_CXformImplementRowTrigger_H
+#endif  // !GPOPT_CXformImplementRowTrigger_H
 
 // EOF

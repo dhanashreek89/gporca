@@ -34,9 +34,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerPartitionSelector::CParseHandlerPartitionSelector(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerPhysicalOp(mp, parse_handler_mgr, parse_handler_root),
 	  m_rel_mdid(NULL),
 	  m_num_of_part_levels(0),
@@ -120,18 +118,12 @@ CParseHandlerPartitionSelector::StartElement(const XMLCh *const element_uri,
 
 			// parse handler for the proj list
 			CParseHandlerBase *proj_list_parse_handler = CParseHandlerFactory::GetParseHandler(
-				m_mp,
-				CDXLTokens::XmlstrToken(EdxltokenScalarProjList),
-				m_parse_handler_mgr,
-				this);
+				m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarProjList), m_parse_handler_mgr, this);
 			m_parse_handler_mgr->ActivateParseHandler(proj_list_parse_handler);
 
 			// parse handler for the properties of the operator
-			CParseHandlerBase *prop_parse_handler =
-				CParseHandlerFactory::GetParseHandler(m_mp,
-													  CDXLTokens::XmlstrToken(EdxltokenProperties),
-													  m_parse_handler_mgr,
-													  this);
+			CParseHandlerBase *prop_parse_handler = CParseHandlerFactory::GetParseHandler(
+				m_mp, CDXLTokens::XmlstrToken(EdxltokenProperties), m_parse_handler_mgr, this);
 			m_parse_handler_mgr->ActivateParseHandler(prop_parse_handler);
 
 			// store parse handlers

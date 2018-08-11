@@ -28,59 +28,52 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformSimplifyLeftOuterJoin : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformSimplifyLeftOuterJoin(const CXformSimplifyLeftOuterJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformSimplifyLeftOuterJoin(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformSimplifyLeftOuterJoin(const CXformSimplifyLeftOuterJoin &);
+		// dtor
+		virtual ~CXformSimplifyLeftOuterJoin()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfSimplifyLeftOuterJoin;
+		}
 
-			// ctor
-			explicit
-			CXformSimplifyLeftOuterJoin(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformSimplifyLeftOuterJoin";
+		}
 
-			// dtor
-			virtual
-			~CXformSimplifyLeftOuterJoin()
-			{}
+		// Compatibility function for simplifying aggregates
+		virtual BOOL
+		FCompatible(CXform::EXformId exfid)
+		{
+			return (CXform::ExfSimplifyLeftOuterJoin != exfid);
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfSimplifyLeftOuterJoin;
-			}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformSimplifyLeftOuterJoin";
-			}
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
-			// Compatibility function for simplifying aggregates
-			virtual
-			BOOL FCompatible
-				(
-				CXform::EXformId exfid
-				)
-			{
-				return (CXform::ExfSimplifyLeftOuterJoin != exfid);
-			}
+	};  // class CXformSimplifyLeftOuterJoin
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp (CExpressionHandle &exprhdl) const;
+}  // namespace gpopt
 
-			// actual transform
-			virtual
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
-
-	}; // class CXformSimplifyLeftOuterJoin
-
-}
-
-#endif // !GPOPT_CXformSimplifyLeftOuterJoin_H
+#endif  // !GPOPT_CXformSimplifyLeftOuterJoin_H
 
 // EOF

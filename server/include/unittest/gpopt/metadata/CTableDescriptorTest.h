@@ -31,15 +31,13 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CTableDescriptorTest
 	{
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
+		static GPOS_RESULT EresUnittest_Basic();
+	};  // class CTableDescriptorTest
+}  // namespace gpopt
 
-		public:
-
-			// unittests
-			static GPOS_RESULT EresUnittest();
-			static GPOS_RESULT EresUnittest_Basic();
-	}; // class CTableDescriptorTest
-}
-
-#endif // !GPOPT_CTableDescriptorTest_H
+#endif  // !GPOPT_CTableDescriptorTest_H
 
 // EOF

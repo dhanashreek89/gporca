@@ -26,49 +26,51 @@ namespace gpopt
 	//		Transform Inner Join to IndexGet Apply
 	//
 	//---------------------------------------------------------------------------
-	class CXformInnerJoin2IndexGetApply : public CXformJoin2IndexApplyBase
-		<CLogicalInnerJoin, CLogicalIndexApply, CLogicalGet,
-		false /*fWithSelect*/, false /*is_partial*/, IMDIndex::EmdindBtree>
+	class CXformInnerJoin2IndexGetApply : public CXformJoin2IndexApplyBase<CLogicalInnerJoin,
+																		   CLogicalIndexApply,
+																		   CLogicalGet,
+																		   false /*fWithSelect*/,
+																		   false /*is_partial*/,
+																		   IMDIndex::EmdindBtree>
 	{
+	private:
+		// private copy ctor
+		CXformInnerJoin2IndexGetApply(const CXformInnerJoin2IndexGetApply &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformInnerJoin2IndexGetApply(IMemoryPool *mp)
+			: CXformJoin2IndexApplyBase<CLogicalInnerJoin,
+										CLogicalIndexApply,
+										CLogicalGet,
+										false /*fWithSelect*/,
+										false /*is_partial*/,
+										IMDIndex::EmdindBtree>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformInnerJoin2IndexGetApply(const CXformInnerJoin2IndexGetApply &);
+		// dtor
+		virtual ~CXformInnerJoin2IndexGetApply()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfInnerJoin2IndexGetApply;
+		}
 
-			// ctor
-			explicit
-			CXformInnerJoin2IndexGetApply(IMemoryPool *mp)
-				: CXformJoin2IndexApplyBase
-				 <CLogicalInnerJoin, CLogicalIndexApply, CLogicalGet,
-				 false /*fWithSelect*/, false /*is_partial*/, IMDIndex::EmdindBtree>
-				(mp)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformInnerJoin2IndexGetApply";
+		}
 
-			// dtor
-			virtual
-			~CXformInnerJoin2IndexGetApply()
-			{}
+	};  // class CXformInnerJoin2IndexGetApply
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfInnerJoin2IndexGetApply;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformInnerJoin2IndexGetApply";
-			}
-
-	}; // class CXformInnerJoin2IndexGetApply
-
-}
-
-#endif // !GPOPT_CXformInnerJoin2IndexGetApply_H
+#endif  // !GPOPT_CXformInnerJoin2IndexGetApply_H
 
 // EOF

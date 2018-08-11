@@ -78,26 +78,17 @@ CParseHandlerSort::StartElement(const XMLCh *const,  // element_uri,
 	m_parse_handler_mgr->ActivateParseHandler(child_parse_handler);
 
 	// create parse handlers for the limit count and offset expressions
-	CParseHandlerBase *offset_parse_handler =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenScalarLimitOffset),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *offset_parse_handler = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarLimitOffset), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(offset_parse_handler);
 
-	CParseHandlerBase *count_parse_handler =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenScalarLimitCount),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *count_parse_handler = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarLimitCount), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(count_parse_handler);
 
 	// parse handler for the sorting column list
-	CParseHandlerBase *sort_col_list_parse_handler =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenScalarSortColList),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *sort_col_list_parse_handler = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarSortColList), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(sort_col_list_parse_handler);
 
 	// parse handler for the filter

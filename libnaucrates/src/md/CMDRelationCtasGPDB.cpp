@@ -87,8 +87,8 @@ CMDRelationCtasGPDB::CMDRelationCtasGPDB(IMemoryPool *mp,
 
 		m_col_width_array->Append(GPOS_NEW(mp) CDouble(mdcol->Length()));
 	}
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+	m_dxl_str =
+		CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
 }
 
 //---------------------------------------------------------------------------
@@ -300,8 +300,7 @@ CMDRelationCtasGPDB::Serialize(CXMLSerializer *xml_serializer) const
 								 IMDRelation::GetStorageTypeStr(m_rel_storage_type));
 
 	// serialize vartypmod list
-	CWStringDynamic *var_typemod_list_array =
-		CDXLUtils::Serialize(m_mp, m_vartypemod_array);
+	CWStringDynamic *var_typemod_list_array = CDXLUtils::Serialize(m_mp, m_vartypemod_array);
 	GPOS_ASSERT(NULL != var_typemod_list_array);
 
 	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenVarTypeModList),

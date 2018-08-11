@@ -161,8 +161,8 @@ CParseHandlerMDGPDBTrigger::EndElement(const XMLCh *const,  // element_uri,
 	}
 
 	// construct the MD trigger object
-	m_imd_obj = GPOS_NEW(m_mp) CMDTriggerGPDB(
-		m_mp, m_mdid, m_mdname, m_rel_mdid, m_func_mdid, m_type, m_is_enabled);
+	m_imd_obj = GPOS_NEW(m_mp)
+		CMDTriggerGPDB(m_mp, m_mdid, m_mdname, m_rel_mdid, m_func_mdid, m_type, m_is_enabled);
 
 	// deactivate handler
 	m_parse_handler_mgr->DeactivateHandler();

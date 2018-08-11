@@ -9,7 +9,7 @@
 //		Tests minidumps with constant expression evaluator turned on
 //
 //	@owner:
-//		
+//
 //
 //	@test:
 //
@@ -34,24 +34,19 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CMinidumpWithConstExprEvaluatorTest
 	{
-		private:
+	private:
+		// counter used to mark last successful test
+		static ULONG m_ulTestCounter;
 
-			// counter used to mark last successful test
-			static
-			ULONG m_ulTestCounter;
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
 
-		public:
+		static GPOS_RESULT EresUnittest_RunMinidumpTestsWithConstExprEvaluatorOn();
 
-			// unittests
-			static
-			GPOS_RESULT EresUnittest();
+	};  // class CMinidumpWithConstExprEvaluatorTest
+}  // namespace gpopt
 
-			static
-			GPOS_RESULT EresUnittest_RunMinidumpTestsWithConstExprEvaluatorOn();
-
-	}; // class CMinidumpWithConstExprEvaluatorTest
-}
-
-#endif // !GPOPT_CMinidumpWithConstExprEvaluatorTest_H
+#endif  // !GPOPT_CMinidumpWithConstExprEvaluatorTest_H
 
 // EOF

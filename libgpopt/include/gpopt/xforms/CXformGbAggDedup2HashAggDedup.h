@@ -28,50 +28,43 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformGbAggDedup2HashAggDedup : public CXformGbAgg2HashAgg
 	{
+	private:
+		// private copy ctor
+		CXformGbAggDedup2HashAggDedup(const CXformGbAggDedup2HashAggDedup &);
 
-		private:
+	public:
+		// ctor
+		CXformGbAggDedup2HashAggDedup(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformGbAggDedup2HashAggDedup(const CXformGbAggDedup2HashAggDedup &);
+		// dtor
+		virtual ~CXformGbAggDedup2HashAggDedup()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfGbAggDedup2HashAggDedup;
+		}
 
-			// ctor
-			CXformGbAggDedup2HashAggDedup(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformGbAggDedup2HashAggDedup";
+		}
 
-			// dtor
-			virtual
-			~CXformGbAggDedup2HashAggDedup() {}
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfGbAggDedup2HashAggDedup;
-			}
+	};  // class CXformGbAggDedup2HashAggDedup
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformGbAggDedup2HashAggDedup";
-			}
-
-			// actual transform
-			virtual
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformGbAggDedup2HashAggDedup
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformGbAggDedup2HashAggDedup_H
+#endif  // !GPOPT_CXformGbAggDedup2HashAggDedup_H
 
 // EOF

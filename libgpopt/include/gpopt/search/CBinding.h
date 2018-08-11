@@ -22,7 +22,7 @@ namespace gpopt
 	// fwd declaration
 	class CGroupExpression;
 	class CGroup;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CBinding
@@ -35,106 +35,74 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CBinding
 	{
-	
-		private:
-					
-			// initialize cursors of child expressions
-			BOOL FInitChildCursors
-				(
-				IMemoryPool *mp,
-				CGroupExpression *pgexpr,
-				CExpression *pexprPattern,
-				CExpressionArray *pdrgpexpr
-				);
+	private:
+		// initialize cursors of child expressions
+		BOOL FInitChildCursors(IMemoryPool *mp,
+							   CGroupExpression *pgexpr,
+							   CExpression *pexprPattern,
+							   CExpressionArray *pdrgpexpr);
 
-			// advance cursors of child expressions
-			BOOL FAdvanceChildCursors
-				(
-				IMemoryPool *mp,
-				CGroupExpression *pgexpr,
-				CExpression *pexprPattern,
-				CExpression *pexprLast,
-				CExpressionArray *pdrgpexpr
-				);
+		// advance cursors of child expressions
+		BOOL FAdvanceChildCursors(IMemoryPool *mp,
+								  CGroupExpression *pgexpr,
+								  CExpression *pexprPattern,
+								  CExpression *pexprLast,
+								  CExpressionArray *pdrgpexpr);
 
-			// extraction of child expressions
-			BOOL FExtractChildren
-				(
-				IMemoryPool *mp,
-				CExpression *pexprPattern,
-				CGroupExpression *pgexprCursor,
-				CExpressionArray *pdrgpexpr
-				);
-			
-			// move cursor
-			CGroupExpression *PgexprNext
-				(
-				CGroup *pgroup,
-				CGroupExpression *pgexpr
-				)
-				const;
-			
-			// expand n-th child of pattern
-			CExpression *PexprExpandPattern
-				(
-				CExpression *pexpr,
-				ULONG ulPos,
-				ULONG arity
-				);
-			
-			// get binding for children
-			BOOL FExtractChildren
-				(
-				IMemoryPool *mp,
-				CGroupExpression *pgexpr,
-				CExpression *pexprPattern,
-				CExpression *pexprLast,
-				CExpressionArray *pdrgpexprChildren
-				);
-			
-			// extract binding from a group
-			CExpression *PexprExtract
-				(
-				IMemoryPool *mp,
-				CGroup *pgroup,
-				CExpression *pexprPattern,
-				CExpression *pexprLast
-				);
-			
-			// build expression
-			CExpression *PexprFinalize
-				(
-				IMemoryPool *mp,
-				CGroupExpression *pgexpr,
-				CExpressionArray *pdrgpexprChildren
-				);
-			
-			// private copy ctor
-			CBinding(const CBinding &);
-						
-		public:
-		
-			// ctor
-			CBinding()
-			{}
-			
-			// dtor
-			~CBinding()
-			{}
-			
-			// extract binding from group expression
-			CExpression *PexprExtract
-				(
-				IMemoryPool *mp,
-				CGroupExpression *pgexpr,
-				CExpression *pexprPatetrn,
-				CExpression *pexprLast
-				);
+		// extraction of child expressions
+		BOOL FExtractChildren(IMemoryPool *mp,
+							  CExpression *pexprPattern,
+							  CGroupExpression *pgexprCursor,
+							  CExpressionArray *pdrgpexpr);
 
-	}; // class CBinding
-	
-}
+		// move cursor
+		CGroupExpression *PgexprNext(CGroup *pgroup, CGroupExpression *pgexpr) const;
 
-#endif // !GPOPT_CBinding_H
+		// expand n-th child of pattern
+		CExpression *PexprExpandPattern(CExpression *pexpr, ULONG ulPos, ULONG arity);
+
+		// get binding for children
+		BOOL FExtractChildren(IMemoryPool *mp,
+							  CGroupExpression *pgexpr,
+							  CExpression *pexprPattern,
+							  CExpression *pexprLast,
+							  CExpressionArray *pdrgpexprChildren);
+
+		// extract binding from a group
+		CExpression *PexprExtract(IMemoryPool *mp,
+								  CGroup *pgroup,
+								  CExpression *pexprPattern,
+								  CExpression *pexprLast);
+
+		// build expression
+		CExpression *PexprFinalize(IMemoryPool *mp,
+								   CGroupExpression *pgexpr,
+								   CExpressionArray *pdrgpexprChildren);
+
+		// private copy ctor
+		CBinding(const CBinding &);
+
+	public:
+		// ctor
+		CBinding()
+		{
+		}
+
+		// dtor
+		~CBinding()
+		{
+		}
+
+		// extract binding from group expression
+		CExpression *PexprExtract(IMemoryPool *mp,
+								  CGroupExpression *pgexpr,
+								  CExpression *pexprPatetrn,
+								  CExpression *pexprLast);
+
+	};  // class CBinding
+
+}  // namespace gpopt
+
+#endif  // !GPOPT_CBinding_H
 
 // EOF

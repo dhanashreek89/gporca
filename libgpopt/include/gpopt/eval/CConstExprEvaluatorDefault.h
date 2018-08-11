@@ -9,7 +9,7 @@
 //		Dummy implementation of the constant expression evaluator
 //
 //	@owner:
-//		
+//
 //
 //	@test:
 //
@@ -35,31 +35,27 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CConstExprEvaluatorDefault : public IConstExprEvaluator
 	{
-		private:
-			// private copy ctor
-			CConstExprEvaluatorDefault(const CConstExprEvaluatorDefault &);
+	private:
+		// private copy ctor
+		CConstExprEvaluatorDefault(const CConstExprEvaluatorDefault &);
 
-		public:
-			// ctor
-			CConstExprEvaluatorDefault()
-				:
-				IConstExprEvaluator()
-			{}
+	public:
+		// ctor
+		CConstExprEvaluatorDefault() : IConstExprEvaluator()
+		{
+		}
 
-			// dtor
-			virtual
-			~CConstExprEvaluatorDefault();
+		// dtor
+		virtual ~CConstExprEvaluatorDefault();
 
-			// Evaluate the given expression and return the result as a new expression
-			virtual
-			CExpression *PexprEval(CExpression *pexpr);
+		// Evaluate the given expression and return the result as a new expression
+		virtual CExpression *PexprEval(CExpression *pexpr);
 
-			// Returns true iff the evaluator can evaluate constant expressions
-			virtual
-			BOOL FCanEvalExpressions();
+		// Returns true iff the evaluator can evaluate constant expressions
+		virtual BOOL FCanEvalExpressions();
 	};
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CConstExprEvaluatorGPDB_H
+#endif  // !GPOPT_CConstExprEvaluatorGPDB_H
 
 // EOF

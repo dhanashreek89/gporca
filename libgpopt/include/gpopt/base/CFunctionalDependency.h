@@ -37,95 +37,85 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CFunctionalDependency : public CRefCount
 	{
+	private:
+		// the left hand side of the FD
+		CColRefSet *m_pcrsKey;
 
-		private:
+		// the right hand side of the FD
+		CColRefSet *m_pcrsDetermined;
 
-			// the left hand side of the FD
-			CColRefSet *m_pcrsKey;
+		// private copy ctor
+		CFunctionalDependency(const CFunctionalDependency &);
 
-			// the right hand side of the FD
-			CColRefSet *m_pcrsDetermined;
+	public:
+		// ctor
+		CFunctionalDependency(CColRefSet *pcrsKey, CColRefSet *pcrsDetermined);
 
-			// private copy ctor
-			CFunctionalDependency(const CFunctionalDependency &);
+		// dtor
+		virtual ~CFunctionalDependency();
 
-		public:
+		// key set accessor
+		CColRefSet *
+		PcrsKey() const
+		{
+			return m_pcrsKey;
+		}
 
-			// ctor
-			CFunctionalDependency(CColRefSet *pcrsKey, CColRefSet *pcrsDetermined);
+		// determined set accessor
+		CColRefSet *
+		PcrsDetermined() const
+		{
+			return m_pcrsDetermined;
+		}
 
-			// dtor
-			virtual
-			~CFunctionalDependency();
+		// determine if all FD columns are included in the given column set
+		BOOL FIncluded(CColRefSet *pcrs) const;
 
-			// key set accessor
-			CColRefSet *PcrsKey() const
-			{
-				return m_pcrsKey;
-			}
+		// hash function
+		virtual ULONG HashValue() const;
 
-			// determined set accessor
-			CColRefSet *PcrsDetermined() const
-			{
-				return m_pcrsDetermined;
-			}
+		// equality function
+		BOOL Equals(const CFunctionalDependency *pfd) const;
 
-			// determine if all FD columns are included in the given column set
-			BOOL FIncluded(CColRefSet *pcrs) const;
+		// do the given arguments form a functional dependency
+		BOOL
+		FFunctionallyDependent(CColRefSet *pcrsKey, CColRef *colref)
+		{
+			GPOS_ASSERT(NULL != pcrsKey);
+			GPOS_ASSERT(NULL != colref);
 
-			// hash function
-			virtual
-			ULONG HashValue() const;
+			return m_pcrsKey->Equals(pcrsKey) && m_pcrsDetermined->FMember(colref);
+		}
 
-			// equality function
-			BOOL Equals(const CFunctionalDependency *pfd) const;
+		// print
+		virtual IOstream &OsPrint(IOstream &os) const;
 
-			// do the given arguments form a functional dependency
-			BOOL
-			FFunctionallyDependent
-				(
-				CColRefSet *pcrsKey, 
-				CColRef *colref
-				)
-			{
-				GPOS_ASSERT(NULL != pcrsKey);
-				GPOS_ASSERT(NULL != colref);
-				
-				return m_pcrsKey->Equals(pcrsKey) && m_pcrsDetermined->FMember(colref);
-			}
-			
-			// print
-			virtual
-			IOstream &OsPrint(IOstream &os) const;
+		// hash function
+		static ULONG HashValue(const CFunctionalDependencyArray *pdrgpfd);
 
-			// hash function
-			static
-			ULONG HashValue(const CFunctionalDependencyArray *pdrgpfd);
+		// equality function
+		static BOOL Equals(const CFunctionalDependencyArray *pdrgpfdFst,
+						   const CFunctionalDependencyArray *pdrgpfdSnd);
 
-			// equality function
-			static
-			BOOL Equals(const CFunctionalDependencyArray *pdrgpfdFst, const CFunctionalDependencyArray *pdrgpfdSnd);
+		// create a set of all keys in the passed FD's array
+		static CColRefSet *PcrsKeys(IMemoryPool *mp, const CFunctionalDependencyArray *pdrgpfd);
 
-			// create a set of all keys in the passed FD's array
-			static
-			CColRefSet *PcrsKeys(IMemoryPool *mp, const CFunctionalDependencyArray *pdrgpfd);
+		// create an array of all keys in the passed FD's array
+		static CColRefArray *PdrgpcrKeys(IMemoryPool *mp,
+										 const CFunctionalDependencyArray *pdrgpfd);
 
-			// create an array of all keys in the passed FD's array
-			static
-			CColRefArray *PdrgpcrKeys(IMemoryPool *mp, const CFunctionalDependencyArray *pdrgpfd);
-			
 
-	}; // class CFunctionalDependency
+	};  // class CFunctionalDependency
 
- 	// shorthand for printing
-	inline
-	IOstream &operator << (IOstream &os, CFunctionalDependency &fd)
+	// shorthand for printing
+	inline IOstream &
+	operator<<(IOstream &os, CFunctionalDependency &fd)
 	{
 		return fd.OsPrint(os);
 	}
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CFunctionalDependency_H
+#endif  // !GPOPT_CFunctionalDependency_H
 
 // EOF

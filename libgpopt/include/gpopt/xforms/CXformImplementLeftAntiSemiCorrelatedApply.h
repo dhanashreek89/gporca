@@ -28,49 +28,45 @@ namespace gpopt
 	//		to physical left anti semi correlated join
 	//
 	//-------------------------------------------------------------------------
-	class CXformImplementLeftAntiSemiCorrelatedApply :
-		public CXformImplementCorrelatedApply<CLogicalLeftAntiSemiCorrelatedApply, CPhysicalCorrelatedLeftAntiSemiNLJoin>
+	class CXformImplementLeftAntiSemiCorrelatedApply
+		: public CXformImplementCorrelatedApply<CLogicalLeftAntiSemiCorrelatedApply,
+												CPhysicalCorrelatedLeftAntiSemiNLJoin>
 	{
+	private:
+		// private copy ctor
+		CXformImplementLeftAntiSemiCorrelatedApply(
+			const CXformImplementLeftAntiSemiCorrelatedApply &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementLeftAntiSemiCorrelatedApply(IMemoryPool *mp)
+			: CXformImplementCorrelatedApply<CLogicalLeftAntiSemiCorrelatedApply,
+											 CPhysicalCorrelatedLeftAntiSemiNLJoin>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformImplementLeftAntiSemiCorrelatedApply(const CXformImplementLeftAntiSemiCorrelatedApply &);
+		// dtor
+		virtual ~CXformImplementLeftAntiSemiCorrelatedApply()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementLeftAntiSemiCorrelatedApply;
+		}
 
-			// ctor
-			explicit
-			CXformImplementLeftAntiSemiCorrelatedApply
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformImplementCorrelatedApply<CLogicalLeftAntiSemiCorrelatedApply, CPhysicalCorrelatedLeftAntiSemiNLJoin>(mp)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementLeftAntiSemiCorrelatedApply";
+		}
 
-			// dtor
-			virtual
-			~CXformImplementLeftAntiSemiCorrelatedApply()
-			{}
+	};  // class CXformImplementLeftAntiSemiCorrelatedApply
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementLeftAntiSemiCorrelatedApply;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementLeftAntiSemiCorrelatedApply";
-			}
-
-	}; // class CXformImplementLeftAntiSemiCorrelatedApply
-
-}
-
-#endif // !GPOPT_CXformImplementLeftAntiSemiCorrelatedApply_H
+#endif  // !GPOPT_CXformImplementLeftAntiSemiCorrelatedApply_H
 
 // EOF

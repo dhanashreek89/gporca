@@ -16,7 +16,7 @@
 using namespace gpopt;
 
 // global instance of xform factory
-CXformFactory* CXformFactory::m_pxff = NULL;
+CXformFactory *CXformFactory::m_pxff = NULL;
 
 
 //---------------------------------------------------------------------------
@@ -27,18 +27,11 @@ CXformFactory* CXformFactory::m_pxff = NULL;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformFactory::CXformFactory
-	(
-	IMemoryPool *mp
-	)
-	:
-	m_mp(mp),
-	m_phmszxform(NULL),
-	m_pxfsExploration(NULL),
-	m_pxfsImplementation(NULL)
+CXformFactory::CXformFactory(IMemoryPool *mp)
+	: m_mp(mp), m_phmszxform(NULL), m_pxfsExploration(NULL), m_pxfsImplementation(NULL)
 {
 	GPOS_ASSERT(NULL != mp);
-	
+
 	// null out array so dtor can be called prematurely
 	for (ULONG i = 0; i < CXform::ExfSentinel; i++)
 	{
@@ -60,8 +53,7 @@ CXformFactory::CXformFactory
 //---------------------------------------------------------------------------
 CXformFactory::~CXformFactory()
 {
-	GPOS_ASSERT(NULL == m_pxff &&
-				"Xform factory has not been shut down");
+	GPOS_ASSERT(NULL == m_pxff && "Xform factory has not been shut down");
 
 	// delete all xforms in the array
 	for (ULONG i = 0; i < CXform::ExfSentinel; i++)
@@ -71,7 +63,7 @@ CXformFactory::~CXformFactory()
 			// dtor called after failing to populate array
 			break;
 		}
-		
+
 		m_rgpxf[i]->Release();
 		m_rgpxf[i] = NULL;
 	}
@@ -92,16 +84,12 @@ CXformFactory::~CXformFactory()
 //
 //---------------------------------------------------------------------------
 void
-CXformFactory::Add
-	(
-	CXform *pxform
-	)
-{	
+CXformFactory::Add(CXform *pxform)
+{
 	GPOS_ASSERT(NULL != pxform);
 	CXform::EXformId exfid = pxform->Exfid();
-	
-	GPOS_ASSERT_IMP(0 < exfid, m_rgpxf[exfid - 1] != NULL &&
-					"Incorrect order of instantiation");
+
+	GPOS_ASSERT_IMP(0 < exfid, m_rgpxf[exfid - 1] != NULL && "Incorrect order of instantiation");
 	GPOS_ASSERT(NULL == m_rgpxf[exfid]);
 
 	m_rgpxf[exfid] = pxform;
@@ -112,7 +100,7 @@ CXformFactory::Add
 	clib::Strncpy(szXformName, pxform->SzId(), length + 1);
 
 #ifdef GPOS_DEBUG
-		BOOL fInserted =
+	BOOL fInserted =
 #endif
 		m_phmszxform->Insert(szXformName, pxform);
 	GPOS_ASSERT(fInserted);
@@ -126,7 +114,7 @@ CXformFactory::Add
 	GPOS_ASSERT_IMP(pxform->FExploration(), xform_set == m_pxfsExploration);
 	GPOS_ASSERT_IMP(pxform->FImplementation(), xform_set == m_pxfsImplementation);
 	BOOL fSet =
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 		xform_set->ExchangeSet(exfid);
 
 	GPOS_ASSERT(!fSet);
@@ -143,7 +131,7 @@ CXformFactory::Add
 //---------------------------------------------------------------------------
 void
 CXformFactory::Instantiate()
-{	
+{
 	Add(GPOS_NEW(m_mp) CXformProject2ComputeScalar(m_mp));
 	Add(GPOS_NEW(m_mp) CXformExpandNAryJoin(m_mp));
 	Add(GPOS_NEW(m_mp) CXformExpandNAryJoinMinCard(m_mp));
@@ -187,8 +175,8 @@ CXformFactory::Instantiate()
 	Add(GPOS_NEW(m_mp) CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations(m_mp));
 	Add(GPOS_NEW(m_mp) CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn(m_mp));
 	Add(GPOS_NEW(m_mp) CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations(m_mp));
-	Add(GPOS_NEW(m_mp) CXformPushDownLeftOuterJoin (m_mp));
-	Add(GPOS_NEW(m_mp) CXformSimplifyLeftOuterJoin (m_mp));
+	Add(GPOS_NEW(m_mp) CXformPushDownLeftOuterJoin(m_mp));
+	Add(GPOS_NEW(m_mp) CXformSimplifyLeftOuterJoin(m_mp));
 	Add(GPOS_NEW(m_mp) CXformLeftOuterJoin2NLJoin(m_mp));
 	Add(GPOS_NEW(m_mp) CXformLeftOuterJoin2HashJoin(m_mp));
 	Add(GPOS_NEW(m_mp) CXformLeftSemiJoin2NLJoin(m_mp));
@@ -294,7 +282,7 @@ CXformFactory::Instantiate()
 				"Not all xforms have been instantiated");
 }
 
-						  
+
 //---------------------------------------------------------------------------
 //	@function:
 //		CXformFactory::Pxf
@@ -303,16 +291,12 @@ CXformFactory::Instantiate()
 //		Accessor of xform array
 //
 //---------------------------------------------------------------------------
-CXform*
-CXformFactory::Pxf
-	(
-	CXform::EXformId exfid
-	)
-	const
+CXform *
+CXformFactory::Pxf(CXform::EXformId exfid) const
 {
 	CXform *pxf = m_rgpxf[exfid];
 	GPOS_ASSERT(pxf->Exfid() == exfid);
-	
+
 	return pxf;
 }
 
@@ -326,11 +310,7 @@ CXformFactory::Pxf
 //
 //---------------------------------------------------------------------------
 CXform *
-CXformFactory::Pxf
-	(
-	const CHAR *szXformName
-	)
-	const
+CXformFactory::Pxf(const CHAR *szXformName) const
 {
 	return m_phmszxform->Find(szXformName);
 }
@@ -347,18 +327,13 @@ CXformFactory::Pxf
 GPOS_RESULT
 CXformFactory::Init()
 {
-	GPOS_ASSERT(NULL == Pxff() &&
-			    "Xform factory was already initialized");
+	GPOS_ASSERT(NULL == Pxff() && "Xform factory was already initialized");
 
 	GPOS_RESULT eres = GPOS_OK;
 
 	// create xform factory memory pool
-	IMemoryPool *mp = CMemoryPoolManager::GetMemoryPoolMgr()->Create
-							(
-							CMemoryPoolManager::EatTracker,
-							true /*fThreadSafe*/,
-							gpos::ullong_max
-							);
+	IMemoryPool *mp = CMemoryPoolManager::GetMemoryPoolMgr()->Create(
+		CMemoryPoolManager::EatTracker, true /*fThreadSafe*/, gpos::ullong_max);
 	GPOS_TRY
 	{
 		// create xform factory instance
@@ -403,8 +378,7 @@ CXformFactory::Shutdown()
 {
 	CXformFactory *pxff = CXformFactory::Pxff();
 
-	GPOS_ASSERT(NULL != pxff &&
-			    "Xform factory has not been initialized");
+	GPOS_ASSERT(NULL != pxff && "Xform factory has not been initialized");
 
 	IMemoryPool *mp = pxff->m_mp;
 
@@ -418,4 +392,3 @@ CXformFactory::Shutdown()
 
 
 // EOF
-

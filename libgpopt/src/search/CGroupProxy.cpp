@@ -29,12 +29,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CGroupProxy::CGroupProxy
-	(
-	CGroup *pgroup
-	)
-	:
-	m_pgroup(pgroup)
+CGroupProxy::CGroupProxy(CGroup *pgroup) : m_pgroup(pgroup)
 {
 	GPOS_ASSERT(NULL != pgroup);
 
@@ -64,11 +59,8 @@ CGroupProxy::~CGroupProxy()
 //		Insert group expression into group
 //
 //---------------------------------------------------------------------------
-void 
-CGroupProxy::Insert
-	(
-	CGroupExpression *pgexpr
-	)
+void
+CGroupProxy::Insert(CGroupExpression *pgexpr)
 {
 	pgexpr->Init(m_pgroup, m_pgroup->m_ulGExprs++);
 
@@ -87,22 +79,16 @@ CGroupProxy::Insert
 //
 //---------------------------------------------------------------------------
 void
-CGroupProxy::MoveDuplicateGExpr
-	(
-	CGroupExpression *pgexpr
-	)
+CGroupProxy::MoveDuplicateGExpr(CGroupExpression *pgexpr)
 {
 	GPOS_ASSERT(pgexpr->Pgroup() == m_pgroup);
 
 #ifdef GPOS_DEBUG
 	ULONG ulGExprsOld = m_pgroup->m_listGExprs.Size() + m_pgroup->m_listDupGExprs.Size();
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 	m_pgroup->MoveDuplicateGExpr(pgexpr);
-	GPOS_ASSERT
-		(
-		ulGExprsOld == (m_pgroup->m_listGExprs.Size() + m_pgroup->m_listDupGExprs.Size())
-		);
+	GPOS_ASSERT(ulGExprsOld == (m_pgroup->m_listGExprs.Size() + m_pgroup->m_listDupGExprs.Size()));
 }
 
 //---------------------------------------------------------------------------
@@ -114,10 +100,7 @@ CGroupProxy::MoveDuplicateGExpr
 //
 //---------------------------------------------------------------------------
 void
-CGroupProxy::InitProperties
-	(
-	DrvdPropArray *pdp
-	)
+CGroupProxy::InitProperties(DrvdPropArray *pdp)
 {
 	m_pgroup->InitProperties(pdp);
 }
@@ -132,10 +115,7 @@ CGroupProxy::InitProperties
 //
 //---------------------------------------------------------------------------
 void
-CGroupProxy::InitStats
-	(
-	IStatistics *stats
-	)
+CGroupProxy::InitStats(IStatistics *stats)
 {
 	m_pgroup->InitStats(stats);
 }
@@ -150,10 +130,7 @@ CGroupProxy::InitStats
 //
 //---------------------------------------------------------------------------
 CGroupExpression *
-CGroupProxy::PgexprNext
-	(
-	CGroupExpression *pgexpr
-	)
+CGroupProxy::PgexprNext(CGroupExpression *pgexpr)
 {
 	GPOS_ASSERT(NULL != pgexpr);
 	return m_pgroup->PgexprNext(pgexpr);
@@ -186,11 +163,7 @@ CGroupProxy::PgexprFirst()
 //
 //---------------------------------------------------------------------------
 CGroupExpression *
-CGroupProxy::PgexprSkip
-	(
-	CGroupExpression *pgexprStart,
-	BOOL fSkipLogical
-	)
+CGroupProxy::PgexprSkip(CGroupExpression *pgexprStart, BOOL fSkipLogical)
 {
 	CGroupExpression *pgexpr = pgexprStart;
 	while (NULL != pgexpr && fSkipLogical == pgexpr->Pop()->FLogical())
@@ -212,10 +185,7 @@ CGroupProxy::PgexprSkip
 //
 //---------------------------------------------------------------------------
 CGroupExpression *
-CGroupProxy::PgexprSkipLogical
-	(
-	CGroupExpression *pgexpr
-	)
+CGroupProxy::PgexprSkipLogical(CGroupExpression *pgexpr)
 {
 	if (NULL == pgexpr)
 	{
@@ -236,10 +206,7 @@ CGroupProxy::PgexprSkipLogical
 //
 //---------------------------------------------------------------------------
 CGroupExpression *
-CGroupProxy::PgexprNextLogical
-	(
-	CGroupExpression *pgexpr
-	)
+CGroupProxy::PgexprNextLogical(CGroupExpression *pgexpr)
 {
 	GPOS_ASSERT(!m_pgroup->FScalar());
 
@@ -249,9 +216,7 @@ CGroupProxy::PgexprNextLogical
 	}
 
 	return PgexprSkip(PgexprNext(pgexpr), false /*fSkipLogical*/);
-
 }
 
 
 // EOF
-

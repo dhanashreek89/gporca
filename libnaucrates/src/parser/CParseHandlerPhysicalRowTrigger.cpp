@@ -33,9 +33,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerPhysicalRowTrigger::CParseHandlerPhysicalRowTrigger(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerPhysicalOp(mp, parse_handler_mgr, parse_handler_root), m_dxl_op(NULL)
 {
 }
@@ -96,8 +94,7 @@ CParseHandlerPhysicalRowTrigger::StartElement(const XMLCh *const,  // element_ur
 														 EdxltokenPhysicalRowTrigger);
 	}
 
-	m_dxl_op = GPOS_NEW(m_mp)
-		CDXLPhysicalRowTrigger(m_mp, rel_mdid, type, colids_old, colids_new);
+	m_dxl_op = GPOS_NEW(m_mp) CDXLPhysicalRowTrigger(m_mp, rel_mdid, type, colids_old, colids_new);
 
 	// parse handler for physical operator
 	CParseHandlerBase *child_parse_handler = CParseHandlerFactory::GetParseHandler(

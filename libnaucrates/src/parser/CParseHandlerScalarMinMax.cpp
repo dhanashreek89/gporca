@@ -110,9 +110,8 @@ CParseHandlerScalarMinMax::EndElement(const XMLCh *const,  // element_uri
 	}
 
 	// construct node
-	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(
-		m_mp,
-		GPOS_NEW(m_mp) CDXLScalarMinMax(m_mp, m_mdid_type, m_min_max_type));
+	m_dxlnode = GPOS_NEW(m_mp)
+		CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarMinMax(m_mp, m_mdid_type, m_min_max_type));
 
 	// loop over children and add them to this parsehandler
 	const ULONG size = this->Length();

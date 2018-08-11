@@ -29,16 +29,12 @@ using namespace gpopt;
 //		Ctor - for pattern
 //
 //---------------------------------------------------------------------------
-CLogicalSetOp::CLogicalSetOp
-	(
-	IMemoryPool *mp
-	)
-	:
-	CLogical(mp),
-	m_pdrgpcrOutput(NULL),
-	m_pdrgpdrgpcrInput(NULL),
-	m_pcrsOutput(NULL),
-	m_pdrgpcrsInput(NULL)
+CLogicalSetOp::CLogicalSetOp(IMemoryPool *mp)
+	: CLogical(mp),
+	  m_pdrgpcrOutput(NULL),
+	  m_pdrgpdrgpcrInput(NULL),
+	  m_pcrsOutput(NULL),
+	  m_pdrgpcrsInput(NULL)
 {
 	m_fPattern = true;
 }
@@ -51,18 +47,14 @@ CLogicalSetOp::CLogicalSetOp
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalSetOp::CLogicalSetOp
-	(
-	IMemoryPool *mp,
-	CColRefArray *pdrgpcrOutput,
-	CColRefArrays *pdrgpdrgpcrInput
-	)
-	:
-	CLogical(mp),
-	m_pdrgpcrOutput(pdrgpcrOutput),
-	m_pdrgpdrgpcrInput(pdrgpdrgpcrInput),
-	m_pcrsOutput(NULL),
-	m_pdrgpcrsInput(NULL)
+CLogicalSetOp::CLogicalSetOp(IMemoryPool *mp,
+							 CColRefArray *pdrgpcrOutput,
+							 CColRefArrays *pdrgpdrgpcrInput)
+	: CLogical(mp),
+	  m_pdrgpcrOutput(pdrgpcrOutput),
+	  m_pdrgpdrgpcrInput(pdrgpdrgpcrInput),
+	  m_pcrsOutput(NULL),
+	  m_pdrgpcrsInput(NULL)
 {
 	GPOS_ASSERT(NULL != pdrgpcrOutput);
 	GPOS_ASSERT(NULL != pdrgpdrgpcrInput);
@@ -79,18 +71,12 @@ CLogicalSetOp::CLogicalSetOp
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalSetOp::CLogicalSetOp
-	(
-	IMemoryPool *mp,
-	CColRefArray *pdrgpcrOutput,
-	CColRefArray *pdrgpcrLeft,
-	CColRefArray *pdrgpcrRight
-	)
-	:
-	CLogical(mp),
-	m_pdrgpcrOutput(pdrgpcrOutput),
-	m_pdrgpdrgpcrInput(NULL)
-{	
+CLogicalSetOp::CLogicalSetOp(IMemoryPool *mp,
+							 CColRefArray *pdrgpcrOutput,
+							 CColRefArray *pdrgpcrLeft,
+							 CColRefArray *pdrgpcrRight)
+	: CLogical(mp), m_pdrgpcrOutput(pdrgpcrOutput), m_pdrgpdrgpcrInput(NULL)
+{
 	GPOS_ASSERT(NULL != pdrgpcrOutput);
 	GPOS_ASSERT(NULL != pdrgpcrLeft);
 	GPOS_ASSERT(NULL != pdrgpcrRight);
@@ -130,10 +116,7 @@ CLogicalSetOp::~CLogicalSetOp()
 //
 //---------------------------------------------------------------------------
 void
-CLogicalSetOp::BuildColumnSets
-	(
-	IMemoryPool *mp
-	)
+CLogicalSetOp::BuildColumnSets(IMemoryPool *mp)
 {
 	GPOS_ASSERT(NULL != m_pdrgpcrOutput);
 	GPOS_ASSERT(NULL != m_pdrgpdrgpcrInput);
@@ -161,14 +144,12 @@ CLogicalSetOp::BuildColumnSets
 //
 //---------------------------------------------------------------------------
 CColRefSet *
-CLogicalSetOp::PcrsDeriveOutput
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &
+CLogicalSetOp::PcrsDeriveOutput(IMemoryPool *,  // mp
+								CExpressionHandle &
 #ifdef GPOS_DEBUG
-	 exprhdl
-#endif // GPOS_DEBUG
-	)
+									exprhdl
+#endif  // GPOS_DEBUG
+)
 {
 #ifdef GPOS_DEBUG
 	const ULONG arity = exprhdl.Arity();
@@ -177,9 +158,9 @@ CLogicalSetOp::PcrsDeriveOutput
 		CColRefSet *pcrsChildOutput = exprhdl.GetRelationalProperties(ul)->PcrsOutput();
 		CColRefSet *pcrsInput = (*m_pdrgpcrsInput)[ul];
 		GPOS_ASSERT(pcrsChildOutput->ContainsAll(pcrsInput) &&
-				"Unexpected outer references in SetOp input");
+					"Unexpected outer references in SetOp input");
 	}
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 	m_pcrsOutput->AddRef();
 
@@ -195,12 +176,9 @@ CLogicalSetOp::PcrsDeriveOutput
 //
 //---------------------------------------------------------------------------
 CKeyCollection *
-CLogicalSetOp::PkcDeriveKeys
-	(
-	IMemoryPool *mp,
-	CExpressionHandle & // exprhdl
-	)
-	const
+CLogicalSetOp::PkcDeriveKeys(IMemoryPool *mp,
+							 CExpressionHandle &  // exprhdl
+							 ) const
 {
 	// TODO: 3/3/2012 - ; we can do better by remapping the keys between
 	// all children and check if they align
@@ -219,12 +197,7 @@ CLogicalSetOp::PkcDeriveKeys
 //
 //---------------------------------------------------------------------------
 CPartInfo *
-CLogicalSetOp::PpartinfoDerive
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl
-	)
-	const
+CLogicalSetOp::PpartinfoDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const
 {
 	const ULONG arity = exprhdl.Arity();
 	GPOS_ASSERT(0 < arity);
@@ -241,8 +214,10 @@ CLogicalSetOp::PpartinfoDerive
 		CColRefArray *pdrgpcrInput = (*m_pdrgpdrgpcrInput)[ul];
 		GPOS_ASSERT(pdrgpcrInput->Size() == m_pdrgpcrOutput->Size());
 
-		CPartInfo *ppartinfoRemapped = ppartinfoChild->PpartinfoWithRemappedKeys(mp, pdrgpcrInput, m_pdrgpcrOutput);
-		CPartInfo *ppartinfoCombined = CPartInfo::PpartinfoCombine(mp, ppartinfo, ppartinfoRemapped);
+		CPartInfo *ppartinfoRemapped =
+			ppartinfoChild->PpartinfoWithRemappedKeys(mp, pdrgpcrInput, m_pdrgpcrOutput);
+		CPartInfo *ppartinfoCombined =
+			CPartInfo::PpartinfoCombine(mp, ppartinfo, ppartinfoRemapped);
 		ppartinfoRemapped->Release();
 
 		ppartinfo->Release();
@@ -261,11 +236,7 @@ CLogicalSetOp::PpartinfoDerive
 //
 //---------------------------------------------------------------------------
 BOOL
-CLogicalSetOp::Matches
-	(
-	COperator *pop
-	)
-	const
+CLogicalSetOp::Matches(COperator *pop) const
 {
 	if (pop->Eopid() != Eopid())
 	{
@@ -276,8 +247,7 @@ CLogicalSetOp::Matches
 	CColRefArrays *pdrgpdrgpcrInput = popSetOp->PdrgpdrgpcrInput();
 	const ULONG arity = pdrgpdrgpcrInput->Size();
 
-	if (arity != m_pdrgpdrgpcrInput->Size() ||
-		!m_pdrgpcrOutput->Equals(popSetOp->PdrgpcrOutput()))
+	if (arity != m_pdrgpdrgpcrInput->Size() || !m_pdrgpcrOutput->Equals(popSetOp->PdrgpcrOutput()))
 	{
 		return false;
 	}
@@ -302,13 +272,9 @@ CLogicalSetOp::Matches
 //
 //---------------------------------------------------------------------------
 CColRefSetArray *
-CLogicalSetOp::PdrgpcrsOutputEquivClasses
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	BOOL fIntersect
-	)
-	const
+CLogicalSetOp::PdrgpcrsOutputEquivClasses(IMemoryPool *mp,
+										  CExpressionHandle &exprhdl,
+										  BOOL fIntersect) const
 {
 	const ULONG ulChildren = exprhdl.Arity();
 	CColRefSetArray *pdrgpcrs = PdrgpcrsInputMapped(mp, exprhdl, 0 /*ulChild*/);
@@ -328,7 +294,6 @@ CLogicalSetOp::PdrgpcrsOutputEquivClasses
 			// in case of a union, an equivalence class must be coming from all
 			// children to be part of the output
 			pdrgpcrsMerged = CUtils::PdrgpcrsIntersectEquivClasses(mp, pdrgpcrs, pdrgpcrsChild);
-
 		}
 		pdrgpcrsChild->Release();
 		pdrgpcrs->Release();
@@ -347,18 +312,13 @@ CLogicalSetOp::PdrgpcrsOutputEquivClasses
 //
 //---------------------------------------------------------------------------
 CColRefSetArray *
-CLogicalSetOp::PdrgpcrsInputMapped
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	ULONG ulChild
-	)
-	const
+CLogicalSetOp::PdrgpcrsInputMapped(IMemoryPool *mp, CExpressionHandle &exprhdl, ULONG ulChild) const
 {
-	CColRefSetArray *pdrgpcrsInput = exprhdl.GetRelationalProperties(ulChild)->Ppc()->PdrgpcrsEquivClasses();
+	CColRefSetArray *pdrgpcrsInput =
+		exprhdl.GetRelationalProperties(ulChild)->Ppc()->PdrgpcrsEquivClasses();
 	const ULONG length = pdrgpcrsInput->Size();
 
-	CColRefSet* pcrsChildInput = (*m_pdrgpcrsInput)[ulChild];
+	CColRefSet *pcrsChildInput = (*m_pdrgpcrsInput)[ulChild];
 	CColRefSetArray *pdrgpcrs = GPOS_NEW(mp) CColRefSetArray(mp);
 	for (ULONG ul = 0; ul < length; ul++)
 	{
@@ -390,14 +350,10 @@ CLogicalSetOp::PdrgpcrsInputMapped
 //
 //---------------------------------------------------------------------------
 CConstraintArray *
-CLogicalSetOp::PdrgpcnstrColumn
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	ULONG ulColIndex,
-	ULONG ulStart
-	)
-	const
+CLogicalSetOp::PdrgpcnstrColumn(IMemoryPool *mp,
+								CExpressionHandle &exprhdl,
+								ULONG ulColIndex,
+								ULONG ulStart) const
 {
 	CConstraintArray *pdrgpcnstr = GPOS_NEW(mp) CConstraintArray(mp);
 
@@ -415,7 +371,7 @@ CLogicalSetOp::PdrgpcnstrColumn
 		{
 			pcnstr = CConstraintInterval::PciUnbounded(mp, colref, true /*is_null*/);
 		}
-		GPOS_ASSERT (NULL != pcnstr);
+		GPOS_ASSERT(NULL != pcnstr);
 		pdrgpcnstr->Append(pcnstr);
 	}
 
@@ -431,14 +387,10 @@ CLogicalSetOp::PdrgpcnstrColumn
 //
 //---------------------------------------------------------------------------
 CConstraint *
-CLogicalSetOp::PcnstrColumn
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	ULONG ulColIndex,
-	ULONG ulChild
-	)
-	const
+CLogicalSetOp::PcnstrColumn(IMemoryPool *mp,
+							CExpressionHandle &exprhdl,
+							ULONG ulColIndex,
+							ULONG ulChild) const
 {
 	GPOS_ASSERT(ulChild < exprhdl.Arity());
 
@@ -471,13 +423,9 @@ CLogicalSetOp::PcnstrColumn
 //
 //---------------------------------------------------------------------------
 CPropConstraint *
-CLogicalSetOp::PpcDeriveConstraintIntersectUnion
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	BOOL fIntersect
-	)
-	const
+CLogicalSetOp::PpcDeriveConstraintIntersectUnion(IMemoryPool *mp,
+												 CExpressionHandle &exprhdl,
+												 BOOL fIntersect) const
 {
 	const ULONG num_cols = m_pdrgpcrOutput->Size();
 
@@ -519,14 +467,10 @@ CLogicalSetOp::PpcDeriveConstraintIntersectUnion
 //
 //---------------------------------------------------------------------------
 CColRefSet *
-CLogicalSetOp::PcrsStat
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &, //exprhdl,
-	CColRefSet *, //pcrsInput
-	ULONG child_index
-	)
-	const
+CLogicalSetOp::PcrsStat(IMemoryPool *,		  // mp
+						CExpressionHandle &,  //exprhdl,
+						CColRefSet *,		  //pcrsInput
+						ULONG child_index) const
 {
 	CColRefSet *pcrs = (*m_pdrgpcrsInput)[child_index];
 	pcrs->AddRef();
@@ -543,16 +487,12 @@ CLogicalSetOp::PcrsStat
 //
 //---------------------------------------------------------------------------
 IOstream &
-CLogicalSetOp::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CLogicalSetOp::OsPrint(IOstream &os) const
 {
 	os << SzId() << " Output: (";
 	CUtils::OsPrintDrgPcr(os, m_pdrgpcrOutput);
 	os << ")";
-	
+
 	os << ", Input: [";
 	const ULONG ulChildren = m_pdrgpdrgpcrInput->Size();
 	for (ULONG ul = 0; ul < ulChildren; ul++)

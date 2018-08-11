@@ -556,9 +556,9 @@ namespace gpdxl
 		// parse a comma-separated list of MDids into a dynamic array
 		// will raise an exception if list is not well-formed
 		static IMdIdArray *ExtractConvertMdIdsToArray(CDXLMemoryManager *dxl_memory_manager,
-														const XMLCh *mdid_list_xml,
-														Edxltoken target_attr,
-														Edxltoken target_elem);
+													  const XMLCh *mdid_list_xml,
+													  Edxltoken target_attr,
+													  Edxltoken target_elem);
 
 		// parse a comma-separated list of unsigned long numbers into a dynamic array
 		// will raise an exception if list is not well-formed
@@ -687,8 +687,7 @@ namespace gpdxl
 		// get the memory pool from the memory manager
 		IMemoryPool *mp = dxl_memory_manager->Pmp();
 
-		CDynamicPtrArray<T, CleanupFn> *pdrgpt =
-			GPOS_NEW(mp) CDynamicPtrArray<T, CleanupFn>(mp);
+		CDynamicPtrArray<T, CleanupFn> *pdrgpt = GPOS_NEW(mp) CDynamicPtrArray<T, CleanupFn>(mp);
 
 		XMLStringTokenizer mdid_components(mdid_list_xml, CDXLTokens::XmlstrToken(EdxltokenComma));
 		const ULONG num_tokens = mdid_components.countTokens();

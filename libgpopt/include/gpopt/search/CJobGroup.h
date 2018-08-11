@@ -33,66 +33,55 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CJobGroup : public CJob
 	{
-		private:
+	private:
+		// private copy ctor
+		CJobGroup(const CJobGroup &);
 
-			// private copy ctor
-			CJobGroup(const CJobGroup&);
+	protected:
+		// target group
+		CGroup *m_pgroup;
 
-		protected:
+		// last scheduled group expression
+		CGroupExpression *m_pgexprLastScheduled;
 
-			// target group
-			CGroup *m_pgroup;
+		// ctor
+		CJobGroup() : m_pgroup(NULL)
+		{
+		}
 
-			// last scheduled group expression
-			CGroupExpression *m_pgexprLastScheduled;
+		// dtor
+		virtual ~CJobGroup(){};
 
-			// ctor
-			CJobGroup()
-				:
-				m_pgroup(NULL)
-			{}
+		// initialize job
+		void Init(CGroup *pgroup);
 
-			// dtor
-			virtual
-			~CJobGroup()
-			{};
+		// get first unscheduled logical expression
+		virtual CGroupExpression *PgexprFirstUnschedLogical();
 
-			// initialize job
-			void Init(CGroup *pgroup);
+		// get first unscheduled non-logical expression
+		virtual CGroupExpression *PgexprFirstUnschedNonLogical();
 
-			// get first unscheduled logical expression
-			virtual
-			CGroupExpression *PgexprFirstUnschedLogical();
+		// get first unscheduled expression
+		virtual CGroupExpression *PgexprFirstUnsched() = 0;
 
-			// get first unscheduled non-logical expression
-			virtual
-			CGroupExpression *PgexprFirstUnschedNonLogical();
+		// schedule jobs for of all new group expressions
+		virtual BOOL FScheduleGroupExpressions(CSchedulerContext *psc) = 0;
 
-			// get first unscheduled expression
-			virtual
-			CGroupExpression *PgexprFirstUnsched() = 0;
-
-			// schedule jobs for of all new group expressions
-			virtual
-			BOOL FScheduleGroupExpressions(CSchedulerContext *psc) = 0;
-
-			// job's function
-			virtual
-			BOOL FExecute(CSchedulerContext *psc) = 0;
+		// job's function
+		virtual BOOL FExecute(CSchedulerContext *psc) = 0;
 
 #ifdef GPOS_DEBUG
 
-			// print function
-			virtual
-			IOstream &OsPrint(IOstream &os) = 0;
+		// print function
+		virtual IOstream &OsPrint(IOstream &os) = 0;
 
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
-	}; // class CJobGroup
+	};  // class CJobGroup
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CJobGroup_H
+#endif  // !GPOPT_CJobGroup_H
 
 
 // EOF

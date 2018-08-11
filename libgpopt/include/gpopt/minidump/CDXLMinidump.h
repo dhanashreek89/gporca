@@ -31,7 +31,6 @@ using namespace gpdxl;
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CDXLMinidump
@@ -42,97 +41,93 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CDXLMinidump
 	{
-		private:
-			// traceflags
-			CBitSet *m_pbs;
-			
-			// optimizer configuration
-			COptimizerConfig *m_optimizer_config;
-			
-			// DXL query tree
-			CDXLNode *m_query_dxl_root;
-			
-			// Array of DXL nodes that represent the query output
-			CDXLNodeArray *m_query_output;
-			
-			// Array of DXL nodes that represent the CTE producers
-			CDXLNodeArray *m_cte_producers;
+	private:
+		// traceflags
+		CBitSet *m_pbs;
 
-			// DXL plan
-			CDXLNode *m_plan_dxl_root;
+		// optimizer configuration
+		COptimizerConfig *m_optimizer_config;
 
-			// metadata objects
-			IMDCacheObjectArray *m_mdid_cached_obj_array;
-			
-			// source system ids
-			CSystemIdArray *m_system_id_array;
-			
-			// plan Id
-			ULLONG m_plan_id;
+		// DXL query tree
+		CDXLNode *m_query_dxl_root;
 
-			// plan space size
-			ULLONG m_plan_space_size;
+		// Array of DXL nodes that represent the query output
+		CDXLNodeArray *m_query_output;
 
-			// private copy ctor
-			CDXLMinidump(const CDXLMinidump&);
+		// Array of DXL nodes that represent the CTE producers
+		CDXLNodeArray *m_cte_producers;
 
-		public:
+		// DXL plan
+		CDXLNode *m_plan_dxl_root;
 
-			// ctor
-			CDXLMinidump
-				(
-				CBitSet *pbs, 
-				COptimizerConfig *optimizer_config,
-				CDXLNode *query, 
-				CDXLNodeArray *query_output_dxlnode_array,
-				CDXLNodeArray *cte_producers,
-				CDXLNode *pdxlnPlan, 
-				IMDCacheObjectArray *mdcache_obj_array,
-				CSystemIdArray *pdrgpsysid,
-				ULLONG plan_id,
-				ULLONG plan_space_size
-				);
+		// metadata objects
+		IMDCacheObjectArray *m_mdid_cached_obj_array;
 
-			// dtor
-			~CDXLMinidump();
-			
-			// traceflags
-			const CBitSet *Pbs() const;
-			
-			// optimizer configuration
-			COptimizerConfig *GetOptimizerConfig() const
-			{
-				return m_optimizer_config;
-			}
+		// source system ids
+		CSystemIdArray *m_system_id_array;
 
-			// query object
-			const CDXLNode *GetQueryDXLRoot() const;
-			
-			// query output columns
-			const CDXLNodeArray *PdrgpdxlnQueryOutput() const;
-			
-			// CTE list
-			const CDXLNodeArray *GetCTEProducerDXLArray() const;
+		// plan Id
+		ULLONG m_plan_id;
 
-			// plan
-			const CDXLNode *PdxlnPlan() const;
+		// plan space size
+		ULLONG m_plan_space_size;
 
-			// metadata objects
-			const IMDCacheObjectArray *GetMdIdCachedObjArray() const;
-			
-			// source system ids
-			const CSystemIdArray *GetSysidPtrArray() const;
-			
-			// return plan id
-			ULLONG GetPlanId() const;
+		// private copy ctor
+		CDXLMinidump(const CDXLMinidump &);
 
-			// return plan space size
-			ULLONG GetPlanSpaceSize() const;
+	public:
+		// ctor
+		CDXLMinidump(CBitSet *pbs,
+					 COptimizerConfig *optimizer_config,
+					 CDXLNode *query,
+					 CDXLNodeArray *query_output_dxlnode_array,
+					 CDXLNodeArray *cte_producers,
+					 CDXLNode *pdxlnPlan,
+					 IMDCacheObjectArray *mdcache_obj_array,
+					 CSystemIdArray *pdrgpsysid,
+					 ULLONG plan_id,
+					 ULLONG plan_space_size);
 
-	}; // class CDXLMinidump
-}
+		// dtor
+		~CDXLMinidump();
 
-#endif // !GPOPT_CDXLMinidump_H
+		// traceflags
+		const CBitSet *Pbs() const;
+
+		// optimizer configuration
+		COptimizerConfig *
+		GetOptimizerConfig() const
+		{
+			return m_optimizer_config;
+		}
+
+		// query object
+		const CDXLNode *GetQueryDXLRoot() const;
+
+		// query output columns
+		const CDXLNodeArray *PdrgpdxlnQueryOutput() const;
+
+		// CTE list
+		const CDXLNodeArray *GetCTEProducerDXLArray() const;
+
+		// plan
+		const CDXLNode *PdxlnPlan() const;
+
+		// metadata objects
+		const IMDCacheObjectArray *GetMdIdCachedObjArray() const;
+
+		// source system ids
+		const CSystemIdArray *GetSysidPtrArray() const;
+
+		// return plan id
+		ULLONG GetPlanId() const;
+
+		// return plan space size
+		ULLONG GetPlanSpaceSize() const;
+
+	};  // class CDXLMinidump
+}  // namespace gpopt
+
+#endif  // !GPOPT_CDXLMinidump_H
 
 // EOF
-

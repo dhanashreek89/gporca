@@ -23,18 +23,12 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CSearchStage::CSearchStage
-	(
-	CXformSet *xform_set,
-	ULONG ulTimeThreshold,
-	CCost costThreshold
-	)
-	:
-	m_xforms(xform_set),
-	m_time_threshold(ulTimeThreshold),
-	m_cost_threshold(costThreshold),
-	m_pexprBest(NULL),
-	m_costBest(GPOPT_INVALID_COST)
+CSearchStage::CSearchStage(CXformSet *xform_set, ULONG ulTimeThreshold, CCost costThreshold)
+	: m_xforms(xform_set),
+	  m_time_threshold(ulTimeThreshold),
+	  m_cost_threshold(costThreshold),
+	  m_pexprBest(NULL),
+	  m_costBest(GPOPT_INVALID_COST)
 {
 	GPOS_ASSERT(NULL != xform_set);
 	GPOS_ASSERT(0 < xform_set->Size());
@@ -68,16 +62,11 @@ CSearchStage::~CSearchStage()
 //
 //---------------------------------------------------------------------------
 IOstream &
-CSearchStage::OsPrint
-	(
-	IOstream &os
-	)
+CSearchStage::OsPrint(IOstream &os)
 {
-	os
-		<< "Search Stage" << std::endl
-		<< "\ttime threshold: " << m_time_threshold
-		<< ", cost threshold:" << m_cost_threshold
-		<< ", best plan found: " << std::endl;
+	os << "Search Stage" << std::endl
+	   << "\ttime threshold: " << m_time_threshold << ", cost threshold:" << m_cost_threshold
+	   << ", best plan found: " << std::endl;
 
 	if (NULL != m_pexprBest)
 	{
@@ -96,10 +85,7 @@ CSearchStage::OsPrint
 //
 //---------------------------------------------------------------------------
 void
-CSearchStage::SetBestExpr
-	(
-	CExpression *pexpr
-	)
+CSearchStage::SetBestExpr(CExpression *pexpr)
 {
 	GPOS_ASSERT_IMP(NULL != pexpr, pexpr->Pop()->FPhysical());
 
@@ -121,10 +107,7 @@ CSearchStage::SetBestExpr
 //
 //---------------------------------------------------------------------------
 CSearchStageArray *
-CSearchStage::PdrgpssDefault
-	(
-	IMemoryPool *mp
-	)
+CSearchStage::PdrgpssDefault(IMemoryPool *mp)
 {
 	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
 	xform_set->Union(CXformFactory::Pxff()->PxfsExploration());
@@ -136,4 +119,3 @@ CSearchStage::PdrgpssDefault
 }
 
 // EOF
-

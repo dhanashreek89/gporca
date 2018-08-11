@@ -28,58 +28,49 @@ namespace gpopt
 	//		Swap two cascaded anti semi-joins
 	//
 	//---------------------------------------------------------------------------
-	class CXformAntiSemiJoinAntiSemiJoinSwap : public CXformJoinSwap<CLogicalLeftAntiSemiJoin, CLogicalLeftAntiSemiJoin>
+	class CXformAntiSemiJoinAntiSemiJoinSwap
+		: public CXformJoinSwap<CLogicalLeftAntiSemiJoin, CLogicalLeftAntiSemiJoin>
 	{
+	private:
+		// private copy ctor
+		CXformAntiSemiJoinAntiSemiJoinSwap(const CXformAntiSemiJoinAntiSemiJoinSwap &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformAntiSemiJoinAntiSemiJoinSwap(IMemoryPool *mp)
+			: CXformJoinSwap<CLogicalLeftAntiSemiJoin, CLogicalLeftAntiSemiJoin>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformAntiSemiJoinAntiSemiJoinSwap(const CXformAntiSemiJoinAntiSemiJoinSwap &);
+		// dtor
+		virtual ~CXformAntiSemiJoinAntiSemiJoinSwap()
+		{
+		}
 
-		public:
+		// Compatibility function
+		virtual BOOL
+		FCompatible(CXform::EXformId exfid)
+		{
+			return ExfAntiSemiJoinAntiSemiJoinSwap != exfid;
+		}
 
-			// ctor
-			explicit
-			CXformAntiSemiJoinAntiSemiJoinSwap
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformJoinSwap<CLogicalLeftAntiSemiJoin, CLogicalLeftAntiSemiJoin>(mp)
-			{}
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfAntiSemiJoinAntiSemiJoinSwap;
+		}
 
-			// dtor
-			virtual
-			~CXformAntiSemiJoinAntiSemiJoinSwap()
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformAntiSemiJoinAntiSemiJoinSwap";
+		}
 
-			// Compatibility function
-			virtual
-			BOOL FCompatible
-				(
-				CXform::EXformId exfid
-				)
-			{
-				return ExfAntiSemiJoinAntiSemiJoinSwap != exfid;
-			}
+	};  // class CXformAntiSemiJoinAntiSemiJoinSwap
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfAntiSemiJoinAntiSemiJoinSwap;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformAntiSemiJoinAntiSemiJoinSwap";
-			}
-
-	}; // class CXformAntiSemiJoinAntiSemiJoinSwap
-
-}
-
-#endif // !GPOPT_CXformSemiJoinSemiJoinSwap_H
+#endif  // !GPOPT_CXformSemiJoinSemiJoinSwap_H
 
 // EOF

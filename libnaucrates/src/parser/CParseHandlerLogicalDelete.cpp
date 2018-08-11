@@ -128,10 +128,10 @@ CParseHandlerLogicalDelete::EndElement(const XMLCh *const,  // element_uri,
 	CDXLTableDescr *table_descr = table_descr_parse_handler->GetDXLTableDescr();
 	table_descr->AddRef();
 
-	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(
-		m_mp,
-		GPOS_NEW(m_mp) CDXLLogicalDelete(
-			m_mp, table_descr, m_ctid_colid, m_segid_colid, m_deletion_colid_array));
+	m_dxlnode = GPOS_NEW(m_mp)
+		CDXLNode(m_mp,
+				 GPOS_NEW(m_mp) CDXLLogicalDelete(
+					 m_mp, table_descr, m_ctid_colid, m_segid_colid, m_deletion_colid_array));
 
 	AddChildFromParseHandler(logical_op_parse_handler);
 

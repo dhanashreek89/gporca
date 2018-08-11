@@ -86,7 +86,8 @@ namespace gpmd
 	};
 
 	// array of dxl buckets
-	typedef CDynamicPtrArray<CDXLStatsDerivedRelation, CleanupRelease> CDXLStatsDerivedRelationArray;
+	typedef CDynamicPtrArray<CDXLStatsDerivedRelation, CleanupRelease>
+		CDXLStatsDerivedRelationArray;
 }  // namespace gpmd
 
 #endif  // !GPMD_CDXLStatsDerivedRelation_H

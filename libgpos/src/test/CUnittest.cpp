@@ -408,13 +408,10 @@ CUnittest::SetTraceFlag(const CHAR *szTrace)
 
 // Parse plan id
 ULLONG
-CUnittest::UllParsePlanId
-	(
-	const CHAR *szPlanId
-	)
+CUnittest::UllParsePlanId(const CHAR *szPlanId)
 {
 	CHAR *pcEnd = NULL;
-	LINT ullPlanId = clib::Strtol(szPlanId, &pcEnd, 0/*iBase*/);
+	LINT ullPlanId = clib::Strtol(szPlanId, &pcEnd, 0 /*iBase*/);
 	return ullPlanId;
 }
 

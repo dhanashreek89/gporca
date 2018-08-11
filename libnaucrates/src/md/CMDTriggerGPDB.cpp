@@ -48,8 +48,8 @@ CMDTriggerGPDB::CMDTriggerGPDB(IMemoryPool *mp,
 	GPOS_ASSERT(m_func_mdid->IsValid());
 	GPOS_ASSERT(0 <= type);
 
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+	m_dxl_str =
+		CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
 }
 
 //---------------------------------------------------------------------------

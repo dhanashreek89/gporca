@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CXformLeftOuterJoin2NLJoin
@@ -28,55 +28,45 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformLeftOuterJoin2NLJoin : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformLeftOuterJoin2NLJoin(const CXformLeftOuterJoin2NLJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformLeftOuterJoin2NLJoin(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformLeftOuterJoin2NLJoin(const CXformLeftOuterJoin2NLJoin &);
+		// dtor
+		virtual ~CXformLeftOuterJoin2NLJoin()
+		{
+		}
 
-		public:
-		
-			// ctor
-			explicit
-			CXformLeftOuterJoin2NLJoin(IMemoryPool *mp);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftOuterJoin2NLJoin;
+		}
 
-			// dtor
-			virtual 
-			~CXformLeftOuterJoin2NLJoin() {}
-
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftOuterJoin2NLJoin;
-			}
-			
-			// return a string for xform name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CXformLeftOuterJoin2NLJoin";
-			}
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftOuterJoin2NLJoin";
+		}
 
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// actual transform
-			void Transform
-					(
-					CXformContext *pxfctxt,
-					CXformResult *pxfres,
-					CExpression *pexpr
-					)
-					const;
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-	}; // class CXformLeftOuterJoin2NLJoin
+	};  // class CXformLeftOuterJoin2NLJoin
 
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformLeftOuterJoin2NLJoin_H
+#endif  // !GPOPT_CXformLeftOuterJoin2NLJoin_H
 
 // EOF

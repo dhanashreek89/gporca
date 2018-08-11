@@ -13,17 +13,17 @@ namespace gpopt
 	// (or unsatisfiable by) most other distributions to force a motion.
 	class CDistributionSpecStrictHashed : public CDistributionSpecHashed
 	{
-		public:
-			CDistributionSpecStrictHashed(CExpressionArray *pdrgpexpr, BOOL fNullsColocated);
+	public:
+		CDistributionSpecStrictHashed(CExpressionArray *pdrgpexpr, BOOL fNullsColocated);
 
-			virtual EDistributionType Edt() const;
+		virtual EDistributionType Edt() const;
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "STRICT HASHED";
-			}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "STRICT HASHED";
+		}
 	};
-}
+}  // namespace gpopt
 
 #endif

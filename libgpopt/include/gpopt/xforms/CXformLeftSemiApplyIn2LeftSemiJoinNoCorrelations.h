@@ -29,61 +29,52 @@ namespace gpopt
 	//		Transform Apply into Join by decorrelating the inner side
 	//
 	//---------------------------------------------------------------------------
-	class CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations : public CXformLeftSemiApply2LeftSemiJoinNoCorrelations
+	class CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations
+		: public CXformLeftSemiApply2LeftSemiJoinNoCorrelations
 	{
+	private:
+		// private copy ctor
+		CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations(
+			const CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations(IMemoryPool *mp)
+			: CXformLeftSemiApply2LeftSemiJoinNoCorrelations(
+				  mp,
+				  GPOS_NEW(mp) CExpression(
+					  mp,
+					  GPOS_NEW(mp) CLogicalLeftSemiApplyIn(mp),
+					  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // left child
+					  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp)),  // right child
+					  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))   // predicate
+					  ))
+		{
+		}
 
-			// private copy ctor
-			CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations(const CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations &);
+		// dtor
+		virtual ~CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftSemiApplyIn2LeftSemiJoinNoCorrelations;
+		}
 
-			// ctor
-			explicit
-			CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformLeftSemiApply2LeftSemiJoinNoCorrelations
-					(
-						mp,
-						GPOS_NEW(mp) CExpression
-							(
-							mp,
-							GPOS_NEW(mp) CLogicalLeftSemiApplyIn(mp),
-							GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)), // left child
-							GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp)), // right child
-							GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp)) // predicate
-							)
-					)
-			{}
-
-			// dtor
-			virtual
-			~CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations()
-			{}
-
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftSemiApplyIn2LeftSemiJoinNoCorrelations;
-			}
-
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations";
-			}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations";
+		}
 
 
-	}; // class CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations
+	};  // class CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations_H
+#endif  // !GPOPT_CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations_H
 
 // EOF
-

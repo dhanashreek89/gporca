@@ -96,8 +96,8 @@ CMDRelationExternalGPDB::CMDRelationExternalGPDB(IMemoryPool *mp,
 				m_nondrop_col_pos_array->Append(GPOS_NEW(m_mp) ULONG(ul));
 			}
 
-			(void) m_colpos_nondrop_colpos_map->Insert(
-				GPOS_NEW(m_mp) ULONG(ul), GPOS_NEW(m_mp) ULONG(ulPosNonDropped));
+			(void) m_colpos_nondrop_colpos_map->Insert(GPOS_NEW(m_mp) ULONG(ul),
+													   GPOS_NEW(m_mp) ULONG(ulPosNonDropped));
 			ulPosNonDropped++;
 		}
 
@@ -105,8 +105,8 @@ CMDRelationExternalGPDB::CMDRelationExternalGPDB(IMemoryPool *mp,
 													GPOS_NEW(m_mp) ULONG(ul));
 		m_col_width_array->Append(GPOS_NEW(mp) CDouble(pmdcol->Length()));
 	}
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+	m_dxl_str =
+		CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
 }
 
 //---------------------------------------------------------------------------

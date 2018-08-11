@@ -28,49 +28,44 @@ namespace gpopt
 	//		to physical left semi correlated join
 	//
 	//-------------------------------------------------------------------------
-	class CXformImplementLeftSemiCorrelatedApplyIn :
-		public CXformImplementCorrelatedApply<CLogicalLeftSemiCorrelatedApplyIn, CPhysicalCorrelatedInLeftSemiNLJoin>
+	class CXformImplementLeftSemiCorrelatedApplyIn
+		: public CXformImplementCorrelatedApply<CLogicalLeftSemiCorrelatedApplyIn,
+												CPhysicalCorrelatedInLeftSemiNLJoin>
 	{
+	private:
+		// private copy ctor
+		CXformImplementLeftSemiCorrelatedApplyIn(const CXformImplementLeftSemiCorrelatedApplyIn &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementLeftSemiCorrelatedApplyIn(IMemoryPool *mp)
+			: CXformImplementCorrelatedApply<CLogicalLeftSemiCorrelatedApplyIn,
+											 CPhysicalCorrelatedInLeftSemiNLJoin>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformImplementLeftSemiCorrelatedApplyIn(const CXformImplementLeftSemiCorrelatedApplyIn &);
+		// dtor
+		virtual ~CXformImplementLeftSemiCorrelatedApplyIn()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementLeftSemiCorrelatedApplyIn;
+		}
 
-			// ctor
-			explicit
-			CXformImplementLeftSemiCorrelatedApplyIn
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformImplementCorrelatedApply<CLogicalLeftSemiCorrelatedApplyIn, CPhysicalCorrelatedInLeftSemiNLJoin>(mp)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementLeftSemiCorrelatedApplyIn";
+		}
 
-			// dtor
-			virtual
-			~CXformImplementLeftSemiCorrelatedApplyIn()
-			{}
+	};  // class CXformImplementLeftSemiCorrelatedApplyIn
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementLeftSemiCorrelatedApplyIn;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementLeftSemiCorrelatedApplyIn";
-			}
-
-	}; // class CXformImplementLeftSemiCorrelatedApplyIn
-
-}
-
-#endif // !GPOPT_CXformImplementLeftSemiCorrelatedApplyIn_H
+#endif  // !GPOPT_CXformImplementLeftSemiCorrelatedApplyIn_H
 
 // EOF

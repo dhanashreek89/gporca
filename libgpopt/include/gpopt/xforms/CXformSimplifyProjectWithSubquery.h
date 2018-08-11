@@ -31,74 +31,60 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformSimplifyProjectWithSubquery : public CXformSimplifySubquery
 	{
+	private:
+		// private copy ctor
+		CXformSimplifyProjectWithSubquery(const CXformSimplifyProjectWithSubquery &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformSimplifyProjectWithSubquery(IMemoryPool *mp)
+			:  // pattern
+			  CXformSimplifySubquery(GPOS_NEW(mp) CExpression(
+				  mp,
+				  GPOS_NEW(mp) CLogicalProject(mp),
+				  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // relational child
+				  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))   // project list
+				  ))
+		{
+		}
 
-			// private copy ctor
-			CXformSimplifyProjectWithSubquery(const CXformSimplifyProjectWithSubquery &);
+		// dtor
+		virtual ~CXformSimplifyProjectWithSubquery()
+		{
+		}
 
-		public:
+		// Compatibility function for simplifying aggregates
+		virtual BOOL
+		FCompatible(CXform::EXformId exfid)
+		{
+			return (CXform::ExfSimplifyProjectWithSubquery != exfid);
+		}
 
-			// ctor
-			explicit
-			CXformSimplifyProjectWithSubquery
-				(
-				IMemoryPool *mp
-				)
-				:
-				// pattern
-				CXformSimplifySubquery
-				(
-				GPOS_NEW(mp) CExpression
-						(
-						mp,
-						GPOS_NEW(mp) CLogicalProject(mp),
-						GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),	// relational child
-						GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))	// project list
-						)
-				)
-			{}
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfSimplifyProjectWithSubquery;
+		}
 
-			// dtor
-			virtual
-			~CXformSimplifyProjectWithSubquery()
-			{}
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformSimplifyProjectWithSubquery";
+		}
 
-			// Compatibility function for simplifying aggregates
-			virtual
-			BOOL FCompatible
-				(
-				CXform::EXformId exfid
-				)
-			{
-				return (CXform::ExfSimplifyProjectWithSubquery != exfid);
-			}
+		// is transformation a subquery unnesting (Subquery To Apply) xform?
+		virtual BOOL
+		FSubqueryUnnesting() const
+		{
+			return true;
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfSimplifyProjectWithSubquery;
-			}
+	};  // class CXformSimplifyProjectWithSubquery
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformSimplifyProjectWithSubquery";
-			}
+}  // namespace gpopt
 
-			// is transformation a subquery unnesting (Subquery To Apply) xform?
-			virtual
-			BOOL FSubqueryUnnesting() const
-			{
-				return true;
-			}
-
-	}; // class CXformSimplifyProjectWithSubquery
-
-}
-
-#endif // !GPOPT_CXformSimplifyProjectWithSubquery_H
+#endif  // !GPOPT_CXformSimplifyProjectWithSubquery_H
 
 // EOF

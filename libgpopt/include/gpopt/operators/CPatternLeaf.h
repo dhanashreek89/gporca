@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPatternLeaf
@@ -28,55 +28,47 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPatternLeaf : public CPattern
 	{
+	private:
+		// private copy ctor
+		CPatternLeaf(const CPatternLeaf &);
 
-		private:
+	public:
+		// ctor
+		explicit CPatternLeaf(IMemoryPool *mp) : CPattern(mp)
+		{
+		}
 
-			// private copy ctor
-			CPatternLeaf(const CPatternLeaf &);
+		// dtor
+		virtual ~CPatternLeaf()
+		{
+		}
 
-		public:
-		
-			// ctor
-			explicit
-			CPatternLeaf
-				(
-				IMemoryPool *mp
-				)
-				: 
-				CPattern(mp)
-			{
-			}
+		// check if operator is a pattern leaf
+		virtual BOOL
+		FLeaf() const
+		{
+			return true;
+		}
 
-			// dtor
-			virtual 
-			~CPatternLeaf() {}
-			
-			// check if operator is a pattern leaf
-			virtual
-			BOOL FLeaf() const
-			{
-				return true;
-			}
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPatternLeaf;
+		}
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopPatternLeaf;
-			}
-			
-			// return a string for operator name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CPatternLeaf";
-			}		
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPatternLeaf";
+		}
 
-	}; // class CPatternLeaf
+	};  // class CPatternLeaf
 
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CPatternLeaf_H
+#endif  // !GPOPT_CPatternLeaf_H
 
 // EOF

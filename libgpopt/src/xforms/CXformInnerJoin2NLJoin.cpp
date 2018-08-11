@@ -27,24 +27,17 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CXformInnerJoin2NLJoin::CXformInnerJoin2NLJoin
-	(
-	IMemoryPool *mp
-	)
-	:
-	// pattern
-	CXformImplementation
-		(
-		GPOS_NEW(mp) CExpression
-					(
-					mp, 
-					GPOS_NEW(mp) CLogicalInnerJoin(mp),
-					GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)), // left child
-					GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)), // right child
-					GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))  // predicate
-					)
-		)
-{}
+CXformInnerJoin2NLJoin::CXformInnerJoin2NLJoin(IMemoryPool *mp)
+	:  // pattern
+	  CXformImplementation(GPOS_NEW(mp) CExpression(
+		  mp,
+		  GPOS_NEW(mp) CLogicalInnerJoin(mp),
+		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // left child
+		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // right child
+		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))   // predicate
+		  ))
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -56,11 +49,7 @@ CXformInnerJoin2NLJoin::CXformInnerJoin2NLJoin
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise
-CXformInnerJoin2NLJoin::Exfp
-	(
-	CExpressionHandle &exprhdl
-	)
-	const
+CXformInnerJoin2NLJoin::Exfp(CExpressionHandle &exprhdl) const
 {
 	return CXformUtils::ExfpLogicalJoin2PhysicalJoin(exprhdl);
 }
@@ -75,22 +64,16 @@ CXformInnerJoin2NLJoin::Exfp
 //
 //---------------------------------------------------------------------------
 void
-CXformInnerJoin2NLJoin::Transform
-	(
-	CXformContext *pxfctxt,
-	CXformResult *pxfres,
-	CExpression *pexpr
-	) 
-	const
+CXformInnerJoin2NLJoin::Transform(CXformContext *pxfctxt,
+								  CXformResult *pxfres,
+								  CExpression *pexpr) const
 {
 	GPOS_ASSERT(NULL != pxfctxt);
 	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
-	GPOS_ASSERT(FCheckPattern(pexpr));	
+	GPOS_ASSERT(FCheckPattern(pexpr));
 
 	CXformUtils::ImplementNLJoin<CPhysicalInnerNLJoin>(pxfctxt, pxfres, pexpr);
 }
-	
+
 
 // EOF
-
-

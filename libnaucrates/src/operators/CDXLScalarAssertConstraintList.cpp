@@ -26,8 +26,7 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarAssertConstraintList::CDXLScalarAssertConstraintList(IMemoryPool *mp)
-	: CDXLScalar(mp)
+CDXLScalarAssertConstraintList::CDXLScalarAssertConstraintList(IMemoryPool *mp) : CDXLScalar(mp)
 {
 }
 

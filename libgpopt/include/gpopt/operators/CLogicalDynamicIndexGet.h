@@ -19,12 +19,11 @@
 
 namespace gpopt
 {
-
 	// fwd declarations
 	class CName;
 	class CColRefSet;
 	class CPartConstraint;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CLogicalDynamicIndexGet
@@ -35,183 +34,163 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalDynamicIndexGet : public CLogicalDynamicGetBase
 	{
+	private:
+		// index descriptor
+		CIndexDescriptor *m_pindexdesc;
 
-		private:
+		// origin operator id -- gpos::ulong_max if operator was not generated via a transformation
+		ULONG m_ulOriginOpId;
 
-			// index descriptor
-			CIndexDescriptor *m_pindexdesc;
+		// order spec
+		COrderSpec *m_pos;
 
-			// origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-			ULONG m_ulOriginOpId;
+		// private copy ctor
+		CLogicalDynamicIndexGet(const CLogicalDynamicIndexGet &);
 
-			// order spec
-			COrderSpec *m_pos;
+	public:
+		// ctors
+		explicit CLogicalDynamicIndexGet(IMemoryPool *mp);
 
-			// private copy ctor
-			CLogicalDynamicIndexGet(const CLogicalDynamicIndexGet &);
+		CLogicalDynamicIndexGet(IMemoryPool *mp,
+								const IMDIndex *pmdindex,
+								CTableDescriptor *ptabdesc,
+								ULONG ulOriginOpId,
+								const CName *pnameAlias,
+								ULONG ulPartIndex,
+								CColRefArray *pdrgpcrOutput,
+								CColRefArrays *pdrgpdrgpcrPart,
+								ULONG ulSecondaryPartIndexId,
+								CPartConstraint *ppartcnstr,
+								CPartConstraint *ppartcnstrRel);
 
-		public:
+		// dtor
+		virtual ~CLogicalDynamicIndexGet();
 
-			// ctors
-			explicit
-			CLogicalDynamicIndexGet(IMemoryPool *mp);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalDynamicIndexGet;
+		}
 
-			CLogicalDynamicIndexGet
-				(
-				IMemoryPool *mp,
-				const IMDIndex *pmdindex,
-				CTableDescriptor *ptabdesc,
-				ULONG ulOriginOpId,
-				const CName *pnameAlias,
-				ULONG ulPartIndex,
-				CColRefArray *pdrgpcrOutput,
-				CColRefArrays *pdrgpdrgpcrPart,
-				ULONG ulSecondaryPartIndexId,
-				CPartConstraint *ppartcnstr,
-				CPartConstraint *ppartcnstrRel
-				);
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalDynamicIndexGet";
+		}
 
-			// dtor
-			virtual
-			~CLogicalDynamicIndexGet();
+		// origin operator id -- gpos::ulong_max if operator was not generated via a transformation
+		ULONG
+		UlOriginOpId() const
+		{
+			return m_ulOriginOpId;
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopLogicalDynamicIndexGet;
-			}
+		// index name
+		const CName &
+		Name() const
+		{
+			return m_pindexdesc->Name();
+		}
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CLogicalDynamicIndexGet";
-			}
+		// table alias name
+		const CName &
+		NameAlias() const
+		{
+			return *m_pnameAlias;
+		}
 
-			// origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-			ULONG UlOriginOpId() const
-			{
-				return m_ulOriginOpId;
-			}
+		// index descriptor
+		CIndexDescriptor *
+		Pindexdesc() const
+		{
+			return m_pindexdesc;
+		}
 
-			// index name
-			const CName &Name() const
-			{
-				return m_pindexdesc->Name();
-			}
+		// check if index is partial given the table descriptor and the index mdid
+		static BOOL IsPartialIndex(CTableDescriptor *ptabdesc, const IMDIndex *pmdindex);
 
-			// table alias name
-			const CName &NameAlias() const
-			{
-				return *m_pnameAlias;
-			}
+		// order spec
+		COrderSpec *
+		Pos() const
+		{
+			return m_pos;
+		}
 
-			// index descriptor
-			CIndexDescriptor *Pindexdesc() const
-			{
-				return m_pindexdesc;
-			}
+		// operator specific hash function
+		virtual ULONG HashValue() const;
 
-			// check if index is partial given the table descriptor and the index mdid
-			static
-			BOOL IsPartialIndex(CTableDescriptor *ptabdesc, const IMDIndex *pmdindex);
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// order spec
-			COrderSpec *Pos() const
-			{
-				return m_pos;
-			}
+		// derive outer references
+		virtual CColRefSet *PcrsDeriveOuter(IMemoryPool *mp, CExpressionHandle &exprhdl);
 
-			// operator specific hash function
-			virtual
-			ULONG HashValue() const;
+		// sensitivity to order of inputs
+		virtual BOOL FInputOrderSensitive() const;
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
+		// return a copy of the operator with remapped columns
+		virtual COperator *PopCopyWithRemappedColumns(IMemoryPool *mp,
+													  UlongToColRefMap *colref_mapping,
+													  BOOL must_exist);
 
-			// derive outer references
-			virtual
-			CColRefSet *PcrsDeriveOuter(IMemoryPool *mp, CExpressionHandle &exprhdl);
-			
-			// sensitivity to order of inputs
-			virtual
-			BOOL FInputOrderSensitive() const;
+		//-------------------------------------------------------------------------------------
+		// Required Relational Properties
+		//-------------------------------------------------------------------------------------
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+		// compute required stat columns of the n-th child
+		virtual CColRefSet *
+		PcrsStat(IMemoryPool *,		   //mp
+				 CExpressionHandle &,  // exprhdl
+				 CColRefSet *,		   //pcrsInput
+				 ULONG				   // child_index
+				 ) const
+		{
+			GPOS_ASSERT(!"CLogicalDynamicIndexGet has no children");
+			return NULL;
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Required Relational Properties
-			//-------------------------------------------------------------------------------------
+		// derive statistics
+		virtual IStatistics *PstatsDerive(IMemoryPool *mp,
+										  CExpressionHandle &exprhdl,
+										  IStatisticsArray *stats_ctxt) const;
 
-			// compute required stat columns of the n-th child
-			virtual
-			CColRefSet *PcrsStat
-				(
-				IMemoryPool *, //mp
-				CExpressionHandle &, // exprhdl
-				CColRefSet *, //pcrsInput
-				ULONG // child_index
-				)
-				const
-			{
-				GPOS_ASSERT(!"CLogicalDynamicIndexGet has no children");
-				return NULL;
-			}
+		// stat promise
+		virtual EStatPromise
+		Esp(CExpressionHandle &) const
+		{
+			return CLogical::EspHigh;
+		}
 
-			// derive statistics
-			virtual
-			IStatistics *PstatsDerive
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				IStatisticsArray *stats_ctxt
-				)
-				const;
+		//-------------------------------------------------------------------------------------
+		// Transformations
+		//-------------------------------------------------------------------------------------
 
-			// stat promise
-			virtual
-			EStatPromise Esp(CExpressionHandle &) const
-			{
-				return CLogical::EspHigh;
-			}
+		// candidate set of xforms
+		virtual CXformSet *PxfsCandidates(IMemoryPool *mp) const;
 
-			//-------------------------------------------------------------------------------------
-			// Transformations
-			//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		// conversion function
+		//-------------------------------------------------------------------------------------
 
-			// candidate set of xforms
-			virtual
-			CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+		static CLogicalDynamicIndexGet *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalDynamicIndexGet == pop->Eopid());
 
-			//-------------------------------------------------------------------------------------
-			// conversion function
-			//-------------------------------------------------------------------------------------
-
-			static
-			CLogicalDynamicIndexGet *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalDynamicIndexGet == pop->Eopid());
-
-				return dynamic_cast<CLogicalDynamicIndexGet*>(pop);
-			}
+			return dynamic_cast<CLogicalDynamicIndexGet *>(pop);
+		}
 
 
-			// debug print
-			virtual
-			IOstream &OsPrint(IOstream &) const;
+		// debug print
+		virtual IOstream &OsPrint(IOstream &) const;
 
-	}; // class CLogicalDynamicIndexGet
+	};  // class CLogicalDynamicIndexGet
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CLogicalDynamicIndexGet_H
+#endif  // !GPOPT_CLogicalDynamicIndexGet_H
 
 // EOF

@@ -28,56 +28,50 @@ namespace gpopt
 	//		Transform Apply into Join by decorrelating the inner side
 	//
 	//---------------------------------------------------------------------------
-	class CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations : public CXformApply2Join<CLogicalLeftAntiSemiApply, CLogicalLeftAntiSemiJoin>
+	class CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations
+		: public CXformApply2Join<CLogicalLeftAntiSemiApply, CLogicalLeftAntiSemiJoin>
 	{
+	private:
+		// private copy ctor
+		CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations(
+			const CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations(IMemoryPool *mp)
+			: CXformApply2Join<CLogicalLeftAntiSemiApply, CLogicalLeftAntiSemiJoin>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations(const CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations &);
+		// dtor
+		virtual ~CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations;
+		}
 
-			// ctor
-			explicit
-			CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformApply2Join<CLogicalLeftAntiSemiApply, CLogicalLeftAntiSemiJoin>(mp)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations";
+		}
 
-			// dtor
-			virtual
-			~CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations;
-			}
-
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations";
-			}
-
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
 
-	}; // class CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations
+	};  // class CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations_H
+#endif  // !GPOPT_CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations_H
 
 // EOF

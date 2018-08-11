@@ -16,155 +16,130 @@
 
 namespace gpopt
 {
-
 	class CLogicalIndexApply : public CLogicalApply
 	{
-		private:
+	private:
+		// private copy ctor
+		CLogicalIndexApply(const CLogicalIndexApply &);
 
-			// private copy ctor
-			CLogicalIndexApply(const CLogicalIndexApply &);
+	protected:
+		// columns used from Apply's outer child used by index in Apply's inner child
+		CColRefArray *m_pdrgpcrOuterRefs;
 
-		protected:
+		// is this an outer join?
+		BOOL m_fOuterJoin;
 
-			// columns used from Apply's outer child used by index in Apply's inner child
-			CColRefArray *m_pdrgpcrOuterRefs;
+	public:
+		// ctor
+		CLogicalIndexApply(IMemoryPool *mp, CColRefArray *pdrgpcrOuterRefs, BOOL fOuterJoin);
 
-			// is this an outer join?
-			BOOL m_fOuterJoin;
+		// ctor for patterns
+		explicit CLogicalIndexApply(IMemoryPool *mp);
 
-		public:
+		// dtor
+		virtual ~CLogicalIndexApply();
 
-			// ctor
-			CLogicalIndexApply(IMemoryPool *mp,  CColRefArray *pdrgpcrOuterRefs, BOOL fOuterJoin);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalIndexApply;
+		}
 
-			// ctor for patterns
-			explicit
-			CLogicalIndexApply(IMemoryPool *mp);
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalIndexApply";
+		}
 
-			// dtor
-			virtual
-			~CLogicalIndexApply();
+		// outer column references accessor
+		CColRefArray *
+		PdrgPcrOuterRefs() const
+		{
+			return m_pdrgpcrOuterRefs;
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopLogicalIndexApply;
-			}
+		// outer column references accessor
+		BOOL
+		FouterJoin() const
+		{
+			return m_fOuterJoin;
+		}
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CLogicalIndexApply";
-			}
+		//-------------------------------------------------------------------------------------
+		// Derived Relational Properties
+		//-------------------------------------------------------------------------------------
 
-			// outer column references accessor
-			CColRefArray *PdrgPcrOuterRefs() const
-			{
-				return m_pdrgpcrOuterRefs;
-			}
+		// derive output columns
+		virtual CColRefSet *
+		PcrsDeriveOutput(IMemoryPool *mp, CExpressionHandle &exprhdl)
+		{
+			GPOS_ASSERT(3 == exprhdl.Arity());
 
-			// outer column references accessor
-			BOOL FouterJoin() const
-			{
-				return m_fOuterJoin;
-			}
+			return PcrsDeriveOutputCombineLogical(mp, exprhdl);
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Derived Relational Properties
-			//-------------------------------------------------------------------------------------
+		// derive not nullable columns
+		virtual CColRefSet *
+		PcrsDeriveNotNull(IMemoryPool *mp, CExpressionHandle &exprhdl) const
+		{
+			return PcrsDeriveNotNullCombineLogical(mp, exprhdl);
+		}
 
-			// derive output columns
-			virtual
-			CColRefSet *PcrsDeriveOutput
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl
-				)
-			{
-				GPOS_ASSERT(3 == exprhdl.Arity());
+		// derive max card
+		virtual CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-				return PcrsDeriveOutputCombineLogical(mp, exprhdl);
-			}
+		// derive constraint property
+		virtual CPropConstraint *
+		PpcDeriveConstraint(IMemoryPool *mp, CExpressionHandle &exprhdl) const
+		{
+			return PpcDeriveConstraintFromPredicates(mp, exprhdl);
+		}
 
-			// derive not nullable columns
-			virtual
-			CColRefSet *PcrsDeriveNotNull
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl
-				)
-				const
-			{
-				return PcrsDeriveNotNullCombineLogical(mp, exprhdl);
-			}
+		// applicable transformations
+		virtual CXformSet *PxfsCandidates(IMemoryPool *mp) const;
 
-			// derive max card
-			virtual
-			CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// derive constraint property
-			virtual
-			CPropConstraint *PpcDeriveConstraint
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl
-				)
-				const
-			{
-				return PpcDeriveConstraintFromPredicates(mp, exprhdl);
-			}
+		//-------------------------------------------------------------------------------------
+		// Derived Stats
+		//-------------------------------------------------------------------------------------
 
-			// applicable transformations
-			virtual
-			CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+		// derive statistics
+		virtual IStatistics *PstatsDerive(IMemoryPool *mp,
+										  CExpressionHandle &exprhdl,
+										  IStatisticsArray *stats_ctxt) const;
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
+		// stat promise
+		virtual EStatPromise
+		Esp(CExpressionHandle &  // exprhdl
+			) const
+		{
+			return CLogical::EspMedium;
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Derived Stats
-			//-------------------------------------------------------------------------------------
+		// return a copy of the operator with remapped columns
+		virtual COperator *PopCopyWithRemappedColumns(IMemoryPool *mp,
+													  UlongToColRefMap *colref_mapping,
+													  BOOL must_exist);
 
-			// derive statistics
-			virtual
-			IStatistics *PstatsDerive(IMemoryPool *mp, CExpressionHandle &exprhdl, IStatisticsArray *stats_ctxt) const;
+		// conversion function
+		static CLogicalIndexApply *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalIndexApply == pop->Eopid());
 
-			// stat promise
-			virtual
-			EStatPromise Esp
-				(
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{
-				return CLogical::EspMedium;
-			}
+			return dynamic_cast<CLogicalIndexApply *>(pop);
+		}
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+	};  // class CLogicalIndexApply
 
-			// conversion function
-			static
-			CLogicalIndexApply *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalIndexApply == pop->Eopid());
-
-				return dynamic_cast<CLogicalIndexApply*>(pop);
-			}
-
-	}; // class CLogicalIndexApply
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CLogicalIndexApply_H
+#endif  // !GPOPT_CLogicalIndexApply_H
 
 // EOF

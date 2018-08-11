@@ -32,9 +32,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerScalarArrayRefIndexList::CParseHandlerScalarArrayRefIndexList(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root)
 {
 }
@@ -77,9 +75,8 @@ CParseHandlerScalarArrayRefIndexList::StartElement(const XMLCh *const element_ur
 				CDXLTokens::GetDXLTokenStr(EdxltokenScalarArrayRefIndexList)->GetBuffer());
 		}
 
-		m_dxlnode = GPOS_NEW(m_mp)
-			CDXLNode(m_mp,
-					 GPOS_NEW(m_mp) CDXLScalarArrayRefIndexList(m_mp, eilb));
+		m_dxlnode =
+			GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarArrayRefIndexList(m_mp, eilb));
 	}
 	else
 	{

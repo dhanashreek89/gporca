@@ -18,7 +18,6 @@
 
 namespace gpopt
 {
-	
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CLogicalUnion
@@ -29,123 +28,103 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalUnion : public CLogicalSetOp
 	{
+	private:
+		// private copy ctor
+		CLogicalUnion(const CLogicalUnion &);
 
-		private:
+	public:
+		// ctor
+		explicit CLogicalUnion(IMemoryPool *mp);
 
-			// private copy ctor
-			CLogicalUnion(const CLogicalUnion &);
+		CLogicalUnion(IMemoryPool *mp,
+					  CColRefArray *pdrgpcrOutput,
+					  CColRefArrays *pdrgpdrgpcrInput);
 
-		public:
-		
-			// ctor
-			explicit
-			CLogicalUnion(IMemoryPool *mp);
+		// dtor
+		virtual ~CLogicalUnion();
 
-			CLogicalUnion
-				(
-				IMemoryPool *mp,
-				CColRefArray *pdrgpcrOutput,
-				CColRefArrays *pdrgpdrgpcrInput
-				);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalUnion;
+		}
 
-			// dtor
-			virtual
-			~CLogicalUnion();
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalUnion";
+		}
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopLogicalUnion;
-			}
-			
-			// return a string for operator name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CLogicalUnion";
-			}
-			
-			// sensitivity to order of inputs
-			BOOL FInputOrderSensitive() const
-			{
-				return true;
-			}
-			
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+		// sensitivity to order of inputs
+		BOOL
+		FInputOrderSensitive() const
+		{
+			return true;
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Derived Relational Properties
-			//-------------------------------------------------------------------------------------
+		// return a copy of the operator with remapped columns
+		virtual COperator *PopCopyWithRemappedColumns(IMemoryPool *mp,
+													  UlongToColRefMap *colref_mapping,
+													  BOOL must_exist);
 
-			// derive max card
-			virtual
-			CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		//-------------------------------------------------------------------------------------
+		// Derived Relational Properties
+		//-------------------------------------------------------------------------------------
 
-			// derive constraint property
-			virtual
-			CPropConstraint *PpcDeriveConstraint
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl
-				)
-				const
-			{
-				return PpcDeriveConstraintIntersectUnion(mp, exprhdl, false /*fIntersect*/);
-			}
+		// derive max card
+		virtual CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			//-------------------------------------------------------------------------------------
-			// Transformations
-			//-------------------------------------------------------------------------------------
+		// derive constraint property
+		virtual CPropConstraint *
+		PpcDeriveConstraint(IMemoryPool *mp, CExpressionHandle &exprhdl) const
+		{
+			return PpcDeriveConstraintIntersectUnion(mp, exprhdl, false /*fIntersect*/);
+		}
 
-			// candidate set of xforms
-			CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+		//-------------------------------------------------------------------------------------
+		// Transformations
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			// Derived Stats
-			//-------------------------------------------------------------------------------------
+		// candidate set of xforms
+		CXformSet *PxfsCandidates(IMemoryPool *mp) const;
 
-			// stat promise
-			virtual
-			EStatPromise Esp(CExpressionHandle &) const
-			{
-				return CLogical::EspHigh;
-			}
+		//-------------------------------------------------------------------------------------
+		// Derived Stats
+		//-------------------------------------------------------------------------------------
 
-			// derive statistics
-			virtual
-			IStatistics *PstatsDerive
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				IStatisticsArray *stats_ctxt
-				)
-				const;
+		// stat promise
+		virtual EStatPromise
+		Esp(CExpressionHandle &) const
+		{
+			return CLogical::EspHigh;
+		}
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+		// derive statistics
+		virtual IStatistics *PstatsDerive(IMemoryPool *mp,
+										  CExpressionHandle &exprhdl,
+										  IStatisticsArray *stats_ctxt) const;
 
-			// conversion function
-			static
-			CLogicalUnion *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalUnion == pop->Eopid());
-				
-				return reinterpret_cast<CLogicalUnion*>(pop);
-			}
-		
-	}; // class CLogicalUnion
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
 
-}
+		// conversion function
+		static CLogicalUnion *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalUnion == pop->Eopid());
+
+			return reinterpret_cast<CLogicalUnion *>(pop);
+		}
+
+	};  // class CLogicalUnion
+
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CLogicalUnion_H
+#endif  // !GPOPT_CLogicalUnion_H
 
 // EOF

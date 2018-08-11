@@ -27,33 +27,29 @@ namespace gpnaucrates
 	//---------------------------------------------------------------------------
 	class CMCVTest
 	{
-		private:
-			// triplet consisting of MCV input file, histogram input file and merged output file
-			struct SMergeTestElem
-				{
-				const CHAR *szInputMCVFile;
-				const CHAR *szInputHistFile;
-				const CHAR *szMergedFile;
-				};
+	private:
+		// triplet consisting of MCV input file, histogram input file and merged output file
+		struct SMergeTestElem
+		{
+			const CHAR *szInputMCVFile;
+			const CHAR *szInputHistFile;
+			const CHAR *szMergedFile;
+		};
 
-		public:
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
 
-			// unittests
-			static
-			GPOS_RESULT EresUnittest();
+		// sort MCVs tests
+		static GPOS_RESULT EresUnittest_SortInt4MCVs();
 
-			// sort MCVs tests
-			static
-			GPOS_RESULT EresUnittest_SortInt4MCVs();
+		// merge MCVs and histogram
+		static GPOS_RESULT EresUnittest_MergeHistMCV();
 
-			// merge MCVs and histogram
-			static
-			GPOS_RESULT EresUnittest_MergeHistMCV();
+	};  // class CMCVTest
+}  // namespace gpnaucrates
 
-	}; // class CMCVTest
-}
-
-#endif // !GPNAUCRATES_CMCVTest_H
+#endif  // !GPNAUCRATES_CMCVTest_H
 
 
 // EOF

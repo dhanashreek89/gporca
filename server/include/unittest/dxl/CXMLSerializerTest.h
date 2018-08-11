@@ -36,25 +36,24 @@ namespace gpdxl
 	//		Static unit tests
 	//
 	//---------------------------------------------------------------------------
-	
+
 	class CXMLSerializerTest
 	{
-		private:
-			// helper function for using the XML serializer to generate a document
-			// with or without indentation
-			static CWStringDynamic *Pstr(IMemoryPool *mp, BOOL indentation);
-			
-		public:
+	private:
+		// helper function for using the XML serializer to generate a document
+		// with or without indentation
+		static CWStringDynamic *Pstr(IMemoryPool *mp, BOOL indentation);
 
-			// unittests
-			static GPOS_RESULT EresUnittest();
-			static GPOS_RESULT EresUnittest_Basic();
-			static GPOS_RESULT EresUnittest_NoIndent();
-			static GPOS_RESULT EresUnittest_Base64();
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
+		static GPOS_RESULT EresUnittest_Basic();
+		static GPOS_RESULT EresUnittest_NoIndent();
+		static GPOS_RESULT EresUnittest_Base64();
 
-	}; // class CXMLSerializerTest
-}
+	};  // class CXMLSerializerTest
+}  // namespace gpdxl
 
-#endif // !GPOPT_CXMLSerializerTest_H
+#endif  // !GPOPT_CXMLSerializerTest_H
 
 // EOF

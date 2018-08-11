@@ -29,15 +29,11 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalExternalScan::CPhysicalExternalScan
-	(
-	IMemoryPool *mp,
-	const CName *pnameAlias,
-	CTableDescriptor *ptabdesc,
-	CColRefArray *pdrgpcrOutput
-	)
-	:
-	CPhysicalTableScan(mp, pnameAlias, ptabdesc, pdrgpcrOutput)
+CPhysicalExternalScan::CPhysicalExternalScan(IMemoryPool *mp,
+											 const CName *pnameAlias,
+											 CTableDescriptor *ptabdesc,
+											 CColRefArray *pdrgpcrOutput)
+	: CPhysicalTableScan(mp, pnameAlias, ptabdesc, pdrgpcrOutput)
 {
 	// if this table is master only, then keep the original distribution spec.
 	if (IMDRelation::EreldistrMasterOnly == ptabdesc->GetRelDistribution())
@@ -63,11 +59,7 @@ CPhysicalExternalScan::CPhysicalExternalScan
 //
 //---------------------------------------------------------------------------
 BOOL
-CPhysicalExternalScan::Matches
-	(
-	COperator *pop
-	)
-	const
+CPhysicalExternalScan::Matches(COperator *pop) const
 {
 	if (Eopid() != pop->Eopid())
 	{
@@ -76,7 +68,7 @@ CPhysicalExternalScan::Matches
 
 	CPhysicalExternalScan *popExternalScan = CPhysicalExternalScan::PopConvert(pop);
 	return m_ptabdesc == popExternalScan->Ptabdesc() &&
-			m_pdrgpcrOutput->Equals(popExternalScan->PdrgpcrOutput());
+		   m_pdrgpcrOutput->Equals(popExternalScan->PdrgpcrOutput());
 }
 
 //---------------------------------------------------------------------------
@@ -88,12 +80,8 @@ CPhysicalExternalScan::Matches
 //
 //---------------------------------------------------------------------------
 CEnfdProp::EPropEnforcingType
-CPhysicalExternalScan::EpetRewindability
-	(
-	CExpressionHandle &exprhdl,
-	const CEnfdRewindability *per
-	)
-	const
+CPhysicalExternalScan::EpetRewindability(CExpressionHandle &exprhdl,
+										 const CEnfdRewindability *per) const
 {
 	CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
 	if (per->FCompatible(prs))
@@ -101,8 +89,7 @@ CPhysicalExternalScan::EpetRewindability
 		return CEnfdProp::EpetUnnecessary;
 	}
 
-    return CEnfdProp::EpetRequired;
+	return CEnfdProp::EpetRequired;
 }
 
 // EOF
-

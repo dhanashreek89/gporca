@@ -27,17 +27,16 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformFactoryTest
 	{
-		public:
-			
-			// unittests
-			static GPOS_RESULT EresUnittest();
-			static GPOS_RESULT EresUnittest_Basic();
-			
-	}; // class CXformFactoryTest
-	
-}
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
+		static GPOS_RESULT EresUnittest_Basic();
+
+	};  // class CXformFactoryTest
+
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformFactoryTest_H
+#endif  // !GPOPT_CXformFactoryTest_H
 
 // EOF

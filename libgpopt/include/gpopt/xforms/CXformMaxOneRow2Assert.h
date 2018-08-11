@@ -28,53 +28,44 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformMaxOneRow2Assert : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformMaxOneRow2Assert(const CXformMaxOneRow2Assert &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformMaxOneRow2Assert(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformMaxOneRow2Assert(const CXformMaxOneRow2Assert &);
+		// dtor
+		virtual ~CXformMaxOneRow2Assert()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfMaxOneRow2Assert;
+		}
 
-			// ctor
-			explicit
-			CXformMaxOneRow2Assert(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformMaxOneRow2Assert";
+		}
 
-			// dtor
-			virtual
-			~CXformMaxOneRow2Assert() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfMaxOneRow2Assert;
-			}
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformMaxOneRow2Assert";
-			}
+	};  // class CXformMaxOneRow2Assert
+}  // namespace gpopt
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			virtual
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformMaxOneRow2Assert
-}
-
-#endif // !GPOPT_CXformMaxOneRow2Assert_H
+#endif  // !GPOPT_CXformMaxOneRow2Assert_H
 
 // EOF

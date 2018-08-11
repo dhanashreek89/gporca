@@ -53,8 +53,8 @@ CDXLColStats::CDXLColStats(IMemoryPool *mp,
 {
 	GPOS_ASSERT(mdid_col_stats->IsValid());
 	GPOS_ASSERT(NULL != dxl_stats_bucket_array);
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+	m_dxl_str =
+		CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
 }
 
 //---------------------------------------------------------------------------
@@ -222,10 +222,7 @@ CDXLColStats::DebugPrint(IOstream &os) const
 //
 //---------------------------------------------------------------------------
 CDXLColStats *
-CDXLColStats::CreateDXLDummyColStats(IMemoryPool *mp,
-									 IMDId *mdid,
-									 CMDName *mdname,
-									 CDouble width)
+CDXLColStats::CreateDXLDummyColStats(IMemoryPool *mp, IMDId *mdid, CMDName *mdname, CDouble width)
 {
 	CMDIdColStats *mdid_col_stats = CMDIdColStats::CastMdid(mdid);
 
@@ -233,14 +230,14 @@ CDXLColStats::CreateDXLDummyColStats(IMemoryPool *mp,
 	dxl_bucket_array = GPOS_NEW(mp) CDXLBucketArray(mp);
 	CAutoRef<CDXLColStats> dxl_col_stats;
 	dxl_col_stats = GPOS_NEW(mp) CDXLColStats(mp,
-													   mdid_col_stats,
-													   mdname,
-													   width,
-													   CHistogram::DefaultNullFreq,
-													   CHistogram::DefaultNDVRemain,
-													   CHistogram::DefaultNDVFreqRemain,
-													   dxl_bucket_array.Value(),
-													   true /* is_col_stats_missing */
+											  mdid_col_stats,
+											  mdname,
+											  width,
+											  CHistogram::DefaultNullFreq,
+											  CHistogram::DefaultNDVRemain,
+											  CHistogram::DefaultNDVFreqRemain,
+											  dxl_bucket_array.Value(),
+											  true /* is_col_stats_missing */
 	);
 	dxl_bucket_array.Reset();
 	return dxl_col_stats.Reset();

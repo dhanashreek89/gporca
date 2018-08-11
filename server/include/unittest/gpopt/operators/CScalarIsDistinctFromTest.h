@@ -7,8 +7,8 @@ namespace gpopt
 {
 	class CScalarIsDistinctFromTest
 	{
-		public:
-			static gpos::GPOS_RESULT EresUnittest();
+	public:
+		static gpos::GPOS_RESULT EresUnittest();
 	};
-}
-#endif // GPOPT_CScalarIsDistinctFromTest_H
+}  // namespace gpopt
+#endif  // GPOPT_CScalarIsDistinctFromTest_H

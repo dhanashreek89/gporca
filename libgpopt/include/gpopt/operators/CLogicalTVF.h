@@ -17,7 +17,6 @@
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CLogicalTVF
@@ -28,228 +27,206 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalTVF : public CLogical
 	{
+	private:
+		// function mdid
+		IMDId *m_func_mdid;
 
-		private:
-		
-			// function mdid
-			IMDId *m_func_mdid;
-			
-			// return type
-			IMDId *m_return_type_mdid;
+		// return type
+		IMDId *m_return_type_mdid;
 
-			// function name
-			CWStringConst *m_pstr;
-			
-			// array of column descriptors: the schema of the function result
-			CColumnDescriptorArray *m_pdrgpcoldesc;
-				
-			// output columns
-			CColRefArray *m_pdrgpcrOutput;
-			
-			// function stability
-			IMDFunction::EFuncStbl m_efs;
+		// function name
+		CWStringConst *m_pstr;
 
-			// function data access
-			IMDFunction::EFuncDataAcc m_efda;
+		// array of column descriptors: the schema of the function result
+		CColumnDescriptorArray *m_pdrgpcoldesc;
 
-			// does this function return a set of rows
-			BOOL m_returns_set;
+		// output columns
+		CColRefArray *m_pdrgpcrOutput;
 
-			// private copy ctor
-			CLogicalTVF(const CLogicalTVF &);
-			
-		public:
-		
-			// ctors
-			explicit
-			CLogicalTVF(IMemoryPool *mp);
+		// function stability
+		IMDFunction::EFuncStbl m_efs;
 
-			CLogicalTVF
-				(
-				IMemoryPool *mp,
-				IMDId *mdid_func,
-				IMDId *mdid_return_type,
-				CWStringConst *str,
-				CColumnDescriptorArray *pdrgpcoldesc
-				);
+		// function data access
+		IMDFunction::EFuncDataAcc m_efda;
 
-			CLogicalTVF
-				(
-				IMemoryPool *mp,
-				IMDId *mdid_func,
-				IMDId *mdid_return_type,
-				CWStringConst *str,
-				CColumnDescriptorArray *pdrgpcoldesc,
-				CColRefArray *pdrgpcrOutput
-				);
+		// does this function return a set of rows
+		BOOL m_returns_set;
 
-			// dtor
-			virtual 
-			~CLogicalTVF();
+		// private copy ctor
+		CLogicalTVF(const CLogicalTVF &);
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopLogicalTVF;
-			}
-			
-			// return a string for operator name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CLogicalTVF";
-			}
-			
-			// function mdid
-			IMDId *FuncMdId() const
-			{
-				return m_func_mdid;
-			}
-			
-			// return type
-			IMDId *ReturnTypeMdId() const
-			{
-				return m_return_type_mdid;
-			}
+	public:
+		// ctors
+		explicit CLogicalTVF(IMemoryPool *mp);
 
-			// function name
-			const CWStringConst *Pstr() const
-			{
-				return m_pstr;
-			}
+		CLogicalTVF(IMemoryPool *mp,
+					IMDId *mdid_func,
+					IMDId *mdid_return_type,
+					CWStringConst *str,
+					CColumnDescriptorArray *pdrgpcoldesc);
 
-			// col descr accessor
-			CColumnDescriptorArray *Pdrgpcoldesc() const
-			{
-				return m_pdrgpcoldesc;
-			}
-			
-			// accessors
-			CColRefArray *PdrgpcrOutput() const
-			{
-				return m_pdrgpcrOutput;
-			}
+		CLogicalTVF(IMemoryPool *mp,
+					IMDId *mdid_func,
+					IMDId *mdid_return_type,
+					CWStringConst *str,
+					CColumnDescriptorArray *pdrgpcoldesc,
+					CColRefArray *pdrgpcrOutput);
 
-			// sensitivity to order of inputs
-			BOOL FInputOrderSensitive() const;
+		// dtor
+		virtual ~CLogicalTVF();
 
-			// operator specific hash function
-			virtual
-			ULONG HashValue() const;
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalTVF;
+		}
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
-			
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalTVF";
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Derived Relational Properties
-			//-------------------------------------------------------------------------------------
+		// function mdid
+		IMDId *
+		FuncMdId() const
+		{
+			return m_func_mdid;
+		}
 
-			// derive output columns
-			virtual
-			CColRefSet *PcrsDeriveOutput(IMemoryPool *, CExpressionHandle &);
+		// return type
+		IMDId *
+		ReturnTypeMdId() const
+		{
+			return m_return_type_mdid;
+		}
 
-			// derive partition consumer info
-			virtual
-			CPartInfo *PpartinfoDerive
-				(
-				IMemoryPool *mp,
-				CExpressionHandle & //exprhdl
-				) 
-				const
-			{
-				return GPOS_NEW(mp) CPartInfo(mp);
-			}
-			
-			// derive constraint property
-			virtual
-			CPropConstraint *PpcDeriveConstraint
-				(
-				IMemoryPool *mp,
-				CExpressionHandle & //exprhdl
-				)
-				const
-			{
-				return GPOS_NEW(mp) CPropConstraint(mp, GPOS_NEW(mp) CColRefSetArray(mp), NULL /*pcnstr*/);
-			}
+		// function name
+		const CWStringConst *
+		Pstr() const
+		{
+			return m_pstr;
+		}
 
-			// derive function properties
-			virtual
-			CFunctionProp *PfpDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// col descr accessor
+		CColumnDescriptorArray *
+		Pdrgpcoldesc() const
+		{
+			return m_pdrgpcoldesc;
+		}
 
-			// derive max card
-			virtual
-			CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// accessors
+		CColRefArray *
+		PdrgpcrOutput() const
+		{
+			return m_pdrgpcrOutput;
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Required Relational Properties
-			//-------------------------------------------------------------------------------------
+		// sensitivity to order of inputs
+		BOOL FInputOrderSensitive() const;
 
-			// compute required stat columns of the n-th child
-			virtual
-			CColRefSet *PcrsStat
-				(
-				IMemoryPool *,// mp
-				CExpressionHandle &,// exprhdl
-				CColRefSet *,// pcrsInput
-				ULONG // child_index
-				)
-				const
-			{
-				return NULL;
-			}
+		// operator specific hash function
+		virtual ULONG HashValue() const;
 
-			//-------------------------------------------------------------------------------------
-			// Transformations
-			//-------------------------------------------------------------------------------------
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// candidate set of xforms
-			virtual
-			CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+		// return a copy of the operator with remapped columns
+		virtual COperator *PopCopyWithRemappedColumns(IMemoryPool *mp,
+													  UlongToColRefMap *colref_mapping,
+													  BOOL must_exist);
 
-			// stat promise
-			virtual
-			EStatPromise Esp(CExpressionHandle &) const
-			{
-				return CLogical::EspLow;
-			}
+		//-------------------------------------------------------------------------------------
+		// Derived Relational Properties
+		//-------------------------------------------------------------------------------------
 
-			// derive statistics
-			virtual
-			IStatistics *PstatsDerive(IMemoryPool *mp, CExpressionHandle &exprhdl, IStatisticsArray *stats_ctxt) const;
+		// derive output columns
+		virtual CColRefSet *PcrsDeriveOutput(IMemoryPool *, CExpressionHandle &);
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+		// derive partition consumer info
+		virtual CPartInfo *
+		PpartinfoDerive(IMemoryPool *mp,
+						CExpressionHandle &  //exprhdl
+						) const
+		{
+			return GPOS_NEW(mp) CPartInfo(mp);
+		}
 
-			// conversion function
-			static
-			CLogicalTVF *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalTVF == pop->Eopid());
-				
-				return dynamic_cast<CLogicalTVF*>(pop);
-			}
-			
+		// derive constraint property
+		virtual CPropConstraint *
+		PpcDeriveConstraint(IMemoryPool *mp,
+							CExpressionHandle &  //exprhdl
+							) const
+		{
+			return GPOS_NEW(mp)
+				CPropConstraint(mp, GPOS_NEW(mp) CColRefSetArray(mp), NULL /*pcnstr*/);
+		}
 
-			// debug print
-			virtual 
-			IOstream &OsPrint(IOstream &) const;
+		// derive function properties
+		virtual CFunctionProp *PfpDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-	}; // class CLogicalTVF
+		// derive max card
+		virtual CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-}
+		//-------------------------------------------------------------------------------------
+		// Required Relational Properties
+		//-------------------------------------------------------------------------------------
+
+		// compute required stat columns of the n-th child
+		virtual CColRefSet *
+		PcrsStat(IMemoryPool *,		   // mp
+				 CExpressionHandle &,  // exprhdl
+				 CColRefSet *,		   // pcrsInput
+				 ULONG				   // child_index
+				 ) const
+		{
+			return NULL;
+		}
+
+		//-------------------------------------------------------------------------------------
+		// Transformations
+		//-------------------------------------------------------------------------------------
+
+		// candidate set of xforms
+		virtual CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+
+		// stat promise
+		virtual EStatPromise
+		Esp(CExpressionHandle &) const
+		{
+			return CLogical::EspLow;
+		}
+
+		// derive statistics
+		virtual IStatistics *PstatsDerive(IMemoryPool *mp,
+										  CExpressionHandle &exprhdl,
+										  IStatisticsArray *stats_ctxt) const;
+
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+
+		// conversion function
+		static CLogicalTVF *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalTVF == pop->Eopid());
+
+			return dynamic_cast<CLogicalTVF *>(pop);
+		}
 
 
-#endif // !GPOPT_CLogicalTVF_H
+		// debug print
+		virtual IOstream &OsPrint(IOstream &) const;
+
+	};  // class CLogicalTVF
+
+}  // namespace gpopt
+
+
+#endif  // !GPOPT_CLogicalTVF_H
 
 // EOF

@@ -28,63 +28,52 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformJoinCommutativity : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformJoinCommutativity(const CXformJoinCommutativity &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformJoinCommutativity(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformJoinCommutativity(const CXformJoinCommutativity &);
+		// dtor
+		virtual ~CXformJoinCommutativity()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfJoinCommutativity;
+		}
 
-			// ctor
-			explicit
-			CXformJoinCommutativity(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformJoinCommutativity";
+		}
 
-			// dtor
-			virtual
-			~CXformJoinCommutativity() {}
+		// compatibility function
+		BOOL FCompatible(CXform::EXformId exfid);
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfJoinCommutativity;
-			}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise
+		Exfp(CExpressionHandle &  // exprhdl
+			 ) const
+		{
+			return CXform::ExfpHigh;
+		}
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformJoinCommutativity";
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// compatibility function
-			BOOL FCompatible(CXform::EXformId exfid);
+	};  // class CXformJoinCommutativity
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp
-				(
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{
-				return CXform::ExfpHigh;
-			}
-
-			// actual transform
-			void Transform
-					(
-					CXformContext *pxfctxt,
-					CXformResult *pxfres,
-					CExpression *pexpr
-					) const;
-
-	}; // class CXformJoinCommutativity
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformJoinCommutativity_H
+#endif  // !GPOPT_CXformJoinCommutativity_H
 
 // EOF

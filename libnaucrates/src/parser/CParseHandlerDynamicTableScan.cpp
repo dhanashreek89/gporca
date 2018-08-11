@@ -35,9 +35,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerDynamicTableScan::CParseHandlerDynamicTableScan(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerPhysicalOp(mp, parse_handler_mgr, parse_handler_root)
 {
 }
@@ -143,8 +141,8 @@ CParseHandlerDynamicTableScan::EndElement(const XMLCh *const,  // element_uri,
 	// set table descriptor
 	CDXLTableDescr *table_descr = table_descr_parse_handler->GetDXLTableDescr();
 	table_descr->AddRef();
-	CDXLPhysicalDynamicTableScan *dxl_op = GPOS_NEW(m_mp) CDXLPhysicalDynamicTableScan(
-		m_mp, table_descr, m_part_index_id, m_part_index_id_printable);
+	CDXLPhysicalDynamicTableScan *dxl_op = GPOS_NEW(m_mp)
+		CDXLPhysicalDynamicTableScan(m_mp, table_descr, m_part_index_id, m_part_index_id_printable);
 
 	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, dxl_op);
 	// set statictics and physical properties

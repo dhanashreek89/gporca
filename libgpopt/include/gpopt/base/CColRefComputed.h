@@ -24,7 +24,7 @@ namespace gpopt
 {
 	using namespace gpos;
 	using namespace gpmd;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CColRefComputed
@@ -34,43 +34,36 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CColRefComputed : public CColRef
 	{
-		private:
+	private:
+		// private copy ctor
+		CColRefComputed(const CColRefComputed &);
 
-			// private copy ctor
-			CColRefComputed(const CColRefComputed &);
-			
-		public:
-		
-			// ctor
-			CColRefComputed
-				(
-				const IMDType *pmdtype,
-				INT type_modifier,
-				ULONG id, 
-				const CName *pname
-				);
+	public:
+		// ctor
+		CColRefComputed(const IMDType *pmdtype, INT type_modifier, ULONG id, const CName *pname);
 
-			// dtor
-			virtual ~CColRefComputed();
-			
-			virtual
-			CColRef::Ecolreftype Ecrt() const
-			{
-				return CColRef::EcrtComputed;
-			}
+		// dtor
+		virtual ~CColRefComputed();
 
-			// is column a system column?
-			BOOL FSystemCol() const
-			{
-				// we cannot introduce system columns as computed column
-				return false;
-			}
+		virtual CColRef::Ecolreftype
+		Ecrt() const
+		{
+			return CColRef::EcrtComputed;
+		}
+
+		// is column a system column?
+		BOOL
+		FSystemCol() const
+		{
+			// we cannot introduce system columns as computed column
+			return false;
+		}
 
 
-	}; // class CColRefComputed
+	};  // class CColRefComputed
 
-}
+}  // namespace gpopt
 
-#endif // !GPOS_CColRefComputed_H
+#endif  // !GPOS_CColRefComputed_H
 
 // EOF

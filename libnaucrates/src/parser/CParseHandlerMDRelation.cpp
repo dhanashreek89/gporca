@@ -223,9 +223,9 @@ CParseHandlerMDRelation::EndElement(const XMLCh *const,  // element_uri,
 			pdxlnPartConstraint->AddRef();
 			m_part_constraint =
 				GPOS_NEW(m_mp) CMDPartConstraintGPDB(m_mp,
-															  m_level_with_default_part_array,
-															  m_part_constraint_unbounded,
-															  pdxlnPartConstraint);
+													 m_level_with_default_part_array,
+													 m_part_constraint_unbounded,
+													 pdxlnPartConstraint);
 		}
 		else
 		{
@@ -268,23 +268,23 @@ CParseHandlerMDRelation::EndElement(const XMLCh *const,  // element_uri,
 	mdid_check_constraint_array->AddRef();
 
 	m_imd_obj = GPOS_NEW(m_mp) CMDRelationGPDB(m_mp,
-														m_mdid,
-														m_mdname,
-														m_is_temp_table,
-														m_rel_storage_type,
-														m_rel_distr_policy,
-														md_col_array,
-														m_distr_col_array,
-														m_partition_cols_array,
-														m_str_part_types_array,
-														m_num_of_partitions,
-														m_convert_hash_to_random,
-														m_key_sets_arrays,
-														md_index_info_array,
-														mdid_triggers_array,
-														mdid_check_constraint_array,
-														m_part_constraint,
-														m_has_oids);
+											   m_mdid,
+											   m_mdname,
+											   m_is_temp_table,
+											   m_rel_storage_type,
+											   m_rel_distr_policy,
+											   md_col_array,
+											   m_distr_col_array,
+											   m_partition_cols_array,
+											   m_str_part_types_array,
+											   m_num_of_partitions,
+											   m_convert_hash_to_random,
+											   m_key_sets_arrays,
+											   md_index_info_array,
+											   mdid_triggers_array,
+											   mdid_check_constraint_array,
+											   m_part_constraint,
+											   m_has_oids);
 
 	// deactivate handler
 	m_parse_handler_mgr->DeactivateHandler();
@@ -384,11 +384,8 @@ CParseHandlerMDRelation::ParseChildNodes()
 	m_parse_handler_mgr->ActivateParseHandler(index_info_list_parse_handler);
 
 	// parse handler for the columns
-	CParseHandlerBase *columns_parse_handler =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenMetadataColumns),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *columns_parse_handler = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenMetadataColumns), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(columns_parse_handler);
 
 	// store parse handlers

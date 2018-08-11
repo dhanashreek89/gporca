@@ -29,9 +29,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerScalarSwitchCase::CParseHandlerScalarSwitchCase(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root)
 {
 }
@@ -100,8 +98,7 @@ CParseHandlerScalarSwitchCase::EndElement(const XMLCh *const,  // element_uri
 	}
 
 	// construct node
-	m_dxlnode = GPOS_NEW(m_mp)
-		CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarSwitchCase(m_mp));
+	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarSwitchCase(m_mp));
 
 	CParseHandlerScalarOp *parse_handler_condition_expr =
 		dynamic_cast<CParseHandlerScalarOp *>((*this)[0]);

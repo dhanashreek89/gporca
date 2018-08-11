@@ -36,9 +36,7 @@ const ULONG_PTR CMemoryPool::m_invalid = ULONG_PTR_MAX;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CMemoryPool::CMemoryPool(IMemoryPool *underlying_mp,
-						 BOOL owns_underlying_mp,
-						 BOOL thread_safe)
+CMemoryPool::CMemoryPool(IMemoryPool *underlying_mp, BOOL owns_underlying_mp, BOOL thread_safe)
 	: m_ref_counter(0),
 	  m_hash_key(0),
 	  m_underlying_mp(underlying_mp),

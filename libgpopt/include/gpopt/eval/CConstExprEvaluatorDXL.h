@@ -9,7 +9,7 @@
 //		Constant expression evaluator implementation that delegates to a DXL evaluator
 //
 //	@owner:
-//		
+//
 //
 //	@test:
 //
@@ -51,43 +51,40 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CConstExprEvaluatorDXL : public IConstExprEvaluator
 	{
-		private:
-			// evaluates expressions represented as DXL, not owned
-			IConstDXLNodeEvaluator *m_pconstdxleval;
+	private:
+		// evaluates expressions represented as DXL, not owned
+		IConstDXLNodeEvaluator *m_pconstdxleval;
 
-			// translates CExpression's to DXL which can then be sent to the evaluator
-			CTranslatorExprToDXL m_trexpr2dxl;
+		// translates CExpression's to DXL which can then be sent to the evaluator
+		CTranslatorExprToDXL m_trexpr2dxl;
 
-			// translates DXL coming from the evaluator back to CExpression
-			CTranslatorDXLToExpr m_trdxl2expr;
+		// translates DXL coming from the evaluator back to CExpression
+		CTranslatorDXLToExpr m_trdxl2expr;
 
-			// private copy ctor
-			CConstExprEvaluatorDXL(const CConstExprEvaluatorDXL &);
+		// private copy ctor
+		CConstExprEvaluatorDXL(const CConstExprEvaluatorDXL &);
 
-			// checks if the given expression is a valid input for constant expression evaluation
-			static
-			BOOL FValidInput(CExpression *pexpr, const CHAR **szErrorMsg);
+		// checks if the given expression is a valid input for constant expression evaluation
+		static BOOL FValidInput(CExpression *pexpr, const CHAR **szErrorMsg);
 
-		public:
-			// ctor
-			CConstExprEvaluatorDXL(IMemoryPool *mp, CMDAccessor *md_accessor, IConstDXLNodeEvaluator *pconstdxleval);
+	public:
+		// ctor
+		CConstExprEvaluatorDXL(IMemoryPool *mp,
+							   CMDAccessor *md_accessor,
+							   IConstDXLNodeEvaluator *pconstdxleval);
 
-			// dtor
-			virtual
-			~CConstExprEvaluatorDXL();
+		// dtor
+		virtual ~CConstExprEvaluatorDXL();
 
-			// evaluate the given expression and return the result as a new expression
-			// caller takes ownership of returned expression
-			virtual
-			CExpression *PexprEval(CExpression *pexpr);
+		// evaluate the given expression and return the result as a new expression
+		// caller takes ownership of returned expression
+		virtual CExpression *PexprEval(CExpression *pexpr);
 
-			// Returns true iff the evaluator can evaluate expressions
-			virtual
-			BOOL FCanEvalExpressions();
-
+		// Returns true iff the evaluator can evaluate expressions
+		virtual BOOL FCanEvalExpressions();
 	};
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CConstExprEvaluatorDXL_H
+#endif  // !GPOPT_CConstExprEvaluatorDXL_H
 
 // EOF

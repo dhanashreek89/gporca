@@ -6,7 +6,7 @@
 //		CDistributionSpecRouted.h
 //
 //	@doc:
-//		Description of a routed distribution; 
+//		Description of a routed distribution;
 //		Can be used as required or derived property;
 //---------------------------------------------------------------------------
 #ifndef GPOPT_CDistributionSpecRouted_H
@@ -31,102 +31,92 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CDistributionSpecRouted : public CDistributionSpec
 	{
-		private:
+	private:
+		// segment id column
+		CColRef *m_pcrSegmentId;
 
-			// segment id column
-			CColRef *m_pcrSegmentId;
+		// private copy ctor
+		CDistributionSpecRouted(const CDistributionSpecRouted &);
 
-			// private copy ctor
-			CDistributionSpecRouted(const CDistributionSpecRouted &);
-			
-		public:
-		
-			// ctor
-			explicit
-			CDistributionSpecRouted(CColRef *pcrSegmentId);
-			
-			// dtor
-			virtual 
-			~CDistributionSpecRouted();
-			
-			// distribution type accessor
-			virtual 
-			EDistributionType Edt() const
-			{
-				return CDistributionSpec::EdtRouted;
-			}
+	public:
+		// ctor
+		explicit CDistributionSpecRouted(CColRef *pcrSegmentId);
 
-			// segment id column accessor
-			CColRef *Pcr() const
-			{
-				return m_pcrSegmentId;
-			}
-			
-			// does this distribution satisfy the given one
-			virtual 
-			BOOL Matches(const CDistributionSpec *pds) const;
+		// dtor
+		virtual ~CDistributionSpecRouted();
 
-			// does this distribution satisfy the given one
-			virtual 
-			BOOL FSatisfies(const CDistributionSpec *pds) const;
+		// distribution type accessor
+		virtual EDistributionType
+		Edt() const
+		{
+			return CDistributionSpec::EdtRouted;
+		}
 
-			// return a copy of the distribution spec with remapped columns
-			virtual
-			CDistributionSpec *PdsCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+		// segment id column accessor
+		CColRef *
+		Pcr() const
+		{
+			return m_pcrSegmentId;
+		}
 
-			// append enforcers to dynamic array for the given plan properties
-			virtual
-			void AppendEnforcers(IMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prpp, CExpressionArray *pdrgpexpr, CExpression *pexpr);
+		// does this distribution satisfy the given one
+		virtual BOOL Matches(const CDistributionSpec *pds) const;
 
-			// hash function for routed distribution spec
-			virtual
-			ULONG HashValue() const;
-			
-			// extract columns used by the distribution spec
-			virtual
-			CColRefSet *PcrsUsed(IMemoryPool *mp) const;
+		// does this distribution satisfy the given one
+		virtual BOOL FSatisfies(const CDistributionSpec *pds) const;
 
-			// return distribution partitioning type
-			virtual
-			EDistributionPartitioningType Edpt() const
-			{
-				return EdptPartitioned;
-			}
+		// return a copy of the distribution spec with remapped columns
+		virtual CDistributionSpec *PdsCopyWithRemappedColumns(IMemoryPool *mp,
+															  UlongToColRefMap *colref_mapping,
+															  BOOL must_exist);
 
-			// print
-			virtual
-			IOstream &OsPrint(IOstream &os) const;
+		// append enforcers to dynamic array for the given plan properties
+		virtual void AppendEnforcers(IMemoryPool *mp,
+									 CExpressionHandle &exprhdl,
+									 CReqdPropPlan *prpp,
+									 CExpressionArray *pdrgpexpr,
+									 CExpression *pexpr);
 
-			// conversion function
-			static
-			CDistributionSpecRouted *PdsConvert
-				(
-				CDistributionSpec *pds
-				)
-			{
-				GPOS_ASSERT(NULL != pds);
-				GPOS_ASSERT(EdtRouted == pds->Edt());
+		// hash function for routed distribution spec
+		virtual ULONG HashValue() const;
 
-				return dynamic_cast<CDistributionSpecRouted*>(pds);
-			}
+		// extract columns used by the distribution spec
+		virtual CColRefSet *PcrsUsed(IMemoryPool *mp) const;
 
-			// conversion function - const argument
-			static
-			const CDistributionSpecRouted *PdsConvert
-				(
-				const CDistributionSpec *pds
-				)
-			{
-				GPOS_ASSERT(NULL != pds);
-				GPOS_ASSERT(EdtRouted == pds->Edt());
+		// return distribution partitioning type
+		virtual EDistributionPartitioningType
+		Edpt() const
+		{
+			return EdptPartitioned;
+		}
 
-				return dynamic_cast<const CDistributionSpecRouted*>(pds);
-			}
+		// print
+		virtual IOstream &OsPrint(IOstream &os) const;
 
-	}; // class CDistributionSpecRouted
+		// conversion function
+		static CDistributionSpecRouted *
+		PdsConvert(CDistributionSpec *pds)
+		{
+			GPOS_ASSERT(NULL != pds);
+			GPOS_ASSERT(EdtRouted == pds->Edt());
 
-}
+			return dynamic_cast<CDistributionSpecRouted *>(pds);
+		}
 
-#endif // !GPOPT_CDistributionSpecRouted_H
+		// conversion function - const argument
+		static const CDistributionSpecRouted *
+		PdsConvert(const CDistributionSpec *pds)
+		{
+			GPOS_ASSERT(NULL != pds);
+			GPOS_ASSERT(EdtRouted == pds->Edt());
+
+			return dynamic_cast<const CDistributionSpecRouted *>(pds);
+		}
+
+	};  // class CDistributionSpecRouted
+
+}  // namespace gpopt
+
+#endif  // !GPOPT_CDistributionSpecRouted_H
 
 // EOF

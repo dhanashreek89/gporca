@@ -35,74 +35,72 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPartKeys : public CRefCount
 	{
-		private:
+	private:
+		// partitioning keys
+		CColRefArrays *m_pdrgpdrgpcr;
 
-			// partitioning keys
-			CColRefArrays *m_pdrgpdrgpcr;
+		// number of levels
+		ULONG m_num_of_part_levels;
 
-			// number of levels
-			ULONG m_num_of_part_levels;
+		// private copy ctor
+		CPartKeys(const CPartKeys &);
 
-			// private copy ctor
-			CPartKeys(const CPartKeys &);
+	public:
+		// ctor
+		explicit CPartKeys(CColRefArrays *pdrgpdrgpcr);
 
-		public:
+		// dtor
+		~CPartKeys();
 
-			// ctor
-			explicit
-			CPartKeys(CColRefArrays *pdrgpdrgpcr);
+		// return key at a given level
+		CColRef *PcrKey(ULONG ulLevel) const;
 
-			// dtor
-			~CPartKeys();
+		// return array of keys
+		CColRefArrays *
+		Pdrgpdrgpcr() const
+		{
+			return m_pdrgpdrgpcr;
+		}
 
-			// return key at a given level
-			CColRef *PcrKey(ULONG ulLevel) const;
+		// number of levels
+		ULONG
+		GetPartitioningLevel() const
+		{
+			return m_num_of_part_levels;
+		}
 
-			// return array of keys
-			CColRefArrays *Pdrgpdrgpcr() const
-			{
-				return m_pdrgpdrgpcr;
-			}
+		// copy part key into the given memory pool
+		CPartKeys *PpartkeysCopy(IMemoryPool *mp);
 
-			// number of levels
-			ULONG GetPartitioningLevel() const
-			{
-				return m_num_of_part_levels;
-			}
+		// check whether the key columns overlap the given column
+		BOOL FOverlap(CColRefSet *pcrs) const;
 
-			// copy part key into the given memory pool
-			CPartKeys *PpartkeysCopy(IMemoryPool *mp);
+		// create a new PartKeys object from the current one by remapping the
+		// keys using the given hashmap
+		CPartKeys *PpartkeysRemap(IMemoryPool *mp, UlongToColRefMap *colref_mapping) const;
 
-			// check whether the key columns overlap the given column
-			BOOL FOverlap(CColRefSet *pcrs) const;
+		// print
+		IOstream &OsPrint(IOstream &) const;
 
-			// create a new PartKeys object from the current one by remapping the
-			// keys using the given hashmap
-			CPartKeys *PpartkeysRemap(IMemoryPool *mp, UlongToColRefMap *colref_mapping) const;
-
-			// print
-			IOstream &OsPrint(IOstream &) const;
-
-			// copy array of part keys into given memory pool
-			static
-			CPartKeysArray *PdrgppartkeysCopy(IMemoryPool *mp, const CPartKeysArray *pdrgppartkeys);
+		// copy array of part keys into given memory pool
+		static CPartKeysArray *PdrgppartkeysCopy(IMemoryPool *mp,
+												 const CPartKeysArray *pdrgppartkeys);
 
 #ifdef GPOS_DEBUG
-			// debug print for interactive debugging sessions only
-			void DbgPrint() const;
-#endif // GPOS_DEBUG
-	}; // CPartKeys
+		// debug print for interactive debugging sessions only
+		void DbgPrint() const;
+#endif  // GPOS_DEBUG
+	};  // CPartKeys
 
 	// shorthand for printing
-	inline
-	IOstream &operator << (IOstream &os, CPartKeys &partkeys)
+	inline IOstream &
+	operator<<(IOstream &os, CPartKeys &partkeys)
 	{
 		return partkeys.OsPrint(os);
 	}
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CPartKeys_H
+#endif  // !GPOPT_CPartKeys_H
 
 // EOF
-

@@ -29,12 +29,7 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CLogicalLeftAntiSemiJoin::CLogicalLeftAntiSemiJoin
-	(
-	IMemoryPool *mp
-	)
-	:
-	CLogicalJoin(mp)
+CLogicalLeftAntiSemiJoin::CLogicalLeftAntiSemiJoin(IMemoryPool *mp) : CLogicalJoin(mp)
 {
 	GPOS_ASSERT(NULL != mp);
 }
@@ -49,12 +44,8 @@ CLogicalLeftAntiSemiJoin::CLogicalLeftAntiSemiJoin
 //
 //---------------------------------------------------------------------------
 CMaxCard
-CLogicalLeftAntiSemiJoin::MaxCard
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CLogicalLeftAntiSemiJoin::MaxCard(IMemoryPool *,  // mp
+								  CExpressionHandle &exprhdl) const
 {
 	// pass on max card of first child
 	return exprhdl.GetRelationalProperties(0)->Maxcard();
@@ -70,11 +61,7 @@ CLogicalLeftAntiSemiJoin::MaxCard
 //
 //---------------------------------------------------------------------------
 CXformSet *
-CLogicalLeftAntiSemiJoin::PxfsCandidates
-	(
-	IMemoryPool *mp
-	)
-	const
+CLogicalLeftAntiSemiJoin::PxfsCandidates(IMemoryPool *mp) const
 {
 	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
 
@@ -98,11 +85,8 @@ CLogicalLeftAntiSemiJoin::PxfsCandidates
 //
 //---------------------------------------------------------------------------
 CColRefSet *
-CLogicalLeftAntiSemiJoin::PcrsDeriveOutput
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
+CLogicalLeftAntiSemiJoin::PcrsDeriveOutput(IMemoryPool *,  // mp
+										   CExpressionHandle &exprhdl)
 {
 	GPOS_ASSERT(3 == exprhdl.Arity());
 
@@ -119,12 +103,8 @@ CLogicalLeftAntiSemiJoin::PcrsDeriveOutput
 //
 //---------------------------------------------------------------------------
 CKeyCollection *
-CLogicalLeftAntiSemiJoin::PkcDeriveKeys
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CLogicalLeftAntiSemiJoin::PkcDeriveKeys(IMemoryPool *,  // mp
+										CExpressionHandle &exprhdl) const
 {
 	return PkcDeriveKeysPassThru(exprhdl, 0 /* ulChild */);
 }
@@ -138,25 +118,19 @@ CLogicalLeftAntiSemiJoin::PkcDeriveKeys
 //
 //---------------------------------------------------------------------------
 IStatistics *
-CLogicalLeftAntiSemiJoin::PstatsDerive
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	IStatisticsArray * // not used
-	)
-	const
+CLogicalLeftAntiSemiJoin::PstatsDerive(IMemoryPool *mp,
+									   CExpressionHandle &exprhdl,
+									   IStatisticsArray *  // not used
+									   ) const
 {
 	GPOS_ASSERT(Esp(exprhdl) > EspNone);
 	IStatistics *outer_stats = exprhdl.Pstats(0);
 	IStatistics *inner_side_stats = exprhdl.Pstats(1);
-	CStatsPredJoinArray *join_preds_stats = CStatsPredUtils::ExtractJoinStatsFromExprHandle(mp, exprhdl);
-	IStatistics *pstatsLASJoin = outer_stats->CalcLASJoinStats
-												(
-												mp,
-												inner_side_stats,
-												join_preds_stats,
-												true /* DoIgnoreLASJHistComputation */
-												);
+	CStatsPredJoinArray *join_preds_stats =
+		CStatsPredUtils::ExtractJoinStatsFromExprHandle(mp, exprhdl);
+	IStatistics *pstatsLASJoin = outer_stats->CalcLASJoinStats(
+		mp, inner_side_stats, join_preds_stats, true /* DoIgnoreLASJHistComputation */
+	);
 
 	// clean up
 	join_preds_stats->Release();
@@ -164,4 +138,3 @@ CLogicalLeftAntiSemiJoin::PstatsDerive
 	return pstatsLASJoin;
 }
 // EOF
-

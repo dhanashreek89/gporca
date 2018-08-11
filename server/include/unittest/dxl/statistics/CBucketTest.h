@@ -15,7 +15,6 @@
 
 namespace gpnaucrates
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CBucketTest
@@ -26,8 +25,7 @@ namespace gpnaucrates
 	//---------------------------------------------------------------------------
 	class CBucketTest
 	{
-		private:
-
+	private:
 		// test case for intersection of buckets
 		struct SBucketsIntersectTestElem
 		{
@@ -70,41 +68,33 @@ namespace gpnaucrates
 			// is upper bound of output bucket closed
 			BOOL m_fUbOutputClosed;
 
-		}; // SBucketsIntersectTestElem
+		};  // SBucketsIntersectTestElem
 
-			// do the bucket boundaries match
-			static
-			BOOL FMatchBucketBoundary(CBucket *bucket1, CBucket *bucket2);
+		// do the bucket boundaries match
+		static BOOL FMatchBucketBoundary(CBucket *bucket1, CBucket *bucket2);
 
-		public:
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
 
-			// unittests
-			static
-			GPOS_RESULT EresUnittest();
+		// bucket basic tests
+		static GPOS_RESULT EresUnittest_CBucketInt4();
 
-			// bucket basic tests
-			static
-			GPOS_RESULT EresUnittest_CBucketInt4();
+		static GPOS_RESULT EresUnittest_CBucketBool();
 
-			static
-			GPOS_RESULT EresUnittest_CBucketBool();
+		// bucket intersect
+		static GPOS_RESULT EresUnittest_CBucketIntersect();
 
-			// bucket intersect
-			static
-			GPOS_RESULT EresUnittest_CBucketIntersect();
+		// bucket scaling tests
+		static GPOS_RESULT EresUnittest_CBucketScale();
 
-			// bucket scaling tests
-			static
-			GPOS_RESULT EresUnittest_CBucketScale();
+		// bucket difference tests
+		static GPOS_RESULT EresUnittest_CBucketDifference();
 
-			// bucket difference tests
-			static
-			GPOS_RESULT EresUnittest_CBucketDifference();
+	};  // class CBucketTest
+}  // namespace gpnaucrates
 
-	}; // class CBucketTest
-}
-
-#endif // !GPNAUCRATES_CBucketTest_H
+#endif  // !GPNAUCRATES_CBucketTest_H
 
 
 // EOF

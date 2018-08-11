@@ -81,11 +81,8 @@ CParseHandlerHashJoin::StartElement(const XMLCh *const,  // element_uri,
 	m_parse_handler_mgr->ActivateParseHandler(left_child_parse_handler);
 
 	// parse handler for the hash clauses
-	CParseHandlerBase *hash_clauses_parse_handler =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenScalarHashCondList),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *hash_clauses_parse_handler = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarHashCondList), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(hash_clauses_parse_handler);
 
 	// parse handler for the join filter

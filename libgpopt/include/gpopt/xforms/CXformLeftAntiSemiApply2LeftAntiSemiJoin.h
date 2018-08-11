@@ -28,55 +28,49 @@ namespace gpopt
 	//		Transform Apply into Join by decorrelating the inner side
 	//
 	//---------------------------------------------------------------------------
-	class CXformLeftAntiSemiApply2LeftAntiSemiJoin : public CXformApply2Join<CLogicalLeftAntiSemiApply, CLogicalLeftAntiSemiJoin>
+	class CXformLeftAntiSemiApply2LeftAntiSemiJoin
+		: public CXformApply2Join<CLogicalLeftAntiSemiApply, CLogicalLeftAntiSemiJoin>
 	{
+	private:
+		// private copy ctor
+		CXformLeftAntiSemiApply2LeftAntiSemiJoin(const CXformLeftAntiSemiApply2LeftAntiSemiJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformLeftAntiSemiApply2LeftAntiSemiJoin(IMemoryPool *mp)
+			: CXformApply2Join<CLogicalLeftAntiSemiApply, CLogicalLeftAntiSemiJoin>(
+				  mp, true /*fDeepTree*/)
+		{
+		}
 
-			// private copy ctor
-			CXformLeftAntiSemiApply2LeftAntiSemiJoin(const CXformLeftAntiSemiApply2LeftAntiSemiJoin &);
+		// dtor
+		virtual ~CXformLeftAntiSemiApply2LeftAntiSemiJoin()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftAntiSemiApply2LeftAntiSemiJoin;
+		}
 
-			// ctor
-			explicit
-			CXformLeftAntiSemiApply2LeftAntiSemiJoin
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformApply2Join<CLogicalLeftAntiSemiApply, CLogicalLeftAntiSemiJoin>(mp, true /*fDeepTree*/)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftAntiSemiApply2LeftAntiSemiJoin";
+		}
 
-			// dtor
-			virtual
-			~CXformLeftAntiSemiApply2LeftAntiSemiJoin()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftAntiSemiApply2LeftAntiSemiJoin;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftAntiSemiApply2LeftAntiSemiJoin";
-			}
+	};  // class CXformLeftAntiSemiApply2LeftAntiSemiJoin
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+}  // namespace gpopt
 
-			// actual transform
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
-
-	}; // class CXformLeftAntiSemiApply2LeftAntiSemiJoin
-
-}
-
-#endif // !GPOPT_CXformLeftAntiSemiApply2LeftAntiSemiJoin_H
+#endif  // !GPOPT_CXformLeftAntiSemiApply2LeftAntiSemiJoin_H
 
 // EOF

@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CXformImplementAssert
@@ -28,49 +28,43 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformImplementAssert : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformImplementAssert(const CXformImplementAssert &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementAssert(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformImplementAssert(const CXformImplementAssert &);
+		// dtor
+		virtual ~CXformImplementAssert()
+		{
+		}
 
-		public:
-		
-			// ctor
-			explicit
-			CXformImplementAssert(IMemoryPool *mp);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementAssert;
+		}
 
-			// dtor
-			virtual 
-			~CXformImplementAssert() 
-			{}
+		// xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementAssert";
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementAssert;
-			}
-			
-			// xform name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CXformImplementAssert";
-			}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+		// actual transform
+		virtual void Transform(CXformContext *, CXformResult *, CExpression *) const;
 
-			// actual transform
-			virtual
-			void Transform(CXformContext *, CXformResult *, CExpression *) const;
+	};  // class CXformImplementAssert
 
-	}; // class CXformImplementAssert
+}  // namespace gpopt
 
-}
-
-#endif // !GPOPT_CXformImplementAssert_H
+#endif  // !GPOPT_CXformImplementAssert_H
 
 // EOF

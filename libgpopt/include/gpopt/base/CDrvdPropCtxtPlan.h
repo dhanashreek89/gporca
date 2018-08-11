@@ -34,87 +34,77 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CDrvdPropCtxtPlan : public CDrvdPropCtxt
 	{
+	private:
+		// map of CTE id to producer plan properties
+		UlongToDrvdPropPlanMap *m_phmulpdpCTEs;
 
-		private:
+		// the number of expected partition selectors
+		ULONG m_ulExpectedPartitionSelectors;
 
-			// map of CTE id to producer plan properties
-			UlongToDrvdPropPlanMap *m_phmulpdpCTEs;
+		// if true, a call to AddProps updates the CTE.
+		BOOL m_fUpdateCTEMap;
 
-			// the number of expected partition selectors
-			ULONG m_ulExpectedPartitionSelectors;
+		// private copy ctor
+		CDrvdPropCtxtPlan(const CDrvdPropCtxtPlan &);
 
-			// if true, a call to AddProps updates the CTE.
-			BOOL m_fUpdateCTEMap;
+	protected:
+		// copy function
+		virtual CDrvdPropCtxt *PdpctxtCopy(IMemoryPool *mp) const;
 
-			// private copy ctor
-			CDrvdPropCtxtPlan(const CDrvdPropCtxtPlan &);
+		// add props to context
+		virtual void AddProps(DrvdPropArray *pdp);
 
-		protected:
+	public:
+		// ctor
+		CDrvdPropCtxtPlan(IMemoryPool *mp, BOOL fUpdateCTEMap = true);
 
-			// copy function
-			virtual
-			CDrvdPropCtxt *PdpctxtCopy(IMemoryPool *mp) const;
+		// dtor
+		virtual ~CDrvdPropCtxtPlan();
 
-			// add props to context
-			virtual
-			void AddProps(DrvdPropArray *pdp);
+		ULONG
+		UlExpectedPartitionSelectors() const
+		{
+			return m_ulExpectedPartitionSelectors;
+		}
 
-		public:
+		// set the number of expected partition selectors based on the given
+		// operator and the given cost context
+		void SetExpectedPartitionSelectors(COperator *pop, CCostContext *pcc);
 
-			// ctor
-			CDrvdPropCtxtPlan(IMemoryPool *mp, BOOL fUpdateCTEMap = true);
+		// print
+		virtual IOstream &OsPrint(IOstream &os) const;
 
-			// dtor
-			virtual
-			~CDrvdPropCtxtPlan();
+		// return the plan properties of CTE producer with given id
+		CDrvdPropPlan *PdpplanCTEProducer(ULONG ulCTEId) const;
 
-			ULONG UlExpectedPartitionSelectors() const
-			{
-				return m_ulExpectedPartitionSelectors;
-			}
-
-			// set the number of expected partition selectors based on the given
-			// operator and the given cost context
-			void SetExpectedPartitionSelectors(COperator *pop, CCostContext *pcc);
-
-			// print
-			virtual
-			IOstream &OsPrint(IOstream &os) const;
-
-			// return the plan properties of CTE producer with given id
-			CDrvdPropPlan *PdpplanCTEProducer(ULONG ulCTEId) const;
-
-			// copy plan properties of given CTE prdoucer
-			void CopyCTEProducerProps(CDrvdPropPlan *pdpplan, ULONG ulCTEId);
+		// copy plan properties of given CTE prdoucer
+		void CopyCTEProducerProps(CDrvdPropPlan *pdpplan, ULONG ulCTEId);
 
 #ifdef GPOS_DEBUG
 
-			// is it a plan property context?
-			virtual
-			BOOL FPlan() const
-			{
-				return true;
-			}
+		// is it a plan property context?
+		virtual BOOL
+		FPlan() const
+		{
+			return true;
+		}
 
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
-			// conversion function
-			static
-			CDrvdPropCtxtPlan *PdpctxtplanConvert
-				(
-				CDrvdPropCtxt *pdpctxt
-				)
-			{
-				GPOS_ASSERT(NULL != pdpctxt);
+		// conversion function
+		static CDrvdPropCtxtPlan *
+		PdpctxtplanConvert(CDrvdPropCtxt *pdpctxt)
+		{
+			GPOS_ASSERT(NULL != pdpctxt);
 
-				return reinterpret_cast<CDrvdPropCtxtPlan*>(pdpctxt);
-			}
+			return reinterpret_cast<CDrvdPropCtxtPlan *>(pdpctxt);
+		}
 
-	}; // class CDrvdPropCtxtPlan
+	};  // class CDrvdPropCtxtPlan
 
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CDrvdPropCtxtPlan_H
+#endif  // !GPOPT_CDrvdPropCtxtPlan_H
 
 // EOF

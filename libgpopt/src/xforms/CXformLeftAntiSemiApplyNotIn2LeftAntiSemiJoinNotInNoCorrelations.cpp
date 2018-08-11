@@ -26,11 +26,8 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise
-CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations::Exfp
-	(
-	CExpressionHandle &exprhdl
-	)
-	const
+CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations::Exfp(
+	CExpressionHandle &exprhdl) const
 {
 	// if there are no outer references, or if all outer refs do not reference outer
 	// child, the transformation is applicable
@@ -51,13 +48,8 @@ CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations::Exfp
 //
 //---------------------------------------------------------------------------
 void
-CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations::Transform
-	(
-	CXformContext *pxfctxt,
-	CXformResult *pxfres,
-	CExpression *pexpr
-	)
-	const
+CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations::Transform(
+	CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const
 {
 	GPOS_ASSERT(NULL != pxfctxt);
 	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));

@@ -16,7 +16,6 @@
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalInnerIndexNLJoin
@@ -27,85 +26,73 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalInnerIndexNLJoin : public CPhysicalInnerNLJoin
 	{
+	private:
+		// columns from outer child used for index lookup in inner child
+		CColRefArray *m_pdrgpcrOuterRefs;
 
-		private:
+		// private copy ctor
+		CPhysicalInnerIndexNLJoin(const CPhysicalInnerIndexNLJoin &);
 
-			// columns from outer child used for index lookup in inner child
-			CColRefArray *m_pdrgpcrOuterRefs;
+	public:
+		// ctor
+		CPhysicalInnerIndexNLJoin(IMemoryPool *mp, CColRefArray *colref_array);
 
-			// private copy ctor
-			CPhysicalInnerIndexNLJoin(const CPhysicalInnerIndexNLJoin &);
+		// dtor
+		virtual ~CPhysicalInnerIndexNLJoin();
 
-		public:
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalInnerIndexNLJoin;
+		}
 
-			// ctor
-			CPhysicalInnerIndexNLJoin(IMemoryPool *mp, CColRefArray *colref_array);
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalInnerIndexNLJoin";
+		}
 
-			// dtor
-			virtual
-			~CPhysicalInnerIndexNLJoin();
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalInnerIndexNLJoin;
-			}
+		// outer column references accessor
+		CColRefArray *
+		PdrgPcrOuterRefs() const
+		{
+			return m_pdrgpcrOuterRefs;
+		}
 
-			 // return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CPhysicalInnerIndexNLJoin";
-			}
+		// compute required distribution of the n-th child
+		virtual CDistributionSpec *PdsRequired(IMemoryPool *mp,
+											   CExpressionHandle &exprhdl,
+											   CDistributionSpec *pdsRequired,
+											   ULONG child_index,
+											   CDrvdPropArrays *pdrgpdpCtxt,
+											   ULONG ulOptReq) const;
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
+		// execution order of children
+		virtual EChildExecOrder
+		Eceo() const
+		{
+			// we optimize inner (right) child first to be able to match child hashed distributions
+			return EceoRightToLeft;
+		}
 
-			// outer column references accessor
-			CColRefArray *PdrgPcrOuterRefs() const
-			{
-				return m_pdrgpcrOuterRefs;
-			}
+		// conversion function
+		static CPhysicalInnerIndexNLJoin *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(EopPhysicalInnerIndexNLJoin == pop->Eopid());
 
-			// compute required distribution of the n-th child
-			virtual
-			CDistributionSpec *PdsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CDistributionSpec *pdsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				)
-				const;
+			return dynamic_cast<CPhysicalInnerIndexNLJoin *>(pop);
+		}
 
-			// execution order of children
-			virtual
-			EChildExecOrder Eceo() const
-			{
-				// we optimize inner (right) child first to be able to match child hashed distributions
-				return EceoRightToLeft;
-			}
+	};  // class CPhysicalInnerIndexNLJoin
 
-			// conversion function
-			static
-			CPhysicalInnerIndexNLJoin *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(EopPhysicalInnerIndexNLJoin == pop->Eopid());
+}  // namespace gpopt
 
-				return dynamic_cast<CPhysicalInnerIndexNLJoin*>(pop);
-			}
-
-	}; // class CPhysicalInnerIndexNLJoin
-
-}
-
-#endif // !GPOPT_CPhysicalInnerIndexNLJoin_H
+#endif  // !GPOPT_CPhysicalInnerIndexNLJoin_H
 
 // EOF

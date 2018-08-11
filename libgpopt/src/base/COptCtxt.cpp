@@ -34,26 +34,22 @@ ULONG COptCtxt::m_ulFirstValidPartId = 1;
 //		ctor
 //
 //---------------------------------------------------------------------------
-COptCtxt::COptCtxt
-	(
-	IMemoryPool *mp,
-	CColumnFactory *col_factory,
-	CMDAccessor *md_accessor,
-	IConstExprEvaluator *pceeval,
-	COptimizerConfig *optimizer_config
-	)
-	:
-	CTaskLocalStorageObject(CTaskLocalStorage::EtlsidxOptCtxt),
-	m_mp(mp),
-	m_pcf(col_factory),
-	m_pmda(md_accessor),
-	m_pceeval(pceeval),
-	m_pcomp(GPOS_NEW(m_mp) CDefaultComparator(pceeval)),
-	m_auPartId(m_ulFirstValidPartId),
-	m_pcteinfo(NULL),
-	m_pdrgpcrSystemCols(NULL),
-	m_optimizer_config(optimizer_config),
-	m_fDMLQuery(false)
+COptCtxt::COptCtxt(IMemoryPool *mp,
+				   CColumnFactory *col_factory,
+				   CMDAccessor *md_accessor,
+				   IConstExprEvaluator *pceeval,
+				   COptimizerConfig *optimizer_config)
+	: CTaskLocalStorageObject(CTaskLocalStorage::EtlsidxOptCtxt),
+	  m_mp(mp),
+	  m_pcf(col_factory),
+	  m_pmda(md_accessor),
+	  m_pceeval(pceeval),
+	  m_pcomp(GPOS_NEW(m_mp) CDefaultComparator(pceeval)),
+	  m_auPartId(m_ulFirstValidPartId),
+	  m_pcteinfo(NULL),
+	  m_pdrgpcrSystemCols(NULL),
+	  m_optimizer_config(optimizer_config),
+	  m_fDMLQuery(false)
 {
 	GPOS_ASSERT(NULL != mp);
 	GPOS_ASSERT(NULL != col_factory);
@@ -62,7 +58,7 @@ COptCtxt::COptCtxt
 	GPOS_ASSERT(NULL != m_pcomp);
 	GPOS_ASSERT(NULL != optimizer_config);
 	GPOS_ASSERT(NULL != optimizer_config->GetCostModel());
-	
+
 	m_pcteinfo = GPOS_NEW(m_mp) CCTEInfo(m_mp);
 	m_cost_model = optimizer_config->GetCostModel();
 }
@@ -97,13 +93,10 @@ COptCtxt::~COptCtxt()
 //
 //---------------------------------------------------------------------------
 COptCtxt *
-COptCtxt::PoctxtCreate
-	(
-	IMemoryPool *mp,
-	CMDAccessor *md_accessor,
-	IConstExprEvaluator *pceeval,
-	COptimizerConfig *optimizer_config
-	)
+COptCtxt::PoctxtCreate(IMemoryPool *mp,
+					   CMDAccessor *md_accessor,
+					   IConstExprEvaluator *pceeval,
+					   COptimizerConfig *optimizer_config)
 {
 	GPOS_ASSERT(NULL != optimizer_config);
 
@@ -140,15 +133,12 @@ BOOL
 COptCtxt::FAllEnforcersEnabled()
 {
 	BOOL fEnforcerDisabled =
-		GPOS_FTRACE(EopttraceDisableMotions) ||
-		GPOS_FTRACE(EopttraceDisableMotionBroadcast) ||
+		GPOS_FTRACE(EopttraceDisableMotions) || GPOS_FTRACE(EopttraceDisableMotionBroadcast) ||
 		GPOS_FTRACE(EopttraceDisableMotionGather) ||
 		GPOS_FTRACE(EopttraceDisableMotionHashDistribute) ||
 		GPOS_FTRACE(EopttraceDisableMotionRandom) ||
-		GPOS_FTRACE(EopttraceDisableMotionRountedDistribute) ||
-		GPOS_FTRACE(EopttraceDisableSort) ||
-		GPOS_FTRACE(EopttraceDisableSpool) ||
-		GPOS_FTRACE(EopttraceDisablePartPropagation);
+		GPOS_FTRACE(EopttraceDisableMotionRountedDistribute) || GPOS_FTRACE(EopttraceDisableSort) ||
+		GPOS_FTRACE(EopttraceDisableSpool) || GPOS_FTRACE(EopttraceDisablePartPropagation);
 
 	return !fEnforcerDisabled;
 }
@@ -164,17 +154,12 @@ COptCtxt::FAllEnforcersEnabled()
 //
 //---------------------------------------------------------------------------
 IOstream &
-COptCtxt::OsPrint
-	(
-	IOstream &os
-	)
-	const
+COptCtxt::OsPrint(IOstream &os) const
 {
 	// NOOP
 	return os;
 }
 
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF
-

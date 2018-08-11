@@ -32,8 +32,7 @@ XERCES_CPP_NAMESPACE_USE
 CParseHandlerLogicalWindow::CParseHandlerLogicalWindow(IMemoryPool *mp,
 													   CParseHandlerManager *parse_handler_mgr,
 													   CParseHandlerBase *parse_handler_root)
-	: CParseHandlerLogicalOp(mp, parse_handler_mgr, parse_handler_root),
-	  m_window_spec_array(NULL)
+	: CParseHandlerLogicalOp(mp, parse_handler_mgr, parse_handler_root), m_window_spec_array(NULL)
 {
 }
 
@@ -62,19 +61,13 @@ CParseHandlerLogicalWindow::StartElement(const XMLCh *const,  // element_uri,
 		m_parse_handler_mgr->ActivateParseHandler(child_parse_handler);
 
 		// parse handler for the proj list
-		CParseHandlerBase *proj_list_parse_handler =
-			CParseHandlerFactory::GetParseHandler(m_mp,
-												  CDXLTokens::XmlstrToken(EdxltokenScalarProjList),
-												  m_parse_handler_mgr,
-												  this);
+		CParseHandlerBase *proj_list_parse_handler = CParseHandlerFactory::GetParseHandler(
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarProjList), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(proj_list_parse_handler);
 
 		// parse handler for window specification list
-		CParseHandlerBase *window_speclist_parse_handler =
-			CParseHandlerFactory::GetParseHandler(m_mp,
-												  CDXLTokens::XmlstrToken(EdxltokenWindowSpecList),
-												  m_parse_handler_mgr,
-												  this);
+		CParseHandlerBase *window_speclist_parse_handler = CParseHandlerFactory::GetParseHandler(
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenWindowSpecList), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(window_speclist_parse_handler);
 
 		// store child parse handler in array
@@ -122,8 +115,7 @@ CParseHandlerLogicalWindow::EndElement(const XMLCh *const,  // element_uri,
 	CDXLWindowSpecArray *window_spec_array = window_speclist_parse_handler->GetDxlWindowSpecArray();
 	GPOS_ASSERT(NULL != window_spec_array);
 
-	CDXLLogicalWindow *lg_window =
-		GPOS_NEW(m_mp) CDXLLogicalWindow(m_mp, window_spec_array);
+	CDXLLogicalWindow *lg_window = GPOS_NEW(m_mp) CDXLLogicalWindow(m_mp, window_spec_array);
 	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, lg_window);
 	GPOS_ASSERT(NULL != proj_list_parse_handler->CreateDXLNode());
 	GPOS_ASSERT(NULL != lg_op_parse_handler->CreateDXLNode());

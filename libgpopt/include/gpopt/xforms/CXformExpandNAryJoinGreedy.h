@@ -32,61 +32,51 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformExpandNAryJoinGreedy : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformExpandNAryJoinGreedy(const CXformExpandNAryJoinGreedy &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformExpandNAryJoinGreedy(IMemoryPool *pmp);
 
-			// private copy ctor
-			CXformExpandNAryJoinGreedy(const CXformExpandNAryJoinGreedy &);
+		// dtor
+		virtual ~CXformExpandNAryJoinGreedy()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfExpandNAryJoinGreedy;
+		}
 
-			// ctor
-			explicit
-			CXformExpandNAryJoinGreedy(IMemoryPool *pmp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformExpandNAryJoinGreedy";
+		}
 
-			// dtor
-			virtual
-			~CXformExpandNAryJoinGreedy()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfExpandNAryJoinGreedy;
-			}
+		// do stats need to be computed before applying xform?
+		virtual BOOL
+		FNeedsStats() const
+		{
+			return true;
+		}
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformExpandNAryJoinGreedy";
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+	};  // class CXformExpandNAryJoinGreedy
 
-			// do stats need to be computed before applying xform?
-			virtual
-			BOOL FNeedsStats() const
-			{
-				return true;
-			}
-
-			// actual transform
-			void Transform
-					(
-					CXformContext *pxfctxt,
-					CXformResult *pxfres,
-					CExpression *pexpr
-					) const;
-
-	}; // class CXformExpandNAryJoinGreedy
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformExpandNAryJoinGreedy_H
+#endif  // !GPOPT_CXformExpandNAryJoinGreedy_H
 
 // EOF

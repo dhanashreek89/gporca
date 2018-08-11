@@ -28,10 +28,7 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLTableDescr::CDXLTableDescr(IMemoryPool *mp,
-							   IMDId *mdid,
-							   CMDName *mdname,
-							   ULONG ulExecuteAsUser)
+CDXLTableDescr::CDXLTableDescr(IMemoryPool *mp, IMDId *mdid, CMDName *mdname, ULONG ulExecuteAsUser)
 	: m_mp(mp),
 	  m_mdid(mdid),
 	  m_mdname(mdname),

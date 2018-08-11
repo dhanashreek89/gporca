@@ -28,58 +28,49 @@ namespace gpopt
 	//		Swap cascaded anti semi-join (NotIn) and anti semi-join
 	//
 	//---------------------------------------------------------------------------
-	class CXformAntiSemiJoinNotInAntiSemiJoinSwap : public CXformJoinSwap<CLogicalLeftAntiSemiJoinNotIn, CLogicalLeftAntiSemiJoin>
+	class CXformAntiSemiJoinNotInAntiSemiJoinSwap
+		: public CXformJoinSwap<CLogicalLeftAntiSemiJoinNotIn, CLogicalLeftAntiSemiJoin>
 	{
+	private:
+		// private copy ctor
+		CXformAntiSemiJoinNotInAntiSemiJoinSwap(const CXformAntiSemiJoinNotInAntiSemiJoinSwap &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformAntiSemiJoinNotInAntiSemiJoinSwap(IMemoryPool *mp)
+			: CXformJoinSwap<CLogicalLeftAntiSemiJoinNotIn, CLogicalLeftAntiSemiJoin>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformAntiSemiJoinNotInAntiSemiJoinSwap(const CXformAntiSemiJoinNotInAntiSemiJoinSwap &);
+		// dtor
+		virtual ~CXformAntiSemiJoinNotInAntiSemiJoinSwap()
+		{
+		}
 
-		public:
+		// Compatibility function
+		virtual BOOL
+		FCompatible(CXform::EXformId exfid)
+		{
+			return ExfAntiSemiJoinAntiSemiJoinNotInSwap != exfid;
+		}
 
-			// ctor
-			explicit
-			CXformAntiSemiJoinNotInAntiSemiJoinSwap
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformJoinSwap<CLogicalLeftAntiSemiJoinNotIn, CLogicalLeftAntiSemiJoin>(mp)
-			{}
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfAntiSemiJoinNotInAntiSemiJoinSwap;
+		}
 
-			// dtor
-			virtual
-			~CXformAntiSemiJoinNotInAntiSemiJoinSwap()
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformAntiSemiJoinNotInAntiSemiJoinSwap";
+		}
 
-			// Compatibility function
-			virtual
-			BOOL FCompatible
-				(
-				CXform::EXformId exfid
-				)
-			{
-				return ExfAntiSemiJoinAntiSemiJoinNotInSwap != exfid;
-			}
+	};  // class CXformAntiSemiJoinNotInAntiSemiJoinSwap
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfAntiSemiJoinNotInAntiSemiJoinSwap;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformAntiSemiJoinNotInAntiSemiJoinSwap";
-			}
-
-	}; // class CXformAntiSemiJoinNotInAntiSemiJoinSwap
-
-}
-
-#endif // !GPOPT_CXformAntiSemiJoinNotInAntiSemiJoinSwap_H
+#endif  // !GPOPT_CXformAntiSemiJoinNotInAntiSemiJoinSwap_H
 
 // EOF

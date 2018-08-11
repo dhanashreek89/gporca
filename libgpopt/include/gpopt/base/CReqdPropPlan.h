@@ -45,222 +45,195 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CReqdPropPlan : public CReqdProp
 	{
+	private:
+		// required columns
+		CColRefSet *m_pcrs;
 
-		private:
+		// required sort order
+		CEnfdOrder *m_peo;
 
-			// required columns
-			CColRefSet *m_pcrs;
+		// required distribution
+		CEnfdDistribution *m_ped;
 
-			// required sort order
-			CEnfdOrder *m_peo;
+		// required rewindability
+		CEnfdRewindability *m_per;
 
-			// required distribution
-			CEnfdDistribution *m_ped;
+		// required partition propagation
+		CEnfdPartitionPropagation *m_pepp;
 
-			// required rewindability
-			CEnfdRewindability *m_per;
-			
-			// required partition propagation
-			CEnfdPartitionPropagation *m_pepp;
+		// required ctes
+		CCTEReq *m_pcter;
 
-			// required ctes
-			CCTEReq *m_pcter;
+		// private copy ctor
+		CReqdPropPlan(const CReqdPropPlan &);
 
-			// private copy ctor
-			CReqdPropPlan(const CReqdPropPlan &);
+		// combine derived part filter map from input requirements and
+		// derived plan properties in the passed context
+		CPartFilterMap *PpfmCombineDerived(IMemoryPool *mp,
+										   CExpressionHandle &exprhdl,
+										   CReqdPropPlan *prppInput,
+										   ULONG child_index,
+										   CDrvdPropArrays *pdrgpdpCtxt);
 
-			// combine derived part filter map from input requirements and
-			// derived plan properties in the passed context
-			CPartFilterMap *PpfmCombineDerived
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CReqdPropPlan *prppInput,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt
-				);
+	public:
+		// default ctor
+		CReqdPropPlan()
+			: m_pcrs(NULL), m_peo(NULL), m_ped(NULL), m_per(NULL), m_pepp(NULL), m_pcter(NULL)
+		{
+		}
 
-		public:
+		// ctor
+		CReqdPropPlan(CColRefSet *pcrs,
+					  CEnfdOrder *peo,
+					  CEnfdDistribution *ped,
+					  CEnfdRewindability *per,
+					  CCTEReq *pcter);
 
-			// default ctor
-			CReqdPropPlan()
-				:
-				m_pcrs(NULL),
-				m_peo(NULL),
-				m_ped(NULL),
-				m_per(NULL),
-				m_pepp(NULL),
-				m_pcter(NULL)
-			{}
+		// ctor
+		CReqdPropPlan(CColRefSet *pcrs,
+					  CEnfdOrder *peo,
+					  CEnfdDistribution *ped,
+					  CEnfdRewindability *per,
+					  CEnfdPartitionPropagation *pepp,
+					  CCTEReq *pcter);
 
-			// ctor
-			CReqdPropPlan
-				(
-				CColRefSet *pcrs,
-				CEnfdOrder *peo,
-				CEnfdDistribution *ped,
-				CEnfdRewindability *per,
-				CCTEReq *pcter
-				);
+		// dtor
+		virtual ~CReqdPropPlan();
 
-			// ctor
-			CReqdPropPlan
-				(
-				CColRefSet *pcrs,
-				CEnfdOrder *peo,
-				CEnfdDistribution *ped,
-				CEnfdRewindability *per,
-				CEnfdPartitionPropagation *pepp,
-				CCTEReq *pcter
-				);
+		// type of properties
+		virtual BOOL
+		FPlan() const
+		{
+			GPOS_ASSERT(!FRelational());
+			return true;
+		}
 
-			// dtor
-			virtual
-			~CReqdPropPlan();
+		// required properties computation function
+		virtual void Compute(IMemoryPool *mp,
+							 CExpressionHandle &exprhdl,
+							 CReqdProp *prpInput,
+							 ULONG child_index,
+							 CDrvdPropArrays *pdrgpdpCtxt,
+							 ULONG ulOptReq);
 
-			// type of properties
-			virtual
-			BOOL FPlan() const
-			{
-				GPOS_ASSERT(!FRelational());
-				return true;
-			}
+		// required columns computation function
+		void ComputeReqdCols(IMemoryPool *mp,
+							 CExpressionHandle &exprhdl,
+							 CReqdProp *prpInput,
+							 ULONG child_index,
+							 CDrvdPropArrays *pdrgpdpCtxt);
 
-			// required properties computation function
-			virtual
-			void Compute
-					(
-					IMemoryPool *mp,
-					CExpressionHandle &exprhdl,
-					CReqdProp *prpInput,
-					ULONG child_index,
-					CDrvdPropArrays *pdrgpdpCtxt,
-					ULONG ulOptReq
-					);
+		// required ctes computation function
+		void ComputeReqdCTEs(IMemoryPool *mp,
+							 CExpressionHandle &exprhdl,
+							 CReqdProp *prpInput,
+							 ULONG child_index,
+							 CDrvdPropArrays *pdrgpdpCtxt);
 
-			// required columns computation function
-			void ComputeReqdCols
-					(
-					IMemoryPool *mp,
-					CExpressionHandle &exprhdl,
-					CReqdProp *prpInput,
-					ULONG child_index,
-					CDrvdPropArrays *pdrgpdpCtxt
-					);
+		// required columns accessor
+		CColRefSet *
+		PcrsRequired() const
+		{
+			return m_pcrs;
+		}
 
-			// required ctes computation function
-			void ComputeReqdCTEs
-					(
-					IMemoryPool *mp,
-					CExpressionHandle &exprhdl,
-					CReqdProp *prpInput,
-					ULONG child_index,
-					CDrvdPropArrays *pdrgpdpCtxt
-					);
+		// required order accessor
+		CEnfdOrder *
+		Peo() const
+		{
+			return m_peo;
+		}
 
-			// required columns accessor
-			CColRefSet *PcrsRequired() const
-			{
-				return m_pcrs;
-			}
+		// required distribution accessor
+		CEnfdDistribution *
+		Ped() const
+		{
+			return m_ped;
+		}
 
-			// required order accessor
-			CEnfdOrder *Peo() const
-			{
-				return m_peo;
-			}
+		// required rewindability accessor
+		CEnfdRewindability *
+		Per() const
+		{
+			return m_per;
+		}
 
-			// required distribution accessor
-			CEnfdDistribution *Ped() const
-			{
-				return m_ped;
-			}
+		// required partition propagation accessor
+		CEnfdPartitionPropagation *
+		Pepp() const
+		{
+			return m_pepp;
+		}
 
-			// required rewindability accessor
-			CEnfdRewindability *Per() const
-			{
-				return m_per;
-			}
+		// required cte accessor
+		CCTEReq *
+		Pcter() const
+		{
+			return m_pcter;
+		}
 
-			// required partition propagation accessor
-			CEnfdPartitionPropagation *Pepp() const
-			{
-				return m_pepp;
-			}
+		// given a property spec type, return the corresponding property spec member
+		CPropSpec *Pps(ULONG ul) const;
 
-			// required cte accessor
-			CCTEReq *Pcter() const
-			{
-				return m_pcter;
-			}
+		// equality function
+		BOOL Equals(const CReqdPropPlan *prpp) const;
 
-			// given a property spec type, return the corresponding property spec member
-			CPropSpec *Pps(ULONG ul) const;
+		// hash function
+		ULONG HashValue() const;
 
-			// equality function
-			BOOL Equals(const CReqdPropPlan *prpp) const;
+		// check if plan properties are satisfied by the given derived properties
+		BOOL FSatisfied(const CDrvdPropRelational *pdprel, const CDrvdPropPlan *pdpplan) const;
 
-			// hash function
-			ULONG HashValue() const;
+		// check if plan properties are compatible with the given derived properties
+		BOOL FCompatible(CExpressionHandle &exprhdl,
+						 CPhysical *popPhysical,
+						 const CDrvdPropRelational *pdprel,
+						 const CDrvdPropPlan *pdpplan) const;
 
-			// check if plan properties are satisfied by the given derived properties
-			BOOL FSatisfied(const CDrvdPropRelational *pdprel, const CDrvdPropPlan *pdpplan) const;
+		// initialize partition propagation requirements
+		void InitReqdPartitionPropagation(IMemoryPool *mp, CPartInfo *ppartinfo);
 
-			// check if plan properties are compatible with the given derived properties
-			BOOL FCompatible
-				(
-				CExpressionHandle &exprhdl,
-				CPhysical *popPhysical,
-				const CDrvdPropRelational *pdprel,
-				const CDrvdPropPlan *pdpplan
-				)
-				const;
+		// check if expression attached to handle provides required columns by all plan properties
+		BOOL FProvidesReqdCols(IMemoryPool *mp, CExpressionHandle &exprhdl, ULONG ulOptReq) const;
 
-			// initialize partition propagation requirements
-			void InitReqdPartitionPropagation(IMemoryPool *mp, CPartInfo *ppartinfo);
-			
-			// check if expression attached to handle provides required columns by all plan properties
-			BOOL FProvidesReqdCols(IMemoryPool *mp, CExpressionHandle &exprhdl, ULONG ulOptReq) const;
+		// shorthand for conversion
+		static CReqdPropPlan *
+		Prpp(CReqdProp *prp)
+		{
+			GPOS_ASSERT(NULL != prp);
 
-			// shorthand for conversion
-			static
-			CReqdPropPlan *Prpp(CReqdProp *prp)
-			{
-				GPOS_ASSERT(NULL != prp);
+			return dynamic_cast<CReqdPropPlan *>(prp);
+		}
 
-				return dynamic_cast<CReqdPropPlan*>(prp);
-			}
+		//generate empty required properties
+		static CReqdPropPlan *PrppEmpty(IMemoryPool *mp);
 
-			//generate empty required properties
-			static
-			CReqdPropPlan *PrppEmpty(IMemoryPool *mp);
+		// hash function used for cost bounding
+		static ULONG UlHashForCostBounding(const CReqdPropPlan *prpp);
 
-			// hash function used for cost bounding
-			static
-			ULONG UlHashForCostBounding(const CReqdPropPlan *prpp);
+		// equality function used for cost bounding
+		static BOOL FEqualForCostBounding(const CReqdPropPlan *prppFst,
+										  const CReqdPropPlan *prppSnd);
 
-			// equality function used for cost bounding
-			static
-			BOOL FEqualForCostBounding(const CReqdPropPlan *prppFst, const CReqdPropPlan *prppSnd);
+		// map input required and derived plan properties into new required plan properties
+		static CReqdPropPlan *PrppRemap(IMemoryPool *mp,
+										CReqdPropPlan *prppInput,
+										CDrvdPropPlan *pdpplanInput,
+										UlongToColRefMap *colref_mapping);
 
-			// map input required and derived plan properties into new required plan properties
-			static
-			CReqdPropPlan *PrppRemap(IMemoryPool *mp, CReqdPropPlan *prppInput, CDrvdPropPlan *pdpplanInput, UlongToColRefMap *colref_mapping);
-
-			// print function
-			virtual
-			IOstream &OsPrint(IOstream &os) const;
+		// print function
+		virtual IOstream &OsPrint(IOstream &os) const;
 
 #ifdef GPOS_DEBUG
-			// debug print for interactive debugging sessions only
-			void DbgPrint() const;
-#endif // GPOS_DEBUG
+		// debug print for interactive debugging sessions only
+		void DbgPrint() const;
+#endif  // GPOS_DEBUG
 
-	}; // class CReqdPropPlan
+	};  // class CReqdPropPlan
 
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CReqdPropPlan_H
+#endif  // !GPOPT_CReqdPropPlan_H
 
 // EOF

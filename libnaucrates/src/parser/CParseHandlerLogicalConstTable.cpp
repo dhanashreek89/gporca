@@ -32,9 +32,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerLogicalConstTable::CParseHandlerLogicalConstTable(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerLogicalOp(mp, parse_handler_mgr, parse_handler_root),
 	  m_const_tuples_datum_array(NULL),
 	  m_dxl_datum_array(NULL)
@@ -126,8 +124,7 @@ CParseHandlerLogicalConstTable::EndElement(const XMLCh *const,  // element_uri,
 			dynamic_cast<CParseHandlerColDescr *>((*this)[0]);
 		GPOS_ASSERT(NULL != col_descr_parse_handler->GetDXLColumnDescrArray());
 
-		CDXLColDescrArray *dxl_col_descr_array =
-			col_descr_parse_handler->GetDXLColumnDescrArray();
+		CDXLColDescrArray *dxl_col_descr_array = col_descr_parse_handler->GetDXLColumnDescrArray();
 		dxl_col_descr_array->AddRef();
 
 		CDXLLogicalConstTable *lg_const_table_get_dxl_op = GPOS_NEW(m_mp)

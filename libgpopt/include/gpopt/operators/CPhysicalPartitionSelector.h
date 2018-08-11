@@ -18,7 +18,6 @@
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalPartitionSelector
@@ -29,329 +28,276 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalPartitionSelector : public CPhysical
 	{
-		protected:
+	protected:
+		// Scan id
+		ULONG m_scan_id;
 
-			// Scan id
-			ULONG m_scan_id;
+		// mdid of partitioned table
+		IMDId *m_mdid;
 
-			// mdid of partitioned table
-			IMDId *m_mdid;
+		// partition keys
+		CColRefArrays *m_pdrgpdrgpcr;
 
-			// partition keys
-			CColRefArrays *m_pdrgpdrgpcr;
+		// part constraint map
+		UlongToPartConstraintMap *m_ppartcnstrmap;
 
-			// part constraint map
-			UlongToPartConstraintMap *m_ppartcnstrmap;
+		// relation part constraint
+		CPartConstraint *m_part_constraint;
 
-			// relation part constraint
-			CPartConstraint *m_part_constraint;
+		// expressions used in equality filters; for a filter of the form
+		// pk1 = expr, we only store the expr
+		UlongToExprMap *m_phmulexprEqPredicates;
 
-			// expressions used in equality filters; for a filter of the form
-			// pk1 = expr, we only store the expr
-			UlongToExprMap *m_phmulexprEqPredicates;
+		// expressions used in general predicates; we store the whole predicate
+		// in this case (e.g. pk1 > 50)
+		UlongToExprMap *m_phmulexprPredicates;
 
-			// expressions used in general predicates; we store the whole predicate
-			// in this case (e.g. pk1 > 50)
-			UlongToExprMap *m_phmulexprPredicates;
+		// residual partition selection expression that cannot be split to
+		// individual levels (e.g. pk1 < 5 OR pk2 = 6)
+		CExpression *m_pexprResidual;
 
-			// residual partition selection expression that cannot be split to
-			// individual levels (e.g. pk1 < 5 OR pk2 = 6)
-			CExpression *m_pexprResidual;
+		// combined partition selection predicate
+		CExpression *m_pexprCombinedPredicate;
 
-			// combined partition selection predicate
-			CExpression *m_pexprCombinedPredicate;
+		// ctor
+		CPhysicalPartitionSelector(IMemoryPool *mp,
+								   IMDId *mdid,
+								   UlongToExprMap *phmulexprEqPredicates);
 
-			// ctor
-			CPhysicalPartitionSelector(IMemoryPool *mp, IMDId *mdid, UlongToExprMap *phmulexprEqPredicates);
+		// return a single combined partition selection predicate
+		CExpression *PexprCombinedPartPred(IMemoryPool *mp) const;
 
-			// return a single combined partition selection predicate
-			CExpression *PexprCombinedPartPred(IMemoryPool *mp) const;
+		// check whether two expression maps match
+		static BOOL FMatchExprMaps(UlongToExprMap *phmulexprFst, UlongToExprMap *phmulexprSnd);
 
-			// check whether two expression maps match
-			static
-			BOOL FMatchExprMaps(UlongToExprMap *phmulexprFst, UlongToExprMap *phmulexprSnd);
+	private:
+		// private copy ctor
+		CPhysicalPartitionSelector(const CPhysicalPartitionSelector &);
 
-		private:
+		// check whether part constraint maps match
+		BOOL FMatchPartCnstr(UlongToPartConstraintMap *ppartcnstrmap) const;
 
-			// private copy ctor
-			CPhysicalPartitionSelector(const CPhysicalPartitionSelector &);
+		// check whether this operator has a partition selection filter
+		BOOL FHasFilter() const;
 
-			// check whether part constraint maps match
-			BOOL FMatchPartCnstr(UlongToPartConstraintMap *ppartcnstrmap) const;
+		// check whether first part constraint map is contained in the second one
+		static BOOL FSubsetPartCnstr(UlongToPartConstraintMap *ppartcnstrmapFst,
+									 UlongToPartConstraintMap *ppartcnstrmapSnd);
 
-			// check whether this operator has a partition selection filter
-			BOOL FHasFilter() const;
+	public:
+		// ctor
+		CPhysicalPartitionSelector(IMemoryPool *mp,
+								   ULONG scan_id,
+								   IMDId *mdid,
+								   CColRefArrays *pdrgpdrgpcr,
+								   UlongToPartConstraintMap *ppartcnstrmap,
+								   CPartConstraint *ppartcnstr,
+								   UlongToExprMap *phmulexprEqPredicates,
+								   UlongToExprMap *phmulexprPredicates,
+								   CExpression *pexprResidual);
 
-			// check whether first part constraint map is contained in the second one
-			static
-			BOOL FSubsetPartCnstr(UlongToPartConstraintMap *ppartcnstrmapFst, UlongToPartConstraintMap *ppartcnstrmapSnd);
+		// dtor
+		virtual ~CPhysicalPartitionSelector();
 
-		public:
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalPartitionSelector;
+		}
 
-			// ctor
-			CPhysicalPartitionSelector
-				(
-				IMemoryPool *mp,
-				ULONG scan_id,
-				IMDId *mdid,
-				CColRefArrays *pdrgpdrgpcr,
-				UlongToPartConstraintMap *ppartcnstrmap,
-				CPartConstraint *ppartcnstr,
-				UlongToExprMap *phmulexprEqPredicates,
-				UlongToExprMap *phmulexprPredicates,
-				CExpression *pexprResidual
-				);
+		// operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalPartitionSelector";
+		}
 
-			// dtor
-			virtual
-			~CPhysicalPartitionSelector();
+		// scan id
+		ULONG
+		ScanId() const
+		{
+			return m_scan_id;
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalPartitionSelector;
-			}
+		// partitioned table mdid
+		IMDId *
+		MDId() const
+		{
+			return m_mdid;
+		}
 
-			// operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CPhysicalPartitionSelector";
-			}
+		// partition keys
+		CColRefArrays *
+		Pdrgpdrgpcr() const
+		{
+			return m_pdrgpdrgpcr;
+		}
 
-			// scan id
-			ULONG ScanId() const
-			{
-				return m_scan_id;
-			}
+		// number of partitioning levels
+		virtual ULONG UlPartLevels() const;
 
-			// partitioned table mdid
-			IMDId *MDId() const
-			{
-				return m_mdid;
-			}
+		// return a combined printable version of the partition selection predicate
+		CExpression *
+		PexprCombinedPred() const
+		{
+			return m_pexprCombinedPredicate;
+		}
 
-			// partition keys
-			CColRefArrays *Pdrgpdrgpcr() const
-			{
-				return m_pdrgpdrgpcr;
-			}
+		// return the equality filter expression for the given level
+		CExpression *PexprEqFilter(ULONG ulPartLevel) const;
 
-			// number of partitioning levels
-			virtual
-			ULONG UlPartLevels() const;
+		// return the filter expression for the given level
+		CExpression *PexprFilter(ULONG ulPartLevel) const;
 
-			// return a combined printable version of the partition selection predicate
-			CExpression *PexprCombinedPred() const
-			{
-				return m_pexprCombinedPredicate;
-			}
+		// return the partition selection predicate for the given level
+		CExpression *PexprPartPred(IMemoryPool *mp, ULONG ulPartLevel) const;
 
-			// return the equality filter expression for the given level
-			CExpression *PexprEqFilter(ULONG ulPartLevel) const;
+		// return the residual predicate
+		CExpression *
+		PexprResidualPred() const
+		{
+			return m_pexprResidual;
+		}
 
-			// return the filter expression for the given level
-			CExpression *PexprFilter(ULONG ulPartLevel) const;
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// return the partition selection predicate for the given level
-			CExpression *PexprPartPred(IMemoryPool *mp, ULONG ulPartLevel) const;
+		// hash function
+		virtual ULONG HashValue() const;
 
-			// return the residual predicate
-			CExpression *PexprResidualPred() const
-			{
-				return m_pexprResidual;
-			}
+		// sensitivity to order of inputs
+		virtual BOOL
+		FInputOrderSensitive() const
+		{
+			// operator has one child
+			return false;
+		}
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
+		//-------------------------------------------------------------------------------------
+		// Required Plan Properties
+		//-------------------------------------------------------------------------------------
 
-			// hash function
-			virtual
-			ULONG HashValue() const;
+		// compute required output columns of the n-th child
+		virtual CColRefSet *PcrsRequired(IMemoryPool *mp,
+										 CExpressionHandle &exprhdl,
+										 CColRefSet *pcrsRequired,
+										 ULONG child_index,
+										 CDrvdPropArrays *pdrgpdpCtxt,
+										 ULONG ulOptReq);
 
-			// sensitivity to order of inputs
-			virtual
-			BOOL FInputOrderSensitive() const
-			{
-				// operator has one child
-				return false;
-			}
+		// compute required ctes of the n-th child
+		virtual CCTEReq *PcteRequired(IMemoryPool *mp,
+									  CExpressionHandle &exprhdl,
+									  CCTEReq *pcter,
+									  ULONG child_index,
+									  CDrvdPropArrays *pdrgpdpCtxt,
+									  ULONG ulOptReq) const;
 
-			//-------------------------------------------------------------------------------------
-			// Required Plan Properties
-			//-------------------------------------------------------------------------------------
+		// compute required sort order of the n-th child
+		virtual COrderSpec *PosRequired(IMemoryPool *mp,
+										CExpressionHandle &exprhdl,
+										COrderSpec *posRequired,
+										ULONG child_index,
+										CDrvdPropArrays *pdrgpdpCtxt,
+										ULONG ulOptReq) const;
 
-			// compute required output columns of the n-th child
-			virtual
-			CColRefSet *PcrsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CColRefSet *pcrsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				);
+		// compute required distribution of the n-th child
+		virtual CDistributionSpec *PdsRequired(IMemoryPool *mp,
+											   CExpressionHandle &exprhdl,
+											   CDistributionSpec *pdsRequired,
+											   ULONG child_index,
+											   CDrvdPropArrays *pdrgpdpCtxt,
+											   ULONG ulOptReq) const;
 
-			// compute required ctes of the n-th child
-			virtual
-			CCTEReq *PcteRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CCTEReq *pcter,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				)
-				const;
+		// compute required partition propagation of the n-th child
+		virtual CPartitionPropagationSpec *PppsRequired(IMemoryPool *mp,
+														CExpressionHandle &exprhdl,
+														CPartitionPropagationSpec *pppsRequired,
+														ULONG child_index,
+														CDrvdPropArrays *pdrgpdpCtxt,
+														ULONG ulOptReq);
 
-			// compute required sort order of the n-th child
-			virtual
-			COrderSpec *PosRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				COrderSpec *posRequired,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				)
-				const;
+		// compute required rewindability of the n-th child
+		virtual CRewindabilitySpec *PrsRequired(IMemoryPool *mp,
+												CExpressionHandle &exprhdl,
+												CRewindabilitySpec *prsRequired,
+												ULONG child_index,
+												CDrvdPropArrays *pdrgpdpCtxt,
+												ULONG ulOptReq) const;
 
-			// compute required distribution of the n-th child
-			virtual
-			CDistributionSpec *PdsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CDistributionSpec *pdsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				)
-				const;
+		// check if required columns are included in output columns
+		virtual BOOL FProvidesReqdCols(CExpressionHandle &exprhdl,
+									   CColRefSet *pcrsRequired,
+									   ULONG ulOptReq) const;
 
-			// compute required partition propagation of the n-th child
-			virtual
-			CPartitionPropagationSpec *PppsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CPartitionPropagationSpec *pppsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				);
+		//-------------------------------------------------------------------------------------
+		// Derived Plan Properties
+		//-------------------------------------------------------------------------------------
 
-			// compute required rewindability of the n-th child
-			virtual
-			CRewindabilitySpec *PrsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CRewindabilitySpec *prsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				)
-				const;
+		// derive sort order
+		virtual COrderSpec *PosDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// check if required columns are included in output columns
-			virtual
-			BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const;
+		// derive distribution
+		virtual CDistributionSpec *PdsDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			//-------------------------------------------------------------------------------------
-			// Derived Plan Properties
-			//-------------------------------------------------------------------------------------
+		// derive rewindability
+		virtual CRewindabilitySpec *PrsDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// derive sort order
-			virtual
-			COrderSpec *PosDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// derive partition index map
+		virtual CPartIndexMap *PpimDerive(IMemoryPool *mp,
+										  CExpressionHandle &exprhdl,
+										  CDrvdPropCtxt *pdpctxt) const;
 
-			// derive distribution
-			virtual
-			CDistributionSpec *PdsDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// derive partition filter map
+		virtual CPartFilterMap *PpfmDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// derive rewindability
-			virtual
-			CRewindabilitySpec *PrsDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		//-------------------------------------------------------------------------------------
+		// Enforced Properties
+		//-------------------------------------------------------------------------------------
 
-			// derive partition index map
-			virtual
-			CPartIndexMap *PpimDerive(IMemoryPool *mp, CExpressionHandle &exprhdl, CDrvdPropCtxt *pdpctxt) const;
+		// return distribution property enforcing type for this operator
+		virtual CEnfdProp::EPropEnforcingType EpetDistribution(CExpressionHandle &exprhdl,
+															   const CEnfdDistribution *ped) const;
 
-			// derive partition filter map
-			virtual
-			CPartFilterMap *PpfmDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// return rewindability property enforcing type for this operator
+		virtual CEnfdProp::EPropEnforcingType EpetRewindability(
+			CExpressionHandle &exprhdl, const CEnfdRewindability *per) const;
 
-			//-------------------------------------------------------------------------------------
-			// Enforced Properties
-			//-------------------------------------------------------------------------------------
+		// return order property enforcing type for this operator
+		virtual CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl,
+														const CEnfdOrder *peo) const;
 
-			// return distribution property enforcing type for this operator
-			virtual
-			CEnfdProp::EPropEnforcingType EpetDistribution
-				(
-				CExpressionHandle &exprhdl,
-				const CEnfdDistribution *ped
-				)
-				const;
+		// return true if operator passes through stats obtained from children,
+		// this is used when computing stats during costing
+		virtual BOOL
+		FPassThruStats() const
+		{
+			return true;
+		}
 
-			// return rewindability property enforcing type for this operator
-			virtual
-			CEnfdProp::EPropEnforcingType EpetRewindability
-				(
-				CExpressionHandle &exprhdl,
-				const CEnfdRewindability *per
-				)
-				const;
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
 
-			// return order property enforcing type for this operator
-			virtual
-			CEnfdProp::EPropEnforcingType EpetOrder
-				(
-				CExpressionHandle &exprhdl,
-				const CEnfdOrder *peo
-				)
-				const;
+		// conversion function
+		static CPhysicalPartitionSelector *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopPhysicalPartitionSelector == pop->Eopid() ||
+						EopPhysicalPartitionSelectorDML == pop->Eopid());
 
-			// return true if operator passes through stats obtained from children,
-			// this is used when computing stats during costing
-			virtual
-			BOOL FPassThruStats() const
-			{
-				return true;
-			}
+			return dynamic_cast<CPhysicalPartitionSelector *>(pop);
+		}
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+		// debug print
+		virtual IOstream &OsPrint(IOstream &os) const;
 
-			// conversion function
-			static
-			CPhysicalPartitionSelector *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopPhysicalPartitionSelector == pop->Eopid() ||
-							EopPhysicalPartitionSelectorDML == pop->Eopid());
+	};  // class CPhysicalPartitionSelector
 
-				return dynamic_cast<CPhysicalPartitionSelector*>(pop);
-			}
+}  // namespace gpopt
 
-			// debug print
-			virtual
-			IOstream &OsPrint(IOstream &os) const;
-
-	}; // class CPhysicalPartitionSelector
-
-}
-
-#endif // !GPOPT_CPhysicalPartitionSelector_H
+#endif  // !GPOPT_CPhysicalPartitionSelector_H
 
 // EOF

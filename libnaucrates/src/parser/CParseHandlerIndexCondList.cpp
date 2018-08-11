@@ -53,8 +53,7 @@ CParseHandlerIndexCondList::StartElement(const XMLCh *const element_uri,
 									  element_local_name))
 	{
 		// start the index condition list
-		m_dxlnode = GPOS_NEW(m_mp)
-			CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarIndexCondList(m_mp));
+		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarIndexCondList(m_mp));
 	}
 	else
 	{

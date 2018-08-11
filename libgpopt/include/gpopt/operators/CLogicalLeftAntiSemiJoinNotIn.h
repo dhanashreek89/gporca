@@ -34,65 +34,59 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalLeftAntiSemiJoinNotIn : public CLogicalLeftAntiSemiJoin
 	{
-		private:
+	private:
+		// private copy ctor
+		CLogicalLeftAntiSemiJoinNotIn(const CLogicalLeftAntiSemiJoinNotIn &);
 
-			// private copy ctor
-			CLogicalLeftAntiSemiJoinNotIn(const CLogicalLeftAntiSemiJoinNotIn &);
+	public:
+		// ctor
+		explicit CLogicalLeftAntiSemiJoinNotIn(IMemoryPool *mp);
 
-		public:
+		// dtor
+		virtual ~CLogicalLeftAntiSemiJoinNotIn()
+		{
+		}
 
-			// ctor
-			explicit
-			CLogicalLeftAntiSemiJoinNotIn(IMemoryPool *mp);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalLeftAntiSemiJoinNotIn;
+		}
 
-			// dtor
-			virtual
-			~CLogicalLeftAntiSemiJoinNotIn()
-			{}
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalLeftAntiSemiJoinNotIn";
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopLogicalLeftAntiSemiJoinNotIn;
-			}
+		//-------------------------------------------------------------------------------------
+		// Transformations
+		//-------------------------------------------------------------------------------------
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CLogicalLeftAntiSemiJoinNotIn";
-			}
+		// candidate set of xforms
+		CXformSet *PxfsCandidates(IMemoryPool *mp) const;
 
-			//-------------------------------------------------------------------------------------
-			// Transformations
-			//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
 
-			// candidate set of xforms
-			CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+		// conversion function
+		static CLogicalLeftAntiSemiJoinNotIn *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalLeftAntiSemiJoinNotIn == pop->Eopid());
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+			return dynamic_cast<CLogicalLeftAntiSemiJoinNotIn *>(pop);
+		}
 
-			// conversion function
-			static
-			CLogicalLeftAntiSemiJoinNotIn *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalLeftAntiSemiJoinNotIn == pop->Eopid());
+	};  // class CLogicalLeftAntiSemiJoinNotIn
 
-				return dynamic_cast<CLogicalLeftAntiSemiJoinNotIn*>(pop);
-			}
-
-	}; // class CLogicalLeftAntiSemiJoinNotIn
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOS_CLogicalLeftAntiSemiJoinNotIn_H
+#endif  // !GPOS_CLogicalLeftAntiSemiJoinNotIn_H
 
 // EOF

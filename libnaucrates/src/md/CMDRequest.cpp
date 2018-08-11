@@ -30,9 +30,7 @@ using namespace gpmd;
 CMDRequest::CMDRequest(IMemoryPool *mp,
 					   IMdIdArray *mdid_array,
 					   SMDTypeRequestArray *mdtype_request_array)
-	: m_mp(mp),
-	  m_mdid_array(mdid_array),
-	  m_mdtype_request_array(mdtype_request_array)
+	: m_mp(mp), m_mdid_array(mdid_array), m_mdtype_request_array(mdtype_request_array)
 {
 	GPOS_ASSERT(NULL != mp);
 	GPOS_ASSERT(NULL != mdid_array);

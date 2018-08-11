@@ -28,57 +28,46 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformImplementTVF : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformImplementTVF(const CXformImplementTVF &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementTVF(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformImplementTVF(const CXformImplementTVF &);
+		// ctor
+		explicit CXformImplementTVF(CExpression *pexprPattern);
 
-		public:
+		// dtor
+		virtual ~CXformImplementTVF()
+		{
+		}
 
-			// ctor
-			explicit
-			CXformImplementTVF(IMemoryPool *mp);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementTVF;
+		}
 
-			// ctor
-			explicit
-			CXformImplementTVF(CExpression *pexprPattern);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementTVF";
+		}
 
-			// dtor
-			virtual
-			~CXformImplementTVF() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementTVF;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementTVF";
-			}
+	};  // class CXformImplementTVF
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+}  // namespace gpopt
 
-			// actual transform
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformImplementTVF
-
-}
-
-#endif // !GPOPT_CXformImplementTVF_H
+#endif  // !GPOPT_CXformImplementTVF_H
 
 // EOF

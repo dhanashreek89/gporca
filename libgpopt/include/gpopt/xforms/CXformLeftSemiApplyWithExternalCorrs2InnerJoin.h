@@ -31,97 +31,73 @@ namespace gpopt
 	//		Transform Apply into Join by decorrelating the inner side
 	//
 	//---------------------------------------------------------------------------
-	class CXformLeftSemiApplyWithExternalCorrs2InnerJoin : public CXformApply2Join<CLogicalLeftSemiApply, CLogicalInnerJoin>
+	class CXformLeftSemiApplyWithExternalCorrs2InnerJoin
+		: public CXformApply2Join<CLogicalLeftSemiApply, CLogicalInnerJoin>
 	{
+	private:
+		// private copy ctor
+		CXformLeftSemiApplyWithExternalCorrs2InnerJoin(
+			const CXformLeftSemiApplyWithExternalCorrs2InnerJoin &);
 
-		private:
+		// helper for splitting correlations into external and residual
+		static BOOL FSplitCorrelations(IMemoryPool *mp,
+									   CExpression *pexprOuter,
+									   CExpression *pexprInner,
+									   CExpressionArray *pdrgpexprAllCorr,
+									   CExpressionArray **ppdrgpexprExternal,
+									   CExpressionArray **ppdrgpexprResidual,
+									   CColRefSet **ppcrsInnerUsed);
 
-			// private copy ctor
-			CXformLeftSemiApplyWithExternalCorrs2InnerJoin(const CXformLeftSemiApplyWithExternalCorrs2InnerJoin &);
+		// helper for collecting correlations
+		static BOOL FDecorrelate(IMemoryPool *mp,
+								 CExpression *pexpr,
+								 CExpression **ppexprInnerNew,
+								 CExpressionArray **ppdrgpexprCorr);
 
-			// helper for splitting correlations into external and residual
-			static
-			BOOL FSplitCorrelations
-				(
-				IMemoryPool *mp,
-				CExpression *pexprOuter,
-				CExpression *pexprInner,
-				CExpressionArray *pdrgpexprAllCorr,
-				CExpressionArray **ppdrgpexprExternal,
-				CExpressionArray **ppdrgpexprResidual,
-				CColRefSet **ppcrsInnerUsed
-				);
+		// decorrelate semi apply with external correlations
+		static CExpression *PexprDecorrelate(IMemoryPool *mp, CExpression *pexpr);
 
-			// helper for collecting correlations
-			static
-			BOOL FDecorrelate
-				(
-				IMemoryPool *mp,
-				CExpression *pexpr,
-				CExpression **ppexprInnerNew,
-				CExpressionArray **ppdrgpexprCorr
-				);
+	public:
+		// ctor
+		explicit CXformLeftSemiApplyWithExternalCorrs2InnerJoin(IMemoryPool *mp)
+			: CXformApply2Join<CLogicalLeftSemiApply, CLogicalInnerJoin>(mp, true /*fDeepTree*/)
+		{
+		}
 
-			// decorrelate semi apply with external correlations
-			static
-			CExpression *PexprDecorrelate
-				(
-				IMemoryPool *mp,
-				CExpression *pexpr
-				);
+		// ctor with a passed pattern
+		CXformLeftSemiApplyWithExternalCorrs2InnerJoin(IMemoryPool *mp, CExpression *pexprPattern)
+			: CXformApply2Join<CLogicalLeftSemiApply, CLogicalInnerJoin>(mp, pexprPattern)
+		{
+		}
 
-		public:
+		// dtor
+		virtual ~CXformLeftSemiApplyWithExternalCorrs2InnerJoin()
+		{
+		}
 
-			// ctor
-			explicit
-			CXformLeftSemiApplyWithExternalCorrs2InnerJoin
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformApply2Join<CLogicalLeftSemiApply, CLogicalInnerJoin>(mp, true /*fDeepTree*/)
-			{}
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftSemiApplyWithExternalCorrs2InnerJoin;
+		}
 
-			// ctor with a passed pattern
-			CXformLeftSemiApplyWithExternalCorrs2InnerJoin
-				(
-				IMemoryPool *mp,
-				CExpression *pexprPattern
-				)
-				:
-				CXformApply2Join<CLogicalLeftSemiApply, CLogicalInnerJoin>(mp, pexprPattern)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftSemiApplyWithExternalCorrs2InnerJoin";
+		}
 
-			// dtor
-			virtual
-			~CXformLeftSemiApplyWithExternalCorrs2InnerJoin()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftSemiApplyWithExternalCorrs2InnerJoin;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftSemiApplyWithExternalCorrs2InnerJoin";
-			}
+	};  // class CXformLeftSemiApplyWithExternalCorrs2InnerJoin
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+}  // namespace gpopt
 
-			// actual transform
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
-
-	}; // class CXformLeftSemiApplyWithExternalCorrs2InnerJoin
-
-}
-
-#endif // !GPOPT_CXformLeftSemiApplyWithExternalCorrs2InnerJoin_H
+#endif  // !GPOPT_CXformLeftSemiApplyWithExternalCorrs2InnerJoin_H
 
 // EOF
-

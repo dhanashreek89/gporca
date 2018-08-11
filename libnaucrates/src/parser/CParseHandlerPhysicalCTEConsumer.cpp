@@ -31,9 +31,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerPhysicalCTEConsumer::CParseHandlerPhysicalCTEConsumer(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerPhysicalOp(mp, parse_handler_mgr, parse_handler_root)
 {
 }
@@ -72,9 +70,8 @@ CParseHandlerPhysicalCTEConsumer::StartElement(const XMLCh *const,  // element_u
 														 EdxltokenColumns,
 														 EdxltokenPhysicalCTEConsumer);
 
-	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(
-		m_mp,
-		GPOS_NEW(m_mp) CDXLPhysicalCTEConsumer(m_mp, id, output_colids_array));
+	m_dxlnode = GPOS_NEW(m_mp)
+		CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLPhysicalCTEConsumer(m_mp, id, output_colids_array));
 
 	// parse handler for the proj list
 	CParseHandlerBase *proj_list_parse_handler = CParseHandlerFactory::GetParseHandler(

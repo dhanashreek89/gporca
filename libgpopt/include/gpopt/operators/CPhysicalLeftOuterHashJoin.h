@@ -16,7 +16,6 @@
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalLeftOuterHashJoin
@@ -27,58 +26,48 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalLeftOuterHashJoin : public CPhysicalHashJoin
 	{
+	private:
+		// private copy ctor
+		CPhysicalLeftOuterHashJoin(const CPhysicalLeftOuterHashJoin &);
 
-		private:
+	public:
+		// ctor
+		CPhysicalLeftOuterHashJoin(IMemoryPool *mp,
+								   CExpressionArray *pdrgpexprOuterKeys,
+								   CExpressionArray *pdrgpexprInnerKeys);
 
-			// private copy ctor
-			CPhysicalLeftOuterHashJoin(const CPhysicalLeftOuterHashJoin &);
+		// dtor
+		virtual ~CPhysicalLeftOuterHashJoin();
 
-		public:
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalLeftOuterHashJoin;
+		}
 
-			// ctor
-			CPhysicalLeftOuterHashJoin
-				(
-				IMemoryPool *mp,
-				CExpressionArray *pdrgpexprOuterKeys,
-				CExpressionArray *pdrgpexprInnerKeys
-				);
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalLeftOuterHashJoin";
+		}
 
-			// dtor
-			virtual
-			~CPhysicalLeftOuterHashJoin();
+		// conversion function
+		static CPhysicalLeftOuterHashJoin *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopPhysicalLeftOuterHashJoin == pop->Eopid());
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalLeftOuterHashJoin;
-			}
-
-			 // return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CPhysicalLeftOuterHashJoin";
-			}
-
-			// conversion function
-			static
-			CPhysicalLeftOuterHashJoin *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopPhysicalLeftOuterHashJoin == pop->Eopid());
-
-				return dynamic_cast<CPhysicalLeftOuterHashJoin*>(pop);
-			}
+			return dynamic_cast<CPhysicalLeftOuterHashJoin *>(pop);
+		}
 
 
-	}; // class CPhysicalLeftOuterHashJoin
+	};  // class CPhysicalLeftOuterHashJoin
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CPhysicalLeftOuterHashJoin_H
+#endif  // !GPOPT_CPhysicalLeftOuterHashJoin_H
 
 // EOF

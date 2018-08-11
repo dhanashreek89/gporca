@@ -35,9 +35,11 @@ CHashSetIterTest::EresUnittest_Basic()
 	ULONG rgul[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 	const ULONG ulCnt = GPOS_ARRAY_SIZE(rgul);
 
-	typedef CHashSet<ULONG, HashValue<ULONG>, gpos::Equals<ULONG>, CleanupNULL<ULONG> > UlongHashSet;
+	typedef CHashSet<ULONG, HashValue<ULONG>, gpos::Equals<ULONG>, CleanupNULL<ULONG> >
+		UlongHashSet;
 
-	typedef CHashSetIter<ULONG, HashValue<ULONG>, gpos::Equals<ULONG>, CleanupNULL<ULONG> > UlongHashSetIter;
+	typedef CHashSetIter<ULONG, HashValue<ULONG>, gpos::Equals<ULONG>, CleanupNULL<ULONG> >
+		UlongHashSetIter;
 
 	// using N - 2 slots guarantees collisions
 	UlongHashSet *ps = GPOS_NEW(mp) UlongHashSet(mp, ulCnt - 2);

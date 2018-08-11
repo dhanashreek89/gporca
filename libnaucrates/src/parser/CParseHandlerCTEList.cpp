@@ -73,10 +73,7 @@ CParseHandlerCTEList::StartElement(const XMLCh *const element_uri,
 
 		// start new CTE producer
 		CParseHandlerBase *cte_producer_parse_handler = CParseHandlerFactory::GetParseHandler(
-			m_mp,
-			CDXLTokens::XmlstrToken(EdxltokenLogicalCTEProducer),
-			m_parse_handler_mgr,
-			this);
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenLogicalCTEProducer), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(cte_producer_parse_handler);
 
 		// store parse handler

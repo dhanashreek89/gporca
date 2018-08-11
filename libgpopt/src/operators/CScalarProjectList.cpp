@@ -31,16 +31,11 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CScalarProjectList::CScalarProjectList
-	(
-	IMemoryPool *mp
-	)
-	:
-	CScalar(mp)
+CScalarProjectList::CScalarProjectList(IMemoryPool *mp) : CScalar(mp)
 {
 }
 
-	
+
 //---------------------------------------------------------------------------
 //	@function:
 //		CScalarProjectList::Matches
@@ -50,11 +45,7 @@ CScalarProjectList::CScalarProjectList
 //
 //---------------------------------------------------------------------------
 BOOL
-CScalarProjectList::Matches
-	(
-	COperator *pop
-	)
-	const
+CScalarProjectList::Matches(COperator *pop) const
 {
 	return (pop->Eopid() == Eopid());
 }
@@ -84,12 +75,9 @@ CScalarProjectList::FInputOrderSensitive() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarProjectList::UlDistinctAggs
-	(
-	CExpressionHandle &exprhdl
-	)
+CScalarProjectList::UlDistinctAggs(CExpressionHandle &exprhdl)
 {
-	CExpression *pexprPrjList =  exprhdl.PexprScalar();
+	CExpression *pexprPrjList = exprhdl.PexprScalar();
 
 	GPOS_ASSERT(NULL != pexprPrjList);
 	GPOS_ASSERT(COperator::EopScalarProjectList == pexprPrjList->Pop()->Eopid());
@@ -136,10 +124,7 @@ CScalarProjectList::UlDistinctAggs
 //
 //---------------------------------------------------------------------------
 BOOL
-CScalarProjectList::FHasMultipleDistinctAggs
-	(
-	CExpressionHandle &exprhdl
-	)
+CScalarProjectList::FHasMultipleDistinctAggs(CExpressionHandle &exprhdl)
 {
 	CExpression *pexprPrjList = exprhdl.PexprScalar();
 
@@ -153,7 +138,8 @@ CScalarProjectList::FHasMultipleDistinctAggs
 	CAutoMemoryPool amp;
 	ExprToExprArrayMap *phmexprdrgpexpr = NULL;
 	ULONG ulDifferentDQAs = 0;
-	CXformUtils::MapPrjElemsWithDistinctAggs(amp.Pmp(), pexprPrjList, &phmexprdrgpexpr, &ulDifferentDQAs);
+	CXformUtils::MapPrjElemsWithDistinctAggs(
+		amp.Pmp(), pexprPrjList, &phmexprdrgpexpr, &ulDifferentDQAs);
 	phmexprdrgpexpr->Release();
 
 	return (1 < ulDifferentDQAs);
@@ -161,4 +147,3 @@ CScalarProjectList::FHasMultipleDistinctAggs
 
 
 // EOF
-

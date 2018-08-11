@@ -28,8 +28,7 @@ using namespace gpopt;
 ULONG
 CScalarProjectElement::HashValue() const
 {
-	return gpos::CombineHashes(COperator::HashValue(),
-							   gpos::HashPtr<CColRef>(m_pcr));
+	return gpos::CombineHashes(COperator::HashValue(), gpos::HashPtr<CColRef>(m_pcr));
 }
 
 
@@ -42,11 +41,7 @@ CScalarProjectElement::HashValue() const
 //
 //---------------------------------------------------------------------------
 BOOL
-CScalarProjectElement::Matches
-	(
-	COperator *pop
-	)
-const
+CScalarProjectElement::Matches(COperator *pop) const
 {
 	if (pop->Eopid() == Eopid())
 	{
@@ -82,12 +77,9 @@ CScalarProjectElement::FInputOrderSensitive() const
 //
 //---------------------------------------------------------------------------
 COperator *
-CScalarProjectElement::PopCopyWithRemappedColumns
-	(
-	IMemoryPool *mp,
-	UlongToColRefMap *colref_mapping,
-	BOOL must_exist
-	)
+CScalarProjectElement::PopCopyWithRemappedColumns(IMemoryPool *mp,
+												  UlongToColRefMap *colref_mapping,
+												  BOOL must_exist)
 {
 	ULONG id = m_pcr->Id();
 	CColRef *colref = colref_mapping->Find(&id);
@@ -103,8 +95,8 @@ CScalarProjectElement::PopCopyWithRemappedColumns
 
 #ifdef GPOS_DEBUG
 			BOOL result =
-#endif // GPOS_DEBUG
-			colref_mapping->Insert(GPOS_NEW(mp) ULONG(id), colref);
+#endif  // GPOS_DEBUG
+				colref_mapping->Insert(GPOS_NEW(mp) ULONG(id), colref);
 			GPOS_ASSERT(result);
 		}
 		else
@@ -125,11 +117,7 @@ CScalarProjectElement::PopCopyWithRemappedColumns
 //
 //---------------------------------------------------------------------------
 IOstream &
-CScalarProjectElement::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CScalarProjectElement::OsPrint(IOstream &os) const
 {
 	os << SzId() << " ";
 	m_pcr->OsPrint(os);

@@ -29,55 +29,48 @@ namespace gpopt
 	//		Transform inner apply into inner join
 	//
 	//---------------------------------------------------------------------------
-	class CXformInnerApply2InnerJoinNoCorrelations : public CXformApply2Join<CLogicalInnerApply, CLogicalInnerJoin>
+	class CXformInnerApply2InnerJoinNoCorrelations
+		: public CXformApply2Join<CLogicalInnerApply, CLogicalInnerJoin>
 	{
+	private:
+		// private copy ctor
+		CXformInnerApply2InnerJoinNoCorrelations(const CXformInnerApply2InnerJoinNoCorrelations &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformInnerApply2InnerJoinNoCorrelations(IMemoryPool *mp)
+			: CXformApply2Join<CLogicalInnerApply, CLogicalInnerJoin>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformInnerApply2InnerJoinNoCorrelations(const CXformInnerApply2InnerJoinNoCorrelations &);
+		// dtor
+		virtual ~CXformInnerApply2InnerJoinNoCorrelations()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfInnerApply2InnerJoinNoCorrelations;
+		}
 
-			// ctor
-			explicit
-			CXformInnerApply2InnerJoinNoCorrelations
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformApply2Join<CLogicalInnerApply, CLogicalInnerJoin>(mp)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformInnerApply2InnerJoinNoCorrelations";
+		}
 
-			// dtor
-			virtual
-			~CXformInnerApply2InnerJoinNoCorrelations()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfInnerApply2InnerJoinNoCorrelations;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformInnerApply2InnerJoinNoCorrelations";
-			}
+	};  // class CXformInnerApply2InnerJoinNoCorrelations
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+}  // namespace gpopt
 
-			// actual transform
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
-
-	}; // class CXformInnerApply2InnerJoinNoCorrelations
-
-}
-
-#endif // !GPOPT_CXformInnerApply2InnerJoinNoCorrelations_H
+#endif  // !GPOPT_CXformInnerApply2InnerJoinNoCorrelations_H
 
 // EOF

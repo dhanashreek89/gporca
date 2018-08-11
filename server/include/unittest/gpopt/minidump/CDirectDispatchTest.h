@@ -27,25 +27,19 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CDirectDispatchTest
 	{
-		private:
+	private:
+		// counter used to mark last successful test
+		static ULONG m_ulDirectDispatchCounter;
 
-			// counter used to mark last successful test
-			static
-			ULONG m_ulDirectDispatchCounter;
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
 
-		public:
+		static GPOS_RESULT EresUnittest_RunTests();
 
-			// unittests
-			static
-			GPOS_RESULT EresUnittest();
+	};  // class CDirectDispatchTest
+}  // namespace gpopt
 
-			static
-			GPOS_RESULT EresUnittest_RunTests();
-
-	}; // class CDirectDispatchTest
-}
-
-#endif // !GPOPT_CDirectDispatchTest_H
+#endif  // !GPOPT_CDirectDispatchTest_H
 
 // EOF
-

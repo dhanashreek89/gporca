@@ -26,13 +26,9 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalLeftAntiSemiNLJoin::CPhysicalLeftAntiSemiNLJoin
-	(
-	IMemoryPool *mp
-	)
-	:
-	CPhysicalNLJoin(mp)
-{}
+CPhysicalLeftAntiSemiNLJoin::CPhysicalLeftAntiSemiNLJoin(IMemoryPool *mp) : CPhysicalNLJoin(mp)
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -44,7 +40,8 @@ CPhysicalLeftAntiSemiNLJoin::CPhysicalLeftAntiSemiNLJoin
 //
 //---------------------------------------------------------------------------
 CPhysicalLeftAntiSemiNLJoin::~CPhysicalLeftAntiSemiNLJoin()
-{}
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -56,13 +53,10 @@ CPhysicalLeftAntiSemiNLJoin::~CPhysicalLeftAntiSemiNLJoin()
 //
 //---------------------------------------------------------------------------
 BOOL
-CPhysicalLeftAntiSemiNLJoin::FProvidesReqdCols
-	(
-	CExpressionHandle &exprhdl,
-	CColRefSet *pcrsRequired,
-	ULONG // ulOptReq
-	)
-	const
+CPhysicalLeftAntiSemiNLJoin::FProvidesReqdCols(CExpressionHandle &exprhdl,
+											   CColRefSet *pcrsRequired,
+											   ULONG  // ulOptReq
+											   ) const
 {
 	// left anti semi join only propagates columns from left child
 	return FOuterProvidesReqdCols(exprhdl, pcrsRequired);
@@ -77,19 +71,16 @@ CPhysicalLeftAntiSemiNLJoin::FProvidesReqdCols
 //
 //---------------------------------------------------------------------------
 CPartitionPropagationSpec *
-CPhysicalLeftAntiSemiNLJoin::PppsRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CPartitionPropagationSpec *pppsRequired,
-	ULONG child_index,
-	CDrvdPropArrays *, // pdrgpdpCtxt,
-	ULONG // ulOptReq
-	)
+CPhysicalLeftAntiSemiNLJoin::PppsRequired(IMemoryPool *mp,
+										  CExpressionHandle &exprhdl,
+										  CPartitionPropagationSpec *pppsRequired,
+										  ULONG child_index,
+										  CDrvdPropArrays *,  // pdrgpdpCtxt,
+										  ULONG				  // ulOptReq
+)
 {
 	// no partition elimination for LASJ: push request to the respective child
 	return CPhysical::PppsRequiredPushThruNAry(mp, exprhdl, pppsRequired, child_index);
 }
 
 // EOF
-

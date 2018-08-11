@@ -17,7 +17,6 @@
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CSearchStrategyTest
@@ -28,56 +27,48 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CSearchStrategyTest
 	{
+	private:
+		// type definition for of expression generator
+		typedef CExpression *(*Pfpexpr)(IMemoryPool *);
 
-		private:
+		// type definition for of optimize function
+		typedef void (*PfnOptimize)(IMemoryPool *, CExpression *, CSearchStageArray *);
 
-			// type definition for of expression generator
-			typedef CExpression *(*Pfpexpr)(IMemoryPool*);
+		// generate random search strategy
+		static CSearchStageArray *PdrgpssRandom(IMemoryPool *mp);
 
-			// type definition for of optimize function
-			typedef void (*PfnOptimize)(IMemoryPool *, CExpression *, CSearchStageArray *);
+		// run optimize function on given expression
+		static void Optimize(IMemoryPool *mp,
+							 Pfpexpr pfnGenerator,
+							 CSearchStageArray *search_stage_array,
+							 PfnOptimize pfnOptimize);
 
-			// generate random search strategy
-			static
-			CSearchStageArray *PdrgpssRandom(IMemoryPool *mp);
-
-			// run optimize function on given expression
-			static
-			void Optimize(IMemoryPool *mp, Pfpexpr pfnGenerator, CSearchStageArray *search_stage_array, PfnOptimize pfnOptimize);
-
-		public:
-
-			// unittests driver
-			static
-			GPOS_RESULT EresUnittest();
+	public:
+		// unittests driver
+		static GPOS_RESULT EresUnittest();
 
 #ifdef GPOS_DEBUG
-			// test search strategy with recursive optimization
-			static
-			GPOS_RESULT EresUnittest_RecursiveOptimize();
-#endif // GPOS_DEBUG
+		// test search strategy with recursive optimization
+		static GPOS_RESULT EresUnittest_RecursiveOptimize();
+#endif  // GPOS_DEBUG
 
-			// test search strategy with multi-threaded optimization
-			static
-			GPOS_RESULT EresUnittest_MultiThreadedOptimize();
+		// test search strategy with multi-threaded optimization
+		static GPOS_RESULT EresUnittest_MultiThreadedOptimize();
 
-			// test reading search strategy from XML file
-			static
-			GPOS_RESULT EresUnittest_Parsing();
+		// test reading search strategy from XML file
+		static GPOS_RESULT EresUnittest_Parsing();
 
-			// test search strategy that times out
-			static
-			GPOS_RESULT EresUnittest_Timeout();
+		// test search strategy that times out
+		static GPOS_RESULT EresUnittest_Timeout();
 
-			// test exception handling when parsing search strategy
-			static
-			GPOS_RESULT EresUnittest_ParsingWithException();
+		// test exception handling when parsing search strategy
+		static GPOS_RESULT EresUnittest_ParsingWithException();
 
-	}; // CSearchStrategyTest
+	};  // CSearchStrategyTest
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CSearchStrategyTest_H
+#endif  // !GPOPT_CSearchStrategyTest_H
 
 
 // EOF

@@ -199,9 +199,7 @@ namespace gpnaucrates
 		CBucket *MakeBucketCopy(IMemoryPool *mp);
 
 		// return a copy of the bucket with updated frequency based on the new total number of rows
-		CBucket *MakeBucketUpdateFrequency(IMemoryPool *mp,
-										   CDouble rows_old,
-										   CDouble rows_new);
+		CBucket *MakeBucketUpdateFrequency(IMemoryPool *mp, CDouble rows_old, CDouble rows_new);
 
 		// Merge with another bucket and return leftovers
 		CBucket *MakeBucketMerged(IMemoryPool *mp,

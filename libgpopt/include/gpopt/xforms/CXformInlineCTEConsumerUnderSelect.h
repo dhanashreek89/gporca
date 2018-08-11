@@ -32,53 +32,44 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformInlineCTEConsumerUnderSelect : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformInlineCTEConsumerUnderSelect(const CXformInlineCTEConsumerUnderSelect &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformInlineCTEConsumerUnderSelect(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformInlineCTEConsumerUnderSelect(const CXformInlineCTEConsumerUnderSelect &);
+		// dtor
+		virtual ~CXformInlineCTEConsumerUnderSelect()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfInlineCTEConsumerUnderSelect;
+		}
 
-			// ctor
-			explicit
-			CXformInlineCTEConsumerUnderSelect(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformInlineCTEConsumerUnderSelect";
+		}
 
-			// dtor
-			virtual
-			~CXformInlineCTEConsumerUnderSelect() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfInlineCTEConsumerUnderSelect;
-			}
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformInlineCTEConsumerUnderSelect";
-			}
+	};  // class CXformInlineCTEConsumerUnderSelect
+}  // namespace gpopt
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			virtual
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformInlineCTEConsumerUnderSelect
-}
-
-#endif // !GPOPT_CXformInlineCTEConsumerUnderSelect_H
+#endif  // !GPOPT_CXformInlineCTEConsumerUnderSelect_H
 
 // EOF

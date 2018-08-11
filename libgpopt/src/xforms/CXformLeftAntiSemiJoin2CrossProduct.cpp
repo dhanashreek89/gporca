@@ -29,24 +29,23 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CXformLeftAntiSemiJoin2CrossProduct::CXformLeftAntiSemiJoin2CrossProduct
-	(
-	IMemoryPool *mp
-	)
-	:
-	// pattern
-	CXformExploration
-		(
-		GPOS_NEW(mp) CExpression
-					(
-					mp,
-					GPOS_NEW(mp) CLogicalLeftAntiSemiJoin(mp),
-					GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp)), // left child is a tree since we may need to push predicates down
-					GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)), // right child
-					GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))  // predicate is a tree since we may need to do clean-up of scalar expression
-					)
-		)
-{}
+CXformLeftAntiSemiJoin2CrossProduct::CXformLeftAntiSemiJoin2CrossProduct(IMemoryPool *mp)
+	:  // pattern
+	  CXformExploration(GPOS_NEW(mp) CExpression(
+		  mp,
+		  GPOS_NEW(mp) CLogicalLeftAntiSemiJoin(mp),
+		  GPOS_NEW(mp) CExpression(
+			  mp,
+			  GPOS_NEW(mp) CPatternTree(
+				  mp)),  // left child is a tree since we may need to push predicates down
+		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // right child
+		  GPOS_NEW(mp) CExpression(
+			  mp,
+			  GPOS_NEW(mp) CPatternTree(
+				  mp))  // predicate is a tree since we may need to do clean-up of scalar expression
+		  ))
+{
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -56,13 +55,10 @@ CXformLeftAntiSemiJoin2CrossProduct::CXformLeftAntiSemiJoin2CrossProduct
 //		ctor
 //
 //---------------------------------------------------------------------------
-CXformLeftAntiSemiJoin2CrossProduct::CXformLeftAntiSemiJoin2CrossProduct
-	(
-	CExpression *pexprPattern
-	)
-	:
-	CXformExploration(pexprPattern)
-{}
+CXformLeftAntiSemiJoin2CrossProduct::CXformLeftAntiSemiJoin2CrossProduct(CExpression *pexprPattern)
+	: CXformExploration(pexprPattern)
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -74,11 +70,7 @@ CXformLeftAntiSemiJoin2CrossProduct::CXformLeftAntiSemiJoin2CrossProduct
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise
-CXformLeftAntiSemiJoin2CrossProduct::Exfp
-	(
-	CExpressionHandle &exprhdl
-	)
-	const
+CXformLeftAntiSemiJoin2CrossProduct::Exfp(CExpressionHandle &exprhdl) const
 {
 	return CXformUtils::ExfpSemiJoin2CrossProduct(exprhdl);
 }
@@ -97,13 +89,9 @@ CXformLeftAntiSemiJoin2CrossProduct::Exfp
 //
 //---------------------------------------------------------------------------
 void
-CXformLeftAntiSemiJoin2CrossProduct::Transform
-	(
-	CXformContext *pxfctxt,
-	CXformResult *pxfres,
-	CExpression *pexpr
-	)
-	const
+CXformLeftAntiSemiJoin2CrossProduct::Transform(CXformContext *pxfctxt,
+											   CXformResult *pxfres,
+											   CExpression *pexpr) const
 {
 	GPOS_ASSERT(NULL != pxfctxt);
 	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
@@ -125,12 +113,14 @@ CXformLeftAntiSemiJoin2CrossProduct::Transform
 	CExpression *pexprLimitOffset = CUtils::PexprScalarConstInt8(mp, 0 /*val*/);
 	CExpression *pexprLimitCount = CUtils::PexprScalarConstInt8(mp, 1 /*val*/);
 	COrderSpec *pos = GPOS_NEW(mp) COrderSpec(mp);
-	CLogicalLimit *popLimit =
-			GPOS_NEW(mp) CLogicalLimit(mp, pos, true /*fGlobal*/, true /*fHasCount*/, false /*fNonRemovableLimit*/);
-	CExpression *pexprLimit = GPOS_NEW(mp) CExpression(mp, popLimit, pexprInner, pexprLimitOffset, pexprLimitCount);
+	CLogicalLimit *popLimit = GPOS_NEW(mp)
+		CLogicalLimit(mp, pos, true /*fGlobal*/, true /*fHasCount*/, false /*fNonRemovableLimit*/);
+	CExpression *pexprLimit =
+		GPOS_NEW(mp) CExpression(mp, popLimit, pexprInner, pexprLimitOffset, pexprLimitCount);
 
 	// create cross product
-	CExpression *pexprJoin = CUtils::PexprLogicalJoin<CLogicalInnerJoin>(mp, pexprOuter, pexprLimit, pexprNegatedScalar);
+	CExpression *pexprJoin =
+		CUtils::PexprLogicalJoin<CLogicalInnerJoin>(mp, pexprOuter, pexprLimit, pexprNegatedScalar);
 	CExpression *pexprNormalized = CNormalizer::PexprNormalize(mp, pexprJoin);
 	pexprJoin->Release();
 

@@ -38,8 +38,7 @@ CDXLDatumStatsDoubleMappable::CDXLDatumStatsDoubleMappable(IMemoryPool *mp,
 														   BYTE *data,
 														   ULONG length,
 														   CDouble val)
-	: CDXLDatumGeneric(
-		  mp, mdid_type, type_modifier, is_passed_by_value, is_null, data, length),
+	: CDXLDatumGeneric(mp, mdid_type, type_modifier, is_passed_by_value, is_null, data, length),
 	  m_val(val)
 {
 }

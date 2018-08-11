@@ -46,95 +46,92 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class COptimizerConfig : public CRefCount
 	{
+	private:
+		// plan enumeration configuration
+		CEnumeratorConfig *m_enumerator_cfg;
 
-		private:
-			
-			// plan enumeration configuration
-			CEnumeratorConfig *m_enumerator_cfg;
+		// statistics configuration
+		CStatisticsConfig *m_stats_conf;
 
-			// statistics configuration
-			CStatisticsConfig *m_stats_conf;
+		// CTE configuration
+		CCTEConfig *m_cte_conf;
 
-			// CTE configuration
-			CCTEConfig *m_cte_conf;
-			
-			// cost model configuration
-			ICostModel *m_cost_model;
+		// cost model configuration
+		ICostModel *m_cost_model;
 
-			// hint configuration
-			CHint *m_hint;
+		// hint configuration
+		CHint *m_hint;
 
-			// default window oids
-			CWindowOids *m_window_oids;
+		// default window oids
+		CWindowOids *m_window_oids;
 
-		public:
+	public:
+		// ctor
+		COptimizerConfig(CEnumeratorConfig *pec,
+						 CStatisticsConfig *stats_config,
+						 CCTEConfig *pcteconf,
+						 ICostModel *pcm,
+						 CHint *phint,
+						 CWindowOids *pdefoidsGPDB);
 
-			// ctor
-			COptimizerConfig
-				(
-				CEnumeratorConfig *pec,
-				CStatisticsConfig *stats_config,
-				CCTEConfig *pcteconf,
-				ICostModel *pcm,
-				CHint *phint,
-				CWindowOids *pdefoidsGPDB
-				);
+		// dtor
+		virtual ~COptimizerConfig();
 
-			// dtor
-			virtual
-			~COptimizerConfig();
 
-			
-			// plan enumeration configuration
-			CEnumeratorConfig *GetEnumeratorCfg() const
-			{
-				return m_enumerator_cfg;
-			}
+		// plan enumeration configuration
+		CEnumeratorConfig *
+		GetEnumeratorCfg() const
+		{
+			return m_enumerator_cfg;
+		}
 
-			// statistics configuration
-			CStatisticsConfig *GetStatsConf() const
-			{
-				return m_stats_conf;
-			}
+		// statistics configuration
+		CStatisticsConfig *
+		GetStatsConf() const
+		{
+			return m_stats_conf;
+		}
 
-			// CTE configuration
-			CCTEConfig *GetCteConf() const
-			{
-				return m_cte_conf;
-			}
+		// CTE configuration
+		CCTEConfig *
+		GetCteConf() const
+		{
+			return m_cte_conf;
+		}
 
-			// cost model configuration
-			ICostModel *GetCostModel() const
-			{
-				return m_cost_model;
-			}
-			
-			// default window oids
-			CWindowOids *GetWindowOids() const
-			{
-				return m_window_oids;
-			}
+		// cost model configuration
+		ICostModel *
+		GetCostModel() const
+		{
+			return m_cost_model;
+		}
 
-			// hint configuration
-			CHint *GetHint() const
-			{
-				return m_hint;
-			}
+		// default window oids
+		CWindowOids *
+		GetWindowOids() const
+		{
+			return m_window_oids;
+		}
 
-			// generate default optimizer configurations
-			static
-			COptimizerConfig *PoconfDefault(IMemoryPool *mp);
-			
-			// generate default optimizer configurations with the given cost model
-			static
-			COptimizerConfig *PoconfDefault(IMemoryPool *mp, ICostModel *pcm);
+		// hint configuration
+		CHint *
+		GetHint() const
+		{
+			return m_hint;
+		}
 
-			void Serialize(IMemoryPool *mp, CXMLSerializer *xml_serializer, CBitSet *pbsTrace) const;
+		// generate default optimizer configurations
+		static COptimizerConfig *PoconfDefault(IMemoryPool *mp);
 
-	}; // class COptimizerConfig
+		// generate default optimizer configurations with the given cost model
+		static COptimizerConfig *PoconfDefault(IMemoryPool *mp, ICostModel *pcm);
 
-}
+		void Serialize(IMemoryPool *mp, CXMLSerializer *xml_serializer, CBitSet *pbsTrace) const;
 
-#endif // !GPOPT_COptimizerConfig_H
+	};  // class COptimizerConfig
+
+}  // namespace gpopt
+
+#endif  // !GPOPT_COptimizerConfig_H
 
 // EOF

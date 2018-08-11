@@ -76,8 +76,7 @@ CParseHandlerScalarPartBound::StartElement(const XMLCh *const,  // element_uri,
 
 	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(
 		m_mp,
-		GPOS_NEW(m_mp)
-			CDXLScalarPartBound(m_mp, partition_level, m_mdid_type, is_lower_bound));
+		GPOS_NEW(m_mp) CDXLScalarPartBound(m_mp, partition_level, m_mdid_type, is_lower_bound));
 }
 
 //---------------------------------------------------------------------------

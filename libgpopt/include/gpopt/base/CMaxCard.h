@@ -23,7 +23,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CMaxCard
@@ -34,111 +34,88 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CMaxCard
 	{
-
 		// friends that enforce 'literal == variable' order
-		friend BOOL operator == (ULLONG, const CMaxCard&);
-		friend BOOL operator == (const CMaxCard &, const CMaxCard &);
-	
-		private:
+		friend BOOL operator==(ULLONG, const CMaxCard &);
+		friend BOOL operator==(const CMaxCard &, const CMaxCard &);
 
-			// actual (cropped) value
-			ULLONG m_ull;
-			
-			// equality
-			BOOL operator == 
-				(
-				ULLONG ull
-				) 
-				const
+	private:
+		// actual (cropped) value
+		ULLONG m_ull;
+
+		// equality
+		BOOL
+		operator==(ULLONG ull) const
+		{
+			GPOS_ASSERT(ull <= GPOPT_MAX_CARD);
+			return m_ull == ull;
+		}
+
+	public:
+		// ctor
+		explicit CMaxCard(ULLONG ull = GPOPT_MAX_CARD) : m_ull(ull)
+		{
+			GPOS_ASSERT(m_ull <= GPOPT_MAX_CARD);
+			m_ull = std::min(m_ull, GPOPT_MAX_CARD);
+		}
+
+		// copy ctor
+		CMaxCard(const CMaxCard &mc)
+		{
+			*this = mc;
+		}
+
+		// accessor
+		ULLONG
+		Ull() const
+		{
+			return m_ull;
+		}
+
+		// assignment
+		void
+		operator=(const CMaxCard &mc)
+		{
+			m_ull = mc.m_ull;
+		}
+
+		// arithmetic operators
+		void
+		operator*=(const CMaxCard &mc)
+		{
+			m_ull = std::min(mc.m_ull * m_ull, GPOPT_MAX_CARD);
+		}
+
+		// arithmetic operators
+		void
+		operator+=(const CMaxCard &mc)
+		{
+			m_ull = std::min(mc.m_ull + m_ull, GPOPT_MAX_CARD);
+		}
+
+		// print
+		IOstream &
+		OsPrint(IOstream &os) const
+		{
+			if (GPOPT_MAX_CARD == m_ull)
 			{
-				GPOS_ASSERT(ull <= GPOPT_MAX_CARD);
-				return m_ull == ull;
+				return os << "unbounded";
 			}
 
-		public:
-
-			// ctor
-			explicit
-			CMaxCard
-				(
-				ULLONG ull = GPOPT_MAX_CARD
-				)
-				: 
-				m_ull(ull)
-			{
-				GPOS_ASSERT(m_ull <= GPOPT_MAX_CARD);
-				m_ull = std::min(m_ull, GPOPT_MAX_CARD);
-			}
-
-			// copy ctor
-			CMaxCard
-				(
-				const CMaxCard &mc
-				)
-			{
-				*this = mc;
-			}
-
-			// accessor
-			ULLONG Ull() const
-			{
-				return m_ull;
-			}
-			
-			// assignment
-			void operator = 
-				(
-				const CMaxCard& mc
-				)
-			{
-				m_ull = mc.m_ull;
-			}
-
-			// arithmetic operators
-			void operator *= 
-				(
-				const CMaxCard &mc
-				)
-			{
-				m_ull = std::min(mc.m_ull * m_ull, GPOPT_MAX_CARD);
-			}
-			
-			// arithmetic operators
-			void operator += 
-				(
-				const CMaxCard &mc
-				)
-			{
-				m_ull = std::min(mc.m_ull + m_ull, GPOPT_MAX_CARD);
-			}
-				
-			// print
-			IOstream &OsPrint
-				(
-				IOstream &os
-				) 
-				const
-			{
-				if (GPOPT_MAX_CARD == m_ull)
-				{
-					return os << "unbounded";
-				}
-				
-				return os << m_ull;
-			}
-	}; // class CMaxCard
+			return os << m_ull;
+		}
+	};  // class CMaxCard
 
 
- 	// shorthand for printing
-	inline
-	IOstream &operator << (IOstream &os, const CMaxCard &mc)
+	// shorthand for printing
+	inline IOstream &
+	operator<<(IOstream &os, const CMaxCard &mc)
 	{
 		return mc.OsPrint(os);
 	}
-		
- 	// shorthand for less-than equal
-	inline
-	BOOL operator <= (const CMaxCard &mcLHS, const CMaxCard &mcRHS)
+
+	// shorthand for less-than equal
+	inline BOOL
+	operator<=(const CMaxCard &mcLHS, const CMaxCard &mcRHS)
 	{
 		if (mcLHS.Ull() <= mcRHS.Ull())
 		{
@@ -149,21 +126,21 @@ namespace gpopt
 	}
 
 	// shorthand for equality
-	inline
-	BOOL operator == (const CMaxCard &mcLHS, const CMaxCard &mcRHS)
+	inline BOOL
+	operator==(const CMaxCard &mcLHS, const CMaxCard &mcRHS)
 	{
 		return mcLHS.operator==(mcRHS.Ull());
 	}
 
- 	// shorthand for equality
-	inline
-	BOOL operator == (ULLONG ull, const CMaxCard &mc)
+	// shorthand for equality
+	inline BOOL
+	operator==(ULLONG ull, const CMaxCard &mc)
 	{
 		return mc.operator==(ull);
 	}
-	
-}
 
-#endif // !GPOPT_CMaxCard_H
+}  // namespace gpopt
+
+#endif  // !GPOPT_CMaxCard_H
 
 // EOF

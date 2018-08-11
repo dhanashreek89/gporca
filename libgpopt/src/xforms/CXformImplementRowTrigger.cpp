@@ -25,22 +25,14 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformImplementRowTrigger::CXformImplementRowTrigger
-	(
-	IMemoryPool *mp
-	)
-	:
-	CXformImplementation
-		(
-		 // pattern
-		GPOS_NEW(mp) CExpression
-				(
-				mp,
-				GPOS_NEW(mp) CLogicalRowTrigger(mp),
-				GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))
-				)
-		)
-{}
+CXformImplementRowTrigger::CXformImplementRowTrigger(IMemoryPool *mp)
+	: CXformImplementation(
+		  // pattern
+		  GPOS_NEW(mp) CExpression(mp,
+								   GPOS_NEW(mp) CLogicalRowTrigger(mp),
+								   GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))))
+{
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -51,11 +43,8 @@ CXformImplementRowTrigger::CXformImplementRowTrigger
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise
-CXformImplementRowTrigger::Exfp
-	(
-	CExpressionHandle & // exprhdl
-	)
-	const
+CXformImplementRowTrigger::Exfp(CExpressionHandle &  // exprhdl
+								) const
 {
 	return CXform::ExfpHigh;
 }
@@ -70,13 +59,9 @@ CXformImplementRowTrigger::Exfp
 //
 //---------------------------------------------------------------------------
 void
-CXformImplementRowTrigger::Transform
-	(
-	CXformContext *pxfctxt,
-	CXformResult *pxfres,
-	CExpression *pexpr
-	)
-	const
+CXformImplementRowTrigger::Transform(CXformContext *pxfctxt,
+									 CXformResult *pxfres,
+									 CExpression *pexpr) const
 {
 	GPOS_ASSERT(NULL != pxfctxt);
 	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
@@ -108,13 +93,10 @@ CXformImplementRowTrigger::Transform
 	pexprChild->AddRef();
 
 	// create physical RowTrigger
-	CExpression *pexprAlt =
-		GPOS_NEW(mp) CExpression
-			(
-			mp,
-			GPOS_NEW(mp) CPhysicalRowTrigger(mp, rel_mdid, type, pdrgpcrOld, pdrgpcrNew),
-			pexprChild
-			);
+	CExpression *pexprAlt = GPOS_NEW(mp)
+		CExpression(mp,
+					GPOS_NEW(mp) CPhysicalRowTrigger(mp, rel_mdid, type, pdrgpcrOld, pdrgpcrNew),
+					pexprChild);
 	// add alternative to transformation result
 	pxfres->Add(pexprAlt);
 }

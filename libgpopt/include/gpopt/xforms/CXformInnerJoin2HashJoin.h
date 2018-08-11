@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CXformInnerJoin2HashJoin
@@ -28,55 +28,45 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformInnerJoin2HashJoin : public CXformImplementation
 	{
-
-		private:
-
-			// private copy ctor
-			CXformInnerJoin2HashJoin(const CXformInnerJoin2HashJoin &);
+	private:
+		// private copy ctor
+		CXformInnerJoin2HashJoin(const CXformInnerJoin2HashJoin &);
 
 
-		public:
-		
-			// ctor
-			explicit
-			CXformInnerJoin2HashJoin(IMemoryPool *mp);
+	public:
+		// ctor
+		explicit CXformInnerJoin2HashJoin(IMemoryPool *mp);
 
-			// dtor
-			virtual 
-			~CXformInnerJoin2HashJoin() {}
+		// dtor
+		virtual ~CXformInnerJoin2HashJoin()
+		{
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfInnerJoin2HashJoin;
-			}
-			
-			// return a string for xform name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CXformInnerJoin2HashJoin";
-			}
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfInnerJoin2HashJoin;
+		}
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformInnerJoin2HashJoin";
+		}
 
-			// actual transform
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				) 
-				const;
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-	}; // class CXformInnerJoin2HashJoin
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-}
+	};  // class CXformInnerJoin2HashJoin
+
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformInnerJoin2HashJoin_H
+#endif  // !GPOPT_CXformInnerJoin2HashJoin_H
 
 // EOF

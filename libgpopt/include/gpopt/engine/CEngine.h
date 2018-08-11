@@ -44,418 +44,385 @@ namespace gpopt
 	//
 	//---------------------------------------------------------------------------
 	class CEngine
-	{	
+	{
+	private:
+		// memory pool
+		IMemoryPool *m_mp;
 
-		private:
+		// query context
+		CQueryContext *m_pqc;
 
-			// memory pool
-			IMemoryPool *m_mp;
-			
-			// query context
-			CQueryContext *m_pqc;
+		// search strategy
+		CSearchStageArray *m_search_stage_array;
 
-			// search strategy
-			CSearchStageArray *m_search_stage_array;
+		// index of current search stage
+		ULONG m_ulCurrSearchStage;
 
-			// index of current search stage
-			ULONG m_ulCurrSearchStage;
+		// memo table
+		CMemo *m_pmemo;
 
-			// memo table
-			CMemo *m_pmemo;
+		//  pattern used for adding enforcers
+		CExpression *m_pexprEnforcerPattern;
 
-			//  pattern used for adding enforcers
-			CExpression *m_pexprEnforcerPattern;
+		// the following variables are used for maintaining optimization statistics
 
-			// the following variables are used for maintaining optimization statistics
+		// set of activated xforms
+		CXformSet *m_xforms;
 
-			// set of activated xforms
-			CXformSet *m_xforms;
+		// number of calls to each xform
+		ULONGPtrArray *m_pdrgpulpXformCalls;
 
-			// number of calls to each xform
-			ULONGPtrArray *m_pdrgpulpXformCalls;
+		// time consumed by each xform
+		ULONGPtrArray *m_pdrgpulpXformTimes;
 
-			// time consumed by each xform
-			ULONGPtrArray *m_pdrgpulpXformTimes;
-
-			// mutex for locking shared data structures when updating optimization statistics
-			CMutex m_mutexOptStats;
+		// mutex for locking shared data structures when updating optimization statistics
+		CMutex m_mutexOptStats;
 
 #ifdef GPOS_DEBUG
 
-			// a set of internal debugging function used for recursive
-			// memo construction
+		// a set of internal debugging function used for recursive
+		// memo construction
 
-			// apply xforms to group expression and insert results to memo
-			void ApplyTransformations
-				(
-				IMemoryPool *pmpLocal,
-				CXformSet *xform_set,
-				CGroupExpression *pgexpr
-				);
+		// apply xforms to group expression and insert results to memo
+		void ApplyTransformations(IMemoryPool *pmpLocal,
+								  CXformSet *xform_set,
+								  CGroupExpression *pgexpr);
 
-			// transition a given group to a target state
-			void TransitionGroup
-					(
-					IMemoryPool *pmpLocal,
-					CGroup *pgroup,
-					CGroup::EState estTarget
-					);
+		// transition a given group to a target state
+		void TransitionGroup(IMemoryPool *pmpLocal, CGroup *pgroup, CGroup::EState estTarget);
 
-			// transition a given group expression to a target state
-			void TransitionGroupExpression
-					(
-					IMemoryPool *pmpLocal,
-					CGroupExpression *pgexpr,
-					CGroupExpression::EState estTarget
-					);
+		// transition a given group expression to a target state
+		void TransitionGroupExpression(IMemoryPool *pmpLocal,
+									   CGroupExpression *pgexpr,
+									   CGroupExpression::EState estTarget);
 
-			// create optimization context for child group
-			COptimizationContext *PocChild
-				(
-				CGroupExpression *pgexpr, // parent expression
-				COptimizationContext *pocOrigin, // optimization context of parent operator
-				CExpressionHandle &exprhdlPlan, // handle to compute required plan properties
-				CExpressionHandle &exprhdlRel, // handle to compute required relational properties
-				CDrvdPropArrays *pdrgpdpChildren, // derived plan properties of optimized children
-				IStatisticsArray *pdrgpstatCurrentCtxt,
-				ULONG child_index,
-				ULONG ulOptReq
-				);
+		// create optimization context for child group
+		COptimizationContext *PocChild(
+			CGroupExpression *pgexpr,		   // parent expression
+			COptimizationContext *pocOrigin,   // optimization context of parent operator
+			CExpressionHandle &exprhdlPlan,	// handle to compute required plan properties
+			CExpressionHandle &exprhdlRel,	 // handle to compute required relational properties
+			CDrvdPropArrays *pdrgpdpChildren,  // derived plan properties of optimized children
+			IStatisticsArray *pdrgpstatCurrentCtxt,
+			ULONG child_index,
+			ULONG ulOptReq);
 
-			// optimize child group and return best cost context satisfying required properties
-			CCostContext *PccOptimizeChild
-				(
-				CExpressionHandle &exprhdl,
-				CExpressionHandle &exprhdlRel,
-				COptimizationContext *pocOrigin,
-				CDrvdPropArrays *pdrgpdp,
-				IStatisticsArray *pdrgpstatCurrentCtxt,
-				ULONG child_index,
-				ULONG ulOptReq
-				);
+		// optimize child group and return best cost context satisfying required properties
+		CCostContext *PccOptimizeChild(CExpressionHandle &exprhdl,
+									   CExpressionHandle &exprhdlRel,
+									   COptimizationContext *pocOrigin,
+									   CDrvdPropArrays *pdrgpdp,
+									   IStatisticsArray *pdrgpstatCurrentCtxt,
+									   ULONG child_index,
+									   ULONG ulOptReq);
 
-			// optimize child groups of a given group expression
-			COptimizationContextArray *PdrgpocOptimizeChildren(CExpressionHandle &exprhdl, COptimizationContext *pocOrigin, ULONG ulOptReq);
+		// optimize child groups of a given group expression
+		COptimizationContextArray *PdrgpocOptimizeChildren(CExpressionHandle &exprhdl,
+														   COptimizationContext *pocOrigin,
+														   ULONG ulOptReq);
 
-			// optimize group expression under a given context
-			void OptimizeGroupExpression(CGroupExpression *pgexpr, COptimizationContext *poc);
+		// optimize group expression under a given context
+		void OptimizeGroupExpression(CGroupExpression *pgexpr, COptimizationContext *poc);
 
-			// optimize group under a given context
-			CGroupExpression * PgexprOptimize(CGroup *pgroup, COptimizationContext *poc, CGroupExpression *pgexprOrigin);
-#endif // GPOS_DEBUG
+		// optimize group under a given context
+		CGroupExpression *PgexprOptimize(CGroup *pgroup,
+										 COptimizationContext *poc,
+										 CGroupExpression *pgexprOrigin);
+#endif  // GPOS_DEBUG
 
-			// initialize query logical expression
-			void InitLogicalExpression(CExpression *pexpr);
+		// initialize query logical expression
+		void InitLogicalExpression(CExpression *pexpr);
 
-			// insert children of the given expression to memo, and
-			// copy the resulting groups to the given group array
-			void InsertExpressionChildren
-					(
-					CExpression *pexpr,
-					CGroupArray *pdrgpgroupChildren,
-					CXform::EXformId exfidOrigin,
-					CGroupExpression *pgexprOrigin
-					);
+		// insert children of the given expression to memo, and
+		// copy the resulting groups to the given group array
+		void InsertExpressionChildren(CExpression *pexpr,
+									  CGroupArray *pdrgpgroupChildren,
+									  CXform::EXformId exfidOrigin,
+									  CGroupExpression *pgexprOrigin);
 
-			// create and schedule the main optimization job
-			void ScheduleMainJob(CSchedulerContext *psc, COptimizationContext *poc);
+		// create and schedule the main optimization job
+		void ScheduleMainJob(CSchedulerContext *psc, COptimizationContext *poc);
 
-			// build memo using multiple threads
-			void MultiThreadedOptimize(ULONG ulWorkers = 4);
+		// build memo using multiple threads
+		void MultiThreadedOptimize(ULONG ulWorkers = 4);
 
-			// run optimizer on the main thread
-			void MainThreadOptimize();
+		// run optimizer on the main thread
+		void MainThreadOptimize();
 
-			// print activated xform
-			void PrintActivatedXforms(IOstream &os) const;
+		// print activated xform
+		void PrintActivatedXforms(IOstream &os) const;
 
-			// process trace flags after optimization is complete
-			void ProcessTraceFlags();
+		// process trace flags after optimization is complete
+		void ProcessTraceFlags();
 
-			// check if search has terminated
-			BOOL FSearchTerminated() const
-			{
-				// at least one stage has completed and achieved required cost
-				return (NULL != PssPrevious() && PssPrevious()->FAchievedReqdCost());
-			}
+		// check if search has terminated
+		BOOL
+		FSearchTerminated() const
+		{
+			// at least one stage has completed and achieved required cost
+			return (NULL != PssPrevious() && PssPrevious()->FAchievedReqdCost());
+		}
 
-			// generate random plan id
-			ULLONG UllRandomPlanId(ULONG *seed);
+		// generate random plan id
+		ULLONG UllRandomPlanId(ULONG *seed);
 
-			// extract a plan sample and handle exceptions according to enumerator configurations
-			BOOL FValidPlanSample(CEnumeratorConfig *pec, ULLONG plan_id, CExpression **ppexpr);
+		// extract a plan sample and handle exceptions according to enumerator configurations
+		BOOL FValidPlanSample(CEnumeratorConfig *pec, ULLONG plan_id, CExpression **ppexpr);
 
-			// sample possible plans uniformly
-			void SamplePlans();
+		// sample possible plans uniformly
+		void SamplePlans();
 
-			// check if all children were successfully optimized
-			BOOL FChildrenOptimized(COptimizationContextArray *pdrgpoc);
+		// check if all children were successfully optimized
+		BOOL FChildrenOptimized(COptimizationContextArray *pdrgpoc);
 
-			// check if ayn of the given property enforcing types prohibits enforcement
-			static
-			BOOL FProhibited
-				(
-				CEnfdProp::EPropEnforcingType epetOrder, 
-				CEnfdProp::EPropEnforcingType epetDistribution, 
-				CEnfdProp::EPropEnforcingType epetRewindability, 
-				CEnfdProp::EPropEnforcingType epetPropagation
-				);
+		// check if ayn of the given property enforcing types prohibits enforcement
+		static BOOL FProhibited(CEnfdProp::EPropEnforcingType epetOrder,
+								CEnfdProp::EPropEnforcingType epetDistribution,
+								CEnfdProp::EPropEnforcingType epetRewindability,
+								CEnfdProp::EPropEnforcingType epetPropagation);
 
-			// check whether the given memo groups can be marked as duplicates. This is
-			// true only if they have the same logical properties
-			static
-			BOOL FPossibleDuplicateGroups(CGroup *pgroupFst, CGroup *pgroupSnd);
+		// check whether the given memo groups can be marked as duplicates. This is
+		// true only if they have the same logical properties
+		static BOOL FPossibleDuplicateGroups(CGroup *pgroupFst, CGroup *pgroupSnd);
 
-			// check if optimization is possible under the given property enforcing types
-			static
-			BOOL FOptimize
-				(
-				CEnfdProp::EPropEnforcingType epetOrder, 
-				CEnfdProp::EPropEnforcingType epetDistribution, 
-				CEnfdProp::EPropEnforcingType epetRewindability, 
-				CEnfdProp::EPropEnforcingType epetPropagation
-				);
-			
-			// check if partition propagation resolver is passed an empty part
-			// propagation spec
-			static
-			BOOL FCheckReqdPartPropagation(CPhysical *pop, CEnfdPartitionPropagation *pepp);
+		// check if optimization is possible under the given property enforcing types
+		static BOOL FOptimize(CEnfdProp::EPropEnforcingType epetOrder,
+							  CEnfdProp::EPropEnforcingType epetDistribution,
+							  CEnfdProp::EPropEnforcingType epetRewindability,
+							  CEnfdProp::EPropEnforcingType epetPropagation);
 
-			// unrank the plan with the given 'plan_id' from the memo
-			CExpression *PexprUnrank(ULLONG plan_id);
+		// check if partition propagation resolver is passed an empty part
+		// propagation spec
+		static BOOL FCheckReqdPartPropagation(CPhysical *pop, CEnfdPartitionPropagation *pepp);
 
-			// determine if a plan, rooted by given group expression, can be safely pruned based on cost bounds
-			// when stats for Dynamic Partition Elimination are derived
-			BOOL FSafeToPruneWithDPEStats(CGroupExpression *pgexpr, CReqdPropPlan *prpp, CCostContext *pccChild, ULONG child_index);
+		// unrank the plan with the given 'plan_id' from the memo
+		CExpression *PexprUnrank(ULLONG plan_id);
 
-			// print current memory consumption
-			IOstream &OsPrintMemoryConsumption(IOstream &os, const CHAR *szHeader) const;
+		// determine if a plan, rooted by given group expression, can be safely pruned based on cost bounds
+		// when stats for Dynamic Partition Elimination are derived
+		BOOL FSafeToPruneWithDPEStats(CGroupExpression *pgexpr,
+									  CReqdPropPlan *prpp,
+									  CCostContext *pccChild,
+									  ULONG child_index);
 
-			// inaccessible copy ctor
-			CEngine(const CEngine &);
-			
-		public:
-		
-			// ctor
-			explicit
-			CEngine(IMemoryPool *mp);
-						
-			// dtor
-			~CEngine();
+		// print current memory consumption
+		IOstream &OsPrintMemoryConsumption(IOstream &os, const CHAR *szHeader) const;
 
-			// initialize engine with a query context and search strategy
-			void Init
-				(
-				CQueryContext *pqc,
-				CSearchStageArray *search_stage_array
-				);
+		// inaccessible copy ctor
+		CEngine(const CEngine &);
 
-			// accessor of memo's root group
-			CGroup *PgroupRoot() const
-			{
-				GPOS_ASSERT(NULL != m_pmemo);
+	public:
+		// ctor
+		explicit CEngine(IMemoryPool *mp);
 
-				return m_pmemo->PgroupRoot();
-			}
+		// dtor
+		~CEngine();
 
-			// check if a group is the root one
-			BOOL FRoot(CGroup *pgroup) const
-			{
-				return (PgroupRoot() == pgroup);
-			}
+		// initialize engine with a query context and search strategy
+		void Init(CQueryContext *pqc, CSearchStageArray *search_stage_array);
 
-			// insert expression tree to memo
-			CGroup *PgroupInsert
-				(
-				CGroup *pgroupTarget,
-				CExpression *pexpr,
-				CXform::EXformId exfidOrigin,
-				CGroupExpression *pgexprOrigin,
-				BOOL fIntermediate
-				);
+		// accessor of memo's root group
+		CGroup *
+		PgroupRoot() const
+		{
+			GPOS_ASSERT(NULL != m_pmemo);
 
-			// insert a set of xform results into the memo
-			void InsertXformResult
-				(
-				CGroup *pgroupOrigin,
-				CXformResult *pxfres,
-				CXform::EXformId exfidOrigin,
-				CGroupExpression *pgexprOrigin,
-				ULONG ulXformTime
-				);
+			return m_pmemo->PgroupRoot();
+		}
 
-			// add enforcers to the memo
-			void AddEnforcers(CGroupExpression *pgexprChild, CExpressionArray *pdrgpexprEnforcers);
+		// check if a group is the root one
+		BOOL
+		FRoot(CGroup *pgroup) const
+		{
+			return (PgroupRoot() == pgroup);
+		}
 
-			// extract a physical plan from the memo
-			CExpression *PexprExtractPlan();
+		// insert expression tree to memo
+		CGroup *PgroupInsert(CGroup *pgroupTarget,
+							 CExpression *pexpr,
+							 CXform::EXformId exfidOrigin,
+							 CGroupExpression *pgexprOrigin,
+							 BOOL fIntermediate);
 
-			// check required properties;
-			// return false if it's impossible for the operator to satisfy one or more
-			BOOL FCheckReqdProps
-				(
-				CExpressionHandle &exprhdl,
-				CReqdPropPlan *prpp,
-				ULONG ulOptReq
-				);
+		// insert a set of xform results into the memo
+		void InsertXformResult(CGroup *pgroupOrigin,
+							   CXformResult *pxfres,
+							   CXform::EXformId exfidOrigin,
+							   CGroupExpression *pgexprOrigin,
+							   ULONG ulXformTime);
 
-			// check enforceable properties;
-			// return false if it's impossible for the operator to satisfy one or more
-			BOOL FCheckEnfdProps
-				(
-				IMemoryPool *mp,
-				CGroupExpression *pgexpr,
-				COptimizationContext *poc,
-				ULONG ulOptReq,
-				COptimizationContextArray *pdrgpoc
-				);
+		// add enforcers to the memo
+		void AddEnforcers(CGroupExpression *pgexprChild, CExpressionArray *pdrgpexprEnforcers);
 
-			// check if the given expression has valid cte and partition properties
-			// with respect to the given requirements
-			BOOL FValidCTEAndPartitionProperties
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CReqdPropPlan *prpp
-				);
+		// extract a physical plan from the memo
+		CExpression *PexprExtractPlan();
+
+		// check required properties;
+		// return false if it's impossible for the operator to satisfy one or more
+		BOOL FCheckReqdProps(CExpressionHandle &exprhdl, CReqdPropPlan *prpp, ULONG ulOptReq);
+
+		// check enforceable properties;
+		// return false if it's impossible for the operator to satisfy one or more
+		BOOL FCheckEnfdProps(IMemoryPool *mp,
+							 CGroupExpression *pgexpr,
+							 COptimizationContext *poc,
+							 ULONG ulOptReq,
+							 COptimizationContextArray *pdrgpoc);
+
+		// check if the given expression has valid cte and partition properties
+		// with respect to the given requirements
+		BOOL FValidCTEAndPartitionProperties(IMemoryPool *mp,
+											 CExpressionHandle &exprhdl,
+											 CReqdPropPlan *prpp);
 
 #ifdef GPOS_DEBUG
-			// apply all exploration xforms
-			void Explore();
+		// apply all exploration xforms
+		void Explore();
 
-			// apply all implementation xforms
-			void Implement();
+		// apply all implementation xforms
+		void Implement();
 
-			// build memo by recursive construction (used for debugging)
-			void RecursiveOptimize();
-#endif // GPOS_DEBUG
+		// build memo by recursive construction (used for debugging)
+		void RecursiveOptimize();
+#endif  // GPOS_DEBUG
 
-			// derive statistics
-			void DeriveStats(IMemoryPool *mp);
+		// derive statistics
+		void DeriveStats(IMemoryPool *mp);
 
-			// execute operations after exploration completes
-			void FinalizeExploration();
+		// execute operations after exploration completes
+		void FinalizeExploration();
 
-			// execute operations after implementation completes
-			void FinalizeImplementation();
+		// execute operations after implementation completes
+		void FinalizeImplementation();
 
-			// execute operations after search stage completes
-			void FinalizeSearchStage();
+		// execute operations after search stage completes
+		void FinalizeSearchStage();
 
-			// main driver of optimization engine
-			void Optimize();
-					
-			// print memo to output logger
-			void Trace()
+		// main driver of optimization engine
+		void Optimize();
+
+		// print memo to output logger
+		void
+		Trace()
+		{
+			m_pmemo->Trace();
+		}
+
+		// merge duplicate groups
+		void
+		GroupMerge()
+		{
+			m_pmemo->GroupMerge();
+		}
+
+		// query context accessor
+		const CQueryContext *
+		Pqc() const
+		{
+			return m_pqc;
+		}
+
+		// return current search stage
+		CSearchStage *
+		PssCurrent() const
+		{
+			return (*m_search_stage_array)[m_ulCurrSearchStage];
+		}
+
+		// current search stage index accessor
+		ULONG
+		UlCurrSearchStage() const
+		{
+			return m_ulCurrSearchStage;
+		}
+
+		// return previous search stage
+		CSearchStage *
+		PssPrevious() const
+		{
+			if (0 == m_ulCurrSearchStage)
 			{
-				m_pmemo->Trace();
+				return NULL;
 			}
 
-			// merge duplicate groups
-			void GroupMerge()
-			{
-				m_pmemo->GroupMerge();
-			}
+			return (*m_search_stage_array)[m_ulCurrSearchStage - 1];
+		}
 
-			// query context accessor
-			const CQueryContext *Pqc() const
-			{
-				return m_pqc;
-			}
+		// number of search stages accessor
+		ULONG
+		UlSearchStages() const
+		{
+			return m_search_stage_array->Size();
+		}
 
-			// return current search stage
-			CSearchStage *PssCurrent() const
-			{
-				return (*m_search_stage_array)[m_ulCurrSearchStage];
-			}
+		// set of xforms of current stage
+		CXformSet *
+		PxfsCurrentStage() const
+		{
+			return (*m_search_stage_array)[m_ulCurrSearchStage]->GetXformSet();
+		}
 
-			// current search stage index accessor
-			ULONG UlCurrSearchStage() const
-			{
-				return m_ulCurrSearchStage;
-			}
+		// return array of child optimization contexts corresponding to handle requirements
+		COptimizationContextArray *PdrgpocChildren(IMemoryPool *mp, CExpressionHandle &exprhdl);
 
-			// return previous search stage
-			CSearchStage *PssPrevious() const
-			{
-				if (0 == m_ulCurrSearchStage)
-				{
-					return NULL;
-				}
+		// build tree map on memo
+		MemoTreeMap *Pmemotmap();
 
-				return (*m_search_stage_array)[m_ulCurrSearchStage - 1];
-			}
+		// reset tree map
+		void
+		ResetTreeMap()
+		{
+			m_pmemo->ResetTreeMap();
+		}
 
-			// number of search stages accessor
-			ULONG UlSearchStages() const
-			{
-				return m_search_stage_array->Size();
-			}
+		// check if parent group expression can optimize child group expression
+		BOOL FOptimizeChild(CGroupExpression *pgexprParent,
+							CGroupExpression *pgexprChild,
+							COptimizationContext *pocChild,
+							EOptimizationLevel eol);
 
-			// set of xforms of current stage
-			CXformSet *PxfsCurrentStage() const
-			{
-				return (*m_search_stage_array)[m_ulCurrSearchStage]->GetXformSet();
-			}
+		// determine if a plan, rooted by given group expression, can be safely pruned based on cost bounds
+		BOOL FSafeToPrune(CGroupExpression *pgexpr,
+						  CReqdPropPlan *prpp,
+						  CCostContext *pccChild,
+						  ULONG child_index,
+						  CCost *pcostLowerBound);
 
-			// return array of child optimization contexts corresponding to handle requirements
-			COptimizationContextArray *PdrgpocChildren(IMemoryPool *mp, CExpressionHandle &exprhdl);
-
-			// build tree map on memo
-			MemoTreeMap *Pmemotmap();
-
-			// reset tree map
-			void ResetTreeMap()
-			{
-				 m_pmemo->ResetTreeMap();
-			}
-
-			// check if parent group expression can optimize child group expression
-			BOOL FOptimizeChild(CGroupExpression *pgexprParent, CGroupExpression *pgexprChild, COptimizationContext *pocChild, EOptimizationLevel eol);
-
-			// determine if a plan, rooted by given group expression, can be safely pruned based on cost bounds
-			BOOL FSafeToPrune(CGroupExpression *pgexpr, CReqdPropPlan *prpp, CCostContext *pccChild, ULONG child_index, CCost *pcostLowerBound);
-
-			// print
-			IOstream &
-			OsPrint(IOstream&) const;
+		// print
+		IOstream &OsPrint(IOstream &) const;
 
 #ifdef GPOS_DEBUG
-			// print root group
-			void PrintRoot();
+		// print root group
+		void PrintRoot();
 
-			// print main optimization context and optimal cost context
-			void PrintOptCtxts();
-#endif // GPOS_DEBUG
+		// print main optimization context and optimal cost context
+		void PrintOptCtxts();
+#endif  // GPOS_DEBUG
 
-			// damp optimization level to process group expressions
-			// in the next lower optimization level
-			static
-			EOptimizationLevel EolDamp(EOptimizationLevel eol);
+		// damp optimization level to process group expressions
+		// in the next lower optimization level
+		static EOptimizationLevel EolDamp(EOptimizationLevel eol);
 
-			// derive statistics
-			static
-			void DeriveStats(IMemoryPool *pmpLocal, IMemoryPool *pmpGlobal, CGroup *pgroup, CReqdPropRelational *prprel);
+		// derive statistics
+		static void DeriveStats(IMemoryPool *pmpLocal,
+								IMemoryPool *pmpGlobal,
+								CGroup *pgroup,
+								CReqdPropRelational *prprel);
 
-			// return the first group expression in a given group
-			static
-			CGroupExpression *PgexprFirst(CGroup *pgroup);
+		// return the first group expression in a given group
+		static CGroupExpression *PgexprFirst(CGroup *pgroup);
 
-	}; // class CEngine
+	};  // class CEngine
 
 	// shorthand for printing
-	inline
-	IOstream &operator <<
-		(
-		IOstream &os,
-		CEngine &eng
-		)
+	inline IOstream &
+	operator<<(IOstream &os, CEngine &eng)
 	{
 		return eng.OsPrint(os);
 	}
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CEngine_H
+#endif  // !GPOPT_CEngine_H
 
 
 // EOF

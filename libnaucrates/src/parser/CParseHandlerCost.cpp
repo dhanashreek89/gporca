@@ -31,8 +31,7 @@ XERCES_CPP_NAMESPACE_USE
 CParseHandlerCost::CParseHandlerCost(IMemoryPool *mp,
 									 CParseHandlerManager *parse_handler_mgr,
 									 CParseHandlerBase *parse_handler_root)
-	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root),
-	  m_operator_cost_dxl(NULL)
+	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root), m_operator_cost_dxl(NULL)
 {
 }
 

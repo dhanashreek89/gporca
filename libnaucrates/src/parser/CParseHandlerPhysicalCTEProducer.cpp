@@ -31,9 +31,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerPhysicalCTEProducer::CParseHandlerPhysicalCTEProducer(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerPhysicalOp(mp, parse_handler_mgr, parse_handler_root)
 {
 }
@@ -73,9 +71,8 @@ CParseHandlerPhysicalCTEProducer::StartElement(const XMLCh *const,  // element_u
 														 EdxltokenColumns,
 														 EdxltokenPhysicalCTEProducer);
 
-	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(
-		m_mp,
-		GPOS_NEW(m_mp) CDXLPhysicalCTEProducer(m_mp, id, output_colids_array));
+	m_dxlnode = GPOS_NEW(m_mp)
+		CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLPhysicalCTEProducer(m_mp, id, output_colids_array));
 
 	// create and activate the parse handler for the child expression node
 	CParseHandlerBase *child_parse_handler = CParseHandlerFactory::GetParseHandler(

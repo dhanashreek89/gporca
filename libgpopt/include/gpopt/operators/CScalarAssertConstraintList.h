@@ -19,7 +19,7 @@
 //            +--CScalarAssertConstraint (ErrorMsg: Check constraint r_c_check for table r violated)
 //               +--CScalarIsDistinctFrom (=)
 //                  |--CScalarCmp (>)
-//                  |  |--CScalarIdent "c" (3) 
+//                  |  |--CScalarIdent "c" (3)
 //                  |  +--CScalarConst (0)
 //                  +--CScalarConst (0)
 //---------------------------------------------------------------------------
@@ -34,7 +34,6 @@
 
 namespace gpopt
 {
-
 	using namespace gpos;
 	using namespace gpmd;
 
@@ -48,73 +47,64 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalarAssertConstraintList : public CScalar
 	{
-		private:
+	private:
+		// private copy ctor
+		CScalarAssertConstraintList(const CScalarAssertConstraintList &);
 
-			// private copy ctor
-			CScalarAssertConstraintList(const CScalarAssertConstraintList &);
+	public:
+		// ctor
+		CScalarAssertConstraintList(IMemoryPool *mp);
 
-		public:
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopScalarAssertConstraintList;
+		}
 
-			// ctor
-			CScalarAssertConstraintList(IMemoryPool *mp);
+		// operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CScalarAssertConstraintList";
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopScalarAssertConstraintList;
-			}
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CScalarAssertConstraintList";
-			}
+		// sensitivity to order of inputs
+		virtual BOOL
+		FInputOrderSensitive() const
+		{
+			return false;
+		}
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
+		// return a copy of the operator with remapped columns
+		virtual COperator *
+		PopCopyWithRemappedColumns(IMemoryPool *,		//mp,
+								   UlongToColRefMap *,  //colref_mapping,
+								   BOOL					//must_exist
+		)
+		{
+			return PopCopyDefault();
+		}
 
-			// sensitivity to order of inputs
-			virtual
-			BOOL FInputOrderSensitive() const
-			{
-				return false;
-			}
+		// type of expression's result
+		virtual IMDId *MDIdType() const;
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *, //mp,
-						UlongToColRefMap *, //colref_mapping,
-						BOOL //must_exist
-						)
-			{
-				return PopCopyDefault();
-			}
+		// conversion function
+		static CScalarAssertConstraintList *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopScalarAssertConstraintList == pop->Eopid());
 
-			// type of expression's result
-			virtual
-			IMDId *MDIdType() const;
+			return dynamic_cast<CScalarAssertConstraintList *>(pop);
+		}
 
-			// conversion function
-			static
-			CScalarAssertConstraintList *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopScalarAssertConstraintList == pop->Eopid());
+	};  // class CScalarAssertConstraintList
+}  // namespace gpopt
 
-				return dynamic_cast<CScalarAssertConstraintList*>(pop);
-			}
-
-	}; // class CScalarAssertConstraintList
-}
-
-#endif // !GPOPT_CScalarAssertConstraintList_H
+#endif  // !GPOPT_CScalarAssertConstraintList_H
 
 // EOF

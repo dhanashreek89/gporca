@@ -28,136 +28,111 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalIntersectAll : public CLogicalSetOp
 	{
+	private:
+		// private copy ctor
+		CLogicalIntersectAll(const CLogicalIntersectAll &);
 
-		private:
+	public:
+		// ctor
+		explicit CLogicalIntersectAll(IMemoryPool *mp);
 
-			// private copy ctor
-			CLogicalIntersectAll(const CLogicalIntersectAll &);
+		CLogicalIntersectAll(IMemoryPool *mp,
+							 CColRefArray *pdrgpcrOutput,
+							 CColRefArrays *pdrgpdrgpcrInput);
 
-		public:
+		// dtor
+		virtual ~CLogicalIntersectAll();
 
-			// ctor
-			explicit
-			CLogicalIntersectAll(IMemoryPool *mp);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalIntersectAll;
+		}
 
-			CLogicalIntersectAll
-				(
-				IMemoryPool *mp,
-				CColRefArray *pdrgpcrOutput,
-				CColRefArrays *pdrgpdrgpcrInput
-				);
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalIntersectAll";
+		}
 
-			// dtor
-			virtual
-			~CLogicalIntersectAll();
+		// sensitivity to order of inputs
+		BOOL
+		FInputOrderSensitive() const
+		{
+			return true;
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopLogicalIntersectAll;
-			}
+		// return a copy of the operator with remapped columns
+		virtual COperator *PopCopyWithRemappedColumns(IMemoryPool *mp,
+													  UlongToColRefMap *colref_mapping,
+													  BOOL must_exist);
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CLogicalIntersectAll";
-			}
+		//-------------------------------------------------------------------------------------
+		// Derived Relational Properties
+		//-------------------------------------------------------------------------------------
 
-			// sensitivity to order of inputs
-			BOOL FInputOrderSensitive() const
-			{
-				return true;
-			}
+		// derive max card
+		virtual CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+		// derive key collections
+		virtual CKeyCollection *PkcDeriveKeys(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			//-------------------------------------------------------------------------------------
-			// Derived Relational Properties
-			//-------------------------------------------------------------------------------------
+		// derive constraint property
+		virtual CPropConstraint *
+		PpcDeriveConstraint(IMemoryPool *mp, CExpressionHandle &exprhdl) const
+		{
+			return PpcDeriveConstraintIntersectUnion(mp, exprhdl, true /*fIntersect*/);
+		}
 
-			// derive max card
-			virtual
-			CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		//-------------------------------------------------------------------------------------
+		// Transformations
+		//-------------------------------------------------------------------------------------
 
-			// derive key collections
-			virtual
-			CKeyCollection *PkcDeriveKeys(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// candidate set of xforms
+		CXformSet *PxfsCandidates(IMemoryPool *mp) const;
 
-			// derive constraint property
-			virtual
-			CPropConstraint *PpcDeriveConstraint
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl
-				)
-				const
-			{
-				return PpcDeriveConstraintIntersectUnion(mp, exprhdl, true /*fIntersect*/);
-			}
+		//-------------------------------------------------------------------------------------
+		// Derived Stats
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			// Transformations
-			//-------------------------------------------------------------------------------------
+		// stat promise
+		virtual EStatPromise
+		Esp(CExpressionHandle &) const
+		{
+			return CLogical::EspHigh;
+		}
 
-			// candidate set of xforms
-			CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+		// derive statistics
+		virtual IStatistics *PstatsDerive(IMemoryPool *mp,
+										  CExpressionHandle &exprhdl,
+										  IStatisticsArray *stats_ctxt) const;
 
-			//-------------------------------------------------------------------------------------
-			// Derived Stats
-			//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
 
-			// stat promise
-			virtual
-			EStatPromise Esp(CExpressionHandle &) const
-			{
-				return CLogical::EspHigh;
-			}
+		// conversion function
+		static CLogicalIntersectAll *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalIntersectAll == pop->Eopid());
 
-			// derive statistics
-			virtual
-			IStatistics *PstatsDerive
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				IStatisticsArray *stats_ctxt
-				)
-				const;
+			return reinterpret_cast<CLogicalIntersectAll *>(pop);
+		}
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			
-			// conversion function
-			static
-			CLogicalIntersectAll *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalIntersectAll == pop->Eopid());
+		// derive statistics
+		static IStatistics *PstatsDerive(IMemoryPool *mp,
+										 CExpressionHandle &exprhdl,
+										 CColRefArrays *pdrgpdrgpcrInput,
+										 CColRefSetArray *output_colrefsets);
 
-				return reinterpret_cast<CLogicalIntersectAll*>(pop);
-			}
+	};  // class CLogicalIntersectAll
 
-			// derive statistics
-			static
-			IStatistics *PstatsDerive
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CColRefArrays *pdrgpdrgpcrInput,
-				CColRefSetArray *output_colrefsets
-				);
+}  // namespace gpopt
 
-	}; // class CLogicalIntersectAll
-
-}
-
-#endif // !GPOPT_CLogicalIntersectAll_H
+#endif  // !GPOPT_CLogicalIntersectAll_H
 
 // EOF

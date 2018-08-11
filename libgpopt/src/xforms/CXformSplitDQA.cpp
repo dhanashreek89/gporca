@@ -33,23 +33,17 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformSplitDQA::CXformSplitDQA
-	(
-	IMemoryPool *mp
-	)
-	:
-	CXformExploration
-		(
-		 // pattern
-		GPOS_NEW(mp) CExpression
-					(
-					mp,
-					GPOS_NEW(mp) CLogicalGbAgg(mp),
-					GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)), // relational child
-					GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))  // scalar project list
-					)
-		)
-{}
+CXformSplitDQA::CXformSplitDQA(IMemoryPool *mp)
+	: CXformExploration(
+		  // pattern
+		  GPOS_NEW(mp) CExpression(
+			  mp,
+			  GPOS_NEW(mp) CLogicalGbAgg(mp),
+			  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // relational child
+			  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))   // scalar project list
+			  ))
+{
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -60,11 +54,7 @@ CXformSplitDQA::CXformSplitDQA
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise
-CXformSplitDQA::Exfp
-	(
-	CExpressionHandle &exprhdl
-	)
-	const
+CXformSplitDQA::Exfp(CExpressionHandle &exprhdl) const
 {
 	// do not split aggregate if it is not a global aggregate,  has no distinct aggs, has MDQAs, has outer references,
 	// or return types of Agg functions are ambiguous
@@ -72,8 +62,8 @@ CXformSplitDQA::Exfp
 		0 == exprhdl.GetDrvdScalarProps(1 /*child_index*/)->UlDistinctAggs() ||
 		exprhdl.GetDrvdScalarProps(1 /*child_index*/)->FHasMultipleDistinctAggs() ||
 		0 < CDrvdPropRelational::GetRelationalProperties(exprhdl.Pdp())->PcrsOuter()->Size() ||
-		CXformUtils::FHasAmbiguousType(exprhdl.PexprScalarChild(1 /*child_index*/), COptCtxt::PoctxtFromTLS()->Pmda())
-		)
+		CXformUtils::FHasAmbiguousType(exprhdl.PexprScalarChild(1 /*child_index*/),
+									   COptCtxt::PoctxtFromTLS()->Pmda()))
 	{
 		return CXform::ExfpNone;
 	}
@@ -91,13 +81,7 @@ CXformSplitDQA::Exfp
 //
 //---------------------------------------------------------------------------
 void
-CXformSplitDQA::Transform
-	(
-	CXformContext *pxfctxt,
-	CXformResult *pxfres,
-	CExpression *pexpr
-	)
-	const
+CXformSplitDQA::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const
 {
 	GPOS_ASSERT(NULL != pxfctxt);
 	GPOS_ASSERT(NULL != pxfres);
@@ -116,16 +100,13 @@ CXformSplitDQA::Transform
 	CExpressionArray *pdrgpexprChildPrEl = GPOS_NEW(mp) CExpressionArray(mp);
 	CColRefArray *pdrgpcrArgDQA = NULL;
 
-	ExtractDistinctCols
-				(
-				mp,
-				col_factory,
-				md_accessor,
-				pexprProjectList,
-				pdrgpexprChildPrEl,
-				phmexprcr,
-				&pdrgpcrArgDQA
-				);
+	ExtractDistinctCols(mp,
+						col_factory,
+						md_accessor,
+						pexprProjectList,
+						pdrgpexprChildPrEl,
+						phmexprcr,
+						&pdrgpcrArgDQA);
 
 	if (NULL == pdrgpcrArgDQA)
 	{
@@ -142,76 +123,60 @@ CXformSplitDQA::Transform
 		pexprRelational->AddRef();
 
 		// computed columns referred to in the DQA
-		CExpression *pexprChildProject = CUtils::PexprLogicalProject
-													(
-													mp,
-													pexprRelational,
-													GPOS_NEW(mp) CExpression
-																(
-																mp,
-																GPOS_NEW(mp) CScalarProjectList(mp),
-																pdrgpexprChildPrEl
-																),
-													true /*fNewComputedCol*/
-													);
+		CExpression *pexprChildProject = CUtils::PexprLogicalProject(
+			mp,
+			pexprRelational,
+			GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CScalarProjectList(mp), pdrgpexprChildPrEl),
+			true /*fNewComputedCol*/
+		);
 		pexprRelational = pexprChildProject;
 	}
 
 	// multi-stage for both scalar and non-scalar aggregates.
-	CExpression *pexprAlt1 = PexprSplitHelper
-								(
-								mp,
-								col_factory,
-								md_accessor,
-								pexpr,
-								pexprRelational,
-								phmexprcr,
-								pdrgpcrArgDQA,
-								false /*fSpillTo2Level*/
-								);
-        
+	CExpression *pexprAlt1 = PexprSplitHelper(mp,
+											  col_factory,
+											  md_accessor,
+											  pexpr,
+											  pexprRelational,
+											  phmexprcr,
+											  pdrgpcrArgDQA,
+											  false /*fSpillTo2Level*/
+	);
+
 	pxfres->Add(pexprAlt1);
 
 	CColRefArray *pDrgPcr = CLogicalGbAgg::PopConvert(pexpr->Pop())->Pdrgpcr();
 	BOOL fScalarDQA = (pDrgPcr == NULL || pDrgPcr->Size() == 0);
 	BOOL fForce3StageScalarDQA = GPOS_FTRACE(EopttraceForceThreeStageScalarDQA);
-	if (!(fForce3StageScalarDQA && fScalarDQA)) {
+	if (!(fForce3StageScalarDQA && fScalarDQA))
+	{
 		// we skip this option if it is a Scalar DQA and we only want plans with 3-stages of aggregation
 
 		// local/global for both scalar and non-scalar aggregates.
-		CExpression *pexprAlt2 = PexprSplitIntoLocalDQAGlobalAgg
-				(
-				mp,
-				col_factory,
-				md_accessor,
-				pexpr,
-				pexprRelational,
-				phmexprcr,
-				pdrgpcrArgDQA
-				);
+		CExpression *pexprAlt2 = PexprSplitIntoLocalDQAGlobalAgg(
+			mp, col_factory, md_accessor, pexpr, pexprRelational, phmexprcr, pdrgpcrArgDQA);
 
 		pxfres->Add(pexprAlt2);
 	}
 
-	if (fScalarDQA && !fForce3StageScalarDQA) {
+	if (fScalarDQA && !fForce3StageScalarDQA)
+	{
 		// if only want 3-stage DQA then skip this 2-stage option for scalar DQA.
 
 		// special case for 'scalar DQA' only, transform to 2-stage aggregate.
 		// It's beneficial for distinct column same as distributed column.
-		CExpression *pexprAlt3 = PexprSplitHelper
-				(
-				mp,
-				col_factory,
-				md_accessor,
-				pexpr,
-				pexprRelational,
-				phmexprcr,
-				pdrgpcrArgDQA,
-				true /*fSpillTo2Level*/
-				);
+		CExpression *pexprAlt3 = PexprSplitHelper(mp,
+												  col_factory,
+												  md_accessor,
+												  pexpr,
+												  pexprRelational,
+												  phmexprcr,
+												  pdrgpcrArgDQA,
+												  true /*fSpillTo2Level*/
+		);
 		pxfres->Add(pexprAlt3);
 	}
-        
+
 	pdrgpcrArgDQA->Release();
 
 	// clean up
@@ -237,16 +202,13 @@ CXformSplitDQA::Transform
 //
 //---------------------------------------------------------------------------
 CExpression *
-CXformSplitDQA::PexprSplitIntoLocalDQAGlobalAgg
-	(
-	IMemoryPool *mp,
-	CColumnFactory *col_factory,
-	CMDAccessor *md_accessor,
-	CExpression *pexpr,
-	CExpression *pexprRelational,
-	ExprToColRefMap *phmexprcr,
-	CColRefArray *pdrgpcrArgDQA
-	)
+CXformSplitDQA::PexprSplitIntoLocalDQAGlobalAgg(IMemoryPool *mp,
+												CColumnFactory *col_factory,
+												CMDAccessor *md_accessor,
+												CExpression *pexpr,
+												CExpression *pexprRelational,
+												ExprToColRefMap *phmexprcr,
+												CColRefArray *pdrgpcrArgDQA)
 {
 	CExpression *pexprPrL = (*pexpr)[1];
 
@@ -271,15 +233,14 @@ CXformSplitDQA::PexprSplitIntoLocalDQAGlobalAgg
 		{
 			// create a new local DQA version of the original global DQA
 			popScAggFunc->MDId()->AddRef();
-			CScalarAggFunc *popScAggFuncLocal = CUtils::PopAggFunc
-												(
-												mp,
-												popScAggFunc->MDId(),
-												GPOS_NEW(mp) CWStringConst(mp, popScAggFunc->PstrAggFunc()->GetBuffer()),
-												true /* is_distinct */,
-												EaggfuncstageLocal /*eaggfuncstage*/,
-												true /* fSplit */
-												);
+			CScalarAggFunc *popScAggFuncLocal = CUtils::PopAggFunc(
+				mp,
+				popScAggFunc->MDId(),
+				GPOS_NEW(mp) CWStringConst(mp, popScAggFunc->PstrAggFunc()->GetBuffer()),
+				true /* is_distinct */,
+				EaggfuncstageLocal /*eaggfuncstage*/,
+				true /* fSplit */
+			);
 
 			GPOS_ASSERT(1 == pexprAggFunc->Arity());
 			CExpression *pexprArg = (*pexprAggFunc)[0];
@@ -289,71 +250,61 @@ CXformSplitDQA::PexprSplitIntoLocalDQAGlobalAgg
 			pdrgpexprArgsLocal->Append(CUtils::PexprScalarIdent(mp, pcrDistinctCol));
 
 			const IMDAggregate *pmdagg = md_accessor->RetrieveAgg(popScAggFunc->MDId());
-			const IMDType *pmdtype = md_accessor->RetrieveType(pmdagg->GetIntermediateResultTypeMdid());
+			const IMDType *pmdtype =
+				md_accessor->RetrieveType(pmdagg->GetIntermediateResultTypeMdid());
 			CColRef *pcrLocal = col_factory->PcrCreate(pmdtype, default_type_modifier);
 
-			CExpression *pexprPrElLocal = CUtils::PexprScalarProjectElement
-													(
-													mp,
-													pcrLocal,
-													GPOS_NEW(mp) CExpression(mp, popScAggFuncLocal, pdrgpexprArgsLocal)
-													);
+			CExpression *pexprPrElLocal = CUtils::PexprScalarProjectElement(
+				mp, pcrLocal, GPOS_NEW(mp) CExpression(mp, popScAggFuncLocal, pdrgpexprArgsLocal));
 
 			pdrgpexprPrElFirstStage->Append(pexprPrElLocal);
 
 			// create a new "non-distinct" global aggregate version of the original DQA
 			popScAggFunc->MDId()->AddRef();
-			CScalarAggFunc *popScAggFuncGlobal = CUtils::PopAggFunc
-													(
-													mp,
-													popScAggFunc->MDId(),
-													GPOS_NEW(mp) CWStringConst(mp, popScAggFunc->PstrAggFunc()->GetBuffer()),
-													false /* is_distinct */,
-													EaggfuncstageGlobal /*eaggfuncstage*/,
-													true /* fSplit */
-													);
+			CScalarAggFunc *popScAggFuncGlobal = CUtils::PopAggFunc(
+				mp,
+				popScAggFunc->MDId(),
+				GPOS_NEW(mp) CWStringConst(mp, popScAggFunc->PstrAggFunc()->GetBuffer()),
+				false /* is_distinct */,
+				EaggfuncstageGlobal /*eaggfuncstage*/,
+				true /* fSplit */
+			);
 
 			CExpressionArray *pdrgpexprArgsGlobal = GPOS_NEW(mp) CExpressionArray(mp);
 			pdrgpexprArgsGlobal->Append(CUtils::PexprScalarIdent(mp, pcrLocal));
 
-			CExpression *pexprPrElGlobal = CUtils::PexprScalarProjectElement
-													(
-													mp,
-													popScPrEl->Pcr(),
-													GPOS_NEW(mp) CExpression(mp, popScAggFuncGlobal, pdrgpexprArgsGlobal)
-													);
+			CExpression *pexprPrElGlobal = CUtils::PexprScalarProjectElement(
+				mp,
+				popScPrEl->Pcr(),
+				GPOS_NEW(mp) CExpression(mp, popScAggFuncGlobal, pdrgpexprArgsGlobal));
 
 			pdrgpexprPrElLastStage->Append(pexprPrElGlobal);
 		}
 		else
 		{
 			// split regular aggregate function into multi-level aggregate functions
-			PopulatePrLMultiPhaseAgg
-				(
-				mp,
-				col_factory,
-				md_accessor,
-				pexprPrEl,
-				pdrgpexprPrElFirstStage,
-				NULL, /* pdrgpexprPrElSecondStage*/
-				pdrgpexprPrElLastStage,
-				true /* fSplit2LevelsOnly */
-				);
+			PopulatePrLMultiPhaseAgg(mp,
+									 col_factory,
+									 md_accessor,
+									 pexprPrEl,
+									 pdrgpexprPrElFirstStage,
+									 NULL, /* pdrgpexprPrElSecondStage*/
+									 pdrgpexprPrElLastStage,
+									 true /* fSplit2LevelsOnly */
+			);
 		}
 	}
 
-	CExpression *pexprGlobal = PexprMultiLevelAggregation
-								(
-								mp,
-								pexprRelational,
-								pdrgpexprPrElFirstStage,
-								NULL, /* pdrgpexprPrElSecondStage */
-								pdrgpexprPrElLastStage,
-								pdrgpcrArgDQA,
-								pdrgpcrGlobal,
-								true /* fSplit2LevelsOnly */,
-								false /* fAddDistinctColToLocalGb */
-								);
+	CExpression *pexprGlobal = PexprMultiLevelAggregation(mp,
+														  pexprRelational,
+														  pdrgpexprPrElFirstStage,
+														  NULL, /* pdrgpexprPrElSecondStage */
+														  pdrgpexprPrElLastStage,
+														  pdrgpcrArgDQA,
+														  pdrgpcrGlobal,
+														  true /* fSplit2LevelsOnly */,
+														  false /* fAddDistinctColToLocalGb */
+	);
 
 	return pexprGlobal;
 }
@@ -376,17 +327,14 @@ CXformSplitDQA::PexprSplitIntoLocalDQAGlobalAgg
 //
 //---------------------------------------------------------------------------
 CExpression *
-CXformSplitDQA::PexprSplitHelper
-	(
-	IMemoryPool *mp,
-	CColumnFactory *col_factory,
-	CMDAccessor *md_accessor,
-	CExpression *pexpr,
-	CExpression *pexprRelational,
-	ExprToColRefMap *phmexprcr,
-	CColRefArray *pdrgpcrArgDQA,
-	BOOL fSpillTo2Level
-	)
+CXformSplitDQA::PexprSplitHelper(IMemoryPool *mp,
+								 CColumnFactory *col_factory,
+								 CMDAccessor *md_accessor,
+								 CExpression *pexpr,
+								 CExpression *pexprRelational,
+								 ExprToColRefMap *phmexprcr,
+								 CColRefArray *pdrgpcrArgDQA,
+								 BOOL fSpillTo2Level)
 {
 	CExpression *pexprPrL = (*pexpr)[1];
 
@@ -413,15 +361,14 @@ CXformSplitDQA::PexprSplitHelper
 		{
 			// create a new "non-distinct" version of the original aggregate function
 			popScAggFunc->MDId()->AddRef();
-			CScalarAggFunc *popScAggFuncNew = CUtils::PopAggFunc
-												(
-												mp,
-												popScAggFunc->MDId(),
-												GPOS_NEW(mp) CWStringConst(mp, popScAggFunc->PstrAggFunc()->GetBuffer()),
-												false /* is_distinct */,
-												EaggfuncstageGlobal /*eaggfuncstage*/,
-												false /* fSplit */
-												);
+			CScalarAggFunc *popScAggFuncNew = CUtils::PopAggFunc(
+				mp,
+				popScAggFunc->MDId(),
+				GPOS_NEW(mp) CWStringConst(mp, popScAggFunc->PstrAggFunc()->GetBuffer()),
+				false /* is_distinct */,
+				EaggfuncstageGlobal /*eaggfuncstage*/,
+				false /* fSplit */
+			);
 
 			GPOS_ASSERT(1 == pexprAggFunc->Arity());
 			CExpression *pexprArg = (*pexprAggFunc)[0];
@@ -431,44 +378,35 @@ CXformSplitDQA::PexprSplitHelper
 			CExpressionArray *pdrgpexprArgs = GPOS_NEW(mp) CExpressionArray(mp);
 			pdrgpexprArgs->Append(CUtils::PexprScalarIdent(mp, pcrDistinctCol));
 
-			CExpression *pexprPrElGlobal = CUtils::PexprScalarProjectElement
-													(
-													mp,
-													popScPrEl->Pcr(),
-													GPOS_NEW(mp) CExpression(mp, popScAggFuncNew, pdrgpexprArgs)
-													);
+			CExpression *pexprPrElGlobal = CUtils::PexprScalarProjectElement(
+				mp, popScPrEl->Pcr(), GPOS_NEW(mp) CExpression(mp, popScAggFuncNew, pdrgpexprArgs));
 
 			pdrgpexprPrElLastStage->Append(pexprPrElGlobal);
 		}
 		else
 		{
 			// split the regular aggregate function into multi-level aggregate functions
-			PopulatePrLMultiPhaseAgg
-				(
-				mp,
-				col_factory,
-				md_accessor,
-				pexprPrEl,
-				pdrgpexprPrElFirstStage,
-				pdrgpexprPrElSecondStage,
-				pdrgpexprPrElLastStage,
-				fSpillTo2Level
-				);
+			PopulatePrLMultiPhaseAgg(mp,
+									 col_factory,
+									 md_accessor,
+									 pexprPrEl,
+									 pdrgpexprPrElFirstStage,
+									 pdrgpexprPrElSecondStage,
+									 pdrgpexprPrElLastStage,
+									 fSpillTo2Level);
 		}
 	}
 
-	CExpression *pexprGlobal = PexprMultiLevelAggregation
-								(
-								mp,
-								pexprRelational,
-								pdrgpexprPrElFirstStage,
-								pdrgpexprPrElSecondStage,
-								pdrgpexprPrElLastStage,
-								pdrgpcrArgDQA,
-								pdrgpcrGlobal,
-								fSpillTo2Level,
-								true /* fAddDistinctColToLocalGb */
-								);
+	CExpression *pexprGlobal = PexprMultiLevelAggregation(mp,
+														  pexprRelational,
+														  pdrgpexprPrElFirstStage,
+														  pdrgpexprPrElSecondStage,
+														  pdrgpexprPrElLastStage,
+														  pdrgpcrArgDQA,
+														  pdrgpcrGlobal,
+														  fSpillTo2Level,
+														  true /* fAddDistinctColToLocalGb */
+	);
 
 	// clean-up the secondStage if spill to 2 level
 	if (fSpillTo2Level)
@@ -489,14 +427,11 @@ CXformSplitDQA::PexprSplitHelper
 //
 //---------------------------------------------------------------------------
 CExpression *
-CXformSplitDQA::PexprPrElAgg
-	(
-	IMemoryPool *mp,
-	CExpression *pexprAggFunc,
-	EAggfuncStage eaggfuncstage,
-	CColRef *pcrPreviousStage,
-	CColRef *pcrCurrStage
-	)
+CXformSplitDQA::PexprPrElAgg(IMemoryPool *mp,
+							 CExpression *pexprAggFunc,
+							 EAggfuncStage eaggfuncstage,
+							 CColRef *pcrPreviousStage,
+							 CColRef *pcrCurrStage)
 {
 	GPOS_ASSERT(NULL != pexprAggFunc);
 	GPOS_ASSERT(NULL != pcrCurrStage);
@@ -520,22 +455,17 @@ CXformSplitDQA::PexprPrElAgg
 	}
 
 	popScAggFunc->MDId()->AddRef();
-	CScalarAggFunc *popScAggFuncNew = CUtils::PopAggFunc
-												(
-												mp,
-												popScAggFunc->MDId(),
-												GPOS_NEW(mp) CWStringConst(mp, popScAggFunc->PstrAggFunc()->GetBuffer()),
-												false, /*fdistinct */
-												eaggfuncstage,
-												true /* fSplit */
-												);
+	CScalarAggFunc *popScAggFuncNew =
+		CUtils::PopAggFunc(mp,
+						   popScAggFunc->MDId(),
+						   GPOS_NEW(mp) CWStringConst(mp, popScAggFunc->PstrAggFunc()->GetBuffer()),
+						   false, /*fdistinct */
+						   eaggfuncstage,
+						   true /* fSplit */
+		);
 
-	return CUtils::PexprScalarProjectElement
-					(
-					mp,
-					pcrCurrStage,
-					GPOS_NEW(mp) CExpression(mp, popScAggFuncNew, pdrgpexprArg)
-					);
+	return CUtils::PexprScalarProjectElement(
+		mp, pcrCurrStage, GPOS_NEW(mp) CExpression(mp, popScAggFuncNew, pdrgpexprArg));
 }
 
 
@@ -550,17 +480,14 @@ CXformSplitDQA::PexprPrElAgg
 //
 //---------------------------------------------------------------------------
 void
-CXformSplitDQA::PopulatePrLMultiPhaseAgg
-	(
-	IMemoryPool *mp,
-	CColumnFactory *col_factory,
-	CMDAccessor *md_accessor,
-	CExpression *pexprPrEl,
-	CExpressionArray *pdrgpexprPrElFirstStage,
-	CExpressionArray *pdrgpexprPrElSecondStage,
-	CExpressionArray *pdrgpexprPrElLastStage,
-	BOOL fSplit2LevelsOnly
-	)
+CXformSplitDQA::PopulatePrLMultiPhaseAgg(IMemoryPool *mp,
+										 CColumnFactory *col_factory,
+										 CMDAccessor *md_accessor,
+										 CExpression *pexprPrEl,
+										 CExpressionArray *pdrgpexprPrElFirstStage,
+										 CExpressionArray *pdrgpexprPrElSecondStage,
+										 CExpressionArray *pdrgpexprPrElLastStage,
+										 BOOL fSplit2LevelsOnly)
 {
 	GPOS_ASSERT(NULL != pexprPrEl);
 	GPOS_ASSERT(NULL != pdrgpexprPrElFirstStage);
@@ -578,7 +505,8 @@ CXformSplitDQA::PopulatePrLMultiPhaseAgg
 	// create new column reference for the first stage (local) project element
 	CColRef *pcrLocal = col_factory->PcrCreate(pmdtype, default_type_modifier);
 
-	CExpression *pexprPrElFirstStage = PexprPrElAgg(mp, pexprAggFunc, EaggfuncstageLocal, NULL /*pcrPreviousStage*/, pcrLocal);
+	CExpression *pexprPrElFirstStage =
+		PexprPrElAgg(mp, pexprAggFunc, EaggfuncstageLocal, NULL /*pcrPreviousStage*/, pcrLocal);
 	pdrgpexprPrElFirstStage->Append(pexprPrElFirstStage);
 
 	// column reference for the second stage project elements
@@ -595,7 +523,8 @@ CXformSplitDQA::PopulatePrLMultiPhaseAgg
 		pcrSecondStage = col_factory->PcrCreate(pmdtype, default_type_modifier);
 	}
 
-	CExpression *pexprPrElSecondStage = PexprPrElAgg(mp, pexprAggFunc, eaggfuncstage, pcrLocal, pcrSecondStage);
+	CExpression *pexprPrElSecondStage =
+		PexprPrElAgg(mp, pexprAggFunc, eaggfuncstage, pcrLocal, pcrSecondStage);
 	if (fSplit2LevelsOnly)
 	{
 		pdrgpexprPrElLastStage->Append(pexprPrElSecondStage);
@@ -606,7 +535,8 @@ CXformSplitDQA::PopulatePrLMultiPhaseAgg
 
 	// column reference for the third stage project elements
 	CColRef *pcrGlobal = popScPrEl->Pcr();
-	CExpression *pexprPrElGlobal = PexprPrElAgg(mp, pexprAggFunc, EaggfuncstageGlobal, pcrSecondStage, pcrGlobal);
+	CExpression *pexprPrElGlobal =
+		PexprPrElAgg(mp, pexprAggFunc, EaggfuncstageGlobal, pcrSecondStage, pcrGlobal);
 
 	pdrgpexprPrElLastStage->Append(pexprPrElGlobal);
 }
@@ -623,14 +553,11 @@ CXformSplitDQA::PopulatePrLMultiPhaseAgg
 //
 //---------------------------------------------------------------------------
 CColRef *
-CXformSplitDQA::PcrAggFuncArgument
-	(
-	IMemoryPool *mp,
-	CMDAccessor *md_accessor,
-	CColumnFactory *col_factory,
-	CExpression *pexprArg,
-	CExpressionArray *pdrgpexprChildPrEl
-	)
+CXformSplitDQA::PcrAggFuncArgument(IMemoryPool *mp,
+								   CMDAccessor *md_accessor,
+								   CColumnFactory *col_factory,
+								   CExpression *pexprArg,
+								   CExpressionArray *pdrgpexprChildPrEl)
 {
 	GPOS_ASSERT(NULL != pexprArg);
 	GPOS_ASSERT(NULL != pdrgpexprChildPrEl);
@@ -646,7 +573,8 @@ CXformSplitDQA::PcrAggFuncArgument
 	CColRef *pcrAdditionalGrpCol = col_factory->PcrCreate(pmdtype, popScalar->TypeModifier());
 
 	pexprArg->AddRef();
-	CExpression *pexprPrElNew = CUtils::PexprScalarProjectElement(mp, pcrAdditionalGrpCol, pexprArg);
+	CExpression *pexprPrElNew =
+		CUtils::PexprScalarProjectElement(mp, pcrAdditionalGrpCol, pexprArg);
 
 	pdrgpexprChildPrEl->Append(pexprPrElNew);
 
@@ -663,18 +591,15 @@ CXformSplitDQA::PcrAggFuncArgument
 //
 //---------------------------------------------------------------------------
 CExpression *
-CXformSplitDQA::PexprMultiLevelAggregation
-	(
-	IMemoryPool *mp,
-	CExpression *pexprRelational,
-	CExpressionArray *pdrgpexprPrElFirstStage,
-	CExpressionArray *pdrgpexprPrElSecondStage,
-	CExpressionArray *pdrgpexprPrElThirdStage,
-	CColRefArray *pdrgpcrArgDQA,
-	CColRefArray *pdrgpcrLastStage,
-	BOOL fSplit2LevelsOnly,
-	BOOL fAddDistinctColToLocalGb
-	)
+CXformSplitDQA::PexprMultiLevelAggregation(IMemoryPool *mp,
+										   CExpression *pexprRelational,
+										   CExpressionArray *pdrgpexprPrElFirstStage,
+										   CExpressionArray *pdrgpexprPrElSecondStage,
+										   CExpressionArray *pdrgpexprPrElThirdStage,
+										   CColRefArray *pdrgpcrArgDQA,
+										   CColRefArray *pdrgpcrLastStage,
+										   BOOL fSplit2LevelsOnly,
+										   BOOL fAddDistinctColToLocalGb)
 {
 	GPOS_ASSERT(NULL != pexprRelational);
 	GPOS_ASSERT(NULL != pdrgpexprPrElFirstStage);
@@ -713,59 +638,41 @@ CXformSplitDQA::PexprMultiLevelAggregation
 		BOOL fLocalAggGeneratesDuplicates = (0 < pdrgpcrLastStage->Size());
 
 		pdrgpcrArgDQA->AddRef();
-		popFirstStage = GPOS_NEW(mp) CLogicalGbAgg
-									(
-									mp,
-									pdrgpcrLocal,
-									COperator::EgbaggtypeLocal,
-									fLocalAggGeneratesDuplicates,
-									pdrgpcrArgDQA
-									);
+		popFirstStage = GPOS_NEW(mp) CLogicalGbAgg(mp,
+												   pdrgpcrLocal,
+												   COperator::EgbaggtypeLocal,
+												   fLocalAggGeneratesDuplicates,
+												   pdrgpcrArgDQA);
 		pdrgpcrLastStage->AddRef();
-		popSecondStage = GPOS_NEW(mp) CLogicalGbAgg(mp, pdrgpcrLastStage, COperator::EgbaggtypeGlobal /* egbaggtype */);
+		popSecondStage = GPOS_NEW(mp)
+			CLogicalGbAgg(mp, pdrgpcrLastStage, COperator::EgbaggtypeGlobal /* egbaggtype */);
 		pdrgpexprLastStage = pdrgpexprPrElThirdStage;
 	}
 	else
 	{
-		popFirstStage = GPOS_NEW(mp) CLogicalGbAgg(mp, pdrgpcrLocal, COperator::EgbaggtypeLocal /* egbaggtype */);
+		popFirstStage = GPOS_NEW(mp)
+			CLogicalGbAgg(mp, pdrgpcrLocal, COperator::EgbaggtypeLocal /* egbaggtype */);
 		pdrgpcrLocal->AddRef();
 		pdrgpcrArgDQA->AddRef();
-		popSecondStage = GPOS_NEW(mp) CLogicalGbAgg
-									(
-									mp,
-									pdrgpcrLocal,
-									COperator::EgbaggtypeIntermediate,
-									false, /* fGeneratesDuplicates */
-									pdrgpcrArgDQA
-									);
+		popSecondStage = GPOS_NEW(mp) CLogicalGbAgg(mp,
+													pdrgpcrLocal,
+													COperator::EgbaggtypeIntermediate,
+													false, /* fGeneratesDuplicates */
+													pdrgpcrArgDQA);
 	}
 
 	pexprRelational->AddRef();
-	CExpression *pexprFirstStage = GPOS_NEW(mp) CExpression
-											(
-											mp,
-											popFirstStage,
-											pexprRelational,
-											GPOS_NEW(mp) CExpression
-														(
-														mp,
-														GPOS_NEW(mp) CScalarProjectList(mp),
-														pdrgpexprPrElFirstStage
-														)
-											);
+	CExpression *pexprFirstStage = GPOS_NEW(mp) CExpression(
+		mp,
+		popFirstStage,
+		pexprRelational,
+		GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CScalarProjectList(mp), pdrgpexprPrElFirstStage));
 
-	CExpression *pexprSecondStage = GPOS_NEW(mp) CExpression
-												(
-												mp,
-												popSecondStage,
-												pexprFirstStage,
-												GPOS_NEW(mp) CExpression
-															(
-															mp,
-															GPOS_NEW(mp) CScalarProjectList(mp),
-															pdrgpexprLastStage
-															)
-												);
+	CExpression *pexprSecondStage = GPOS_NEW(mp) CExpression(
+		mp,
+		popSecondStage,
+		pexprFirstStage,
+		GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CScalarProjectList(mp), pdrgpexprLastStage));
 
 	if (fSplit2LevelsOnly)
 	{
@@ -773,18 +680,12 @@ CXformSplitDQA::PexprMultiLevelAggregation
 	}
 
 	pdrgpcrLastStage->AddRef();
-	return GPOS_NEW(mp) CExpression
-						(
-						mp,
-						GPOS_NEW(mp) CLogicalGbAgg(mp, pdrgpcrLastStage, COperator::EgbaggtypeGlobal /* egbaggtype */),
-						pexprSecondStage,
-						GPOS_NEW(mp) CExpression
-									(
-									mp,
-									GPOS_NEW(mp) CScalarProjectList(mp),
-									pdrgpexprPrElThirdStage
-									)
-						);
+	return GPOS_NEW(mp) CExpression(
+		mp,
+		GPOS_NEW(mp)
+			CLogicalGbAgg(mp, pdrgpcrLastStage, COperator::EgbaggtypeGlobal /* egbaggtype */),
+		pexprSecondStage,
+		GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CScalarProjectList(mp), pdrgpexprPrElThirdStage));
 }
 
 
@@ -797,8 +698,7 @@ CXformSplitDQA::PexprMultiLevelAggregation
 //
 //---------------------------------------------------------------------------
 void
-CXformSplitDQA::ExtractDistinctCols
-	(
+CXformSplitDQA::ExtractDistinctCols(
 	IMemoryPool *mp,
 	CColumnFactory *col_factory,
 	CMDAccessor *md_accessor,
@@ -806,7 +706,7 @@ CXformSplitDQA::ExtractDistinctCols
 	CExpressionArray *pdrgpexprChildPrEl,
 	ExprToColRefMap *phmexprcr,
 	CColRefArray **ppdrgpcrArgDQA  // output: array of distinct aggs arguments
-	)
+)
 {
 	GPOS_ASSERT(NULL != pdrgpexprChildPrEl);
 	GPOS_ASSERT(NULL != ppdrgpcrArgDQA);
@@ -825,10 +725,11 @@ CXformSplitDQA::ExtractDistinctCols
 		CExpression *pexprAggFunc = (*pexprPrEl)[0];
 		CScalarAggFunc *popScAggFunc = CScalarAggFunc::PopConvert(pexprAggFunc->Pop());
 
-		if (popScAggFunc->IsDistinct() && md_accessor->RetrieveAgg(popScAggFunc->MDId())->IsSplittable())
+		if (popScAggFunc->IsDistinct() &&
+			md_accessor->RetrieveAgg(popScAggFunc->MDId())->IsSplittable())
 		{
 			GPOS_ASSERT(1 == pexprAggFunc->Arity());
-			
+
 			CExpression *pexprArg = (*pexprAggFunc)[0];
 			GPOS_ASSERT(NULL != pexprArg);
 			CColRef *pcrDistinctCol = phmexprcr->Find(pexprArg);
@@ -837,15 +738,16 @@ CXformSplitDQA::ExtractDistinctCols
 				ulDistinct++;
 
 				// get the column reference of the DQA argument
-				pcrDistinctCol = PcrAggFuncArgument(mp, md_accessor, col_factory, pexprArg, pdrgpexprChildPrEl);
+				pcrDistinctCol =
+					PcrAggFuncArgument(mp, md_accessor, col_factory, pexprArg, pdrgpexprChildPrEl);
 
-				// insert into the map between the expression representing the DQA argument 
+				// insert into the map between the expression representing the DQA argument
 				// and its column reference
 				pexprArg->AddRef();
 #ifdef GPOS_DEBUG
 				BOOL fInserted =
 #endif
-						phmexprcr->Insert(pexprArg, pcrDistinctCol);
+					phmexprcr->Insert(pexprArg, pcrDistinctCol);
 				GPOS_ASSERT(fInserted);
 
 				// add the distinct column to the set of distinct columns

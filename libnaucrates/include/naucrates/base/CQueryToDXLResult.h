@@ -42,7 +42,9 @@ namespace gpdxl
 
 	public:
 		// ctor
-		CQueryToDXLResult(CDXLNode *query, CDXLNodeArray *query_output, CDXLNodeArray *cte_producers);
+		CQueryToDXLResult(CDXLNode *query,
+						  CDXLNodeArray *query_output,
+						  CDXLNodeArray *cte_producers);
 
 		// dtor
 		~CQueryToDXLResult();

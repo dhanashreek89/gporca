@@ -15,7 +15,7 @@
 #include "gpopt/operators/CLogicalJoin.h"
 
 namespace gpopt
-{	
+{
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CLogicalNAryJoin
@@ -26,126 +26,100 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalNAryJoin : public CLogicalJoin
 	{
-		private:
+	private:
+		// private copy ctor
+		CLogicalNAryJoin(const CLogicalNAryJoin &);
 
-			// private copy ctor
-			CLogicalNAryJoin(const CLogicalNAryJoin &);
+	public:
+		// ctor
+		explicit CLogicalNAryJoin(IMemoryPool *mp);
 
-		public:
+		// dtor
+		virtual ~CLogicalNAryJoin()
+		{
+		}
 
-			// ctor
-			explicit
-			CLogicalNAryJoin(IMemoryPool *mp);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalNAryJoin;
+		}
 
-			// dtor
-			virtual
-			~CLogicalNAryJoin() 
-			{}
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalNAryJoin";
+		}
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopLogicalNAryJoin;
-			}
-			
-			// return a string for operator name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CLogicalNAryJoin";
-			}
+		//-------------------------------------------------------------------------------------
+		// Derived Relational Properties
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			// Derived Relational Properties
-			//-------------------------------------------------------------------------------------
+		// derive not nullable columns
+		virtual CColRefSet *
+		PcrsDeriveNotNull(IMemoryPool *mp, CExpressionHandle &exprhdl) const
+		{
+			return PcrsDeriveNotNullCombineLogical(mp, exprhdl);
+		}
 
-			// derive not nullable columns
-			virtual
-			CColRefSet *PcrsDeriveNotNull
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl
-				)
-				const
-			{
-				return PcrsDeriveNotNullCombineLogical(mp, exprhdl);
-			}
+		// derive partition consumer info
+		virtual CPartInfo *
+		PpartinfoDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const
+		{
+			return PpartinfoDeriveCombine(mp, exprhdl);
+		}
 
-			// derive partition consumer info
-			virtual
-			CPartInfo *PpartinfoDerive
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl
-				) 
-				const
-			{
-				return PpartinfoDeriveCombine(mp, exprhdl);
-			}
+		// derive max card
+		virtual CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// derive max card
-			virtual
-			CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// derive constraint property
+		virtual CPropConstraint *
+		PpcDeriveConstraint(IMemoryPool *mp, CExpressionHandle &exprhdl) const
+		{
+			return PpcDeriveConstraintFromPredicates(mp, exprhdl);
+		}
 
-			// derive constraint property
-			virtual
-			CPropConstraint *PpcDeriveConstraint
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl
-				)
-				const
-			{
-				return PpcDeriveConstraintFromPredicates(mp, exprhdl);
-			}
+		//-------------------------------------------------------------------------------------
+		// Derived Stats
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			// Derived Stats
-			//-------------------------------------------------------------------------------------
+		// promise level for stat derivation
+		virtual EStatPromise
+		Esp(CExpressionHandle &  // exprhdl
+			) const
+		{
+			// we should use the expanded join order for stat derivation
+			return EspLow;
+		}
 
-			// promise level for stat derivation
-			virtual
-			EStatPromise Esp
-				(
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{
-				// we should use the expanded join order for stat derivation
-				return EspLow;
-			}
+		//-------------------------------------------------------------------------------------
+		// Transformations
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			// Transformations
-			//-------------------------------------------------------------------------------------
+		// candidate set of xforms
+		virtual CXformSet *PxfsCandidates(IMemoryPool *mp) const;
 
-			// candidate set of xforms
-			virtual
-			CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+		// conversion function
+		static CLogicalNAryJoin *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalNAryJoin == pop->Eopid());
 
-			// conversion function
-			static
-			CLogicalNAryJoin *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalNAryJoin == pop->Eopid());
-				
-				return dynamic_cast<CLogicalNAryJoin*>(pop);
-			}
+			return dynamic_cast<CLogicalNAryJoin *>(pop);
+		}
 
-	}; // class CLogicalNAryJoin
+	};  // class CLogicalNAryJoin
 
-}
+}  // namespace gpopt
 
 
-#endif // !GPOS_CLogicalNAryJoin_H
+#endif  // !GPOS_CLogicalNAryJoin_H
 
 // EOF

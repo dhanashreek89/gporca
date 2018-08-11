@@ -71,7 +71,8 @@ CParseHandlerNLJoin::StartElement(const XMLCh *const,  // element_uri,
 	CParseHandlerBase *nest_params_parse_handler = NULL;
 	if (m_dxl_op->NestParamsExists())
 	{
-		nest_params_parse_handler = CParseHandlerFactory::GetParseHandler(m_mp, CDXLTokens::XmlstrToken(EdxltokenNLJIndexParamList), m_parse_handler_mgr, this);
+		nest_params_parse_handler = CParseHandlerFactory::GetParseHandler(
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenNLJIndexParamList), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(nest_params_parse_handler);
 	}
 	// parse handler for right child
@@ -140,16 +141,24 @@ CParseHandlerNLJoin::EndElement(const XMLCh *const,  // element_uri,
 	}
 
 	// construct node from the created child nodes
-	CParseHandlerProperties *prop_parse_handler = dynamic_cast<CParseHandlerProperties *>((*this)[EdxlParseHandlerNLJIndexProp]);
-	CParseHandlerProjList *proj_list_parse_handler = dynamic_cast<CParseHandlerProjList*>((*this)[EdxlParseHandlerNLJIndexProjList]);
-	CParseHandlerFilter *filter_parse_handler = dynamic_cast<CParseHandlerFilter *>((*this)[EdxlParseHandlerNLJIndexFilter]);
-	CParseHandlerFilter *join_filter_parse_handler = dynamic_cast<CParseHandlerFilter *>((*this)[EdxlParseHandlerNLJIndexJoinFilter]);
-	CParseHandlerPhysicalOp *left_child_parse_handler = dynamic_cast<CParseHandlerPhysicalOp *>((*this)[EdxlParseHandlerNLJIndexLeftChild]);
-	CParseHandlerPhysicalOp *right_child_parse_handler = dynamic_cast<CParseHandlerPhysicalOp *>((*this)[EdxlParseHandlerNLJIndexRightChild]);
+	CParseHandlerProperties *prop_parse_handler =
+		dynamic_cast<CParseHandlerProperties *>((*this)[EdxlParseHandlerNLJIndexProp]);
+	CParseHandlerProjList *proj_list_parse_handler =
+		dynamic_cast<CParseHandlerProjList *>((*this)[EdxlParseHandlerNLJIndexProjList]);
+	CParseHandlerFilter *filter_parse_handler =
+		dynamic_cast<CParseHandlerFilter *>((*this)[EdxlParseHandlerNLJIndexFilter]);
+	CParseHandlerFilter *join_filter_parse_handler =
+		dynamic_cast<CParseHandlerFilter *>((*this)[EdxlParseHandlerNLJIndexJoinFilter]);
+	CParseHandlerPhysicalOp *left_child_parse_handler =
+		dynamic_cast<CParseHandlerPhysicalOp *>((*this)[EdxlParseHandlerNLJIndexLeftChild]);
+	CParseHandlerPhysicalOp *right_child_parse_handler =
+		dynamic_cast<CParseHandlerPhysicalOp *>((*this)[EdxlParseHandlerNLJIndexRightChild]);
 
 	if (m_dxl_op->NestParamsExists())
 	{
-		CParseHandlerNLJIndexParamList *nest_params_parse_handler = dynamic_cast<CParseHandlerNLJIndexParamList*>((*this)[EdxlParseHandlerNLJIndexNestLoopParams]);
+		CParseHandlerNLJIndexParamList *nest_params_parse_handler =
+			dynamic_cast<CParseHandlerNLJIndexParamList *>(
+				(*this)[EdxlParseHandlerNLJIndexNestLoopParams]);
 		GPOS_ASSERT(nest_params_parse_handler);
 		CDXLColRefArray *nest_params_colrefs = nest_params_parse_handler->GetNLParamsColRefs();
 		nest_params_colrefs->AddRef();

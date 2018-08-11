@@ -27,12 +27,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalNAryJoin::CLogicalNAryJoin
-	(
-	IMemoryPool *mp
-	)
-	:
-	CLogicalJoin(mp)
+CLogicalNAryJoin::CLogicalNAryJoin(IMemoryPool *mp) : CLogicalJoin(mp)
 {
 	GPOS_ASSERT(NULL != mp);
 }
@@ -47,12 +42,8 @@ CLogicalNAryJoin::CLogicalNAryJoin
 //
 //---------------------------------------------------------------------------
 CMaxCard
-CLogicalNAryJoin::Maxcard
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CLogicalNAryJoin::Maxcard(IMemoryPool *,  // mp
+						  CExpressionHandle &exprhdl) const
 {
 	return CLogical::Maxcard(exprhdl, exprhdl.Arity() - 1, MaxcardDef(exprhdl));
 }
@@ -66,14 +57,10 @@ CLogicalNAryJoin::Maxcard
 //
 //---------------------------------------------------------------------------
 CXformSet *
-CLogicalNAryJoin::PxfsCandidates
-	(
-	IMemoryPool *mp
-	) 
-	const
+CLogicalNAryJoin::PxfsCandidates(IMemoryPool *mp) const
 {
 	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
-	
+
 	(void) xform_set->ExchangeSet(CXform::ExfSubqNAryJoin2Apply);
 	(void) xform_set->ExchangeSet(CXform::ExfExpandNAryJoin);
 	(void) xform_set->ExchangeSet(CXform::ExfExpandNAryJoinMinCard);
@@ -85,4 +72,3 @@ CLogicalNAryJoin::PxfsCandidates
 
 
 // EOF
-

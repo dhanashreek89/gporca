@@ -27,45 +27,43 @@ namespace gpopt
 	//		CSerializableQuery
 	//
 	//	@doc:
-	//		Serializable query object 
+	//		Serializable query object
 	//
 	//---------------------------------------------------------------------------
 	class CSerializableQuery : public CSerializable
 	{
-		private:
+	private:
+		IMemoryPool *m_mp;
 
-			IMemoryPool *m_mp;
+		// query DXL node;
+		const CDXLNode *m_query_dxl_root;
 
-			// query DXL node;
-			const CDXLNode *m_query_dxl_root;
+		// query output
+		const CDXLNodeArray *m_query_output;
 
-			// query output
-			const CDXLNodeArray *m_query_output;
+		// CTE DXL nodes
+		const CDXLNodeArray *m_cte_producers;
 
-			// CTE DXL nodes
-			const CDXLNodeArray *m_cte_producers;
 
-			
-			// private copy ctor
-			CSerializableQuery(const CSerializableQuery&);
+		// private copy ctor
+		CSerializableQuery(const CSerializableQuery &);
 
-		public:
+	public:
+		// ctor
+		CSerializableQuery(IMemoryPool *mp,
+						   const CDXLNode *query,
+						   const CDXLNodeArray *query_output_dxlnode_array,
+						   const CDXLNodeArray *cte_producers);
 
-			// ctor
-			CSerializableQuery(IMemoryPool *mp, const CDXLNode *query, const CDXLNodeArray *query_output_dxlnode_array, const CDXLNodeArray *cte_producers);
+		// dtor
+		virtual ~CSerializableQuery();
 
-			// dtor
-			virtual
-			~CSerializableQuery();
+		// serialize object to passed stream
+		virtual void Serialize(COstream &oos);
 
-			// serialize object to passed stream
-			virtual
-			void Serialize(COstream &oos);
+	};  // class CSerializableQuery
+}  // namespace gpopt
 
-	}; // class CSerializableQuery
-}
-
-#endif // !GPOS_CSerializableQuery_H
+#endif  // !GPOS_CSerializableQuery_H
 
 // EOF
-

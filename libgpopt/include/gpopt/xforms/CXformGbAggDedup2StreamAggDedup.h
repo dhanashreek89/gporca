@@ -28,50 +28,43 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformGbAggDedup2StreamAggDedup : public CXformGbAgg2StreamAgg
 	{
+	private:
+		// private copy ctor
+		CXformGbAggDedup2StreamAggDedup(const CXformGbAggDedup2StreamAggDedup &);
 
-		private:
+	public:
+		// ctor
+		CXformGbAggDedup2StreamAggDedup(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformGbAggDedup2StreamAggDedup(const CXformGbAggDedup2StreamAggDedup &);
+		// dtor
+		virtual ~CXformGbAggDedup2StreamAggDedup()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfGbAggDedup2StreamAggDedup;
+		}
 
-			// ctor
-			CXformGbAggDedup2StreamAggDedup(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformGbAggDedup2StreamAggDedup";
+		}
 
-			// dtor
-			virtual
-			~CXformGbAggDedup2StreamAggDedup() {}
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfGbAggDedup2StreamAggDedup;
-			}
+	};  // class CXformGbAggDedup2StreamAggDedup
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformGbAggDedup2StreamAggDedup";
-			}
-
-			// actual transform
-			virtual
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformGbAggDedup2StreamAggDedup
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformGbAggDedup2StreamAggDedup_H
+#endif  // !GPOPT_CXformGbAggDedup2StreamAggDedup_H
 
 // EOF

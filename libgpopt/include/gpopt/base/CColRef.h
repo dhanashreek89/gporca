@@ -30,14 +30,24 @@ namespace gpopt
 	// colref array
 	typedef CDynamicPtrArray<CColRef, CleanupNULL> CColRefArray;
 	typedef CDynamicPtrArray<CColRefArray, CleanupRelease> CColRefArrays;
-	
+
 	// hash map mapping ULONG -> CColRef
-	typedef CHashMap<ULONG, CColRef, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-					CleanupDelete<ULONG>, CleanupNULL<CColRef> > UlongToColRefMap;
+	typedef CHashMap<ULONG,
+					 CColRef,
+					 gpos::HashValue<ULONG>,
+					 gpos::Equals<ULONG>,
+					 CleanupDelete<ULONG>,
+					 CleanupNULL<CColRef> >
+		UlongToColRefMap;
 	// iterator
-	typedef CHashMapIter<ULONG, CColRef, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-					CleanupDelete<ULONG>, CleanupNULL<CColRef> > UlongToColRefMapIter;
-	
+	typedef CHashMapIter<ULONG,
+						 CColRef,
+						 gpos::HashValue<ULONG>,
+						 gpos::Equals<ULONG>,
+						 CleanupDelete<ULONG>,
+						 CleanupNULL<CColRef> >
+		UlongToColRefMapIter;
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CColRef
@@ -50,148 +60,130 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CColRef
 	{
-		private:
-			
-			// type information
-			const IMDType *m_pmdtype;
+	private:
+		// type information
+		const IMDType *m_pmdtype;
 
-			// type modifier
-			const INT m_type_modifier;
+		// type modifier
+		const INT m_type_modifier;
 
-			// name: SQL alias or artificial name
-			const CName *m_pname;
+		// name: SQL alias or artificial name
+		const CName *m_pname;
 
-			// private copy ctor
-			CColRef(const CColRef &);
-			
-		public:
-		
-			enum Ecolreftype
-			{
-				EcrtTable,
-				EcrtComputed,
-				
-				EcrtSentinel
-			};
-		
-			// ctor
-			CColRef(const IMDType *pmdtype, const INT type_modifier, ULONG id, const CName *pname);
+		// private copy ctor
+		CColRef(const CColRef &);
 
-			// dtor
-			virtual
-			~CColRef();
-			
-			// accessor to type info
-			const IMDType *RetrieveType() const
-			{
-				return m_pmdtype;
-			}
+	public:
+		enum Ecolreftype
+		{
+			EcrtTable,
+			EcrtComputed,
 
-			// type modifier
-			INT TypeModifier() const
-			{
-				return m_type_modifier;
-			}
-			
-			// name
-			const CName &Name() const
-			{
-				return *m_pname;
-			}
+			EcrtSentinel
+		};
 
-			// id
-			ULONG Id() const
-			{
-				return m_id;
-			}
-			
-			// overloaded equality operator
-			BOOL operator ==
-				(
-				const CColRef &cr
-				)
-				const
-			{
-				return Equals(m_id, cr.Id());
-			}
+		// ctor
+		CColRef(const IMDType *pmdtype, const INT type_modifier, ULONG id, const CName *pname);
 
-			// static hash functions
-			static
-			ULONG HashValue(const ULONG &);
+		// dtor
+		virtual ~CColRef();
 
-			static
-			ULONG HashValue(const CColRef *colref);
+		// accessor to type info
+		const IMDType *
+		RetrieveType() const
+		{
+			return m_pmdtype;
+		}
 
-			 // equality function for hash table
-			static
-			BOOL Equals
-				(
-				const ULONG &ulKey,
-				const ULONG &ulKeyOther
-				)
-			{
-				return ulKey == ulKeyOther;
-			}
+		// type modifier
+		INT
+		TypeModifier() const
+		{
+			return m_type_modifier;
+		}
 
-			 // equality function
-			static
-			BOOL Equals
-				(
-				const CColRef *pcrFirst,
-				const CColRef *pcrSecond
-				)
-			{
-				return Equals(pcrFirst->Id(), pcrSecond->Id());
-			}
+		// name
+		const CName &
+		Name() const
+		{
+			return *m_pname;
+		}
 
-			// extract array of colids from array of colrefs
-			static
-			ULongPtrArray *Pdrgpul(IMemoryPool *mp, CColRefArray *colref_array);
+		// id
+		ULONG
+		Id() const
+		{
+			return m_id;
+		}
 
-			// check if the the array of column references are equal
-			static
-			BOOL Equals(const CColRefArray *pdrgpcr1, const CColRefArray *pdrgpcr2);
+		// overloaded equality operator
+		BOOL
+		operator==(const CColRef &cr) const
+		{
+			return Equals(m_id, cr.Id());
+		}
 
-			// check if the the array of column reference arrays are equal
-			static
-			BOOL Equals(const CColRefArrays *pdrgdrgpcr1, const CColRefArrays *pdrgdrgpcr2);
+		// static hash functions
+		static ULONG HashValue(const ULONG &);
 
-			// type of column reference (base/computed)
-			virtual
-			Ecolreftype Ecrt() const = 0;
+		static ULONG HashValue(const CColRef *colref);
 
-			// is column a system column?
-			virtual
-			BOOL FSystemCol() const = 0;
+		// equality function for hash table
+		static BOOL
+		Equals(const ULONG &ulKey, const ULONG &ulKeyOther)
+		{
+			return ulKey == ulKeyOther;
+		}
 
-			// print
-			IOstream &OsPrint(IOstream &) const;
+		// equality function
+		static BOOL
+		Equals(const CColRef *pcrFirst, const CColRef *pcrSecond)
+		{
+			return Equals(pcrFirst->Id(), pcrSecond->Id());
+		}
 
-			// link for hash chain
-			SLink m_link;
+		// extract array of colids from array of colrefs
+		static ULongPtrArray *Pdrgpul(IMemoryPool *mp, CColRefArray *colref_array);
 
-			// id, serves as hash key
-			const ULONG m_id;
-			
-			// invalid key
-			static
-			const ULONG m_ulInvalid;
+		// check if the the array of column references are equal
+		static BOOL Equals(const CColRefArray *pdrgpcr1, const CColRefArray *pdrgpcr2);
+
+		// check if the the array of column reference arrays are equal
+		static BOOL Equals(const CColRefArrays *pdrgdrgpcr1, const CColRefArrays *pdrgdrgpcr2);
+
+		// type of column reference (base/computed)
+		virtual Ecolreftype Ecrt() const = 0;
+
+		// is column a system column?
+		virtual BOOL FSystemCol() const = 0;
+
+		// print
+		IOstream &OsPrint(IOstream &) const;
+
+		// link for hash chain
+		SLink m_link;
+
+		// id, serves as hash key
+		const ULONG m_id;
+
+		// invalid key
+		static const ULONG m_ulInvalid;
 
 #ifdef GPOS_DEBUG
-			void DbgPrint() const;
+		void DbgPrint() const;
 #endif  // GPOS_DEBUG
 
-	}; // class CColRef
+	};  // class CColRef
 
- 	// shorthand for printing
-	inline
-	IOstream &operator << (IOstream &os, CColRef &cr)
+	// shorthand for printing
+	inline IOstream &
+	operator<<(IOstream &os, CColRef &cr)
 	{
 		return cr.OsPrint(os);
 	}
-	
-}
 
-#endif // !GPOS_CColRef_H
+}  // namespace gpopt
+
+#endif  // !GPOS_CColRef_H
 
 // EOF

@@ -58,8 +58,7 @@ namespace gpdxl
 		CParseHandlerPhysicalBitmapTableScan(IMemoryPool *mp,
 											 CParseHandlerManager *parse_handler_mgr,
 											 CParseHandlerBase *parse_handler_root)
-			: CParseHandlerPhysicalAbstractBitmapScan(
-				  mp, parse_handler_mgr, parse_handler_root)
+			: CParseHandlerPhysicalAbstractBitmapScan(mp, parse_handler_mgr, parse_handler_root)
 		{
 		}
 	};

@@ -100,9 +100,7 @@ namespace gpos
 
 	protected:
 		// ctor
-		CMemoryPool(IMemoryPool *underlying_mp,
-					BOOL owns_underlying_mp,
-					BOOL thread_safe);
+		CMemoryPool(IMemoryPool *underlying_mp, BOOL owns_underlying_mp, BOOL thread_safe);
 
 		// underlying pool accessor
 		IMemoryPool *

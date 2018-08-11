@@ -80,11 +80,8 @@ CParseHandlerMergeJoin::StartElement(const XMLCh *const,  // element_uri,
 	m_parse_handler_mgr->ActivateParseHandler(left_child_parse_handler);
 
 	// parse handler for the merge clauses
-	CParseHandlerBase *merge_clause_parse_handler =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenScalarMergeCondList),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *merge_clause_parse_handler = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarMergeCondList), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(merge_clause_parse_handler);
 
 	// parse handler for the join filter

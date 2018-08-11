@@ -28,54 +28,47 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformImplementUnionAll : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformImplementUnionAll(const CXformImplementUnionAll &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementUnionAll(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformImplementUnionAll(const CXformImplementUnionAll &);
+		// dtor
+		virtual ~CXformImplementUnionAll()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementUnionAll;
+		}
 
-			// ctor
-			explicit
-			CXformImplementUnionAll(IMemoryPool *mp);
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementUnionAll";
+		}
 
-			// dtor
-			virtual
-			~CXformImplementUnionAll()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise
+		Exfp(CExpressionHandle &  // exprhdl
+			 ) const
+		{
+			return CXform::ExfpHigh;
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementUnionAll;
-			}
+		// actual transform
+		void Transform(CXformContext *, CXformResult *, CExpression *) const;
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementUnionAll";
-			}
+	};  // class CXformImplementUnionAll
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp
-				(
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{
-				return CXform::ExfpHigh;
-			}
+}  // namespace gpopt
 
-			// actual transform
-			void Transform(CXformContext *, CXformResult *, CExpression *) const;
-
-	}; // class CXformImplementUnionAll
-
-}
-
-#endif // !GPOPT_CXformImplementUnionAll_H
+#endif  // !GPOPT_CXformImplementUnionAll_H
 
 // EOF

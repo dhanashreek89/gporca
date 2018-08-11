@@ -28,45 +28,35 @@ namespace gpnaucrates
 	//---------------------------------------------------------------------------
 	class CDatumTest
 	{
+	private:
+		// create an oid datum
+		static IDatum *CreateOidDatum(IMemoryPool *mp, BOOL is_null);
 
-		private:
-			// create an oid datum
-			static
-			IDatum *CreateOidDatum(IMemoryPool *mp, BOOL is_null);
+		// create an int2 datum
+		static IDatum *CreateInt2Datum(IMemoryPool *mp, BOOL is_null);
 
-			// create an int2 datum
-			static
-			IDatum *CreateInt2Datum(IMemoryPool *mp, BOOL is_null);
+		// create an int4 datum
+		static IDatum *CreateInt4Datum(IMemoryPool *mp, BOOL is_null);
 
-			// create an int4 datum
-			static
-			IDatum *CreateInt4Datum(IMemoryPool *mp, BOOL is_null);
-		
-			// create an int8 datum
-			static
-			IDatum *CreateInt8Datum(IMemoryPool *mp, BOOL is_null);
+		// create an int8 datum
+		static IDatum *CreateInt8Datum(IMemoryPool *mp, BOOL is_null);
 
-			// create a bool datum
-			static
-			IDatum *CreateBoolDatum(IMemoryPool *mp, BOOL is_null);
+		// create a bool datum
+		static IDatum *CreateBoolDatum(IMemoryPool *mp, BOOL is_null);
 
-			// create a generic datum
-			static
-			IDatum *CreateGenericDatum(IMemoryPool *mp, BOOL is_null);
+		// create a generic datum
+		static IDatum *CreateGenericDatum(IMemoryPool *mp, BOOL is_null);
 
-		public:
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
 
-			// unittests
-			static 
-			GPOS_RESULT EresUnittest();
-			
-			static 
-			GPOS_RESULT EresUnittest_Basics();
+		static GPOS_RESULT EresUnittest_Basics();
 
-	}; // class CDatumTest
-}
+	};  // class CDatumTest
+}  // namespace gpnaucrates
 
-#endif // !GPNAUCRATES_CDatumTest_H
+#endif  // !GPNAUCRATES_CDatumTest_H
 
 
 // EOF

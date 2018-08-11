@@ -33,8 +33,7 @@ using namespace gpos;
 //	  Ctor
 //
 //---------------------------------------------------------------------------
-CMemoryPoolInjectFault::CMemoryPoolInjectFault(IMemoryPool *mp,
-											   BOOL owns_underlying_mp)
+CMemoryPoolInjectFault::CMemoryPoolInjectFault(IMemoryPool *mp, BOOL owns_underlying_mp)
 	: CMemoryPool(mp, owns_underlying_mp, true /*fThreadSafe*/)
 {
 	GPOS_ASSERT(mp != NULL);

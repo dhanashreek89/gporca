@@ -57,10 +57,7 @@ CParseHandlerPhysicalAbstractBitmapScan::StartElementHelper(const XMLCh *const e
 
 	// parse handler for the recheck condition
 	CParseHandlerBase *recheck_cond_parse_handler = CParseHandlerFactory::GetParseHandler(
-		m_mp,
-		CDXLTokens::XmlstrToken(EdxltokenScalarRecheckCondFilter),
-		m_parse_handler_mgr,
-		this);
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarRecheckCondFilter), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(recheck_cond_parse_handler);
 
 	// parse handler for the filter

@@ -28,54 +28,44 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformLeftAntiSemiJoin2HashJoin : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformLeftAntiSemiJoin2HashJoin(const CXformLeftAntiSemiJoin2HashJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformLeftAntiSemiJoin2HashJoin(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformLeftAntiSemiJoin2HashJoin(const CXformLeftAntiSemiJoin2HashJoin &);
+		// dtor
+		virtual ~CXformLeftAntiSemiJoin2HashJoin()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftAntiSemiJoin2HashJoin;
+		}
 
-			// ctor
-			explicit
-			CXformLeftAntiSemiJoin2HashJoin(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftAntiSemiJoin2HashJoin";
+		}
 
-			// dtor
-			virtual
-			~CXformLeftAntiSemiJoin2HashJoin() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftAntiSemiJoin2HashJoin;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftAntiSemiJoin2HashJoin";
-			}
+	};  // class CXformLeftAntiSemiJoin2HashJoin
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformLeftAntiSemiJoin2HashJoin
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformLeftAntiSemiJoin2HashJoin_H
+#endif  // !GPOPT_CXformLeftAntiSemiJoin2HashJoin_H
 
 // EOF

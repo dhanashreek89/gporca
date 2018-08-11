@@ -50,8 +50,7 @@ namespace gpmd
 		MDIdToSerializedMDIdMap *m_mdmap;
 
 		// load MD objects in the hash map
-		void LoadMetadataObjectsFromArray(IMemoryPool *mp,
-										  IMDCacheObjectArray *mdcache_obj_array);
+		void LoadMetadataObjectsFromArray(IMemoryPool *mp, IMDCacheObjectArray *mdcache_obj_array);
 
 		// private copy ctor
 		CMDProviderMemory(const CMDProviderMemory &);
@@ -72,9 +71,7 @@ namespace gpmd
 											 IMDId *mdid) const;
 
 		// return the mdid for the specified system id and type
-		virtual IMDId *MDId(IMemoryPool *mp,
-							CSystemId sysid,
-							IMDType::ETypeInfo type_info) const;
+		virtual IMDId *MDId(IMemoryPool *mp, CSystemId sysid, IMDType::ETypeInfo type_info) const;
 	};
 }  // namespace gpmd
 

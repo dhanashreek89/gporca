@@ -87,8 +87,7 @@ CParseHandlerScalarCaseTest::EndElement(const XMLCh *const,  // element_uri
 	}
 
 	// construct node
-	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(
-		m_mp, GPOS_NEW(m_mp) CDXLScalarCaseTest(m_mp, m_mdid_type));
+	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarCaseTest(m_mp, m_mdid_type));
 
 	// deactivate handler
 	m_parse_handler_mgr->DeactivateHandler();

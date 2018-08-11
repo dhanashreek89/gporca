@@ -29,48 +29,43 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformCollapseGbAgg : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformCollapseGbAgg(const CXformCollapseGbAgg &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformCollapseGbAgg(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformCollapseGbAgg(const CXformCollapseGbAgg &);
+		// dtor
+		virtual ~CXformCollapseGbAgg()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfCollapseGbAgg;
+		}
 
-			// ctor
-			explicit
-			CXformCollapseGbAgg(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformCollapseGbAgg";
+		}
 
-			// dtor
-			virtual
-			~CXformCollapseGbAgg()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfCollapseGbAgg;
-			}
+		// actual transform
+		void Transform(CXformContext *, CXformResult *, CExpression *) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformCollapseGbAgg";
-			}
+	};  // class CXformCollapseGbAgg
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp (CExpressionHandle &exprhdl) const;
+}  // namespace gpopt
 
-			// actual transform
-			void Transform(CXformContext *, CXformResult *, CExpression *) const;
-
-	}; // class CXformCollapseGbAgg
-
-}
-
-#endif // !GPOPT_CXformCollapseGbAgg_H
+#endif  // !GPOPT_CXformCollapseGbAgg_H
 
 // EOF

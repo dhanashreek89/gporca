@@ -232,7 +232,7 @@ namespace gpos
 					{
 #ifdef GPOS_DEBUG
 						BOOL recycled =
-#endif  // GPOS_DEBUG
+#endif  // GPOS_DEBUG \
 	// unset the reserve bit - must succeed
 							UnsetBit(&m_objs_reserved[elem_offset], bit_val);
 

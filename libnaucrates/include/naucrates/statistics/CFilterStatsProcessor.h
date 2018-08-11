@@ -77,13 +77,12 @@ namespace gpnaucrates
 			CDouble *scale_factor);
 
 		// create new hash map of histograms after applying the disjunctive predicate
-		static UlongToHistogramMap *MakeHistHashMapDisjFilter(
-			IMemoryPool *mp,
-			const CStatisticsConfig *stats_config,
-			UlongToHistogramMap *input_histograms,
-			CDouble input_rows,
-			CStatsPredDisj *pred_stats,
-			CDouble *scale_factor);
+		static UlongToHistogramMap *MakeHistHashMapDisjFilter(IMemoryPool *mp,
+															  const CStatisticsConfig *stats_config,
+															  UlongToHistogramMap *input_histograms,
+															  CDouble input_rows,
+															  CStatsPredDisj *pred_stats,
+															  CDouble *scale_factor);
 
 		// check if the column is a new column for statistic calculation
 		static BOOL IsNewStatsColumn(ULONG colid, ULONG last_colid);

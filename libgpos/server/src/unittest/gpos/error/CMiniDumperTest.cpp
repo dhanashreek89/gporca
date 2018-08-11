@@ -226,8 +226,7 @@ CMiniDumperTest::PvLoopSerialize(void *  // pv
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CMiniDumperTest::CMiniDumperStream::CMiniDumperStream(IMemoryPool *mp)
-	: CMiniDumper(mp)
+CMiniDumperTest::CMiniDumperStream::CMiniDumperStream(IMemoryPool *mp) : CMiniDumper(mp)
 {
 }
 

@@ -128,7 +128,7 @@
 #include "unittest/dxl/statistics/CJoinCardinalityTest.h"
 #include "unittest/dxl/statistics/CJoinCardinalityNDVBasedEqPredTest.h"
 #include "unittest/gpopt/cost/CCostTest.h"
-#include "unittest/gpopt/minidump/MinidumpTestHeaders.h" // auto generated header file
+#include "unittest/gpopt/minidump/MinidumpTestHeaders.h"  // auto generated header file
 
 using namespace gpos;
 using namespace gpopt;
@@ -137,9 +137,8 @@ using namespace gpnaucrates;
 using namespace gpdbcost;
 
 // static array of all known unittest routines
-static gpos::CUnittest rgut[] =
-{
-#include "unittest/gpopt/minidump/MinidumpTestArray.inl" // auto generated inlining file
+static gpos::CUnittest rgut[] = {
+#include "unittest/gpopt/minidump/MinidumpTestArray.inl"  // auto generated inlining file
 
 	// naucrates
 	GPOS_UNITTEST_STD(CCostTest),
@@ -229,18 +228,18 @@ static gpos::CUnittest rgut[] =
 	GPOS_UNITTEST_STD(CXformTest),
 	GPOS_UNITTEST_STD(CConstExprEvaluatorDefaultTest),
 	GPOS_UNITTEST_STD(CConstExprEvaluatorDXLTest),
-	// disable CEnumeratorTest until it is fixed
+// disable CEnumeratorTest until it is fixed
 //#if !defined(GPOS_SunOS)
 //	GPOS_UNITTEST_STD(CEnumeratorTest),
 //#endif // GPOS_SunOS
-	// extended tests
+// extended tests
 #ifdef GPOS_FPSIMULATOR
 	GPOS_UNITTEST_EXT(CFSimulatorTestExt),
-#endif // GPOS_FPSIMULATOR
+#endif  // GPOS_FPSIMULATOR
 
 #ifdef GPOS_DEBUG
 	GPOS_UNITTEST_EXT(CTimeSliceTest),
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 };
 
 //---------------------------------------------------------------------------
@@ -251,7 +250,8 @@ static gpos::CUnittest rgut[] =
 //		Configurations needed before running unittests
 //
 //---------------------------------------------------------------------------
-void ConfigureTests()
+void
+ConfigureTests()
 {
 	// initialize DXL support
 	InitDXL();
@@ -274,7 +274,7 @@ void ConfigureTests()
 	GPOS_RESULT eres = CXformFactory::Init();
 
 	GPOS_ASSERT(GPOS_OK == eres);
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 }
 
 
@@ -286,7 +286,8 @@ void ConfigureTests()
 //		Cleanup after unittests are done
 //
 //---------------------------------------------------------------------------
-void Cleanup()
+void
+Cleanup()
 {
 	CMDCache::Shutdown();
 	CTestUtils::DestroyMDProvider();
@@ -305,12 +306,9 @@ static ULONG tests_failed = 0;
 //
 //---------------------------------------------------------------------------
 static void *
-PvExec
-	(
-	void *pv
-	)
+PvExec(void *pv)
 {
-	CMainArgs *pma = (CMainArgs*) pv;
+	CMainArgs *pma = (CMainArgs *) pv;
 	CBitVector bv(ITask::Self()->Pmp(), CUnittest::UlTests());
 
 	CHAR ch = '\0';
@@ -319,11 +317,11 @@ PvExec
 	BOOL fMinidump = false;
 	BOOL fUnittest = false;
 	ULLONG ullPlanId = 0;
-	
+
 	while (pma->Getopt(&ch))
 	{
 		CHAR *szTestName = NULL;
-		
+
 		switch (ch)
 		{
 			case 'U':
@@ -364,14 +362,14 @@ PvExec
 		GPOS_TRACE(GPOS_WSZ_LIT("Cannot specify -d and -U/-u options at the same time"));
 		return NULL;
 	}
-	
+
 	if (fMinidump)
-	{	
+	{
 		// initialize DXL support
 		InitDXL();
 
 		CMDCache::Init();
-		
+
 		CAutoMemoryPool amp;
 		IMemoryPool *mp = amp.Pmp();
 
@@ -387,7 +385,7 @@ PvExec
 		}
 		else
 		{
-			optimizer_config -> AddRef();
+			optimizer_config->AddRef();
 		}
 
 		if (ullPlanId != 0)
@@ -397,16 +395,14 @@ PvExec
 
 		ULONG ulSegments = CTestUtils::UlSegments(optimizer_config);
 
-		CDXLNode *pdxlnPlan = CMinidumperUtils::PdxlnExecuteMinidump
-								(
-								mp,
-								file_name,
-								ulSegments,
-								1 /*ulSessionId*/,
-								1 /*ulCmdId*/,
-								optimizer_config,
-								NULL /*pceeval*/
-								);
+		CDXLNode *pdxlnPlan = CMinidumperUtils::PdxlnExecuteMinidump(mp,
+																	 file_name,
+																	 ulSegments,
+																	 1 /*ulSessionId*/,
+																	 1 /*ulCmdId*/,
+																	 optimizer_config,
+																	 NULL /*pceeval*/
+		);
 
 		GPOS_DELETE(pdxlmd);
 		optimizer_config->Release();
@@ -432,15 +428,11 @@ PvExec
 //		time being
 //
 //---------------------------------------------------------------------------
-INT main
-	(
-	INT iArgs,
-	const CHAR **rgszArgs
-	)
-{	
-
+INT
+main(INT iArgs, const CHAR **rgszArgs)
+{
 	// Use default allocator
-	struct gpos_init_params gpos_params = { NULL, NULL, NULL };
+	struct gpos_init_params gpos_params = {NULL, NULL, NULL};
 
 	gpos_init(&gpos_params);
 	gpdxl_init();
@@ -455,7 +447,7 @@ INT main
 
 	// setup args for unittest params
 	CMainArgs ma(iArgs, rgszArgs, "uU:d:xT:i:");
-	
+
 	// initialize unittest framework
 	CUnittest::Init(rgut, GPOS_ARRAY_SIZE(rgut), ConfigureTests, Cleanup);
 

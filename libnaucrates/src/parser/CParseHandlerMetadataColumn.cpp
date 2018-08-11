@@ -138,11 +138,8 @@ CParseHandlerMetadataColumn::StartElement(const XMLCh *const,  // element_uri,
 	}
 
 	// install a parse handler for the default value
-	CParseHandlerBase *pph =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenColumnDefaultValue),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *pph = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenColumnDefaultValue), m_parse_handler_mgr, this);
 
 	// activate and store parse handler
 	m_parse_handler_mgr->ActivateParseHandler(pph);
@@ -183,13 +180,13 @@ CParseHandlerMetadataColumn::EndElement(const XMLCh *const,  // element_uri,
 	}
 
 	m_mdcol = GPOS_NEW(m_mp) CMDColumn(m_mdname,
-												m_attno,
-												m_mdid_type,
-												m_type_modifier,
-												m_is_nullable,
-												m_is_dropped,
-												m_dxl_default_val,
-												m_width);
+									   m_attno,
+									   m_mdid_type,
+									   m_type_modifier,
+									   m_is_nullable,
+									   m_is_dropped,
+									   m_dxl_default_val,
+									   m_width);
 
 	// deactivate handler
 	m_parse_handler_mgr->DeactivateHandler();

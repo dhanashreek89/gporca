@@ -124,12 +124,12 @@ namespace gpdxl
 														   const CHAR *xsd_file_path);
 
 		static IMDCacheObjectArray *ParseDXLToIMDObjectArray(IMemoryPool *,
-														  const CHAR *dxl_string,
-														  const CHAR *xsd_file_path);
+															 const CHAR *dxl_string,
+															 const CHAR *xsd_file_path);
 
 		static IMDCacheObjectArray *ParseDXLToIMDObjectArray(IMemoryPool *,
-														  const CWStringBase *dxl_string,
-														  const CHAR *xsd_file_path);
+															 const CWStringBase *dxl_string,
+															 const CHAR *xsd_file_path);
 
 		// parse mdid from a metadata document
 		static IMDId *ParseDXLToMDId(IMemoryPool *,
@@ -141,9 +141,8 @@ namespace gpdxl
 													   const CHAR *xsd_file_path);
 
 		// parse statistics object from the statistics document
-		static CDXLStatsDerivedRelationArray *ParseDXLToStatsDerivedRelArray(IMemoryPool *,
-																	   const CHAR *dxl_string,
-																	   const CHAR *xsd_file_path);
+		static CDXLStatsDerivedRelationArray *ParseDXLToStatsDerivedRelArray(
+			IMemoryPool *, const CHAR *dxl_string, const CHAR *xsd_file_path);
 
 		// parse statistics object from the statistics document
 		static CDXLStatsDerivedRelationArray *ParseDXLToStatsDerivedRelArray(
@@ -158,8 +157,8 @@ namespace gpdxl
 		// extract the array of optimizer buckets from the dxl representation of
 		// dxl buckets in the dxl derived column statistics object
 		static CBucketArray *ParseDXLToBucketsArray(IMemoryPool *mp,
-												   CMDAccessor *md_accessor,
-												   CDXLStatsDerivedColumn *dxl_derived_col_stats);
+													CMDAccessor *md_accessor,
+													CDXLStatsDerivedColumn *dxl_derived_col_stats);
 
 		// serialize a DXL query tree into DXL Document
 		static void SerializeQuery(IMemoryPool *mp,
@@ -261,8 +260,7 @@ namespace gpdxl
 											  ULONG *length);
 
 		// create a GPOS dynamic string from a regular character array
-		static CWStringDynamic *CreateDynamicStringFromCharArray(IMemoryPool *mp,
-																 const CHAR *c);
+		static CWStringDynamic *CreateDynamicStringFromCharArray(IMemoryPool *mp, const CHAR *c);
 
 		// create an MD name from a character array
 		static CMDName *CreateMDNameFromCharArray(IMemoryPool *mp, const CHAR *c);
@@ -296,8 +294,7 @@ namespace gpdxl
 		static CHAR *Read(IMemoryPool *mp, const CHAR *filename);
 
 		// create a multi-byte character string from a wide character string
-		static CHAR *CreateMultiByteCharStringFromWCString(IMemoryPool *mp,
-														   const WCHAR *wc_string);
+		static CHAR *CreateMultiByteCharStringFromWCString(IMemoryPool *mp, const WCHAR *wc_string);
 
 		// serialize a double value in a string
 		static CWStringDynamic *SerializeDouble(CDXLMemoryManager *memory_manager, CDouble value);
@@ -321,8 +318,7 @@ namespace gpdxl
 	// serialize a list of integers into a comma-separate string
 	template <typename T, void (*CleanupFn)(T *)>
 	CWStringDynamic *
-	CDXLUtils::Serialize(IMemoryPool *mp,
-						 const CDynamicPtrArray<T, CleanupFn> *dynamic_ptr_array)
+	CDXLUtils::Serialize(IMemoryPool *mp, const CDynamicPtrArray<T, CleanupFn> *dynamic_ptr_array)
 	{
 		CAutoP<CWStringDynamic> string_var(GPOS_NEW(mp) CWStringDynamic(mp));
 

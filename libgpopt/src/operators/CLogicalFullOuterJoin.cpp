@@ -28,12 +28,7 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CLogicalFullOuterJoin::CLogicalFullOuterJoin
-	(
-	IMemoryPool *mp
-	)
-	:
-	CLogicalJoin(mp)
+CLogicalFullOuterJoin::CLogicalFullOuterJoin(IMemoryPool *mp) : CLogicalJoin(mp)
 {
 	GPOS_ASSERT(NULL != mp);
 }
@@ -48,12 +43,8 @@ CLogicalFullOuterJoin::CLogicalFullOuterJoin
 //
 //---------------------------------------------------------------------------
 CMaxCard
-CLogicalFullOuterJoin::Maxcard
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CLogicalFullOuterJoin::Maxcard(IMemoryPool *,  // mp
+							   CExpressionHandle &exprhdl) const
 {
 	return CLogical::Maxcard(exprhdl, 2 /*ulScalarIndex*/, MaxcardDef(exprhdl));
 }
@@ -67,11 +58,7 @@ CLogicalFullOuterJoin::Maxcard
 //
 //---------------------------------------------------------------------------
 CXformSet *
-CLogicalFullOuterJoin::PxfsCandidates
-	(
-	IMemoryPool *mp
-	)
-	const
+CLogicalFullOuterJoin::PxfsCandidates(IMemoryPool *mp) const
 {
 	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
 	(void) xform_set->ExchangeSet(CXform::ExfExpandFullOuterJoin);
@@ -79,4 +66,3 @@ CLogicalFullOuterJoin::PxfsCandidates
 }
 
 // EOF
-

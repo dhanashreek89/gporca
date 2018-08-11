@@ -28,61 +28,48 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformIntersectAll2LeftSemiJoin : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformIntersectAll2LeftSemiJoin(const CXformIntersectAll2LeftSemiJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformIntersectAll2LeftSemiJoin(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformIntersectAll2LeftSemiJoin(const CXformIntersectAll2LeftSemiJoin &);
+		// dtor
+		virtual ~CXformIntersectAll2LeftSemiJoin()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfIntersectAll2LeftSemiJoin;
+		}
 
-			// ctor
-			explicit
-			CXformIntersectAll2LeftSemiJoin(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformIntersectAll2LeftSemiJoin";
+		}
 
-			// dtor
-			virtual
-			~CXformIntersectAll2LeftSemiJoin()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise
+		Exfp(CExpressionHandle &  // exprhdl
+			 ) const
+		{
+			return CXform::ExfpHigh;
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfIntersectAll2LeftSemiJoin;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformIntersectAll2LeftSemiJoin";
-			}
+	};  // class CXformIntersectAll2LeftSemiJoin
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp
-				(
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{
-				return CXform::ExfpHigh;
-			}
+}  // namespace gpopt
 
-			// actual transform
-			void Transform
-					(
-					CXformContext *pxfctxt,
-					CXformResult *pxfres,
-					CExpression *pexpr
-					)
-			const;
-
-	}; // class CXformIntersectAll2LeftSemiJoin
-
-}
-
-#endif // !GPOPT_CXformIntersectAll2LeftSemiJoin_H
+#endif  // !GPOPT_CXformIntersectAll2LeftSemiJoin_H
 
 // EOF

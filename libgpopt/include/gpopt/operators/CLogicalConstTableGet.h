@@ -29,203 +29,176 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalConstTableGet : public CLogical
 	{
+	private:
+		// array of column descriptors: the schema of the const table
+		CColumnDescriptorArray *m_pdrgpcoldesc;
 
-		private:
-			// array of column descriptors: the schema of the const table
-			CColumnDescriptorArray *m_pdrgpcoldesc;
-		
-			// array of datum arrays
-			IDatumArrays *m_pdrgpdrgpdatum;
-			
-			// output columns
-			CColRefArray *m_pdrgpcrOutput;
-			
-			// private copy ctor
-			CLogicalConstTableGet(const CLogicalConstTableGet &);
-			
-			// construct column descriptors from column references
-			CColumnDescriptorArray *PdrgpcoldescMapping(IMemoryPool *mp, CColRefArray *colref_array)	const;
+		// array of datum arrays
+		IDatumArrays *m_pdrgpdrgpdatum;
 
-		public:
-		
-			// ctors
-			explicit
-			CLogicalConstTableGet(IMemoryPool *mp);
+		// output columns
+		CColRefArray *m_pdrgpcrOutput;
 
-			CLogicalConstTableGet
-				(
-				IMemoryPool *mp,
-				CColumnDescriptorArray *pdrgpcoldesc,
-				IDatumArrays *pdrgpdrgpdatum
-				);
+		// private copy ctor
+		CLogicalConstTableGet(const CLogicalConstTableGet &);
 
-			CLogicalConstTableGet
-				(
-				IMemoryPool *mp,
-				CColRefArray *pdrgpcrOutput,
-				IDatumArrays *pdrgpdrgpdatum
-				);
+		// construct column descriptors from column references
+		CColumnDescriptorArray *PdrgpcoldescMapping(IMemoryPool *mp,
+													CColRefArray *colref_array) const;
 
-			// dtor
-			virtual 
-			~CLogicalConstTableGet();
+	public:
+		// ctors
+		explicit CLogicalConstTableGet(IMemoryPool *mp);
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopLogicalConstTableGet;
-			}
-			
-			// return a string for operator name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CLogicalConstTableGet";
-			}
-			
-			// col descr accessor
-			CColumnDescriptorArray *Pdrgpcoldesc() const
-			{
-				return m_pdrgpcoldesc;
-			}
-			
-			// const table values accessor
-			IDatumArrays *Pdrgpdrgpdatum () const
-			{
-				return m_pdrgpdrgpdatum;
-			}
-			
-			// accessors
-			CColRefArray *PdrgpcrOutput() const
-			{
-				return m_pdrgpcrOutput;
-			}
+		CLogicalConstTableGet(IMemoryPool *mp,
+							  CColumnDescriptorArray *pdrgpcoldesc,
+							  IDatumArrays *pdrgpdrgpdatum);
 
-			// sensitivity to order of inputs
-			BOOL FInputOrderSensitive() const;
+		CLogicalConstTableGet(IMemoryPool *mp,
+							  CColRefArray *pdrgpcrOutput,
+							  IDatumArrays *pdrgpdrgpdatum);
 
-			// operator specific hash function
-			virtual
-			ULONG HashValue() const;
+		// dtor
+		virtual ~CLogicalConstTableGet();
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
-			
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalConstTableGet;
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Derived Relational Properties
-			//-------------------------------------------------------------------------------------
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalConstTableGet";
+		}
 
-			// derive output columns
-			virtual
-			CColRefSet *PcrsDeriveOutput(IMemoryPool *, CExpressionHandle &);
-				
-			// derive max card
-			virtual
-			CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// col descr accessor
+		CColumnDescriptorArray *
+		Pdrgpcoldesc() const
+		{
+			return m_pdrgpcoldesc;
+		}
 
-			// derive partition consumer info
-			virtual
-			CPartInfo *PpartinfoDerive
-				(
-				IMemoryPool *mp,
-				CExpressionHandle & //exprhdl
-				) 
-				const
-			{
-				return GPOS_NEW(mp) CPartInfo(mp);
-			}
+		// const table values accessor
+		IDatumArrays *
+		Pdrgpdrgpdatum() const
+		{
+			return m_pdrgpdrgpdatum;
+		}
 
-			// derive constraint property
-			virtual
-			CPropConstraint *PpcDeriveConstraint
-				(
-				IMemoryPool *mp,
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{
-				// TODO:  - Jan 11, 2013; compute constraints based on the
-				// datum values in this CTG
-				return GPOS_NEW(mp) CPropConstraint(mp, GPOS_NEW(mp) CColRefSetArray(mp), NULL /*pcnstr*/);
-			}
+		// accessors
+		CColRefArray *
+		PdrgpcrOutput() const
+		{
+			return m_pdrgpcrOutput;
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Required Relational Properties
-			//-------------------------------------------------------------------------------------
+		// sensitivity to order of inputs
+		BOOL FInputOrderSensitive() const;
 
-			// compute required stat columns of the n-th child
-			virtual
-			CColRefSet *PcrsStat
-				(
-				IMemoryPool *,// mp
-				CExpressionHandle &,// exprhdl
-				CColRefSet *,// pcrsInput
-				ULONG // child_index
-				)
-				const
-			{
-				GPOS_ASSERT(!"CLogicalConstTableGet has no children");
-				return NULL;
-			}
+		// operator specific hash function
+		virtual ULONG HashValue() const;
 
-			// derive statistics
-			virtual
-			IStatistics *PstatsDerive
-						(
-						IMemoryPool *mp,
-						CExpressionHandle &exprhdl,
-						IStatisticsArray *stats_ctxt
-						)
-						const;
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			//-------------------------------------------------------------------------------------
-			// Transformations
-			//-------------------------------------------------------------------------------------
+		// return a copy of the operator with remapped columns
+		virtual COperator *PopCopyWithRemappedColumns(IMemoryPool *mp,
+													  UlongToColRefMap *colref_mapping,
+													  BOOL must_exist);
 
-			// candidate set of xforms
-			virtual
-			CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+		//-------------------------------------------------------------------------------------
+		// Derived Relational Properties
+		//-------------------------------------------------------------------------------------
 
-			// stat promise
-			virtual
-			EStatPromise Esp(CExpressionHandle &) const
-			{
-				return CLogical::EspLow;
-			}
+		// derive output columns
+		virtual CColRefSet *PcrsDeriveOutput(IMemoryPool *, CExpressionHandle &);
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+		// derive max card
+		virtual CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// conversion function
-			static
-			CLogicalConstTableGet *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalConstTableGet == pop->Eopid());
-				
-				return dynamic_cast<CLogicalConstTableGet*>(pop);
-			}
-			
+		// derive partition consumer info
+		virtual CPartInfo *
+		PpartinfoDerive(IMemoryPool *mp,
+						CExpressionHandle &  //exprhdl
+						) const
+		{
+			return GPOS_NEW(mp) CPartInfo(mp);
+		}
 
-			// debug print
-			virtual 
-			IOstream &OsPrint(IOstream &) const;
+		// derive constraint property
+		virtual CPropConstraint *
+		PpcDeriveConstraint(IMemoryPool *mp,
+							CExpressionHandle &  // exprhdl
+							) const
+		{
+			// TODO:  - Jan 11, 2013; compute constraints based on the
+			// datum values in this CTG
+			return GPOS_NEW(mp)
+				CPropConstraint(mp, GPOS_NEW(mp) CColRefSetArray(mp), NULL /*pcnstr*/);
+		}
 
-	}; // class CLogicalConstTableGet
+		//-------------------------------------------------------------------------------------
+		// Required Relational Properties
+		//-------------------------------------------------------------------------------------
 
-}
+		// compute required stat columns of the n-th child
+		virtual CColRefSet *
+		PcrsStat(IMemoryPool *,		   // mp
+				 CExpressionHandle &,  // exprhdl
+				 CColRefSet *,		   // pcrsInput
+				 ULONG				   // child_index
+				 ) const
+		{
+			GPOS_ASSERT(!"CLogicalConstTableGet has no children");
+			return NULL;
+		}
+
+		// derive statistics
+		virtual IStatistics *PstatsDerive(IMemoryPool *mp,
+										  CExpressionHandle &exprhdl,
+										  IStatisticsArray *stats_ctxt) const;
+
+		//-------------------------------------------------------------------------------------
+		// Transformations
+		//-------------------------------------------------------------------------------------
+
+		// candidate set of xforms
+		virtual CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+
+		// stat promise
+		virtual EStatPromise
+		Esp(CExpressionHandle &) const
+		{
+			return CLogical::EspLow;
+		}
+
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+
+		// conversion function
+		static CLogicalConstTableGet *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalConstTableGet == pop->Eopid());
+
+			return dynamic_cast<CLogicalConstTableGet *>(pop);
+		}
 
 
-#endif // !GPOPT_CLogicalConstTableGet_H
+		// debug print
+		virtual IOstream &OsPrint(IOstream &) const;
+
+	};  // class CLogicalConstTableGet
+
+}  // namespace gpopt
+
+
+#endif  // !GPOPT_CLogicalConstTableGet_H
 
 // EOF

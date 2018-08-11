@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CXformGet2TableScan
@@ -28,54 +28,44 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformGet2TableScan : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformGet2TableScan(const CXformGet2TableScan &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformGet2TableScan(IMemoryPool *);
 
-			// private copy ctor
-			CXformGet2TableScan(const CXformGet2TableScan &);
+		// dtor
+		virtual ~CXformGet2TableScan()
+		{
+		}
 
-		public:
-		
-			// ctor
-			explicit
-			CXformGet2TableScan(IMemoryPool *);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfGet2TableScan;
+		}
 
-			// dtor
-			virtual 
-			~CXformGet2TableScan() {}
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformGet2TableScan";
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfGet2TableScan;
-			}
-			
-			// return a string for xform name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CXformGet2TableScan";
-			}
-			
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-			
-			// actual transform
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				) 
-				const;
-		
-	}; // class CXformGet2TableScan
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
+
+	};  // class CXformGet2TableScan
+
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformGet2TableScan_H
+#endif  // !GPOPT_CXformGet2TableScan_H
 
 // EOF

@@ -31,18 +31,17 @@ namespace gpdxl
 	//		Static unit tests
 	//
 	//---------------------------------------------------------------------------
-	
+
 	class CDXLMemoryManagerTest
 	{
-		public:
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
+		static GPOS_RESULT EresUnittest_Basic();
 
-			// unittests
-			static GPOS_RESULT EresUnittest();
-			static GPOS_RESULT EresUnittest_Basic();
+	};  // class CDXLMemoryManagerTest
+}  // namespace gpdxl
 
-	}; // class CDXLMemoryManagerTest
-}
-
-#endif // !GPOPT_CDXLMemoryManagerTest_H
+#endif  // !GPOPT_CDXLMemoryManagerTest_H
 
 // EOF

@@ -9,7 +9,7 @@
 //		Utility routines for transforming expressions
 //
 //	@owner:
-//		, 
+//		,
 //
 //	@test:
 //
@@ -38,43 +38,36 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CExpressionUtils
 	{
-		private:
-			// unnest a given expression's child and append unnested nodes to given array
-			static
-			void UnnestChild
-				(
-				IMemoryPool *mp,
-				CExpression *pexpr,
-				ULONG UlChildIndex,
-				BOOL fAnd,
-				BOOL fOr,
-				BOOL fNotChildren,
-				CExpressionArray *pdrgpexpr
-				);
+	private:
+		// unnest a given expression's child and append unnested nodes to given array
+		static void UnnestChild(IMemoryPool *mp,
+								CExpression *pexpr,
+								ULONG UlChildIndex,
+								BOOL fAnd,
+								BOOL fOr,
+								BOOL fNotChildren,
+								CExpressionArray *pdrgpexpr);
 
-			// append the unnested children of given expression to given array
-			static
-			void AppendChildren(IMemoryPool *mp, CExpression *pexpr, CExpressionArray *pdrgpexpr);
+		// append the unnested children of given expression to given array
+		static void AppendChildren(IMemoryPool *mp,
+								   CExpression *pexpr,
+								   CExpressionArray *pdrgpexpr);
 
-			// return an array of expression children after being unnested
-			static
-			CExpressionArray *PdrgpexprUnnestChildren(IMemoryPool *mp, CExpression *pexpr);
+		// return an array of expression children after being unnested
+		static CExpressionArray *PdrgpexprUnnestChildren(IMemoryPool *mp, CExpression *pexpr);
 
-			// push not expression one level down the given expression
-			static
-			CExpression *PexprPushNotOneLevel(IMemoryPool *mp, CExpression *pexpr);
+		// push not expression one level down the given expression
+		static CExpression *PexprPushNotOneLevel(IMemoryPool *mp, CExpression *pexpr);
 
-		public:
-			// remove duplicate AND/OR children
-			static
-			CExpression *PexprDedupChildren(IMemoryPool *mp, CExpression *pexpr);
+	public:
+		// remove duplicate AND/OR children
+		static CExpression *PexprDedupChildren(IMemoryPool *mp, CExpression *pexpr);
 
-			// unnest AND/OR/NOT predicates
-			static
-			CExpression *PexprUnnest(IMemoryPool *mp, CExpression *pexpr);
+		// unnest AND/OR/NOT predicates
+		static CExpression *PexprUnnest(IMemoryPool *mp, CExpression *pexpr);
 	};
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CExpressionUtils_H
+#endif  // !GPOPT_CExpressionUtils_H
 
 // EOF

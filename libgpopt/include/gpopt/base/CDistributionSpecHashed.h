@@ -6,7 +6,7 @@
 //		CDistributionSpecHashed.h
 //
 //	@doc:
-//		Description of a hashed distribution; 
+//		Description of a hashed distribution;
 //		Can be used as required or derived property;
 //---------------------------------------------------------------------------
 #ifndef GPOPT_CDistributionSpecHashed_H
@@ -31,175 +31,164 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CDistributionSpecHashed : public CDistributionSpecRandom
 	{
-		private:
+	private:
+		// array of distribution expressions
+		CExpressionArray *m_pdrgpexpr;
 
-			// array of distribution expressions
-			CExpressionArray *m_pdrgpexpr;
-			
-			// are NULLS consistently distributed
-			BOOL m_fNullsColocated;
+		// are NULLS consistently distributed
+		BOOL m_fNullsColocated;
 
-			// equivalent hashed distribution introduced by a hash join
-			CDistributionSpecHashed *m_pdshashedEquiv;
+		// equivalent hashed distribution introduced by a hash join
+		CDistributionSpecHashed *m_pdshashedEquiv;
 
-			// check if specs are compatible wrt to co-location of nulls;
-			// HD1 satisfies HD2 if:
-			//	* HD1 colocates NULLs or
-			//  * HD2 doesn't care about NULLs
-			BOOL FNullsColocated(const CDistributionSpecHashed *pds) const
-			{
-				return (m_fNullsColocated || !pds->m_fNullsColocated);
-			}
-			
-			// check if specs are compatible wrt to duplicate sensitivity
-			// HD1 satisfies HD2 if:
-			//	* HD1 is duplicate sensitive, or
-			//  * HD2 doesn't care about duplicates
-			BOOL FDuplicateSensitiveCompatible
-				(
-				const CDistributionSpecHashed *pds
-				)
-				const
-			{
-				return (m_is_duplicate_sensitive || !pds->m_is_duplicate_sensitive);
-			}
+		// check if specs are compatible wrt to co-location of nulls;
+		// HD1 satisfies HD2 if:
+		//	* HD1 colocates NULLs or
+		//  * HD2 doesn't care about NULLs
+		BOOL
+		FNullsColocated(const CDistributionSpecHashed *pds) const
+		{
+			return (m_fNullsColocated || !pds->m_fNullsColocated);
+		}
 
-			// exact match against given hashed distribution
-			BOOL FMatchHashedDistribution(const CDistributionSpecHashed *pdshashed) const;
+		// check if specs are compatible wrt to duplicate sensitivity
+		// HD1 satisfies HD2 if:
+		//	* HD1 is duplicate sensitive, or
+		//  * HD2 doesn't care about duplicates
+		BOOL
+		FDuplicateSensitiveCompatible(const CDistributionSpecHashed *pds) const
+		{
+			return (m_is_duplicate_sensitive || !pds->m_is_duplicate_sensitive);
+		}
 
-			// private copy ctor
-			CDistributionSpecHashed(const CDistributionSpecHashed &);
-			
-		public:
-		
-			// ctor
-			CDistributionSpecHashed(CExpressionArray *pdrgpexpr, BOOL fNullsColocated);
-			
-			// ctor
-			CDistributionSpecHashed(CExpressionArray *pdrgpexpr, BOOL fNullsColocated, CDistributionSpecHashed *pdshashedEquiv);
+		// exact match against given hashed distribution
+		BOOL FMatchHashedDistribution(const CDistributionSpecHashed *pdshashed) const;
 
-			// dtor
-			virtual 
-			~CDistributionSpecHashed();
-			
-			// distribution type accessor
-			virtual 
-			EDistributionType Edt() const
-			{
-				return CDistributionSpec::EdtHashed;
-			}
+		// private copy ctor
+		CDistributionSpecHashed(const CDistributionSpecHashed &);
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "HASHED";
-			}
+	public:
+		// ctor
+		CDistributionSpecHashed(CExpressionArray *pdrgpexpr, BOOL fNullsColocated);
 
-			// expression array accessor
-			CExpressionArray *Pdrgpexpr() const
-			{
-				return m_pdrgpexpr;
-			}
-			
-			// is distribution nulls colocated
-			BOOL FNullsColocated() const
-			{
-				return m_fNullsColocated;
-			}
+		// ctor
+		CDistributionSpecHashed(CExpressionArray *pdrgpexpr,
+								BOOL fNullsColocated,
+								CDistributionSpecHashed *pdshashedEquiv);
 
-			// equivalent hashed distribution
-			CDistributionSpecHashed *PdshashedEquiv() const
-			{
-				return m_pdshashedEquiv;
-			}
+		// dtor
+		virtual ~CDistributionSpecHashed();
 
-			// columns used by distribution expressions
-			virtual
-			CColRefSet *PcrsUsed(IMemoryPool *mp) const;
+		// distribution type accessor
+		virtual EDistributionType
+		Edt() const
+		{
+			return CDistributionSpec::EdtHashed;
+		}
 
-			// return a copy of the distribution spec after excluding the given columns
-			virtual
-			CDistributionSpecHashed *PdshashedExcludeColumns(IMemoryPool *mp, CColRefSet *pcrs);
+		virtual const CHAR *
+		SzId() const
+		{
+			return "HASHED";
+		}
 
-			// does this distribution match the given one
-			virtual 
-			BOOL Matches(const CDistributionSpec *pds) const;
+		// expression array accessor
+		CExpressionArray *
+		Pdrgpexpr() const
+		{
+			return m_pdrgpexpr;
+		}
 
-			// does this distribution satisfy the given one
-			virtual 
-			BOOL FSatisfies(const CDistributionSpec *pds) const;
-			
-			// check if the columns of passed spec match a subset of the
-			// object's columns
-			BOOL FMatchSubset(const CDistributionSpecHashed *pds) const;
+		// is distribution nulls colocated
+		BOOL
+		FNullsColocated() const
+		{
+			return m_fNullsColocated;
+		}
 
-			// equality function
-			BOOL Equals(const CDistributionSpecHashed *pds) const;
+		// equivalent hashed distribution
+		CDistributionSpecHashed *
+		PdshashedEquiv() const
+		{
+			return m_pdshashedEquiv;
+		}
 
-			// return a copy of the distribution spec with remapped columns
-			virtual
-			CDistributionSpec *PdsCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+		// columns used by distribution expressions
+		virtual CColRefSet *PcrsUsed(IMemoryPool *mp) const;
 
-			// append enforcers to dynamic array for the given plan properties
-			virtual
-			void AppendEnforcers(IMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prpp, CExpressionArray *pdrgpexpr, CExpression *pexpr);
+		// return a copy of the distribution spec after excluding the given columns
+		virtual CDistributionSpecHashed *PdshashedExcludeColumns(IMemoryPool *mp, CColRefSet *pcrs);
 
-			// hash function for hashed distribution spec
-			virtual
-			ULONG HashValue() const;
+		// does this distribution match the given one
+		virtual BOOL Matches(const CDistributionSpec *pds) const;
 
-			// return distribution partitioning type
-			virtual
-			EDistributionPartitioningType Edpt() const
-			{
-				return EdptPartitioned;
-			}
+		// does this distribution satisfy the given one
+		virtual BOOL FSatisfies(const CDistributionSpec *pds) const;
 
-			// print
-			virtual
-			IOstream &OsPrint(IOstream &os) const;
+		// check if the columns of passed spec match a subset of the
+		// object's columns
+		BOOL FMatchSubset(const CDistributionSpecHashed *pds) const;
 
-			// return a hashed distribution on the maximal hashable subset of given columns
-			static
-			CDistributionSpecHashed *PdshashedMaximal
-				(
-				IMemoryPool *mp,
-				CColRefArray *colref_array,
-				BOOL fNullsColocated
-				);
+		// equality function
+		BOOL Equals(const CDistributionSpecHashed *pds) const;
 
-			// conversion function
-			static
-			CDistributionSpecHashed *PdsConvert
-				(
-				CDistributionSpec *pds
-				)
-			{
-				GPOS_ASSERT(NULL != pds);
-				CDistributionSpecHashed *pdsHashed = dynamic_cast<CDistributionSpecHashed*>(pds);
-				GPOS_ASSERT(NULL != pdsHashed);
+		// return a copy of the distribution spec with remapped columns
+		virtual CDistributionSpec *PdsCopyWithRemappedColumns(IMemoryPool *mp,
+															  UlongToColRefMap *colref_mapping,
+															  BOOL must_exist);
 
-				return pdsHashed;
-			}
+		// append enforcers to dynamic array for the given plan properties
+		virtual void AppendEnforcers(IMemoryPool *mp,
+									 CExpressionHandle &exprhdl,
+									 CReqdPropPlan *prpp,
+									 CExpressionArray *pdrgpexpr,
+									 CExpression *pexpr);
 
-			// conversion function: const argument
-			static
-			const CDistributionSpecHashed *PdsConvert
-				(
-				const CDistributionSpec *pds
-				)
-			{
-				GPOS_ASSERT(NULL != pds);
-				const CDistributionSpecHashed *pdsHashed = dynamic_cast<const CDistributionSpecHashed*>(pds);
-				GPOS_ASSERT(NULL != pdsHashed);
+		// hash function for hashed distribution spec
+		virtual ULONG HashValue() const;
 
-				return pdsHashed;
-			}
+		// return distribution partitioning type
+		virtual EDistributionPartitioningType
+		Edpt() const
+		{
+			return EdptPartitioned;
+		}
 
-	}; // class CDistributionSpecHashed
+		// print
+		virtual IOstream &OsPrint(IOstream &os) const;
 
-}
+		// return a hashed distribution on the maximal hashable subset of given columns
+		static CDistributionSpecHashed *PdshashedMaximal(IMemoryPool *mp,
+														 CColRefArray *colref_array,
+														 BOOL fNullsColocated);
 
-#endif // !GPOPT_CDistributionSpecHashed_H
+		// conversion function
+		static CDistributionSpecHashed *
+		PdsConvert(CDistributionSpec *pds)
+		{
+			GPOS_ASSERT(NULL != pds);
+			CDistributionSpecHashed *pdsHashed = dynamic_cast<CDistributionSpecHashed *>(pds);
+			GPOS_ASSERT(NULL != pdsHashed);
+
+			return pdsHashed;
+		}
+
+		// conversion function: const argument
+		static const CDistributionSpecHashed *
+		PdsConvert(const CDistributionSpec *pds)
+		{
+			GPOS_ASSERT(NULL != pds);
+			const CDistributionSpecHashed *pdsHashed =
+				dynamic_cast<const CDistributionSpecHashed *>(pds);
+			GPOS_ASSERT(NULL != pdsHashed);
+
+			return pdsHashed;
+		}
+
+	};  // class CDistributionSpecHashed
+
+}  // namespace gpopt
+
+#endif  // !GPOPT_CDistributionSpecHashed_H
 
 // EOF

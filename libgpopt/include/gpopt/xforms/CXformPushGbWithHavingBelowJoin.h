@@ -28,47 +28,42 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformPushGbWithHavingBelowJoin : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformPushGbWithHavingBelowJoin(const CXformPushGbWithHavingBelowJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformPushGbWithHavingBelowJoin(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformPushGbWithHavingBelowJoin(const CXformPushGbWithHavingBelowJoin &);
+		// dtor
+		virtual ~CXformPushGbWithHavingBelowJoin()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfPushGbWithHavingBelowJoin;
+		}
 
-			// ctor
-			explicit
-			CXformPushGbWithHavingBelowJoin(IMemoryPool *mp);
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformPushGbWithHavingBelowJoin";
+		}
 
-			// dtor
-			virtual
-			~CXformPushGbWithHavingBelowJoin()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfPushGbWithHavingBelowJoin;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformPushGbWithHavingBelowJoin";
-			}
+	};  // class CXformPushGbWithHavingBelowJoin
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+}  // namespace gpopt
 
-			// actual transform
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
-
-	}; // class CXformPushGbWithHavingBelowJoin
-
-}
-
-#endif // !GPOPT_CXformPushGbWithHavingBelowJoin_H
+#endif  // !GPOPT_CXformPushGbWithHavingBelowJoin_H
 
 // EOF

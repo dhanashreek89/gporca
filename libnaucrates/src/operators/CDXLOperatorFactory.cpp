@@ -154,16 +154,14 @@ CDXLOperatorFactory::MakeDXLNLJoin(CDXLMemoryManager *dxl_memory_manager, const 
 
 	// identify if nest params are expected in dxl
 	BOOL nest_params_exists = false;
-	const XMLCh *nest_param_exists_xml = attrs.getValue(CDXLTokens::XmlstrToken(EdxltokenNLJIndexOuterRefAsParam));
+	const XMLCh *nest_param_exists_xml =
+		attrs.getValue(CDXLTokens::XmlstrToken(EdxltokenNLJIndexOuterRefAsParam));
 	if (NULL != nest_param_exists_xml)
 	{
-		nest_params_exists = ConvertAttrValueToBool
-						(
-						dxl_memory_manager,
-						nest_param_exists_xml,
-						EdxltokenNLJIndexOuterRefAsParam,
-						EdxltokenPhysicalNLJoin
-						);
+		nest_params_exists = ConvertAttrValueToBool(dxl_memory_manager,
+													nest_param_exists_xml,
+													EdxltokenNLJIndexOuterRefAsParam,
+													EdxltokenPhysicalNLJoin);
 	}
 
 	EdxlJoinType join_type =
@@ -228,8 +226,7 @@ CDXLOperatorFactory::MakeDXLBroadcastMotion(CDXLMemoryManager *dxl_memory_manage
 	// get the memory pool from the memory manager
 	IMemoryPool *mp = dxl_memory_manager->Pmp();
 
-	CDXLPhysicalBroadcastMotion *dxl_op =
-		GPOS_NEW(mp) CDXLPhysicalBroadcastMotion(mp);
+	CDXLPhysicalBroadcastMotion *dxl_op = GPOS_NEW(mp) CDXLPhysicalBroadcastMotion(mp);
 	SetSegmentInfo(dxl_memory_manager, dxl_op, attrs, EdxltokenPhysicalBroadcastMotion);
 
 	return dxl_op;
@@ -511,8 +508,7 @@ CDXLOperatorFactory::MakeDXLMaterialize(CDXLMemoryManager *dxl_memory_manager,
 	if (1 == attrs.getLength())
 	{
 		// no spooling info specified -> create a non-spooling materialize operator
-		materialize_dxlnode =
-			GPOS_NEW(mp) CDXLPhysicalMaterialize(mp, eager_materialize);
+		materialize_dxlnode = GPOS_NEW(mp) CDXLPhysicalMaterialize(mp, eager_materialize);
 	}
 	else
 	{
@@ -562,8 +558,7 @@ CDXLOperatorFactory::MakeDXLScalarCmp(CDXLMemoryManager *dxl_memory_manager,
 		CDXLUtils::CreateDynamicStringFromXMLChArray(dxl_memory_manager, scalar_cmp_xml);
 
 	// copy dynamic string into const string
-	CWStringConst *comp_op_name_copy =
-		GPOS_NEW(mp) CWStringConst(mp, comp_op_name->GetBuffer());
+	CWStringConst *comp_op_name_copy = GPOS_NEW(mp) CWStringConst(mp, comp_op_name->GetBuffer());
 
 	// cleanup
 	GPOS_DELETE(comp_op_name);
@@ -624,8 +619,7 @@ CDXLOperatorFactory::MakeDXLOpExpr(CDXLMemoryManager *dxl_memory_manager, const 
 
 	CWStringDynamic *value =
 		CDXLUtils::CreateDynamicStringFromXMLChArray(dxl_memory_manager, op_expr_xml);
-	CWStringConst *value_copy =
-		GPOS_NEW(mp) CWStringConst(mp, value->GetBuffer());
+	CWStringConst *value_copy = GPOS_NEW(mp) CWStringConst(mp, value->GetBuffer());
 	GPOS_DELETE(value);
 
 	return GPOS_NEW(mp) CDXLScalarOpExpr(mp, op_id, return_type_mdid, value_copy);
@@ -673,12 +667,10 @@ CDXLOperatorFactory::MakeDXLArrayComp(CDXLMemoryManager *dxl_memory_manager,
 
 	CWStringDynamic *opname =
 		CDXLUtils::CreateDynamicStringFromXMLChArray(dxl_memory_manager, op_expr_xml);
-	CWStringConst *opname_copy =
-		GPOS_NEW(mp) CWStringConst(mp, opname->GetBuffer());
+	CWStringConst *opname_copy = GPOS_NEW(mp) CWStringConst(mp, opname->GetBuffer());
 	GPOS_DELETE(opname);
 
-	return GPOS_NEW(mp)
-		CDXLScalarArrayComp(mp, op_id, opname_copy, array_comp_type);
+	return GPOS_NEW(mp) CDXLScalarArrayComp(mp, op_id, opname_copy, array_comp_type);
 }
 
 //---------------------------------------------------------------------------
@@ -879,12 +871,12 @@ CDXLOperatorFactory::MakeDXLArrayCoerceExpr(CDXLMemoryManager *dxl_memory_manage
 		dxl_memory_manager, attrs, EdxltokenLocation, EdxltokenScalarArrayCoerceExpr);
 
 	return GPOS_NEW(mp) CDXLScalarArrayCoerceExpr(mp,
-														   element_func,
-														   mdid_type,
-														   type_modifier,
-														   is_explicit,
-														   (EdxlCoercionForm) coercion_form,
-														   location);
+												  element_func,
+												  mdid_type,
+												  type_modifier,
+												  is_explicit,
+												  (EdxlCoercionForm) coercion_form,
+												  location);
 }
 
 //---------------------------------------------------------------------------
@@ -1017,8 +1009,7 @@ CDXLOperatorFactory::MakeDXLAggFunc(CDXLMemoryManager *dxl_memory_manager, const
 			dxl_memory_manager, attrs, EdxltokenTypeId, EdxltokenScalarAggref);
 	}
 
-	return GPOS_NEW(mp)
-		CDXLScalarAggref(mp, agg_mdid, resolved_rettype, is_distinct, agg_stage);
+	return GPOS_NEW(mp) CDXLScalarAggref(mp, agg_mdid, resolved_rettype, is_distinct, agg_stage);
 }
 
 //---------------------------------------------------------------------------
@@ -1174,8 +1165,7 @@ CDXLOperatorFactory::MakeDXLArray(CDXLMemoryManager *dxl_memory_manager, const A
 	BOOL is_multidimenstional = ExtractConvertAttrValueToBool(
 		dxl_memory_manager, attrs, EdxltokenArrayMultiDim, EdxltokenScalarArray);
 
-	return GPOS_NEW(mp)
-		CDXLScalarArray(mp, elem_type_mdid, array_type_mdid, is_multidimenstional);
+	return GPOS_NEW(mp) CDXLScalarArray(mp, elem_type_mdid, array_type_mdid, is_multidimenstional);
 }
 
 //---------------------------------------------------------------------------
@@ -1284,13 +1274,11 @@ CDXLOperatorFactory::MakeDXLSortCol(CDXLMemoryManager *dxl_memory_manager, const
 		dxl_memory_manager, attrs, EdxltokenSortOpId, EdxltokenPhysicalSort);
 
 	// copy dynamic string into const string
-	CWStringConst *sort_op_name_copy =
-		GPOS_NEW(mp) CWStringConst(mp, sort_op_name->GetBuffer());
+	CWStringConst *sort_op_name_copy = GPOS_NEW(mp) CWStringConst(mp, sort_op_name->GetBuffer());
 
 	GPOS_DELETE(sort_op_name);
 
-	return GPOS_NEW(mp)
-		CDXLScalarSortCol(mp, colid, sort_op_id, sort_op_name_copy, nulls_first);
+	return GPOS_NEW(mp) CDXLScalarSortCol(mp, colid, sort_op_id, sort_op_name_copy, nulls_first);
 }
 
 //---------------------------------------------------------------------------
@@ -1325,8 +1313,7 @@ CDXLOperatorFactory::MakeDXLOperatorCost(CDXLMemoryManager *dxl_memory_manager,
 	CWStringDynamic *width_str =
 		CDXLUtils::CreateDynamicStringFromXMLChArray(dxl_memory_manager, width_xml);
 
-	return GPOS_NEW(mp)
-		CDXLOperatorCost(startup_cost_str, total_cost_str, rows_out_str, width_str);
+	return GPOS_NEW(mp) CDXLOperatorCost(startup_cost_str, total_cost_str, rows_out_str, width_str);
 }
 
 //---------------------------------------------------------------------------
@@ -1475,8 +1462,8 @@ CDXLOperatorFactory::MakeColumnDescr(CDXLMemoryManager *dxl_memory_manager, cons
 
 	GPOS_DELETE(col_name);
 
-	return GPOS_NEW(mp) CDXLColDescr(
-		mp, mdname, id, attno, mdid_type, type_modifier, col_dropped, col_len);
+	return GPOS_NEW(mp)
+		CDXLColDescr(mp, mdname, id, attno, mdid_type, type_modifier, col_dropped, col_len);
 }
 
 //---------------------------------------------------------------------------
@@ -2287,7 +2274,8 @@ CDXLOperatorFactory::GetCastFuncMdId(CDXLMemoryManager *dxl_memory_manager,
 
 	CMDIdGPDB *mdid_src =
 		GetGPDBMdId(dxl_memory_manager, remaining_tokens, target_attr, target_elem);
-	XMLChArray *dest_xml = GPOS_NEW(dxl_memory_manager->Pmp()) XMLChArray(dxl_memory_manager->Pmp());
+	XMLChArray *dest_xml =
+		GPOS_NEW(dxl_memory_manager->Pmp()) XMLChArray(dxl_memory_manager->Pmp());
 
 	for (ULONG ul = GPDXL_GPDB_MDID_COMPONENTS; ul < GPDXL_GPDB_MDID_COMPONENTS * 2; ul++)
 	{
@@ -2318,7 +2306,8 @@ CDXLOperatorFactory::GetScCmpMdId(CDXLMemoryManager *dxl_memory_manager,
 
 	CMDIdGPDB *left_mdid =
 		GetGPDBMdId(dxl_memory_manager, remaining_tokens, target_attr, target_elem);
-	XMLChArray *right_xml = GPOS_NEW(dxl_memory_manager->Pmp()) XMLChArray(dxl_memory_manager->Pmp());
+	XMLChArray *right_xml =
+		GPOS_NEW(dxl_memory_manager->Pmp()) XMLChArray(dxl_memory_manager->Pmp());
 
 	for (ULONG ul = GPDXL_GPDB_MDID_COMPONENTS; ul < GPDXL_GPDB_MDID_COMPONENTS * 2 + 1; ul++)
 	{
@@ -2378,31 +2367,23 @@ CDXLOperatorFactory::GetDatumVal(CDXLMemoryManager *dxl_memory_manager,
 		{CMDIdGPDB::m_mdid_text.Oid(), &CDXLOperatorFactory::GetDatumStatsLintMappable},
 		{CMDIdGPDB::m_mdid_cash.Oid(), &CDXLOperatorFactory::GetDatumStatsLintMappable},
 		// non-integer numeric types
-		{CMDIdGPDB::m_mdid_numeric.Oid(),
-		 &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
+		{CMDIdGPDB::m_mdid_numeric.Oid(), &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
 		{CMDIdGPDB::m_mdid_float4.Oid(), &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
 		{CMDIdGPDB::m_mdid_float8.Oid(), &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
 		// network-related types
 		{CMDIdGPDB::m_mdid_inet.Oid(), &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
 		{CMDIdGPDB::m_mdid_cidr.Oid(), &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
-		{CMDIdGPDB::m_mdid_macaddr.Oid(),
-		 &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
+		{CMDIdGPDB::m_mdid_macaddr.Oid(), &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
 		// time-related types
 		{CMDIdGPDB::m_mdid_date.Oid(), &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
 		{CMDIdGPDB::m_mdid_time.Oid(), &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
 		{CMDIdGPDB::m_mdid_timeTz.Oid(), &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
-		{CMDIdGPDB::m_mdid_timestamp.Oid(),
-		 &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
-		{CMDIdGPDB::m_mdid_timestampTz.Oid(),
-		 &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
-		{CMDIdGPDB::m_mdid_abs_time.Oid(),
-		 &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
-		{CMDIdGPDB::m_mdid_relative_time.Oid(),
-		 &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
-		{CMDIdGPDB::m_mdid_interval.Oid(),
-		 &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
-		{CMDIdGPDB::m_mdid_time_interval.Oid(),
-		 &CDXLOperatorFactory::GetDatumStatsDoubleMappable}};
+		{CMDIdGPDB::m_mdid_timestamp.Oid(), &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
+		{CMDIdGPDB::m_mdid_timestampTz.Oid(), &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
+		{CMDIdGPDB::m_mdid_abs_time.Oid(), &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
+		{CMDIdGPDB::m_mdid_relative_time.Oid(), &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
+		{CMDIdGPDB::m_mdid_interval.Oid(), &CDXLOperatorFactory::GetDatumStatsDoubleMappable},
+		{CMDIdGPDB::m_mdid_time_interval.Oid(), &CDXLOperatorFactory::GetDatumStatsDoubleMappable}};
 
 	const ULONG translators_mapping_len = GPOS_ARRAY_SIZE(translators_mapping);
 	// find translator for the datum type
@@ -2640,8 +2621,8 @@ CDXLOperatorFactory::GetDatumGeneric(CDXLMemoryManager *dxl_memory_manager,
 													 true,
 													 default_type_modifier);
 
-	return GPOS_NEW(mp) CDXLDatumGeneric(
-		mp, mdid, type_modifier, is_const_by_val, is_const_null, data, len);
+	return GPOS_NEW(mp)
+		CDXLDatumGeneric(mp, mdid, type_modifier, is_const_by_val, is_const_null, data, len);
 }
 
 
@@ -3279,13 +3260,13 @@ CDXLOperatorFactory::MakeWindowRef(CDXLMemoryManager *dxl_memory_manager, const 
 	GPOS_ASSERT(EdxlwinstageSentinel != dxl_win_stage);
 
 	return GPOS_NEW(mp) CDXLScalarWindowRef(mp,
-													 mdid_func,
-													 mdid_return_type,
-													 is_distinct,
-													 is_star_arg,
-													 is_simple_agg,
-													 dxl_win_stage,
-													 win_spec_pos);
+											mdid_func,
+											mdid_return_type,
+											is_distinct,
+											is_star_arg,
+											is_simple_agg,
+											dxl_win_stage,
+											win_spec_pos);
 }
 
 //---------------------------------------------------------------------------
@@ -3482,7 +3463,8 @@ CDXLOperatorFactory::ParseIndexType(const Attributes &attrs)
 	{
 		return IMDIndex::EmdindBitmap;
 	}
-	else if (0 == XMLString::compareString(xml_val, CDXLTokens::XmlstrToken(EdxltokenIndexTypeGist)))
+	else if (0 ==
+			 XMLString::compareString(xml_val, CDXLTokens::XmlstrToken(EdxltokenIndexTypeGist)))
 	{
 		return IMDIndex::EmdindGist;
 	}

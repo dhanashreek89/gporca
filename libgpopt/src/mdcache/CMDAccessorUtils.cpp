@@ -38,16 +38,12 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 const CWStringConst *
-CMDAccessorUtils::PstrWindowFuncName
-	(
-	CMDAccessor *md_accessor,
-	IMDId *mdid_func
-	)
+CMDAccessorUtils::PstrWindowFuncName(CMDAccessor *md_accessor, IMDId *mdid_func)
 {
 	if (md_accessor->FAggWindowFunc(mdid_func))
 	{
 		const IMDAggregate *pmdagg = md_accessor->RetrieveAgg(mdid_func);
-		
+
 		return pmdagg->Mdname().GetMDName();
 	}
 
@@ -65,13 +61,8 @@ CMDAccessorUtils::PstrWindowFuncName
 //
 //---------------------------------------------------------------------------
 IMDId *
-CMDAccessorUtils::PmdidWindowReturnType
-	(
-	CMDAccessor *md_accessor,
-	IMDId *mdid_func
-	)
+CMDAccessorUtils::PmdidWindowReturnType(CMDAccessor *md_accessor, IMDId *mdid_func)
 {
-
 	if (md_accessor->FAggWindowFunc(mdid_func))
 	{
 		const IMDAggregate *pmdagg = md_accessor->RetrieveAgg(mdid_func);
@@ -92,13 +83,10 @@ CMDAccessorUtils::PmdidWindowReturnType
 //
 //---------------------------------------------------------------------------
 BOOL
-CMDAccessorUtils::FCmpExists
-	(
-	CMDAccessor *md_accessor,
-	IMDId *left_mdid,
-	IMDId *right_mdid,
-	IMDType::ECmpType cmp_type
-	)
+CMDAccessorUtils::FCmpExists(CMDAccessor *md_accessor,
+							 IMDId *left_mdid,
+							 IMDId *right_mdid,
+							 IMDType::ECmpType cmp_type)
 {
 	GPOS_ASSERT(NULL != md_accessor);
 	GPOS_ASSERT(NULL != left_mdid);
@@ -141,12 +129,7 @@ CMDAccessorUtils::FCmpExists
 //
 //---------------------------------------------------------------------------
 BOOL
-CMDAccessorUtils::FCastExists
-	(
-	CMDAccessor *md_accessor,
-	IMDId *mdid_src,
-	IMDId *mdid_dest
-	)
+CMDAccessorUtils::FCastExists(CMDAccessor *md_accessor, IMDId *mdid_src, IMDId *mdid_dest)
 {
 	GPOS_ASSERT(NULL != md_accessor);
 	GPOS_ASSERT(NULL != mdid_src);
@@ -183,11 +166,7 @@ CMDAccessorUtils::FCastExists
 //
 //---------------------------------------------------------------------------
 BOOL
-CMDAccessorUtils::FScalarOpReturnsNullOnNullInput
-	(
-	CMDAccessor *md_accessor,
-	IMDId *mdid_op
-	)
+CMDAccessorUtils::FScalarOpReturnsNullOnNullInput(CMDAccessor *md_accessor, IMDId *mdid_op)
 {
 	GPOS_ASSERT(NULL != md_accessor);
 
@@ -228,11 +207,7 @@ CMDAccessorUtils::FScalarOpReturnsNullOnNullInput
 //
 //---------------------------------------------------------------------------
 BOOL
-CMDAccessorUtils::FBoolType
-	(
-	CMDAccessor *md_accessor,
-	IMDId *mdid_type
-	)
+CMDAccessorUtils::FBoolType(CMDAccessor *md_accessor, IMDId *mdid_type)
 {
 	GPOS_ASSERT(NULL != md_accessor);
 
@@ -253,11 +228,7 @@ CMDAccessorUtils::FBoolType
 //
 //---------------------------------------------------------------------------
 BOOL
-CMDAccessorUtils::FCommutativeScalarOp
-	(
-	CMDAccessor *md_accessor,
-	IMDId *mdid_op
-	)
+CMDAccessorUtils::FCommutativeScalarOp(CMDAccessor *md_accessor, IMDId *mdid_op)
 {
 	GPOS_ASSERT(NULL != md_accessor);
 	GPOS_ASSERT(NULL != mdid_op);

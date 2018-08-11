@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CXformGbAgg2StreamAgg
@@ -28,56 +28,47 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformGbAgg2StreamAgg : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformGbAgg2StreamAgg(const CXformGbAgg2StreamAgg &);
 
-		private:
+	public:
+		// ctor
+		CXformGbAgg2StreamAgg(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformGbAgg2StreamAgg(const CXformGbAgg2StreamAgg &);
+		// ctor
+		explicit CXformGbAgg2StreamAgg(CExpression *pexprPattern);
 
-		public:
-		
-			// ctor
-			CXformGbAgg2StreamAgg(IMemoryPool *mp);
+		// dtor
+		virtual ~CXformGbAgg2StreamAgg()
+		{
+		}
 
-			// ctor
-			explicit
-			CXformGbAgg2StreamAgg(CExpression *pexprPattern);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfGbAgg2StreamAgg;
+		}
 
-			// dtor
-			virtual 
-			~CXformGbAgg2StreamAgg() {}
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformGbAgg2StreamAgg";
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfGbAgg2StreamAgg;
-			}
-			
-			// return a string for xform name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CXformGbAgg2StreamAgg";
-			}
-			
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// actual transform
-			void Transform
-					(
-					CXformContext *pxfctxt,
-					CXformResult *pxfres,
-					CExpression *pexpr
-					) const;
-		
-	}; // class CXformGbAgg2StreamAgg
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-}
+	};  // class CXformGbAgg2StreamAgg
+
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformGbAgg2StreamAgg_H
+#endif  // !GPOPT_CXformGbAgg2StreamAgg_H
 
 // EOF

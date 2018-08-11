@@ -28,58 +28,49 @@ namespace gpopt
 	//		Swap cascaded inner join and anti semi-join with NotIn semantics
 	//
 	//---------------------------------------------------------------------------
-	class CXformInnerJoinAntiSemiJoinNotInSwap : public CXformJoinSwap<CLogicalInnerJoin, CLogicalLeftAntiSemiJoinNotIn>
+	class CXformInnerJoinAntiSemiJoinNotInSwap
+		: public CXformJoinSwap<CLogicalInnerJoin, CLogicalLeftAntiSemiJoinNotIn>
 	{
+	private:
+		// private copy ctor
+		CXformInnerJoinAntiSemiJoinNotInSwap(const CXformInnerJoinAntiSemiJoinNotInSwap &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformInnerJoinAntiSemiJoinNotInSwap(IMemoryPool *mp)
+			: CXformJoinSwap<CLogicalInnerJoin, CLogicalLeftAntiSemiJoinNotIn>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformInnerJoinAntiSemiJoinNotInSwap(const CXformInnerJoinAntiSemiJoinNotInSwap &);
+		// dtor
+		virtual ~CXformInnerJoinAntiSemiJoinNotInSwap()
+		{
+		}
 
-		public:
+		// Compatibility function
+		virtual BOOL
+		FCompatible(CXform::EXformId exfid)
+		{
+			return ExfAntiSemiJoinNotInInnerJoinSwap != exfid;
+		}
 
-			// ctor
-			explicit
-			CXformInnerJoinAntiSemiJoinNotInSwap
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformJoinSwap<CLogicalInnerJoin, CLogicalLeftAntiSemiJoinNotIn>(mp)
-			{}
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfInnerJoinAntiSemiJoinNotInSwap;
+		}
 
-			// dtor
-			virtual
-			~CXformInnerJoinAntiSemiJoinNotInSwap()
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformInnerJoinAntiSemiJoinNotInSwap";
+		}
 
-			// Compatibility function
-			virtual
-			BOOL FCompatible
-				(
-				CXform::EXformId exfid
-				)
-			{
-				return ExfAntiSemiJoinNotInInnerJoinSwap != exfid;
-			}
+	};  // class CXformInnerJoinAntiSemiJoinNotInSwap
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfInnerJoinAntiSemiJoinNotInSwap;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformInnerJoinAntiSemiJoinNotInSwap";
-			}
-
-	}; // class CXformInnerJoinAntiSemiJoinNotInSwap
-
-}
-
-#endif // !GPOPT_CXformInnerJoinAntiSemiJoinNotInSwap_H
+#endif  // !GPOPT_CXformInnerJoinAntiSemiJoinNotInSwap_H
 
 // EOF

@@ -28,14 +28,11 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CMaxCard
-CLogicalLeftSemiApply::Maxcard
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CLogicalLeftSemiApply::Maxcard(IMemoryPool *,  // mp
+							   CExpressionHandle &exprhdl) const
 {
-	return CLogical::Maxcard(exprhdl, 2 /*ulScalarIndex*/, exprhdl.GetRelationalProperties(0)->Maxcard());
+	return CLogical::Maxcard(
+		exprhdl, 2 /*ulScalarIndex*/, exprhdl.GetRelationalProperties(0)->Maxcard());
 }
 
 //---------------------------------------------------------------------------
@@ -47,11 +44,7 @@ CLogicalLeftSemiApply::Maxcard
 //
 //---------------------------------------------------------------------------
 CXformSet *
-CLogicalLeftSemiApply::PxfsCandidates
-	(
-	IMemoryPool *mp
-	)
-	const
+CLogicalLeftSemiApply::PxfsCandidates(IMemoryPool *mp) const
 {
 	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
 
@@ -72,11 +65,8 @@ CLogicalLeftSemiApply::PxfsCandidates
 //
 //---------------------------------------------------------------------------
 CColRefSet *
-CLogicalLeftSemiApply::PcrsDeriveOutput
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
+CLogicalLeftSemiApply::PcrsDeriveOutput(IMemoryPool *,  // mp
+										CExpressionHandle &exprhdl)
 {
 	GPOS_ASSERT(3 == exprhdl.Arity());
 
@@ -93,17 +83,14 @@ CLogicalLeftSemiApply::PcrsDeriveOutput
 //
 //---------------------------------------------------------------------------
 COperator *
-CLogicalLeftSemiApply::PopCopyWithRemappedColumns
-	(
-	IMemoryPool *mp,
-	UlongToColRefMap *colref_mapping,
-	BOOL must_exist
-	)
+CLogicalLeftSemiApply::PopCopyWithRemappedColumns(IMemoryPool *mp,
+												  UlongToColRefMap *colref_mapping,
+												  BOOL must_exist)
 {
-	CColRefArray *pdrgpcrInner = CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
+	CColRefArray *pdrgpcrInner =
+		CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
 
 	return GPOS_NEW(mp) CLogicalLeftSemiApply(mp, pdrgpcrInner, m_eopidOriginSubq);
 }
 
 // EOF
-

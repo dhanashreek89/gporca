@@ -30,12 +30,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalFilter::CPhysicalFilter
-	(
-	IMemoryPool *mp
-	)
-	:
-	CPhysical(mp)
+CPhysicalFilter::CPhysicalFilter(IMemoryPool *mp) : CPhysical(mp)
 {
 	// when Filter includes outer references, correlated execution has to be enforced,
 	// in this case, we create two child optimization requests to guarantee correct evaluation of parameters
@@ -55,7 +50,8 @@ CPhysicalFilter::CPhysicalFilter
 //
 //---------------------------------------------------------------------------
 CPhysicalFilter::~CPhysicalFilter()
-{}
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -67,17 +63,16 @@ CPhysicalFilter::~CPhysicalFilter()
 //
 //---------------------------------------------------------------------------
 CColRefSet *
-CPhysicalFilter::PcrsRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CColRefSet *pcrsRequired,
-	ULONG child_index,
-	CDrvdPropArrays *, // pdrgpdpCtxt
-	ULONG // ulOptReq
-	)
+CPhysicalFilter::PcrsRequired(IMemoryPool *mp,
+							  CExpressionHandle &exprhdl,
+							  CColRefSet *pcrsRequired,
+							  ULONG child_index,
+							  CDrvdPropArrays *,  // pdrgpdpCtxt
+							  ULONG				  // ulOptReq
+)
 {
-	GPOS_ASSERT(0 == child_index && "Required properties can only be computed on the relational child");
+	GPOS_ASSERT(0 == child_index &&
+				"Required properties can only be computed on the relational child");
 
 	return PcrsChildReqd(mp, exprhdl, pcrsRequired, child_index, 1 /*ulScalarIndex*/);
 }
@@ -92,16 +87,13 @@ CPhysicalFilter::PcrsRequired
 //
 //---------------------------------------------------------------------------
 COrderSpec *
-CPhysicalFilter::PosRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	COrderSpec *posRequired,
-	ULONG child_index,
-	CDrvdPropArrays *, // pdrgpdpCtxt
-	ULONG // ulOptReq
-	)
-	const
+CPhysicalFilter::PosRequired(IMemoryPool *mp,
+							 CExpressionHandle &exprhdl,
+							 COrderSpec *posRequired,
+							 ULONG child_index,
+							 CDrvdPropArrays *,  // pdrgpdpCtxt
+							 ULONG				 // ulOptReq
+							 ) const
 {
 	GPOS_ASSERT(0 == child_index);
 
@@ -118,16 +110,12 @@ CPhysicalFilter::PosRequired
 //
 //---------------------------------------------------------------------------
 CDistributionSpec *
-CPhysicalFilter::PdsRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CDistributionSpec *pdsRequired,
-	ULONG child_index,
-	CDrvdPropArrays *, // pdrgpdpCtxt
-	ULONG ulOptReq
-	)
-	const
+CPhysicalFilter::PdsRequired(IMemoryPool *mp,
+							 CExpressionHandle &exprhdl,
+							 CDistributionSpec *pdsRequired,
+							 ULONG child_index,
+							 CDrvdPropArrays *,  // pdrgpdpCtxt
+							 ULONG ulOptReq) const
 {
 	if (CDistributionSpec::EdtAny == pdsRequired->Edt() &&
 		CDistributionSpecAny::PdsConvert(pdsRequired)->FAllowOuterRefs())
@@ -153,16 +141,13 @@ CPhysicalFilter::PdsRequired
 //
 //---------------------------------------------------------------------------
 CRewindabilitySpec *
-CPhysicalFilter::PrsRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CRewindabilitySpec *prsRequired,
-	ULONG child_index,
-	CDrvdPropArrays *, // pdrgpdpCtxt
-	ULONG // ulOptReq
-	)
-	const
+CPhysicalFilter::PrsRequired(IMemoryPool *mp,
+							 CExpressionHandle &exprhdl,
+							 CRewindabilitySpec *prsRequired,
+							 ULONG child_index,
+							 CDrvdPropArrays *,  // pdrgpdpCtxt
+							 ULONG				 // ulOptReq
+							 ) const
 {
 	GPOS_ASSERT(0 == child_index);
 
@@ -189,37 +174,35 @@ CPhysicalFilter::PrsRequired
 //
 //---------------------------------------------------------------------------
 CPartitionPropagationSpec *
-CPhysicalFilter::PppsRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CPartitionPropagationSpec *pppsRequired,
-	ULONG 
+CPhysicalFilter::PppsRequired(IMemoryPool *mp,
+							  CExpressionHandle &exprhdl,
+							  CPartitionPropagationSpec *pppsRequired,
+							  ULONG
 #ifdef GPOS_DEBUG
-	child_index
+								  child_index
 #endif
-	,
-	CDrvdPropArrays *, //pdrgpdpCtxt,
-	ULONG // ulOptReq
-	)
+							  ,
+							  CDrvdPropArrays *,  //pdrgpdpCtxt,
+							  ULONG				  // ulOptReq
+)
 {
 	GPOS_ASSERT(0 == child_index);
 	GPOS_ASSERT(NULL != pppsRequired);
-	
+
 	CPartIndexMap *ppimReqd = pppsRequired->Ppim();
 	CPartFilterMap *ppfmReqd = pppsRequired->Ppfm();
-	
+
 	ULongPtrArray *pdrgpul = ppimReqd->PdrgpulScanIds(mp);
-	
+
 	CPartIndexMap *ppimResult = GPOS_NEW(mp) CPartIndexMap(mp);
 	CPartFilterMap *ppfmResult = GPOS_NEW(mp) CPartFilterMap(mp);
-	
+
 	/// get derived part consumers
 	CPartInfo *ppartinfo = exprhdl.GetRelationalProperties(0)->Ppartinfo();
-	
+
 	const ULONG ulPartIndexIds = pdrgpul->Size();
 	BOOL fUseConstraints = (1 == exprhdl.GetRelationalProperties()->JoinDepth());
-	
+
 	for (ULONG ul = 0; ul < ulPartIndexIds; ul++)
 	{
 		ULONG part_idx_id = *((*pdrgpul)[ul]);
@@ -231,8 +214,9 @@ CPhysicalFilter::PppsRequired
 			continue;
 		}
 
-		ppimResult->AddRequiredPartPropagation(ppimReqd, part_idx_id, CPartIndexMap::EppraPreservePropagators);
-		
+		ppimResult->AddRequiredPartPropagation(
+			ppimReqd, part_idx_id, CPartIndexMap::EppraPreservePropagators);
+
 		// look for a filter on the part key
 		CExpression *pexprScalar = exprhdl.PexprScalarChild(1 /*child_index*/);
 
@@ -244,17 +228,14 @@ CPhysicalFilter::PppsRequired
 			// get partition key
 			CColRefArrays *pdrgpdrgpcrPartKeys = (*pdrgppartkeys)[ulKey]->Pdrgpdrgpcr();
 
-			// try to generate a request with dynamic partition selection		
-			pexprCmp = CPredicateUtils::PexprExtractPredicatesOnPartKeys
-									(
-									mp,
-									pexprScalar,
-									pdrgpdrgpcrPartKeys,
-									NULL, /*pcrsAllowedRefs*/
-									fUseConstraints
-									);
+			// try to generate a request with dynamic partition selection
+			pexprCmp = CPredicateUtils::PexprExtractPredicatesOnPartKeys(mp,
+																		 pexprScalar,
+																		 pdrgpdrgpcrPartKeys,
+																		 NULL, /*pcrsAllowedRefs*/
+																		 fUseConstraints);
 		}
-				
+
 		if (NULL == pexprCmp)
 		{
 			// no comparison found in filter: check if a comparison was already
@@ -264,18 +245,18 @@ CPhysicalFilter::PppsRequired
 				pexprCmp = ppfmReqd->Pexpr(part_idx_id);
 				pexprCmp->AddRef();
 			}
-			
-			// TODO:  - May 31, 2012; collect multiple comparisons on the 
+
+			// TODO:  - May 31, 2012; collect multiple comparisons on the
 			// partition keys
 		}
-		
+
 		if (NULL != pexprCmp)
 		{
 			// interesting filter found
 			ppfmResult->AddPartFilter(mp, part_idx_id, pexprCmp, NULL /*stats */);
 		}
 	}
-	
+
 	pdrgpul->Release();
 
 	return GPOS_NEW(mp) CPartitionPropagationSpec(ppimResult, ppfmResult);
@@ -290,20 +271,17 @@ CPhysicalFilter::PppsRequired
 //
 //---------------------------------------------------------------------------
 CCTEReq *
-CPhysicalFilter::PcteRequired
-	(
-	IMemoryPool *, //mp,
-	CExpressionHandle &, //exprhdl,
-	CCTEReq *pcter,
-	ULONG
+CPhysicalFilter::PcteRequired(IMemoryPool *,		//mp,
+							  CExpressionHandle &,  //exprhdl,
+							  CCTEReq *pcter,
+							  ULONG
 #ifdef GPOS_DEBUG
-	child_index
+								  child_index
 #endif
-	,
-	CDrvdPropArrays *, //pdrgpdpCtxt,
-	ULONG //ulOptReq
-	)
-	const
+							  ,
+							  CDrvdPropArrays *,  //pdrgpdpCtxt,
+							  ULONG				  //ulOptReq
+							  ) const
 {
 	GPOS_ASSERT(0 == child_index);
 	return PcterPushThru(pcter);
@@ -318,12 +296,8 @@ CPhysicalFilter::PcteRequired
 //
 //---------------------------------------------------------------------------
 COrderSpec *
-CPhysicalFilter::PosDerive
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CPhysicalFilter::PosDerive(IMemoryPool *,  // mp
+						   CExpressionHandle &exprhdl) const
 {
 	return PosDerivePassThruOuter(exprhdl);
 }
@@ -338,12 +312,8 @@ CPhysicalFilter::PosDerive
 //
 //---------------------------------------------------------------------------
 CDistributionSpec *
-CPhysicalFilter::PdsDerive
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CPhysicalFilter::PdsDerive(IMemoryPool *,  // mp
+						   CExpressionHandle &exprhdl) const
 {
 	return PdsDerivePassThruOuter(exprhdl);
 }
@@ -358,12 +328,8 @@ CPhysicalFilter::PdsDerive
 //
 //---------------------------------------------------------------------------
 CRewindabilitySpec *
-CPhysicalFilter::PrsDerive
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CPhysicalFilter::PrsDerive(IMemoryPool *,  // mp
+						   CExpressionHandle &exprhdl) const
 {
 	return PrsDerivePassThruOuter(exprhdl);
 }
@@ -378,11 +344,7 @@ CPhysicalFilter::PrsDerive
 //
 //---------------------------------------------------------------------------
 BOOL
-CPhysicalFilter::Matches
-	(
-	COperator *pop
-	)
-	const
+CPhysicalFilter::Matches(COperator *pop) const
 {
 	// filter doesn't contain any members as of now
 	return Eopid() == pop->Eopid();
@@ -398,13 +360,10 @@ CPhysicalFilter::Matches
 //
 //---------------------------------------------------------------------------
 BOOL
-CPhysicalFilter::FProvidesReqdCols
-	(
-	CExpressionHandle &exprhdl,
-	CColRefSet *pcrsRequired,
-	ULONG // ulOptReq
-	)
-	const
+CPhysicalFilter::FProvidesReqdCols(CExpressionHandle &exprhdl,
+								   CColRefSet *pcrsRequired,
+								   ULONG  // ulOptReq
+								   ) const
 {
 	return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
 }
@@ -419,15 +378,12 @@ CPhysicalFilter::FProvidesReqdCols
 //
 //---------------------------------------------------------------------------
 CEnfdProp::EPropEnforcingType
-CPhysicalFilter::EpetOrder
-	(
-	CExpressionHandle &, // exprhdl
-	const CEnfdOrder *
+CPhysicalFilter::EpetOrder(CExpressionHandle &,  // exprhdl
+						   const CEnfdOrder *
 #ifdef GPOS_DEBUG
-	peo
-#endif // GPOS_DEBUG
-	)
-	const
+							   peo
+#endif  // GPOS_DEBUG
+						   ) const
 {
 	GPOS_ASSERT(NULL != peo);
 	GPOS_ASSERT(!peo->PosRequired()->IsEmpty());
@@ -446,19 +402,14 @@ CPhysicalFilter::EpetOrder
 //
 //---------------------------------------------------------------------------
 CEnfdProp::EPropEnforcingType
-CPhysicalFilter::EpetRewindability
-	(
-	CExpressionHandle &exprhdl,
-	const CEnfdRewindability *per
-	)
-	const
+CPhysicalFilter::EpetRewindability(CExpressionHandle &exprhdl, const CEnfdRewindability *per) const
 {
 	// get rewindability delivered by the Filter node
 	CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
 	if (per->FCompatible(prs))
 	{
-		 // required rewindability is already provided
-		 return CEnfdProp::EpetUnnecessary;
+		// required rewindability is already provided
+		return CEnfdProp::EpetUnnecessary;
 	}
 
 	// always force spool to be on top of filter
@@ -467,4 +418,3 @@ CPhysicalFilter::EpetRewindability
 
 
 // EOF
-

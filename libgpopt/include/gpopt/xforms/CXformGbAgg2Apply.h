@@ -30,45 +30,40 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformGbAgg2Apply : public CXformSubqueryUnnest
 	{
+	private:
+		// private copy ctor
+		CXformGbAgg2Apply(const CXformGbAgg2Apply &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformGbAgg2Apply(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformGbAgg2Apply(const CXformGbAgg2Apply &);
+		// dtor
+		virtual ~CXformGbAgg2Apply()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfGbAgg2Apply;
+		}
 
-			// ctor
-			explicit
-			CXformGbAgg2Apply(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformGbAgg2Apply";
+		}
 
-			// dtor
-			virtual
-			~CXformGbAgg2Apply()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfGbAgg2Apply;
-			}
+	};  // class CXformGbAgg2Apply
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformGbAgg2Apply";
-			}
+}  // namespace gpopt
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-	}; // class CXformGbAgg2Apply
-
-}
-
-#endif // !GPOPT_CXformGbAgg2Apply_H
+#endif  // !GPOPT_CXformGbAgg2Apply_H
 
 // EOF

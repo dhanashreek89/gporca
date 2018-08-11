@@ -27,10 +27,7 @@ using namespace gpdxl;
 //
 //---------------------------------------------------------------------------
 CDXLNode::CDXLNode(IMemoryPool *mp)
-	: m_mp(mp),
-	  m_dxl_op(NULL),
-	  m_dxl_properties(NULL),
-	  m_direct_dispatch_info(NULL)
+	: m_mp(mp), m_dxl_op(NULL), m_dxl_properties(NULL), m_direct_dispatch_info(NULL)
 {
 	m_dxl_array = GPOS_NEW(mp) CDXLNodeArray(mp);
 }
@@ -44,10 +41,7 @@ CDXLNode::CDXLNode(IMemoryPool *mp)
 //
 //---------------------------------------------------------------------------
 CDXLNode::CDXLNode(IMemoryPool *mp, CDXLOperator *dxl_op)
-	: m_mp(mp),
-	  m_dxl_op(dxl_op),
-	  m_dxl_properties(NULL),
-	  m_direct_dispatch_info(NULL)
+	: m_mp(mp), m_dxl_op(dxl_op), m_dxl_properties(NULL), m_direct_dispatch_info(NULL)
 {
 	GPOS_ASSERT(NULL != dxl_op);
 	m_dxl_array = GPOS_NEW(mp) CDXLNodeArray(mp);

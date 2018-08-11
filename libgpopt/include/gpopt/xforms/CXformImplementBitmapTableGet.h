@@ -9,7 +9,7 @@
 //		Implement BitmapTableGet
 //
 //	@owner:
-//		
+//
 //
 //	@test:
 //
@@ -34,51 +34,48 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformImplementBitmapTableGet : public CXformImplementation
 	{
-		private:
-			// disable copy ctor
-			CXformImplementBitmapTableGet(const CXformImplementBitmapTableGet &);
+	private:
+		// disable copy ctor
+		CXformImplementBitmapTableGet(const CXformImplementBitmapTableGet &);
 
-		public:
-			// ctor
-			explicit
-			CXformImplementBitmapTableGet(IMemoryPool *mp);
+	public:
+		// ctor
+		explicit CXformImplementBitmapTableGet(IMemoryPool *mp);
 
-			// dtor
-			virtual
-			~CXformImplementBitmapTableGet()
-			{}
+		// dtor
+		virtual ~CXformImplementBitmapTableGet()
+		{
+		}
 
-			// identifier
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementBitmapTableGet;
-			}
+		// identifier
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementBitmapTableGet;
+		}
 
-			// xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementBitmapTableGet";
-			}
+		// xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementBitmapTableGet";
+		}
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp
-				(
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{
-				return CXform::ExfpHigh;
-			}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise
+		Exfp(CExpressionHandle &  // exprhdl
+			 ) const
+		{
+			return CXform::ExfpHigh;
+		}
 
-			// actual transform
-			virtual
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
 	};  // class CXformImplementBitmapTableGet
-}
+}  // namespace gpopt
 
 #endif  // !GPOPT_CXformImplementBitmapTableGet_H
 

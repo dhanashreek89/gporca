@@ -19,14 +19,14 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	// fwd declarations
 	class CExpressionHandle;
 	class COperator;
 	class DrvdPropArray;
 	class CDrvdPropCtxt;
 	class CReqdPropPlan;
-	
+
 	// dynamic array for properties
 	typedef CDynamicPtrArray<DrvdPropArray, CleanupRelease> CDrvdPropArrays;
 
@@ -64,63 +64,58 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class DrvdPropArray : public CRefCount
 	{
+	public:
+		// types of derived properties
+		enum EPropType
+		{
+			EptRelational,
+			EptPlan,
+			EptScalar,
 
-		public:
+			EptInvalid,
+			EptSentinel = EptInvalid
+		};
 
-			// types of derived properties
-			enum EPropType
-			{
-				EptRelational,
-				EptPlan,
-				EptScalar,
+	private:
+		// private copy ctor
+		DrvdPropArray(const DrvdPropArray &);
 
-				EptInvalid,
-				EptSentinel = EptInvalid
-			};
+	public:
+		// ctor
+		DrvdPropArray();
 
-		private:
+		// dtor
+		virtual ~DrvdPropArray()
+		{
+		}
 
-			// private copy ctor
-			DrvdPropArray(const DrvdPropArray &);
+		// type of properties
+		virtual EPropType Ept() = 0;
 
-		public:
+		// derivation function
+		virtual void Derive(IMemoryPool *mp,
+							CExpressionHandle &exprhdl,
+							CDrvdPropCtxt *pdppropctxt) = 0;
 
-			// ctor
-			DrvdPropArray();
+		// check for satisfying required plan properties
+		virtual BOOL FSatisfies(const CReqdPropPlan *prpp) const = 0;
 
-			// dtor
-			virtual 
-			~DrvdPropArray() {}
-
-			// type of properties
-			virtual
-			EPropType Ept() = 0;
-
-			// derivation function
-			virtual
-			void Derive(IMemoryPool *mp, CExpressionHandle &exprhdl, CDrvdPropCtxt *pdppropctxt) = 0;
-
-			// check for satisfying required plan properties
-			virtual
-			BOOL FSatisfies(const CReqdPropPlan *prpp) const = 0;
-
-			// print
-			virtual
-			IOstream &OsPrint(IOstream &os) const = 0;
+		// print
+		virtual IOstream &OsPrint(IOstream &os) const = 0;
 
 #ifdef GPOS_DEBUG
-			// debug print for interactive debugging sessions only
-			void DbgPrint() const;
-#endif // GPOS_DEBUG
+		// debug print for interactive debugging sessions only
+		void DbgPrint() const;
+#endif  // GPOS_DEBUG
 
-	}; // class DrvdPropArray
+	};  // class DrvdPropArray
 
- 	// shorthand for printing
-	IOstream &operator << (IOstream &os, const DrvdPropArray &drvdprop);
+	// shorthand for printing
+	IOstream &operator<<(IOstream &os, const DrvdPropArray &drvdprop);
 
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CDrvdProp_H
+#endif  // !GPOPT_CDrvdProp_H
 
 // EOF

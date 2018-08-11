@@ -96,11 +96,8 @@ CParseHandlerQueryOutput::StartElement(const XMLCh *const element_uri,
 		GPOS_ASSERT(NULL != m_dxl_array);
 
 		// start new scalar ident element
-		CParseHandlerBase *child_parse_handler =
-			CParseHandlerFactory::GetParseHandler(m_mp,
-												  CDXLTokens::XmlstrToken(EdxltokenScalarIdent),
-												  m_parse_handler_mgr,
-												  this);
+		CParseHandlerBase *child_parse_handler = CParseHandlerFactory::GetParseHandler(
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarIdent), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(child_parse_handler);
 
 		// store parse handler

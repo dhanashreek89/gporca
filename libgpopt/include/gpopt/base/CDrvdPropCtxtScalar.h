@@ -33,90 +33,70 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CDrvdPropCtxtScalar : public CDrvdPropCtxt
 	{
+	private:
+		// private copy ctor
+		CDrvdPropCtxtScalar(const CDrvdPropCtxtScalar &);
 
-		private:
+	protected:
+		// copy function
+		virtual CDrvdPropCtxt *
+		PdpctxtCopy(IMemoryPool *mp) const
+		{
+			return GPOS_NEW(mp) CDrvdPropCtxtScalar(mp);
+		}
 
-			// private copy ctor
-			CDrvdPropCtxtScalar(const CDrvdPropCtxtScalar &);
+		// add props to context
+		virtual void
+		AddProps(DrvdPropArray *  // pdp
+		)
+		{
+			// derived scalar context is currently empty
+		}
 
-		protected:
+	public:
+		// ctor
+		CDrvdPropCtxtScalar(IMemoryPool *mp) : CDrvdPropCtxt(mp)
+		{
+		}
 
-			// copy function
-			virtual
-			CDrvdPropCtxt *PdpctxtCopy
-				(
-				IMemoryPool *mp
-				)
-				const
-			{
-				return GPOS_NEW(mp) CDrvdPropCtxtScalar(mp);
-			}
+		// dtor
+		virtual ~CDrvdPropCtxtScalar()
+		{
+		}
 
-			// add props to context
-			virtual
-			void AddProps
-				(
-				DrvdPropArray * // pdp
-				)
-			{
-				// derived scalar context is currently empty
-			}
-
-		public:
-
-			// ctor
-			CDrvdPropCtxtScalar
-				(
-				IMemoryPool *mp
-				)
-				:
-				CDrvdPropCtxt(mp)
-			{}
-
-			// dtor
-			virtual
-			~CDrvdPropCtxtScalar() {}
-
-			// print
-			virtual
-			IOstream &OsPrint
-				(
-				IOstream &os
-				)
-				const
-			{
-				return os;
-			}
+		// print
+		virtual IOstream &
+		OsPrint(IOstream &os) const
+		{
+			return os;
+		}
 
 #ifdef GPOS_DEBUG
 
-			// is it a scalar property context?
-			virtual
-			BOOL FScalar() const
-			{
-				return true;
-			}
+		// is it a scalar property context?
+		virtual BOOL
+		FScalar() const
+		{
+			return true;
+		}
 
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
-			// conversion function
-			static
-			CDrvdPropCtxtScalar *PdpctxtscalarConvert
-				(
-				CDrvdPropCtxt *pdpctxt
-				)
-			{
-				GPOS_ASSERT(NULL != pdpctxt);
+		// conversion function
+		static CDrvdPropCtxtScalar *
+		PdpctxtscalarConvert(CDrvdPropCtxt *pdpctxt)
+		{
+			GPOS_ASSERT(NULL != pdpctxt);
 
-				return reinterpret_cast<CDrvdPropCtxtScalar*>(pdpctxt);
-			}
+			return reinterpret_cast<CDrvdPropCtxtScalar *>(pdpctxt);
+		}
 
 
-	}; // class CDrvdPropCtxtScalar
+	};  // class CDrvdPropCtxtScalar
 
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CDrvdPropCtxtScalar_H
+#endif  // !GPOPT_CDrvdPropCtxtScalar_H
 
 // EOF

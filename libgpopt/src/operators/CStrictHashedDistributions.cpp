@@ -6,14 +6,10 @@
 
 using namespace gpopt;
 
-CStrictHashedDistributions::CStrictHashedDistributions
-(
-IMemoryPool *mp,
-CColRefArray *pdrgpcrOutput,
-CColRefArrays *pdrgpdrgpcrInput
-)
-:
-CDistributionSpecArray(mp)
+CStrictHashedDistributions::CStrictHashedDistributions(IMemoryPool *mp,
+													   CColRefArray *pdrgpcrOutput,
+													   CColRefArrays *pdrgpdrgpcrInput)
+	: CDistributionSpecArray(mp)
 {
 	const ULONG num_cols = pdrgpcrOutput->Size();
 	const ULONG arity = pdrgpdrgpcrInput->Size();

@@ -135,8 +135,7 @@ CParseHandlerCostModel::EndElement(const XMLCh *const,  // element_uri,
 	switch (m_cost_model_type)
 	{
 		case ICostModel::EcmtGPDBLegacy:
-			m_cost_model =
-				GPOS_NEW(m_mp) CCostModelGPDBLegacy(m_mp, m_num_of_segments);
+			m_cost_model = GPOS_NEW(m_mp) CCostModelGPDBLegacy(m_mp, m_num_of_segments);
 			break;
 		case ICostModel::EcmtGPDBCalibrated:
 			CCostModelParamsGPDB *pcp;
@@ -153,8 +152,7 @@ CParseHandlerCostModel::EndElement(const XMLCh *const,  // element_uri,
 				GPOS_ASSERT(NULL != pcp);
 				pcp->AddRef();
 			}
-			m_cost_model =
-				GPOS_NEW(m_mp) CCostModelGPDB(m_mp, m_num_of_segments, pcp);
+			m_cost_model = GPOS_NEW(m_mp) CCostModelGPDB(m_mp, m_num_of_segments, pcp);
 			break;
 		case ICostModel::EcmtSentinel:
 			GPOS_ASSERT(false && "Unexpected cost model type");

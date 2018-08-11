@@ -26,129 +26,112 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalStreamAggDeduplicate : public CPhysicalStreamAgg
 	{
-		private:
+	private:
+		// array of keys from the join's child
+		CColRefArray *m_pdrgpcrKeys;
 
-			// array of keys from the join's child
-			CColRefArray *m_pdrgpcrKeys;
+		// private copy ctor
+		CPhysicalStreamAggDeduplicate(const CPhysicalStreamAggDeduplicate &);
 
-			// private copy ctor
-			CPhysicalStreamAggDeduplicate(const CPhysicalStreamAggDeduplicate &);
+	public:
+		// ctor
+		CPhysicalStreamAggDeduplicate(IMemoryPool *mp,
+									  CColRefArray *colref_array,
+									  CColRefArray *pdrgpcrMinimal,
+									  COperator::EGbAggType egbaggtype,
+									  CColRefArray *pdrgpcrKeys,
+									  BOOL fGeneratesDuplicates,
+									  BOOL fMultiStage);
 
-		public:
+		// dtor
+		virtual ~CPhysicalStreamAggDeduplicate();
 
-			// ctor
-			CPhysicalStreamAggDeduplicate
-				(
-				IMemoryPool *mp,
-				CColRefArray *colref_array,
-				CColRefArray *pdrgpcrMinimal,
-				COperator::EGbAggType egbaggtype,
-				CColRefArray *pdrgpcrKeys,
-				BOOL fGeneratesDuplicates,
-				BOOL fMultiStage
-				);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalStreamAggDeduplicate;
+		}
 
-			// dtor
-			virtual
-			~CPhysicalStreamAggDeduplicate();
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalStreamAggDeduplicate";
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalStreamAggDeduplicate;
-			}
+		// array of keys from the join's child
+		CColRefArray *
+		PdrgpcrKeys() const
+		{
+			return m_pdrgpcrKeys;
+		}
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CPhysicalStreamAggDeduplicate";
-			}
+		//-------------------------------------------------------------------------------------
+		// Required Plan Properties
+		//-------------------------------------------------------------------------------------
 
-			// array of keys from the join's child
-			CColRefArray *PdrgpcrKeys() const
-			{
-				return m_pdrgpcrKeys;
-			}
+		// compute required output columns of the n-th child
+		virtual CColRefSet *
+		PcrsRequired(IMemoryPool *mp,
+					 CExpressionHandle &exprhdl,
+					 CColRefSet *pcrsRequired,
+					 ULONG child_index,
+					 CDrvdPropArrays *,  //pdrgpdpCtxt,
+					 ULONG				 //ulOptReq
+		)
+		{
+			return PcrsRequiredAgg(mp, exprhdl, pcrsRequired, child_index, m_pdrgpcrKeys);
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Required Plan Properties
-			//-------------------------------------------------------------------------------------
+		// compute required sort columns of the n-th child
+		virtual COrderSpec *
+		PosRequired(IMemoryPool *mp,
+					CExpressionHandle &exprhdl,
+					COrderSpec *posRequired,
+					ULONG child_index,
+					CDrvdPropArrays *,  //pdrgpdpCtxt,
+					ULONG				//ulOptReq
+					) const
+		{
+			return PosRequiredStreamAgg(mp, exprhdl, posRequired, child_index, m_pdrgpcrKeys);
+		}
 
-			// compute required output columns of the n-th child
-			virtual
-			CColRefSet *PcrsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CColRefSet *pcrsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *, //pdrgpdpCtxt,
-				ULONG //ulOptReq
-				)
-			{
-				return PcrsRequiredAgg(mp, exprhdl, pcrsRequired, child_index, m_pdrgpcrKeys);
-			}
+		// compute required distribution of the n-th child
+		virtual CDistributionSpec *
+		PdsRequired(IMemoryPool *mp,
+					CExpressionHandle &exprhdl,
+					CDistributionSpec *pdsRequired,
+					ULONG child_index,
+					CDrvdPropArrays *,  //pdrgpdpCtxt,
+					ULONG ulOptReq) const
+		{
+			return PdsRequiredAgg(
+				mp, exprhdl, pdsRequired, child_index, ulOptReq, m_pdrgpcrKeys, m_pdrgpcrKeys);
+		}
 
-			// compute required sort columns of the n-th child
-			virtual
-			COrderSpec *PosRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				COrderSpec *posRequired,
-				ULONG child_index,
-				CDrvdPropArrays *, //pdrgpdpCtxt,
-				ULONG //ulOptReq
-				)
-				const
-			{
-				return PosRequiredStreamAgg(mp, exprhdl, posRequired, child_index, m_pdrgpcrKeys);
-			}
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
 
-			// compute required distribution of the n-th child
-			virtual
-			CDistributionSpec *PdsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CDistributionSpec *pdsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *, //pdrgpdpCtxt,
-				ULONG ulOptReq
-				)
-				const
-			{
-				return PdsRequiredAgg(mp, exprhdl, pdsRequired, child_index, ulOptReq, m_pdrgpcrKeys, m_pdrgpcrKeys);
-			}
+		// debug print
+		virtual IOstream &OsPrint(IOstream &os) const;
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+		// conversion function
+		static CPhysicalStreamAggDeduplicate *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopPhysicalStreamAggDeduplicate == pop->Eopid());
 
-			// debug print
-			virtual
-			IOstream &OsPrint(IOstream &os) const;
+			return reinterpret_cast<CPhysicalStreamAggDeduplicate *>(pop);
+		}
 
-			// conversion function
-			static
-			CPhysicalStreamAggDeduplicate *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopPhysicalStreamAggDeduplicate == pop->Eopid());
+	};  // class CPhysicalStreamAggDeduplicate
 
-				return reinterpret_cast<CPhysicalStreamAggDeduplicate*>(pop);
-			}
-
-	}; // class CPhysicalStreamAggDeduplicate
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOS_CPhysicalStreamAggDeduplicate_H
+#endif  // !GPOS_CPhysicalStreamAggDeduplicate_H
 
 // EOF

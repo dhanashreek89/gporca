@@ -133,18 +133,12 @@ CParseHandlerScalarSubPlan::StartElement(const XMLCh *const,  // element_uri,
 
 	// parse handler for params
 	CParseHandlerBase *pphParamList = CParseHandlerFactory::GetParseHandler(
-		m_mp,
-		CDXLTokens::XmlstrToken(EdxltokenScalarSubPlanParamList),
-		m_parse_handler_mgr,
-		this);
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarSubPlanParamList), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(pphParamList);
 
 	// parse handler for test expression
 	CParseHandlerBase *pphTestExpr = CParseHandlerFactory::GetParseHandler(
-		m_mp,
-		CDXLTokens::XmlstrToken(EdxltokenScalarSubPlanTestExpr),
-		m_parse_handler_mgr,
-		this);
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarSubPlanTestExpr), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(pphTestExpr);
 
 	// store parse handlers

@@ -18,7 +18,6 @@
 
 namespace gpopt
 {
-
 	using namespace gpos;
 	using namespace gpmd;
 
@@ -35,111 +34,107 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalarArrayRef : public CScalar
 	{
-		private:
+	private:
+		// element type id
+		IMDId *m_pmdidElem;
 
-			// element type id
-			IMDId *m_pmdidElem;
+		// element type modifier
+		INT m_type_modifier;
 
-			// element type modifier
-			INT m_type_modifier;
+		// array type id
+		IMDId *m_pmdidArray;
 
-			// array type id
-			IMDId *m_pmdidArray;
+		// return type id
+		IMDId *m_mdid_type;
 
-			// return type id
-			IMDId *m_mdid_type;
+		// private copy ctor
+		CScalarArrayRef(const CScalarArrayRef &);
 
-			// private copy ctor
-			CScalarArrayRef(const CScalarArrayRef &);
+	public:
+		// ctor
+		CScalarArrayRef(IMemoryPool *mp,
+						IMDId *elem_type_mdid,
+						INT type_modifier,
+						IMDId *array_type_mdid,
+						IMDId *return_type_mdid);
 
-		public:
+		// dtor
+		virtual ~CScalarArrayRef();
 
-			// ctor
-			CScalarArrayRef(IMemoryPool *mp, IMDId *elem_type_mdid, INT type_modifier, IMDId *array_type_mdid, IMDId *return_type_mdid);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopScalarArrayRef;
+		}
 
-			// dtor
-			virtual
-			~CScalarArrayRef();
+		// operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CScalarArrayRef";
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopScalarArrayRef;
-			}
+		// element type id
+		IMDId *
+		PmdidElem() const
+		{
+			return m_pmdidElem;
+		}
 
-			// operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CScalarArrayRef";
-			}
+		// element type modifier
+		virtual INT TypeModifier() const;
 
-			// element type id
-			IMDId *PmdidElem() const
-			{
-				return m_pmdidElem;
-			}
+		// array type id
+		IMDId *
+		PmdidArray() const
+		{
+			return m_pmdidArray;
+		}
 
-			// element type modifier
-			virtual INT TypeModifier() const;
+		// operator specific hash function
+		virtual ULONG HashValue() const;
 
-			// array type id
-			IMDId *PmdidArray() const
-			{
-				return m_pmdidArray;
-			}
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// operator specific hash function
-			virtual
-			ULONG HashValue() const;
+		// sensitivity to order of inputs
+		virtual BOOL
+		FInputOrderSensitive() const
+		{
+			return true;
+		}
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
+		// return a copy of the operator with remapped columns
+		virtual COperator *
+		PopCopyWithRemappedColumns(IMemoryPool *,		//mp,
+								   UlongToColRefMap *,  //colref_mapping,
+								   BOOL					//must_exist
+		)
+		{
+			return PopCopyDefault();
+		}
 
-			// sensitivity to order of inputs
-			virtual
-			BOOL FInputOrderSensitive() const
-			{
-				return true;
-			}
+		// type of expression's result
+		virtual IMDId *
+		MDIdType() const
+		{
+			return m_mdid_type;
+		}
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *, //mp,
-						UlongToColRefMap *, //colref_mapping,
-						BOOL //must_exist
-						)
-			{
-				return PopCopyDefault();
-			}
+		// conversion function
+		static CScalarArrayRef *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopScalarArrayRef == pop->Eopid());
 
-			// type of expression's result
-			virtual
-			IMDId *MDIdType() const
-			{
-				return m_mdid_type;
-			}
+			return dynamic_cast<CScalarArrayRef *>(pop);
+		}
 
-			// conversion function
-			static
-			CScalarArrayRef *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopScalarArrayRef == pop->Eopid());
+	};  // class CScalarArrayRef
+}  // namespace gpopt
 
-				return dynamic_cast<CScalarArrayRef*>(pop);
-			}
-
-	}; // class CScalarArrayRef
-}
-
-#endif // !GPOPT_CScalarArrayRef_H
+#endif  // !GPOPT_CScalarArrayRef_H
 
 // EOF

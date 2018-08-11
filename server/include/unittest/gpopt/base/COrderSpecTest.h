@@ -27,17 +27,15 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class COrderSpecTest
 	{
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
+		static GPOS_RESULT EresUnittest_Basics();
 
-		public:
+	};  // class COrderSpecTest
+}  // namespace gpopt
 
-			// unittests
-			static GPOS_RESULT EresUnittest();
-			static GPOS_RESULT EresUnittest_Basics();
-
-	}; // class COrderSpecTest
-}
-
-#endif // !GPOS_COrderSpecTest_H
+#endif  // !GPOS_COrderSpecTest_H
 
 
 // EOF

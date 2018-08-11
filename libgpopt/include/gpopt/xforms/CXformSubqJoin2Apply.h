@@ -28,79 +28,74 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformSubqJoin2Apply : public CXformSubqueryUnnest
 	{
+	private:
+		// hash map between expression and a column reference
+		typedef CHashMap<CExpression,
+						 CColRef,
+						 HashPtr<CExpression>,
+						 EqualPtr<CExpression>,
+						 CleanupRelease<CExpression>,
+						 CleanupNULL<CColRef> >
+			ExprToColRefMap;
 
-		private:
+		// private copy ctor
+		CXformSubqJoin2Apply(const CXformSubqJoin2Apply &);
 
-			// hash map between expression and a column reference
-			typedef CHashMap<CExpression, CColRef, HashPtr<CExpression>, EqualPtr<CExpression>,
-					CleanupRelease<CExpression>, CleanupNULL<CColRef> > ExprToColRefMap;
+		// helper to transform function
+		void Transform(CXformContext *pxfctxt,
+					   CXformResult *pxfres,
+					   CExpression *pexpr,
+					   BOOL fEnforceCorrelatedApply) const;
 
-			// private copy ctor
-			CXformSubqJoin2Apply(const CXformSubqJoin2Apply &);
+		// collect subqueries that exclusively use outer/inner child
+		static void CollectSubqueries(IMemoryPool *mp,
+									  CExpression *pexpr,
+									  CColRefSetArray *pdrgpcrs,
+									  CExpressionArrays *pdrgpdrgpexprSubqs);
 
-			// helper to transform function
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr, BOOL fEnforceCorrelatedApply) const;
+		// replace subqueries with scalar identifier based on given map
+		static CExpression *PexprReplaceSubqueries(IMemoryPool *mp,
+												   CExpression *pexprScalar,
+												   ExprToColRefMap *phmexprcr);
 
-			// collect subqueries that exclusively use outer/inner child
-			static
-			void CollectSubqueries
-				(
-				IMemoryPool *mp,
-				CExpression *pexpr,
-				CColRefSetArray *pdrgpcrs,
-				CExpressionArrays *pdrgpdrgpexprSubqs
-				);
+		// push down subquery below join
+		static CExpression *PexprSubqueryPushDown(IMemoryPool *mp,
+												  CExpression *pexpr,
+												  BOOL fEnforceCorrelatedApply);
 
-			// replace subqueries with scalar identifier based on given map
-			static
-			CExpression *PexprReplaceSubqueries(IMemoryPool *mp, CExpression *pexprScalar, ExprToColRefMap *phmexprcr);
+	public:
+		// ctor
+		explicit CXformSubqJoin2Apply(IMemoryPool *mp);
 
-			// push down subquery below join
-			static
-			CExpression *PexprSubqueryPushDown(IMemoryPool *mp, CExpression *pexpr, BOOL fEnforceCorrelatedApply);
+		// ctor
+		explicit CXformSubqJoin2Apply(CExpression *pexprPattern)
+			: CXformSubqueryUnnest(pexprPattern){};
 
-		public:
+		// dtor
+		virtual ~CXformSubqJoin2Apply()
+		{
+		}
 
-			// ctor
-			explicit
-			CXformSubqJoin2Apply(IMemoryPool *mp);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfSubqJoin2Apply;
+		}
 
-			// ctor
-			explicit
-			CXformSubqJoin2Apply
-				(
-				CExpression *pexprPattern
-				)
-				:
-				CXformSubqueryUnnest(pexprPattern)
-			{};
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformSubqJoin2Apply";
+		}
 
-			// dtor
-			virtual
-			~CXformSubqJoin2Apply()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfSubqJoin2Apply;
-			}
+	};  // class CXformSubqJoin2Apply
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformSubqJoin2Apply";
-			}
+}  // namespace gpopt
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-	}; // class CXformSubqJoin2Apply
-
-}
-
-#endif // !GPOPT_CXformSubqJoin2Apply_H
+#endif  // !GPOPT_CXformSubqJoin2Apply_H
 
 // EOF

@@ -149,7 +149,8 @@ namespace gpopt
 		static CStatsPredJoin *ExtractJoinStatsFromJoinPred(
 			IMemoryPool *mp,
 			CExpression *join_predicate_expr,
-			CColRefSetArray *join_output_col_refset,  // array of output columns of join's relational inputs
+			CColRefSetArray
+				*join_output_col_refset,  // array of output columns of join's relational inputs
 			CColRefSet *outer_refs,
 			CExpressionArray *unsupported_predicates_expr);
 
@@ -170,20 +171,21 @@ namespace gpopt
 		static CStatsPredJoinArray *ExtractJoinStatsFromJoinPredArray(
 			IMemoryPool *mp,
 			CExpression *scalar_expr,
-			CColRefSetArray *output_col_refset,  // array of output columns of join's relational inputs
+			CColRefSetArray
+				*output_col_refset,  // array of output columns of join's relational inputs
 			CColRefSet *outer_refs,
 			CStatsPred **unsupported_pred_stats);
 
 		// helper function to extract array of statistics join filter from an expression handle
 		static CStatsPredJoinArray *ExtractJoinStatsFromExprHandle(IMemoryPool *mp,
-																  CExpressionHandle &expr_handle);
+																   CExpressionHandle &expr_handle);
 
 		// helper function to extract array of statistics join filter from an expression
 		static CStatsPredJoinArray *ExtractJoinStatsFromExpr(IMemoryPool *mp,
-															CExpressionHandle &expr_handle,
-															CExpression *scalar_expression,
-															CColRefSetArray *output_col_refset,
-															CColRefSet *outer_refs);
+															 CExpressionHandle &expr_handle,
+															 CExpression *scalar_expression,
+															 CColRefSetArray *output_col_refset,
+															 CColRefSet *outer_refs);
 
 		// is the predicate a conjunctive or disjunctive predicate
 		static BOOL IsConjOrDisjPred(CStatsPred *pred_stats);

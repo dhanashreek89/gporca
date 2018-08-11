@@ -45,113 +45,110 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CDrvdPropPlan : public DrvdPropArray
 	{
+	private:
+		// derived sort order
+		COrderSpec *m_pos;
 
-		private:
+		// derived distribution
+		CDistributionSpec *m_pds;
 
-			// derived sort order
-			COrderSpec *m_pos;
+		// derived rewindability
+		CRewindabilitySpec *m_prs;
 
-			// derived distribution
-			CDistributionSpec *m_pds;
+		// derived partition index map
+		CPartIndexMap *m_ppim;
 
-			// derived rewindability
-			CRewindabilitySpec *m_prs;
+		// derived filter expressions indexed by the part index id
+		CPartFilterMap *m_ppfm;
 
-			// derived partition index map
-			CPartIndexMap *m_ppim;
-			
-			// derived filter expressions indexed by the part index id
-			CPartFilterMap *m_ppfm;
+		// derived cte map
+		CCTEMap *m_pcm;
 
-			// derived cte map
-			CCTEMap *m_pcm;
+		// copy CTE producer plan properties from given context to current object
+		void CopyCTEProducerPlanProps(IMemoryPool *mp, CDrvdPropCtxt *pdpctxt, COperator *pop);
 
-			 // copy CTE producer plan properties from given context to current object
-			void CopyCTEProducerPlanProps(IMemoryPool *mp, CDrvdPropCtxt *pdpctxt, COperator *pop);
+		// private copy ctor
+		CDrvdPropPlan(const CDrvdPropPlan &);
 
-			// private copy ctor
-			CDrvdPropPlan(const CDrvdPropPlan &);
+	public:
+		// ctor
+		CDrvdPropPlan();
 
-		public:
+		// dtor
+		virtual ~CDrvdPropPlan();
 
-			// ctor
-			CDrvdPropPlan();
+		// type of properties
+		virtual EPropType
+		Ept()
+		{
+			return EptPlan;
+		}
 
-			// dtor
-			virtual 
-			~CDrvdPropPlan();
+		// derivation function
+		void Derive(IMemoryPool *mp, CExpressionHandle &exprhdl, CDrvdPropCtxt *pdpctxt);
 
-			// type of properties
-			virtual
-			EPropType Ept()
-			{
-				return EptPlan;
-			}
+		// short hand for conversion
+		static CDrvdPropPlan *Pdpplan(DrvdPropArray *pdp);
 
-			// derivation function
-			void Derive(IMemoryPool *mp, CExpressionHandle &exprhdl, CDrvdPropCtxt *pdpctxt);
+		// sort order accessor
+		COrderSpec *
+		Pos() const
+		{
+			return m_pos;
+		}
 
-			// short hand for conversion
-			static
-			CDrvdPropPlan *Pdpplan(DrvdPropArray *pdp);
+		// distribution accessor
+		CDistributionSpec *
+		Pds() const
+		{
+			return m_pds;
+		}
 
-			// sort order accessor
-			COrderSpec *Pos() const
-			{
-				return m_pos;
-			}
+		// rewindability accessor
+		CRewindabilitySpec *
+		Prs() const
+		{
+			return m_prs;
+		}
 
-			// distribution accessor
-			CDistributionSpec *Pds() const
-			{
-				return m_pds;
-			}
+		// partition index map
+		CPartIndexMap *
+		Ppim() const
+		{
+			return m_ppim;
+		}
 
-			// rewindability accessor
-			CRewindabilitySpec *Prs() const
-			{
-				return m_prs;
-			}
-			
-			// partition index map
-			CPartIndexMap *Ppim() const
-			{
-				return m_ppim;
-			}
+		// partition filter map
+		CPartFilterMap *
+		Ppfm() const
+		{
+			return m_ppfm;
+		}
 
-			// partition filter map
-			CPartFilterMap *Ppfm() const
-			{
-				return m_ppfm;
-			}
+		// cte map
+		CCTEMap *
+		GetCostModel() const
+		{
+			return m_pcm;
+		}
 
-			// cte map
-			CCTEMap *GetCostModel() const
-			{
-				return m_pcm;
-			}
+		// hash function
+		virtual ULONG HashValue() const;
 
-			// hash function
-			virtual
-			ULONG HashValue() const;
+		// equality function
+		virtual ULONG Equals(const CDrvdPropPlan *pdpplan) const;
 
-			// equality function
-			virtual
-			ULONG Equals(const CDrvdPropPlan *pdpplan) const;
+		// check for satisfying required plan properties
+		virtual BOOL FSatisfies(const CReqdPropPlan *prpp) const;
 
-			// check for satisfying required plan properties
-			virtual
-			BOOL FSatisfies(const CReqdPropPlan *prpp) const;
+		// print function
+		virtual IOstream &OsPrint(IOstream &os) const;
 
-			// print function
-			virtual
-			IOstream &OsPrint(IOstream &os) const;
+	};  // class CDrvdPropPlan
 
-	}; // class CDrvdPropPlan
-	
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CDrvdPropPlan_H
+#endif  // !GPOPT_CDrvdPropPlan_H
 
 // EOF

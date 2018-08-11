@@ -27,17 +27,14 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CIOUtils
 	{
+	public:
+		// dump given string to output file
+		static void Dump(CHAR *file_name, CHAR *sz);
 
-		public:
-
-			// dump given string to output file
-			static
-			void Dump(CHAR *file_name, CHAR *sz);
-
-	}; // class CIOUtils
-}
+	};  // class CIOUtils
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CIOUtils_H
+#endif  // !GPOPT_CIOUtils_H
 
 // EOF

@@ -16,7 +16,6 @@
 
 namespace gpnaucrates
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CHistogramTest
@@ -27,36 +26,29 @@ namespace gpnaucrates
 	//---------------------------------------------------------------------------
 	class CHistogramTest
 	{
-		private:
-			// generate int histogram having tuples not covered by buckets,
-			// including null fraction and nDistinctRemain
-			static
-			CHistogram* PhistExampleInt4Remain(IMemoryPool *mp);
+	private:
+		// generate int histogram having tuples not covered by buckets,
+		// including null fraction and nDistinctRemain
+		static CHistogram *PhistExampleInt4Remain(IMemoryPool *mp);
 
-		public:
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
 
-			// unittests
-			static
-			GPOS_RESULT EresUnittest();
+		// histogram basic tests
+		static GPOS_RESULT EresUnittest_CHistogramValid();
 
-			// histogram basic tests
-			static
-			GPOS_RESULT EresUnittest_CHistogramValid();
+		static GPOS_RESULT EresUnittest_CHistogramInt4();
 
-			static
-			GPOS_RESULT EresUnittest_CHistogramInt4();
+		static GPOS_RESULT EresUnittest_CHistogramBool();
 
-			static
-			GPOS_RESULT EresUnittest_CHistogramBool();
+		// skew basic tests
+		static GPOS_RESULT EresUnittest_Skew();
 
-			// skew basic tests
-			static
-			GPOS_RESULT EresUnittest_Skew();
+	};  // class CHistogramTest
+}  // namespace gpnaucrates
 
-	}; // class CHistogramTest
-}
-
-#endif // !GPNAUCRATES_CHistogramTest_H
+#endif  // !GPNAUCRATES_CHistogramTest_H
 
 
 // EOF

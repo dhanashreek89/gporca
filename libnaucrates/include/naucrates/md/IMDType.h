@@ -117,8 +117,7 @@ namespace gpmd
 		virtual IDatum *GetDatumForDXLConstVal(const CDXLScalarConstValue *dxl_op) const = 0;
 
 		// construct a datum from a DXL datum
-		virtual IDatum *GetDatumForDXLDatum(IMemoryPool *mp,
-											const CDXLDatum *dxl_datum) const = 0;
+		virtual IDatum *GetDatumForDXLDatum(IMemoryPool *mp, const CDXLDatum *dxl_datum) const = 0;
 
 		// is type fixed length
 		virtual BOOL IsFixedLength() const = 0;
@@ -139,8 +138,7 @@ namespace gpmd
 		virtual IDatum *DatumNull() const = 0;
 
 		// generate the DXL scalar constant from IDatum
-		virtual CDXLScalarConstValue *GetDXLOpScConst(IMemoryPool *mp,
-													  IDatum *datum) const = 0;
+		virtual CDXLScalarConstValue *GetDXLOpScConst(IMemoryPool *mp, IDatum *datum) const = 0;
 
 		// generate the DXL datum from IDatum
 		virtual CDXLDatum *GetDatumVal(IMemoryPool *mp, IDatum *datum) const = 0;

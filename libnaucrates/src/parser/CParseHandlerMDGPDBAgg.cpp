@@ -166,13 +166,13 @@ CParseHandlerMDGPDBAgg::EndElement(const XMLCh *const,  // element_uri,
 		GPOS_ASSERT(m_mdid->IsValid() && NULL != m_mdname);
 
 		m_imd_obj = GPOS_NEW(m_mp) CMDAggregateGPDB(m_mp,
-															 m_mdid,
-															 m_mdname,
-															 m_mdid_type_result,
-															 m_mdid_type_intermediate,
-															 m_is_ordered,
-															 m_is_splittable,
-															 m_hash_agg_capable);
+													m_mdid,
+													m_mdname,
+													m_mdid_type_result,
+													m_mdid_type_intermediate,
+													m_is_ordered,
+													m_is_splittable,
+													m_hash_agg_capable);
 
 		// deactivate handler
 		m_parse_handler_mgr->DeactivateHandler();

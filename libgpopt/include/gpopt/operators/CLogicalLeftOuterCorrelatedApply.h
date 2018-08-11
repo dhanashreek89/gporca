@@ -18,8 +18,6 @@
 
 namespace gpopt
 {
-
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CLogicalLeftOuterCorrelatedApply
@@ -30,77 +28,71 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalLeftOuterCorrelatedApply : public CLogicalLeftOuterApply
 	{
+	private:
+		// private copy ctor
+		CLogicalLeftOuterCorrelatedApply(const CLogicalLeftOuterCorrelatedApply &);
 
-		private:
+	public:
+		// ctor
+		CLogicalLeftOuterCorrelatedApply(IMemoryPool *mp,
+										 CColRefArray *pdrgpcrInner,
+										 EOperatorId eopidOriginSubq);
 
-			// private copy ctor
-			CLogicalLeftOuterCorrelatedApply(const CLogicalLeftOuterCorrelatedApply &);
+		// ctor for patterns
+		explicit CLogicalLeftOuterCorrelatedApply(IMemoryPool *mp);
 
-		public:
+		// dtor
+		virtual ~CLogicalLeftOuterCorrelatedApply()
+		{
+		}
 
-			// ctor
-			CLogicalLeftOuterCorrelatedApply(IMemoryPool *mp, CColRefArray *pdrgpcrInner, EOperatorId eopidOriginSubq);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalLeftOuterCorrelatedApply;
+		}
 
-			// ctor for patterns
-			explicit
-			CLogicalLeftOuterCorrelatedApply(IMemoryPool *mp);
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalLeftOuterCorrelatedApply";
+		}
 
-			// dtor
-			virtual
-			~CLogicalLeftOuterCorrelatedApply()
-			{}
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopLogicalLeftOuterCorrelatedApply;
-			}
+		// return a copy of the operator with remapped columns
+		virtual COperator *PopCopyWithRemappedColumns(IMemoryPool *mp,
+													  UlongToColRefMap *colref_mapping,
+													  BOOL must_exist);
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CLogicalLeftOuterCorrelatedApply";
-			}
+		// applicable transformations
+		virtual CXformSet *PxfsCandidates(IMemoryPool *mp) const;
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
+		// return true if operator is a correlated apply
+		virtual BOOL
+		FCorrelated() const
+		{
+			return true;
+		}
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+		// conversion function
+		static CLogicalLeftOuterCorrelatedApply *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalLeftOuterCorrelatedApply == pop->Eopid());
 
-			// applicable transformations
-			virtual
-			CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+			return dynamic_cast<CLogicalLeftOuterCorrelatedApply *>(pop);
+		}
 
-			// return true if operator is a correlated apply
-			virtual
-			BOOL FCorrelated() const
-			{
-				return true;
-			}
+	};  // class CLogicalLeftOuterCorrelatedApply
 
-			// conversion function
-			static
-			CLogicalLeftOuterCorrelatedApply *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalLeftOuterCorrelatedApply == pop->Eopid());
-
-				return dynamic_cast<CLogicalLeftOuterCorrelatedApply*>(pop);
-			}
-
-	}; // class CLogicalLeftOuterCorrelatedApply
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CLogicalLeftOuterCorrelatedApply_H
+#endif  // !GPOPT_CLogicalLeftOuterCorrelatedApply_H
 
 // EOF

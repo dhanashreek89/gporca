@@ -26,14 +26,10 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalLeftSemiHashJoin::CPhysicalLeftSemiHashJoin
-	(
-	IMemoryPool *mp,
-	CExpressionArray *pdrgpexprOuterKeys,
-	CExpressionArray *pdrgpexprInnerKeys
-	)
-	:
-	CPhysicalHashJoin(mp, pdrgpexprOuterKeys, pdrgpexprInnerKeys)
+CPhysicalLeftSemiHashJoin::CPhysicalLeftSemiHashJoin(IMemoryPool *mp,
+													 CExpressionArray *pdrgpexprOuterKeys,
+													 CExpressionArray *pdrgpexprInnerKeys)
+	: CPhysicalHashJoin(mp, pdrgpexprOuterKeys, pdrgpexprInnerKeys)
 {
 }
 
@@ -60,13 +56,10 @@ CPhysicalLeftSemiHashJoin::~CPhysicalLeftSemiHashJoin()
 //
 //---------------------------------------------------------------------------
 BOOL
-CPhysicalLeftSemiHashJoin::FProvidesReqdCols
-	(
-	CExpressionHandle &exprhdl,
-	CColRefSet *pcrsRequired,
-	ULONG // ulOptReq
-	)
-	const
+CPhysicalLeftSemiHashJoin::FProvidesReqdCols(CExpressionHandle &exprhdl,
+											 CColRefSet *pcrsRequired,
+											 ULONG  // ulOptReq
+											 ) const
 {
 	// left semi join only propagates columns from left child
 	return FOuterProvidesReqdCols(exprhdl, pcrsRequired);
@@ -81,18 +74,15 @@ CPhysicalLeftSemiHashJoin::FProvidesReqdCols
 //
 //---------------------------------------------------------------------------
 CPartitionPropagationSpec *
-CPhysicalLeftSemiHashJoin::PppsRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CPartitionPropagationSpec *pppsRequired,
-	ULONG child_index,
-	CDrvdPropArrays *pdrgpdpCtxt,
-	ULONG // ulOptReq
-	)
+CPhysicalLeftSemiHashJoin::PppsRequired(IMemoryPool *mp,
+										CExpressionHandle &exprhdl,
+										CPartitionPropagationSpec *pppsRequired,
+										ULONG child_index,
+										CDrvdPropArrays *pdrgpdpCtxt,
+										ULONG  // ulOptReq
+)
 {
 	return PppsRequiredJoinChild(mp, exprhdl, pppsRequired, child_index, pdrgpdpCtxt, false);
 }
 
 // EOF
-

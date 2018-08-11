@@ -68,8 +68,7 @@ CParseHandlerLogicalProject::StartElement(const XMLCh *const,  // element_uri,
 	if (0 == XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenLogicalProject),
 									  element_local_name))
 	{
-		m_dxlnode = GPOS_NEW(m_mp)
-			CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLLogicalProject(m_mp));
+		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLLogicalProject(m_mp));
 
 		// create child node parsers
 
@@ -79,11 +78,8 @@ CParseHandlerLogicalProject::StartElement(const XMLCh *const,  // element_uri,
 		m_parse_handler_mgr->ActivateParseHandler(child_parse_handler);
 
 		// parse handler for the proj list
-		CParseHandlerBase *proj_list_parse_handler =
-			CParseHandlerFactory::GetParseHandler(m_mp,
-												  CDXLTokens::XmlstrToken(EdxltokenScalarProjList),
-												  m_parse_handler_mgr,
-												  this);
+		CParseHandlerBase *proj_list_parse_handler = CParseHandlerFactory::GetParseHandler(
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarProjList), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(proj_list_parse_handler);
 
 

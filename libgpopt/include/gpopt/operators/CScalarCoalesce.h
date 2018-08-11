@@ -29,105 +29,90 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalarCoalesce : public CScalar
 	{
+	private:
+		// return type
+		IMDId *m_mdid_type;
 
-		private:
+		// is operator return type BOOL?
+		BOOL m_fBoolReturnType;
 
-			// return type
-			IMDId *m_mdid_type;
+		// private copy ctor
+		CScalarCoalesce(const CScalarCoalesce &);
 
-			// is operator return type BOOL?
-			BOOL m_fBoolReturnType;
+	public:
+		// ctor
+		CScalarCoalesce(IMemoryPool *mp, IMDId *mdid_type);
 
-			// private copy ctor
-			CScalarCoalesce(const CScalarCoalesce &);
+		// dtor
+		virtual ~CScalarCoalesce();
 
-		public:
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopScalarCoalesce;
+		}
 
-			// ctor
-			CScalarCoalesce(IMemoryPool *mp, IMDId *mdid_type);
+		// operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CScalarCoalesce";
+		}
 
-			// dtor
-			virtual
-			~CScalarCoalesce();
+		// return type
+		virtual IMDId *
+		MDIdType() const
+		{
+			return m_mdid_type;
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopScalarCoalesce;
-			}
+		// operator specific hash function
+		virtual ULONG HashValue() const;
 
-			// operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CScalarCoalesce";
-			}
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// return type
-			virtual
-			IMDId *MDIdType() const
-			{
-				return m_mdid_type;
-			}
+		// sensitivity to order of inputs
+		virtual BOOL
+		FInputOrderSensitive() const
+		{
+			return true;
+		}
 
-			// operator specific hash function
-			virtual
-			ULONG HashValue() const;
+		// return a copy of the operator with remapped columns
+		virtual COperator *
+		PopCopyWithRemappedColumns(IMemoryPool *,		//mp,
+								   UlongToColRefMap *,  //colref_mapping,
+								   BOOL					//must_exist
+		)
+		{
+			return PopCopyDefault();
+		}
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
+		// boolean expression evaluation
+		virtual EBoolEvalResult
+		Eber(ULongPtrArray *pdrgpulChildren) const
+		{
+			// Coalesce returns the first not-null child,
+			// if all children are Null, then Coalesce must return Null
+			return EberNullOnAllNullChildren(pdrgpulChildren);
+		}
 
-			// sensitivity to order of inputs
-			virtual
-			BOOL FInputOrderSensitive() const
-			{
-				return true;
-			}
+		// conversion function
+		static CScalarCoalesce *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopScalarCoalesce == pop->Eopid());
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *, //mp,
-						UlongToColRefMap *, //colref_mapping,
-						BOOL //must_exist
-						)
-			{
-				return PopCopyDefault();
-			}
+			return dynamic_cast<CScalarCoalesce *>(pop);
+		}
 
-			// boolean expression evaluation
-			virtual
-			EBoolEvalResult Eber
-				(
-				ULongPtrArray *pdrgpulChildren
-				)
-				const
-			{
-				// Coalesce returns the first not-null child,
-				// if all children are Null, then Coalesce must return Null
-				return EberNullOnAllNullChildren(pdrgpulChildren);
-			}
+	};  // class CScalarCoalesce
 
-			// conversion function
-			static
-			CScalarCoalesce *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopScalarCoalesce == pop->Eopid());
+}  // namespace gpopt
 
-				return dynamic_cast<CScalarCoalesce*>(pop);
-			}
-
-	}; // class CScalarCoalesce
-
-}
-
-#endif // !GPOPT_CScalarCoalesce_H
+#endif  // !GPOPT_CScalarCoalesce_H
 
 // EOF

@@ -29,59 +29,50 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformSelect2DynamicIndexGet : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformSelect2DynamicIndexGet(const CXformSelect2DynamicIndexGet &);
 
-		private:
+		// return the column reference set of included / key columns
+		CColRefSet *GetColRefSet(IMemoryPool *mp,
+								 CLogicalGet *popGet,
+								 const IMDIndex *pmdindex,
+								 BOOL fIncludedColumns) const;
 
-			// private copy ctor
-			CXformSelect2DynamicIndexGet(const CXformSelect2DynamicIndexGet &);
+	public:
+		// ctor
+		explicit CXformSelect2DynamicIndexGet(IMemoryPool *mp);
 
-			// return the column reference set of included / key columns
-			CColRefSet *GetColRefSet
-				(
-				IMemoryPool *mp,
-				CLogicalGet *popGet,
-				const IMDIndex *pmdindex,
-				BOOL fIncludedColumns
-				)
-				const;
+		// dtor
+		virtual ~CXformSelect2DynamicIndexGet()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfSelect2DynamicIndexGet;
+		}
 
-			// ctor
-			explicit
-			CXformSelect2DynamicIndexGet(IMemoryPool *mp);
+		// xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformSelect2DynamicIndexGet";
+		}
 
-			// dtor
-			virtual
-			~CXformSelect2DynamicIndexGet()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfSelect2DynamicIndexGet;
-			}
-
-			// xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformSelect2DynamicIndexGet";
-			}
-
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
 
-	}; // class CXformSelect2DynamicIndexGet
+	};  // class CXformSelect2DynamicIndexGet
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CXformSelect2DynamicIndexGet_H
+#endif  // !GPOPT_CXformSelect2DynamicIndexGet_H
 
 // EOF

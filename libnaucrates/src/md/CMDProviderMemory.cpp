@@ -40,8 +40,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CMDProviderMemory::CMDProviderMemory(IMemoryPool *mp, const CHAR *file_name)
-	: m_mdmap(NULL)
+CMDProviderMemory::CMDProviderMemory(IMemoryPool *mp, const CHAR *file_name) : m_mdmap(NULL)
 {
 	GPOS_ASSERT(NULL != file_name);
 
@@ -172,10 +171,8 @@ CMDProviderMemory::GetMDObjDXLStr(IMemoryPool *mp,
 				mdid->AddRef();
 				CAutoRef<CDXLRelStats> a_pdxlrelstats;
 				a_pdxlrelstats = CDXLRelStats::CreateDXLDummyRelStats(mp, mdid);
-				a_pstrResult = CDXLUtils::SerializeMDObj(mp,
-														 a_pdxlrelstats.Value(),
-														 true /*fSerializeHeaders*/,
-														 false /*findent*/);
+				a_pstrResult = CDXLUtils::SerializeMDObj(
+					mp, a_pdxlrelstats.Value(), true /*fSerializeHeaders*/, false /*findent*/);
 				break;
 			}
 			case IMDId::EmdidColStats:
@@ -187,15 +184,10 @@ CMDProviderMemory::GetMDObjDXLStr(IMemoryPool *mp,
 				mdid->AddRef();
 				CAutoRef<CDXLColStats> a_pdxlcolstats;
 				a_pdxlcolstats = CDXLColStats::CreateDXLDummyColStats(
-					mp,
-					mdid,
-					a_pmdname.Value(),
-					CStatistics::DefaultColumnWidth /* width */);
+					mp, mdid, a_pmdname.Value(), CStatistics::DefaultColumnWidth /* width */);
 				a_pmdname.Reset();
-				a_pstrResult = CDXLUtils::SerializeMDObj(mp,
-														 a_pdxlcolstats.Value(),
-														 true /*fSerializeHeaders*/,
-														 false /*findent*/);
+				a_pstrResult = CDXLUtils::SerializeMDObj(
+					mp, a_pdxlcolstats.Value(), true /*fSerializeHeaders*/, false /*findent*/);
 				break;
 			}
 			default:
@@ -225,9 +217,7 @@ CMDProviderMemory::GetMDObjDXLStr(IMemoryPool *mp,
 //
 //---------------------------------------------------------------------------
 IMDId *
-CMDProviderMemory::MDId(IMemoryPool *mp,
-						CSystemId sysid,
-						IMDType::ETypeInfo type_info) const
+CMDProviderMemory::MDId(IMemoryPool *mp, CSystemId sysid, IMDType::ETypeInfo type_info) const
 {
 	return GetGPDBTypeMdid(mp, sysid, type_info);
 }

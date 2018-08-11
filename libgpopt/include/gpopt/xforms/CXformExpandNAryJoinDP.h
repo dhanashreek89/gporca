@@ -30,61 +30,51 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformExpandNAryJoinDP : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformExpandNAryJoinDP(const CXformExpandNAryJoinDP &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformExpandNAryJoinDP(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformExpandNAryJoinDP(const CXformExpandNAryJoinDP &);
+		// dtor
+		virtual ~CXformExpandNAryJoinDP()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfExpandNAryJoinDP;
+		}
 
-			// ctor
-			explicit
-			CXformExpandNAryJoinDP(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformExpandNAryJoinDP";
+		}
 
-			// dtor
-			virtual
-			~CXformExpandNAryJoinDP()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfExpandNAryJoinDP;
-			}
+		// do stats need to be computed before applying xform?
+		virtual BOOL
+		FNeedsStats() const
+		{
+			return true;
+		}
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformExpandNAryJoinDP";
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+	};  // class CXformExpandNAryJoinDP
 
-			// do stats need to be computed before applying xform?
-			virtual
-			BOOL FNeedsStats() const
-			{
-				return true;
-			}
-
-			// actual transform
-			void Transform
-					(
-					CXformContext *pxfctxt,
-					CXformResult *pxfres,
-					CExpression *pexpr
-					) const;
-
-	}; // class CXformExpandNAryJoinDP
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformExpandNAryJoinDP_H
+#endif  // !GPOPT_CXformExpandNAryJoinDP_H
 
 // EOF

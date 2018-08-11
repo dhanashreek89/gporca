@@ -27,28 +27,23 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDistributionSpecNonSingleton::CDistributionSpecNonSingleton
-       ()
-       :
-       m_fAllowReplicated(true)
-{}
+CDistributionSpecNonSingleton::CDistributionSpecNonSingleton() : m_fAllowReplicated(true)
+{
+}
 
 
- //---------------------------------------------------------------------------
- //     @function:
+//---------------------------------------------------------------------------
+//     @function:
 //             CDistributionSpecNonSingleton::CDistributionSpecNonSingleton
 //
 //     @doc:
 //             Ctor
 //
 //---------------------------------------------------------------------------
-CDistributionSpecNonSingleton::CDistributionSpecNonSingleton
-       (
-       BOOL fAllowReplicated
-       )
-       :
-       m_fAllowReplicated(fAllowReplicated)
-{}
+CDistributionSpecNonSingleton::CDistributionSpecNonSingleton(BOOL fAllowReplicated)
+	: m_fAllowReplicated(fAllowReplicated)
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -60,11 +55,8 @@ CDistributionSpecNonSingleton::CDistributionSpecNonSingleton
 //
 //---------------------------------------------------------------------------
 BOOL
-CDistributionSpecNonSingleton::FSatisfies
-	(
-	const CDistributionSpec * // pds
-	)
-	const
+CDistributionSpecNonSingleton::FSatisfies(const CDistributionSpec *  // pds
+										  ) const
 {
 	GPOS_ASSERT(!"Non-Singleton distribution cannot be derived");
 
@@ -82,18 +74,15 @@ CDistributionSpecNonSingleton::FSatisfies
 //
 //---------------------------------------------------------------------------
 void
-CDistributionSpecNonSingleton::AppendEnforcers
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &, // exprhdl
-	CReqdPropPlan *
+CDistributionSpecNonSingleton::AppendEnforcers(IMemoryPool *mp,
+											   CExpressionHandle &,  // exprhdl
+											   CReqdPropPlan *
 #ifdef GPOS_DEBUG
-	prpp
-#endif // GPOS_DEBUG
-	,
-	CExpressionArray *pdrgpexpr,
-	CExpression *pexpr
-	)
+												   prpp
+#endif  // GPOS_DEBUG
+											   ,
+											   CExpressionArray *pdrgpexpr,
+											   CExpression *pexpr)
 {
 	GPOS_ASSERT(NULL != mp);
 	GPOS_ASSERT(NULL != prpp);
@@ -101,7 +90,7 @@ CDistributionSpecNonSingleton::AppendEnforcers
 	GPOS_ASSERT(NULL != pexpr);
 	GPOS_ASSERT(!GPOS_FTRACE(EopttraceDisableMotions));
 	GPOS_ASSERT(this == prpp->Ped()->PdsRequired() &&
-	            "required plan properties don't match enforced distribution spec");
+				"required plan properties don't match enforced distribution spec");
 
 
 	if (GPOS_FTRACE(EopttraceDisableMotionRandom))
@@ -113,12 +102,8 @@ CDistributionSpecNonSingleton::AppendEnforcers
 	// add a random distribution enforcer
 	CDistributionSpecRandom *pdsrandom = GPOS_NEW(mp) CDistributionSpecRandom();
 	pexpr->AddRef();
-	CExpression *pexprMotion = GPOS_NEW(mp) CExpression
-										(
-										mp,
-										GPOS_NEW(mp) CPhysicalMotionRandom(mp, pdsrandom),
-										pexpr
-										);
+	CExpression *pexprMotion =
+		GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPhysicalMotionRandom(mp, pdsrandom), pexpr);
 	pdrgpexpr->Append(pexprMotion);
 }
 
@@ -131,19 +116,14 @@ CDistributionSpecNonSingleton::AppendEnforcers
 //
 //---------------------------------------------------------------------------
 IOstream &
-CDistributionSpecNonSingleton::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CDistributionSpecNonSingleton::OsPrint(IOstream &os) const
 {
 	os << "NON-SINGLETON ";
 	if (!m_fAllowReplicated)
 	{
-	   os << " (NON-REPLICATED)";
+		os << " (NON-REPLICATED)";
 	}
 	return os;
 }
 
 // EOF
-

@@ -56,10 +56,7 @@ namespace gpdxl
 
 	public:
 		// ctor/dtor
-		CDXLTableDescr(IMemoryPool *mp,
-					   IMDId *mdid,
-					   CMDName *mdname,
-					   ULONG ulExecuteAsUser);
+		CDXLTableDescr(IMemoryPool *mp, IMDId *mdid, CMDName *mdname, ULONG ulExecuteAsUser);
 
 		virtual ~CDXLTableDescr();
 

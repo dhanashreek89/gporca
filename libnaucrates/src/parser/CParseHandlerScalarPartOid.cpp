@@ -63,8 +63,8 @@ CParseHandlerScalarPartOid::StartElement(const XMLCh *const,  // element_uri,
 		attrs,
 		EdxltokenPartLevel,
 		EdxltokenScalarPartOid);
-	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(
-		m_mp, GPOS_NEW(m_mp) CDXLScalarPartOid(m_mp, partition_level));
+	m_dxlnode =
+		GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarPartOid(m_mp, partition_level));
 }
 
 //---------------------------------------------------------------------------

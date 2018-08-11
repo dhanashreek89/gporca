@@ -16,7 +16,6 @@
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalInnerHashJoin
@@ -27,85 +26,78 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalInnerHashJoin : public CPhysicalHashJoin
 	{
+	private:
+		// helper for computing a hashed distribution matching the given distribution
+		CDistributionSpecHashed *PdshashedCreateMatching(IMemoryPool *mp,
+														 CDistributionSpecHashed *pdshashed,
+														 ULONG ulSourceChild) const;
 
-		private:
+		// helper for deriving hash join distribution from hashed children
+		CDistributionSpec *PdsDeriveFromHashedChildren(IMemoryPool *mp,
+													   CDistributionSpec *pdsOuter,
+													   CDistributionSpec *pdsInner) const;
 
-			// helper for computing a hashed distribution matching the given distribution
-			CDistributionSpecHashed *PdshashedCreateMatching(IMemoryPool *mp, CDistributionSpecHashed *pdshashed, ULONG ulSourceChild) const;
+		// helper for deriving hash join distribution from replicated outer child
+		CDistributionSpec *PdsDeriveFromReplicatedOuter(IMemoryPool *mp,
+														CDistributionSpec *pdsOuter,
+														CDistributionSpec *pdsInner) const;
 
-			// helper for deriving hash join distribution from hashed children
-			CDistributionSpec *PdsDeriveFromHashedChildren(IMemoryPool *mp, CDistributionSpec *pdsOuter, CDistributionSpec *pdsInner) const;
+		// helper for deriving hash join distribution from hashed outer child
+		CDistributionSpec *PdsDeriveFromHashedOuter(IMemoryPool *mp,
+													CDistributionSpec *pdsOuter,
+													CDistributionSpec *pdsInner) const;
 
-			// helper for deriving hash join distribution from replicated outer child
-			CDistributionSpec *PdsDeriveFromReplicatedOuter(IMemoryPool *mp, CDistributionSpec *pdsOuter, CDistributionSpec *pdsInner) const;
+		// private copy ctor
+		CPhysicalInnerHashJoin(const CPhysicalInnerHashJoin &);
 
-			// helper for deriving hash join distribution from hashed outer child
-			CDistributionSpec *PdsDeriveFromHashedOuter(IMemoryPool *mp, CDistributionSpec *pdsOuter, CDistributionSpec *pdsInner) const;
+	public:
+		// ctor
+		CPhysicalInnerHashJoin(IMemoryPool *mp,
+							   CExpressionArray *pdrgpexprOuterKeys,
+							   CExpressionArray *pdrgpexprInnerKeys);
 
-			// private copy ctor
-			CPhysicalInnerHashJoin(const CPhysicalInnerHashJoin &);
+		// dtor
+		virtual ~CPhysicalInnerHashJoin();
 
-		public:
+		// ident accessors
 
-			// ctor
-			CPhysicalInnerHashJoin
-				(
-				IMemoryPool *mp,
-				CExpressionArray *pdrgpexprOuterKeys,
-				CExpressionArray *pdrgpexprInnerKeys
-				);
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalInnerHashJoin;
+		}
 
-			// dtor
-			virtual
-			~CPhysicalInnerHashJoin();
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalInnerHashJoin";
+		}
 
-			// ident accessors
+		// conversion function
+		static CPhysicalInnerHashJoin *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(EopPhysicalInnerHashJoin == pop->Eopid());
 
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalInnerHashJoin;
-			}
+			return dynamic_cast<CPhysicalInnerHashJoin *>(pop);
+		}
 
-			 // return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CPhysicalInnerHashJoin";
-			}
+		// derive distribution
+		virtual CDistributionSpec *PdsDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// conversion function
-			static
-			CPhysicalInnerHashJoin *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(EopPhysicalInnerHashJoin == pop->Eopid());
+		// compute required partition propagation of the n-th child
+		virtual CPartitionPropagationSpec *PppsRequired(IMemoryPool *mp,
+														CExpressionHandle &exprhdl,
+														CPartitionPropagationSpec *pppsRequired,
+														ULONG child_index,
+														CDrvdPropArrays *pdrgpdpCtxt,
+														ULONG ulOptReq);
 
-				return dynamic_cast<CPhysicalInnerHashJoin*>(pop);
-			}
+	};  // class CPhysicalInnerHashJoin
 
-			// derive distribution
-			virtual
-			CDistributionSpec *PdsDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+}  // namespace gpopt
 
-			// compute required partition propagation of the n-th child
-			virtual
-			CPartitionPropagationSpec *PppsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CPartitionPropagationSpec *pppsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				);
-			
-	}; // class CPhysicalInnerHashJoin
-
-}
-
-#endif // !GPOPT_CPhysicalInnerHashJoin_H
+#endif  // !GPOPT_CPhysicalInnerHashJoin_H
 
 // EOF

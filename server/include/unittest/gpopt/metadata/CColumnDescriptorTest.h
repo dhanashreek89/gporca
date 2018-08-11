@@ -27,15 +27,14 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CColumnDescriptorTest
 	{
-		public:
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
+		static GPOS_RESULT EresUnittest_Basic();
 
-			// unittests
-			static GPOS_RESULT EresUnittest();
-			static GPOS_RESULT EresUnittest_Basic();
+	};  // class CColumnDescriptorTest
+}  // namespace gpopt
 
-	}; // class CColumnDescriptorTest
-}
-
-#endif // !GPOPT_CColumnDescriptorTest_H
+#endif  // !GPOPT_CColumnDescriptorTest_H
 
 // EOF

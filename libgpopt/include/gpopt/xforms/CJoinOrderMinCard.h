@@ -31,41 +31,32 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CJoinOrderMinCard : public CJoinOrder
 	{
+	private:
+		// result component
+		SComponent *m_pcompResult;
 
-		private:
+		// mark edges used by result component
+		void MarkUsedEdges();
 
-			// result component
-			SComponent *m_pcompResult;
+	public:
+		// ctor
+		CJoinOrderMinCard(IMemoryPool *mp,
+						  CExpressionArray *pdrgpexprComponents,
+						  CExpressionArray *pdrgpexprConjuncts);
 
-			// mark edges used by result component
-			void MarkUsedEdges();
+		// dtor
+		virtual ~CJoinOrderMinCard();
 
-		public:
+		// main handler
+		virtual CExpression *PexprExpand();
 
-			// ctor
-			CJoinOrderMinCard
-				(
-				IMemoryPool *mp,
-				CExpressionArray *pdrgpexprComponents,
-				CExpressionArray *pdrgpexprConjuncts
-				);
+		// print function
+		virtual IOstream &OsPrint(IOstream &) const;
 
-			// dtor
-			virtual
-			~CJoinOrderMinCard();
+	};  // class CJoinOrderMinCard
 
-			// main handler
-			virtual
-			CExpression *PexprExpand();
+}  // namespace gpopt
 
-			// print function
-			virtual
-			IOstream &OsPrint(IOstream &) const;
-
-	}; // class CJoinOrderMinCard
-
-}
-
-#endif // !GPOPT_CJoinOrderMinCard_H
+#endif  // !GPOPT_CJoinOrderMinCard_H
 
 // EOF

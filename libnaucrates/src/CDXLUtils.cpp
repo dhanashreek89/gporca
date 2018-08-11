@@ -289,8 +289,7 @@ CDXLUtils::GetParseHandlerForDXLString(IMemoryPool *mp,
 									   const CHAR *xsd_file_path)
 {
 	CAutoRg<CHAR> multi_byte_char_string;
-	multi_byte_char_string =
-		CreateMultiByteCharStringFromWCString(mp, dxl_string->GetBuffer());
+	multi_byte_char_string = CreateMultiByteCharStringFromWCString(mp, dxl_string->GetBuffer());
 	CParseHandlerDXL *parse_handler_dxl =
 		GetParseHandlerForDXLString(mp, multi_byte_char_string.Rgt(), xsd_file_path);
 	return parse_handler_dxl;
@@ -490,9 +489,7 @@ CDXLUtils::ParseDXLToMDId(IMemoryPool *mp,
 //
 //---------------------------------------------------------------------------
 CMDRequest *
-CDXLUtils::ParseDXLToMDRequest(IMemoryPool *mp,
-							   const CHAR *dxl_string,
-							   const CHAR *xsd_file_path)
+CDXLUtils::ParseDXLToMDRequest(IMemoryPool *mp, const CHAR *dxl_string, const CHAR *xsd_file_path)
 {
 	GPOS_ASSERT(NULL != mp);
 
@@ -519,9 +516,7 @@ CDXLUtils::ParseDXLToMDRequest(IMemoryPool *mp,
 //
 //---------------------------------------------------------------------------
 CMDRequest *
-CDXLUtils::ParseDXLToMDRequest(IMemoryPool *mp,
-							   const WCHAR *dxl_string,
-							   const CHAR *xsd_file_path)
+CDXLUtils::ParseDXLToMDRequest(IMemoryPool *mp, const WCHAR *dxl_string, const CHAR *xsd_file_path)
 {
 	GPOS_ASSERT(NULL != mp);
 
@@ -642,12 +637,10 @@ CDXLUtils::ParseDXLToOptimizerStatisticObjArray(
 	for (ULONG ulIdxRelStat = 0; ulIdxRelStat < ulRelStat; ulIdxRelStat++)
 	{
 		// create hash map from colid -> histogram
-		UlongToHistogramMap *column_id_histogram_map =
-			GPOS_NEW(mp) UlongToHistogramMap(mp);
+		UlongToHistogramMap *column_id_histogram_map = GPOS_NEW(mp) UlongToHistogramMap(mp);
 
 		// width hash map
-		UlongToDoubleMap *column_id_width_map =
-			GPOS_NEW(mp) UlongToDoubleMap(mp);
+		UlongToDoubleMap *column_id_width_map = GPOS_NEW(mp) UlongToDoubleMap(mp);
 
 		CDXLStatsDerivedRelation *stats_derived_relation_dxl =
 			(*dxl_derived_rel_stats_array)[ulIdxRelStat];
@@ -669,20 +662,19 @@ CDXLUtils::ParseDXLToOptimizerStatisticObjArray(
 			CBucketArray *stats_buckets_array =
 				CDXLUtils::ParseDXLToBucketsArray(mp, md_accessor, dxl_derived_col_stats);
 			CHistogram *histogram = GPOS_NEW(mp) CHistogram(stats_buckets_array,
-																	 true /*is_well_defined*/,
-																	 null_freq,
-																	 distinct_remaining,
-																	 freq_remaining);
+															true /*is_well_defined*/,
+															null_freq,
+															distinct_remaining,
+															freq_remaining);
 
 			column_id_histogram_map->Insert(GPOS_NEW(mp) ULONG(column_id), histogram);
-			column_id_width_map->Insert(GPOS_NEW(mp) ULONG(column_id),
-										GPOS_NEW(mp) CDouble(width));
+			column_id_width_map->Insert(GPOS_NEW(mp) ULONG(column_id), GPOS_NEW(mp) CDouble(width));
 		}
 
 		CDouble rows = stats_derived_relation_dxl->Rows();
-		CStatistics *stats = GPOS_NEW(mp) CStatistics(
-			mp, column_id_histogram_map, column_id_width_map, rows, false /* is_empty */
-		);
+		CStatistics *stats = GPOS_NEW(mp)
+			CStatistics(mp, column_id_histogram_map, column_id_width_map, rows, false /* is_empty */
+			);
 		//stats->AddCardUpperBound(mp, ulIdxRelStat, rows);
 
 		statistics_array->Append(stats);
@@ -706,27 +698,26 @@ CDXLUtils::ParseDXLToBucketsArray(IMemoryPool *mp,
 {
 	CBucketArray *stats_buckets_array = GPOS_NEW(mp) CBucketArray(mp);
 
-	const CDXLBucketArray *dxl_bucket_array = dxl_derived_col_stats->TransformHistogramToDXLBucketArray();
+	const CDXLBucketArray *dxl_bucket_array =
+		dxl_derived_col_stats->TransformHistogramToDXLBucketArray();
 	const ULONG num_of_buckets = dxl_bucket_array->Size();
 	for (ULONG ul = 0; ul < num_of_buckets; ul++)
 	{
 		CDXLBucket *dxl_bucket = (*dxl_bucket_array)[ul];
 
 		// translate the lower and upper bounds of the bucket
-		IDatum *datum_lower_bound =
-			GetDatum(mp, md_accessor, dxl_bucket->GetDXLDatumLower());
+		IDatum *datum_lower_bound = GetDatum(mp, md_accessor, dxl_bucket->GetDXLDatumLower());
 		CPoint *point_lower_bound = GPOS_NEW(mp) CPoint(datum_lower_bound);
 
-		IDatum *datum_upper_bound =
-			GetDatum(mp, md_accessor, dxl_bucket->GetDXLDatumUpper());
+		IDatum *datum_upper_bound = GetDatum(mp, md_accessor, dxl_bucket->GetDXLDatumUpper());
 		CPoint *point_upper_bound = GPOS_NEW(mp) CPoint(datum_upper_bound);
 
 		CBucket *bucket = GPOS_NEW(mp) CBucket(point_lower_bound,
-														point_upper_bound,
-														dxl_bucket->IsLowerClosed(),
-														dxl_bucket->IsUpperClosed(),
-														dxl_bucket->GetFrequency(),
-														dxl_bucket->GetNumDistinct());
+											   point_upper_bound,
+											   dxl_bucket->IsLowerClosed(),
+											   dxl_bucket->IsUpperClosed(),
+											   dxl_bucket->GetFrequency(),
+											   dxl_bucket->GetNumDistinct());
 
 		stats_buckets_array->Append(bucket);
 	}
@@ -1117,9 +1108,7 @@ CDXLUtils::SerializeSamplePlans(IMemoryPool *mp,
 //
 //---------------------------------------------------------------------------
 CWStringDynamic *
-CDXLUtils::SerializeCostDistr(IMemoryPool *mp,
-							  CEnumeratorConfig *enumerator_cfg,
-							  BOOL indentation)
+CDXLUtils::SerializeCostDistr(IMemoryPool *mp, CEnumeratorConfig *enumerator_cfg, BOOL indentation)
 {
 	GPOS_ASSERT(NULL != mp);
 
@@ -1339,8 +1328,7 @@ CDXLUtils::SerializeMetadata(IMemoryPool *mp,
 	// create a string stream to hold the result of serialization
 	COstreamString oss(dxl_string);
 
-	CDXLUtils::SerializeMetadata(
-		mp, imd_obj_array, oss, serialize_header_footer, indentation);
+	CDXLUtils::SerializeMetadata(mp, imd_obj_array, oss, serialize_header_footer, indentation);
 
 	return dxl_string;
 }
@@ -1757,8 +1745,7 @@ CDXLUtils::Serialize(IMemoryPool *mp, const ULongPtrArray2D *array_2D)
 
 // Serialize a list of chars into a comma-separated string
 CWStringDynamic *
-CDXLUtils::SerializeToCommaSeparatedString(IMemoryPool *mp,
-										   const CharPtrArray *char_ptr_array)
+CDXLUtils::SerializeToCommaSeparatedString(IMemoryPool *mp, const CharPtrArray *char_ptr_array)
 {
 	CWStringDynamic *dxl_string = GPOS_NEW(mp) CWStringDynamic(mp);
 

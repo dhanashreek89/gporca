@@ -105,9 +105,7 @@ namespace gpdxl
 
 		// construct a metadata request parse handler
 		static CParseHandlerBase *CreateMDRequestParseHandler(
-			IMemoryPool *mp,
-			CParseHandlerManager *parse_handler_mgr,
-			CParseHandlerBase *pph);
+			IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *pph);
 
 		// construct a parse handler for the optimizer configuration
 		static CParseHandlerBase *CreateOptimizerCfgParseHandler(
@@ -1098,39 +1096,29 @@ namespace gpdxl
 			CParseHandlerBase *parse_handler_root);
 
 		// construct a nested loop param list parse handler
-			static
-			CParseHandlerBase *CreateNLJIndexParamListParseHandler
-				(
-				IMemoryPool *mp,
-				CParseHandlerManager *parse_handler_manager,
-				CParseHandlerBase *parse_handler_root
-				);
+		static CParseHandlerBase *CreateNLJIndexParamListParseHandler(
+			IMemoryPool *mp,
+			CParseHandlerManager *parse_handler_manager,
+			CParseHandlerBase *parse_handler_root);
 
-			// construct a nested loop param parse handler
-			static
-			CParseHandlerBase *CreateNLJIndexParamParseHandler
-				(
-				IMemoryPool *pmp,
-				CParseHandlerManager *parse_handler_manager,
-				CParseHandlerBase *parse_handler_root
-				);public:
+		// construct a nested loop param parse handler
+		static CParseHandlerBase *CreateNLJIndexParamParseHandler(
+			IMemoryPool *pmp,
+			CParseHandlerManager *parse_handler_manager,
+			CParseHandlerBase *parse_handler_root);
 
-			// initialize mappings of tokens to parse handlers
-			static
-			void Init(IMemoryPool *mp);
+	public:
+		// initialize mappings of tokens to parse handlers
+		static void Init(IMemoryPool *mp);
 
-			// return the parse handler creator for operator with the given name
-			static
-			CParseHandlerBase *GetParseHandler(
-				IMemoryPool *mp,
-				const XMLCh *xml_str,
-				CParseHandlerManager *parse_handler_mgr,
-				CParseHandlerBase *parse_handler_root
-				);
+		// return the parse handler creator for operator with the given name
+		static CParseHandlerBase *GetParseHandler(IMemoryPool *mp,
+												  const XMLCh *xml_str,
+												  CParseHandlerManager *parse_handler_mgr,
+												  CParseHandlerBase *parse_handler_root);
 
 		// factory methods for creating parse handlers
-		static CParseHandlerDXL *GetParseHandlerDXL(IMemoryPool *mp,
-													CParseHandlerManager *);
+		static CParseHandlerDXL *GetParseHandlerDXL(IMemoryPool *mp, CParseHandlerManager *);
 	};
 }  // namespace gpdxl
 

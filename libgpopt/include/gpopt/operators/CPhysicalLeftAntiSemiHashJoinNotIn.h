@@ -16,7 +16,6 @@
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalLeftAntiSemiHashJoinNotIn
@@ -27,68 +26,59 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalLeftAntiSemiHashJoinNotIn : public CPhysicalLeftAntiSemiHashJoin
 	{
+	private:
+		// private copy ctor
+		CPhysicalLeftAntiSemiHashJoinNotIn(const CPhysicalLeftAntiSemiHashJoinNotIn &);
 
-		private:
+	public:
+		// ctor
+		CPhysicalLeftAntiSemiHashJoinNotIn(IMemoryPool *mp,
+										   CExpressionArray *pdrgpexprOuterKeys,
+										   CExpressionArray *pdrgpexprInnerKeys);
 
-			// private copy ctor
-			CPhysicalLeftAntiSemiHashJoinNotIn(const CPhysicalLeftAntiSemiHashJoinNotIn &);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalLeftAntiSemiHashJoinNotIn;
+		}
 
-		public:
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalLeftAntiSemiHashJoinNotIn";
+		}
 
-			// ctor
-			CPhysicalLeftAntiSemiHashJoinNotIn(IMemoryPool *mp, CExpressionArray *pdrgpexprOuterKeys, CExpressionArray *pdrgpexprInnerKeys);
+		//-------------------------------------------------------------------------------------
+		// Required Plan Properties
+		//-------------------------------------------------------------------------------------
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalLeftAntiSemiHashJoinNotIn;
-			}
+		// compute required distribution of the n-th child
+		virtual CDistributionSpec *PdsRequired(IMemoryPool *mp,
+											   CExpressionHandle &exprhdl,
+											   CDistributionSpec *pdsRequired,
+											   ULONG child_index,
+											   CDrvdPropArrays *pdrgpdpCtxt,
+											   ULONG ulOptReq) const;
 
-			 // return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CPhysicalLeftAntiSemiHashJoinNotIn";
-			}
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			// Required Plan Properties
-			//-------------------------------------------------------------------------------------
+		// conversion function
+		static CPhysicalLeftAntiSemiHashJoinNotIn *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(EopPhysicalLeftAntiSemiHashJoinNotIn == pop->Eopid());
 
-			// compute required distribution of the n-th child
-			virtual
-			CDistributionSpec *PdsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CDistributionSpec *pdsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				)
-				const;
+			return dynamic_cast<CPhysicalLeftAntiSemiHashJoinNotIn *>(pop);
+		}
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+	};  // class CPhysicalLeftAntiSemiHashJoinNotIn
 
-			// conversion function
-			static
-			CPhysicalLeftAntiSemiHashJoinNotIn *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(EopPhysicalLeftAntiSemiHashJoinNotIn == pop->Eopid());
+}  // namespace gpopt
 
-				return dynamic_cast<CPhysicalLeftAntiSemiHashJoinNotIn*>(pop);
-			}
-
-	}; // class CPhysicalLeftAntiSemiHashJoinNotIn
-
-}
-
-#endif // !GPOPT_CPhysicalLeftAntiSemiHashJoinNotIn_H
+#endif  // !GPOPT_CPhysicalLeftAntiSemiHashJoinNotIn_H
 
 // EOF

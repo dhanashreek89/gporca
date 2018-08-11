@@ -28,7 +28,7 @@ namespace gpopt
 
 	// forward declaration
 	class CColRefSet;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CScalar
@@ -39,202 +39,158 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalar : public COperator
 	{
-		public:
+	public:
+		// possible results of Boolean evaluation of a scalar expression
+		enum EBoolEvalResult
+		{
+			EberTrue = 1,  // TRUE
+			EberFalse,	 // FALSE
+			EberNull,	  // NULL
+			EberUnknown,   // Unknown
 
-			// possible results of Boolean evaluation of a scalar expression
-			enum EBoolEvalResult
-				{
-				EberTrue = 1,	// TRUE
-				EberFalse,		// FALSE
-				EberNull,		// NULL
-				EberUnknown,	// Unknown
+			EerSentinel
+		};
 
-				EerSentinel
-				};
+	private:
+		// private copy ctor
+		CScalar(const CScalar &);
 
-		private:
+		// helper for combining partition consumer arrays of scalar children
+		static CPartInfo *PpartinfoDeriveCombineScalar(IMemoryPool *mp, CExpressionHandle &exprhdl);
 
-			// private copy ctor
-			CScalar(const CScalar &);
-			
-			// helper for combining partition consumer arrays of scalar children
-			static
-			CPartInfo *PpartinfoDeriveCombineScalar(IMemoryPool *mp, CExpressionHandle &exprhdl);
+	protected:
+		// perform conjunction of child boolean evaluation results
+		static EBoolEvalResult EberConjunction(ULongPtrArray *pdrgpulChildren);
 
-		protected:
+		// perform disjunction of child boolean evaluation results
+		static EBoolEvalResult EberDisjunction(ULongPtrArray *pdrgpulChildren);
 
-			// perform conjunction of child boolean evaluation results
-			static
-			EBoolEvalResult EberConjunction(ULongPtrArray *pdrgpulChildren);
+		// return Null if any child is Null
+		static EBoolEvalResult EberNullOnAnyNullChild(ULongPtrArray *pdrgpulChildren);
 
-			// perform disjunction of child boolean evaluation results
-			static
-			EBoolEvalResult EberDisjunction(ULongPtrArray *pdrgpulChildren);
+		// return Null if all children are Null
+		static EBoolEvalResult EberNullOnAllNullChildren(ULongPtrArray *pdrgpulChildren);
 
-			// return Null if any child is Null
-			static
-			EBoolEvalResult EberNullOnAnyNullChild(ULongPtrArray *pdrgpulChildren);
+	public:
+		// ctor
+		explicit CScalar(IMemoryPool *mp) : COperator(mp)
+		{
+		}
 
-			// return Null if all children are Null
-			static
-			EBoolEvalResult EberNullOnAllNullChildren(ULongPtrArray *pdrgpulChildren);
+		// dtor
+		virtual ~CScalar()
+		{
+		}
 
-		public:
-		
-			// ctor
-			explicit
-			CScalar
-				(
-				IMemoryPool *mp
-				)
-				: 
-				COperator(mp)
-			{}
+		// type of operator
+		virtual BOOL
+		FScalar() const
+		{
+			GPOS_ASSERT(!FPhysical() && !FLogical() && !FPattern());
+			return true;
+		}
 
-			// dtor
-			virtual 
-			~CScalar() {}
+		// create derived properties container
+		virtual DrvdPropArray *PdpCreate(IMemoryPool *mp) const;
 
-			// type of operator
-			virtual
-			BOOL FScalar() const
-			{
-				GPOS_ASSERT(!FPhysical() && !FLogical() && !FPattern());
-				return true;
-			}
+		// create required properties container
+		virtual CReqdProp *PrpCreate(IMemoryPool *mp) const;
 
-			// create derived properties container
-			virtual
-			DrvdPropArray *PdpCreate(IMemoryPool *mp) const;
+		// return locally defined columns
+		virtual CColRefSet *
+		PcrsDefined(IMemoryPool *mp,
+					CExpressionHandle &  // exprhdl
+		)
+		{
+			// return an empty set of column refs
+			return GPOS_NEW(mp) CColRefSet(mp);
+		}
 
-			// create required properties container
-			virtual
-			CReqdProp *PrpCreate(IMemoryPool *mp) const;
+		// return columns containing set-returning function
+		virtual CColRefSet *
+		PcrsSetReturningFunction(IMemoryPool *mp,
+								 CExpressionHandle &  // exprhdl
+		)
+		{
+			// return an empty set of column refs
+			return GPOS_NEW(mp) CColRefSet(mp);
+		}
 
-			// return locally defined columns
-			virtual
-			CColRefSet *PcrsDefined
-				(
-				IMemoryPool *mp,
-				CExpressionHandle & // exprhdl
-				)
-			{
-				// return an empty set of column refs
-				return GPOS_NEW(mp) CColRefSet(mp);
-			}
+		// return locally used columns
+		virtual CColRefSet *
+		PcrsUsed(IMemoryPool *mp,
+				 CExpressionHandle &  // exprhdl
+		)
+		{
+			// return an empty set of column refs
+			return GPOS_NEW(mp) CColRefSet(mp);
+		}
 
-			// return columns containing set-returning function
-			virtual
-			CColRefSet *PcrsSetReturningFunction
-				(
-				IMemoryPool *mp,
-				CExpressionHandle & // exprhdl
-				)
-			{
-				// return an empty set of column refs
-				return GPOS_NEW(mp) CColRefSet(mp);
-			}
+		// derive partition consumer info
+		virtual CPartInfo *
+		PpartinfoDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const
+		{
+			return PpartinfoDeriveCombineScalar(mp, exprhdl);
+		}
 
-			// return locally used columns
-			virtual
-			CColRefSet *PcrsUsed
-				(
-				IMemoryPool *mp,
-				CExpressionHandle & // exprhdl
-				)
-			{
-				// return an empty set of column refs
-				return GPOS_NEW(mp) CColRefSet(mp);
-			}
+		// derive function properties
+		virtual CFunctionProp *
+		PfpDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const
+		{
+			return PfpDeriveFromChildren(mp,
+										 exprhdl,
+										 IMDFunction::EfsImmutable,  // efsDefault
+										 IMDFunction::EfdaNoSQL,	 // efdaDefault
+										 false,						 // fHasVolatileFunctionScan
+										 false						 // fScan
+			);
+		}
 
-			// derive partition consumer info
-			virtual
-			CPartInfo *PpartinfoDerive
-				(
-				IMemoryPool *mp, 
-				CExpressionHandle &exprhdl
-				) 
-				const
-			{
-				return PpartinfoDeriveCombineScalar(mp, exprhdl);
-			}
+		// derive subquery existence
+		virtual BOOL FHasSubquery(CExpressionHandle &exprhdl);
 
-			// derive function properties
-			virtual
-			CFunctionProp *PfpDerive
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl
-				)
-				const
-			{
-				return PfpDeriveFromChildren
-							(
-							mp,
-							exprhdl,
-							IMDFunction::EfsImmutable, // efsDefault
-							IMDFunction::EfdaNoSQL, // efdaDefault
-							false, // fHasVolatileFunctionScan
-							false // fScan
-							);
-			}
+		// derive non-scalar function existence
+		virtual BOOL FHasNonScalarFunction(CExpressionHandle &exprhdl);
 
-			// derive subquery existence
-			virtual
-			BOOL FHasSubquery(CExpressionHandle &exprhdl);
+		virtual BOOL FHasScalarArrayCmp(CExpressionHandle &exprhdl);
 
-			// derive non-scalar function existence
-			virtual
-			BOOL FHasNonScalarFunction(CExpressionHandle &exprhdl);
+		// boolean expression evaluation
+		virtual EBoolEvalResult
+		Eber(ULongPtrArray *  // pdrgpulChildren
+			 ) const
+		{
+			// by default, evaluation result is unknown
+			return EberUnknown;
+		}
 
-			virtual
-			BOOL FHasScalarArrayCmp(CExpressionHandle &exprhdl);
+		// perform boolean evaluation of the given expression tree
+		static EBoolEvalResult EberEvaluate(IMemoryPool *mp, CExpression *pexprScalar);
 
-			// boolean expression evaluation
-			virtual
-			EBoolEvalResult Eber
-				(
-				ULongPtrArray * // pdrgpulChildren
-				)
-				const
-			{
-				// by default, evaluation result is unknown
-				return EberUnknown;
-			}
+		// conversion function
+		static CScalar *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(pop->FScalar());
 
-			// perform boolean evaluation of the given expression tree
-			static
-			EBoolEvalResult EberEvaluate(IMemoryPool *mp, CExpression *pexprScalar);
+			return reinterpret_cast<CScalar *>(pop);
+		}
 
-			// conversion function
-			static
-			CScalar *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(pop->FScalar());
-				
-				return reinterpret_cast<CScalar*>(pop);
-			}
-		
-			// the type of the scalar expression
-			virtual 
-			IMDId *MDIdType() const = 0;
+		// the type of the scalar expression
+		virtual IMDId *MDIdType() const = 0;
 
-			// the type modifier of the scalar expression
-			virtual
-			INT TypeModifier() const
-			{
-				return default_type_modifier;
-			}
-			
-	}; // class CScalar
+		// the type modifier of the scalar expression
+		virtual INT
+		TypeModifier() const
+		{
+			return default_type_modifier;
+		}
 
-}
+	};  // class CScalar
+
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CScalar_H
+#endif  // !GPOPT_CScalar_H
 
 // EOF

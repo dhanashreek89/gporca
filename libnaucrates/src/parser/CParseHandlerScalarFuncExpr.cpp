@@ -34,8 +34,7 @@ XERCES_CPP_NAMESPACE_USE
 CParseHandlerScalarFuncExpr::CParseHandlerScalarFuncExpr(IMemoryPool *mp,
 														 CParseHandlerManager *parse_handler_mgr,
 														 CParseHandlerBase *parse_handler_root)
-	: CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root),
-	  m_inside_func_expr(false)
+	: CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root), m_inside_func_expr(false)
 {
 }
 
@@ -73,10 +72,7 @@ CParseHandlerScalarFuncExpr::StartElement(const XMLCh *const element_uri,
 		{
 			// This is to support nested FuncExpr
 			CParseHandlerBase *func_parse_handler = CParseHandlerFactory::GetParseHandler(
-				m_mp,
-				CDXLTokens::XmlstrToken(EdxltokenScalarFuncExpr),
-				m_parse_handler_mgr,
-				this);
+				m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarFuncExpr), m_parse_handler_mgr, this);
 			m_parse_handler_mgr->ActivateParseHandler(func_parse_handler);
 
 			// store parse handlers

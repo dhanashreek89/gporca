@@ -15,19 +15,14 @@ namespace gpopt
 	// It facilitates the construction of CConstraintInterval
 	class CDatumSortedSet : public IDatumArray
 	{
-		private:
-			BOOL m_fIncludesNull;
+	private:
+		BOOL m_fIncludesNull;
 
-		public:
-			CDatumSortedSet
-			(
-			IMemoryPool *mp,
-			CExpression *pexprArray,
-			const IComparator *pcomp
-			);
+	public:
+		CDatumSortedSet(IMemoryPool *mp, CExpression *pexprArray, const IComparator *pcomp);
 
-			BOOL FIncludesNull() const;
+		BOOL FIncludesNull() const;
 	};
-}
+}  // namespace gpopt
 
 #endif

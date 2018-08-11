@@ -83,13 +83,13 @@ namespace gpnaucrates
 
 		// given MCVs and histogram buckets, merge them into buckets of a single histogram
 		static CBucketArray *MergeMcvHistBucket(IMemoryPool *mp,
-											   const CBucketArray *mcv_buckets,
-											   const CBucketArray *histogram_buckets);
+												const CBucketArray *mcv_buckets,
+												const CBucketArray *histogram_buckets);
 
 		// split a histogram bucket given an MCV bucket
 		static CBucketArray *SplitHistBucketGivenMcvBuckets(IMemoryPool *mp,
-														   const CBucket *histogram_bucket,
-														   const CBucketArray *mcv_buckets);
+															const CBucket *histogram_bucket,
+															const CBucketArray *mcv_buckets);
 
 		// given lower and upper bound information and their closedness, return a bucket if they can form a valid bucket
 		static CBucket *CreateValidBucket(IMemoryPool *mp,
@@ -183,8 +183,7 @@ namespace gpnaucrates
 		// given a disjunction filter, generate a bit set of columns whose
 		// histogram buckets cannot be changed by applying the predicates in the
 		// disjunction
-		static CBitSet *GetColsNonUpdatableHistForDisj(IMemoryPool *mp,
-													   CStatsPredDisj *pred_stats);
+		static CBitSet *GetColsNonUpdatableHistForDisj(IMemoryPool *mp, CStatsPredDisj *pred_stats);
 
 		// helper method to add a histogram to a map
 		static void AddHistogram(IMemoryPool *mp,
@@ -205,7 +204,7 @@ namespace gpnaucrates
 
 		// helper method to copy the hash map of histograms
 		static UlongToHistogramMap *CopyHistHashMap(IMemoryPool *mp,
-													  UlongToHistogramMap *col_histogram_mapping);
+													UlongToHistogramMap *col_histogram_mapping);
 
 		// return the column identifier of the filter if the predicate is
 		// on a single column else	return gpos::ulong_max
@@ -256,10 +255,10 @@ namespace gpnaucrates
 
 		// extract NDVs for the given array of grouping columns
 		static CDoubleArray *ExtractNDVForGrpCols(IMemoryPool *mp,
-												const CStatisticsConfig *stats_config,
-												const IStatistics *stats,
-												CColRefSet *grp_cols_refset,  // grouping columns
-												CBitSet *keys  // keys derived during optimization
+												  const CStatisticsConfig *stats_config,
+												  const IStatistics *stats,
+												  CColRefSet *grp_cols_refset,  // grouping columns
+												  CBitSet *keys  // keys derived during optimization
 		);
 
 		// compute the cumulative number of groups for the given set of grouping columns

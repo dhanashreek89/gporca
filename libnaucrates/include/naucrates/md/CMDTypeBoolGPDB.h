@@ -198,13 +198,10 @@ namespace gpmd
 		}
 
 		// factory method for creating constants
-		virtual IDatumBool *CreateBoolDatum(IMemoryPool *mp,
-											BOOL fValue,
-											BOOL is_null) const;
+		virtual IDatumBool *CreateBoolDatum(IMemoryPool *mp, BOOL fValue, BOOL is_null) const;
 
 		// create typed datum from DXL datum
-		virtual IDatum *GetDatumForDXLDatum(IMemoryPool *mp,
-											const CDXLDatum *dxl_datum) const;
+		virtual IDatum *GetDatumForDXLDatum(IMemoryPool *mp, const CDXLDatum *dxl_datum) const;
 
 		// serialize object in DXL format
 		virtual void Serialize(gpdxl::CXMLSerializer *xml_serializer) const;
@@ -216,8 +213,7 @@ namespace gpmd
 		virtual CDXLDatum *GetDatumVal(IMemoryPool *mp, IDatum *datum) const;
 
 		// generate the DXL scalar constant from IDatum
-		virtual CDXLScalarConstValue *GetDXLOpScConst(IMemoryPool *mp,
-													  IDatum *datum) const;
+		virtual CDXLScalarConstValue *GetDXLOpScConst(IMemoryPool *mp, IDatum *datum) const;
 
 		// generate the DXL datum representing null value
 		virtual CDXLDatum *GetDXLDatumNull(IMemoryPool *mp) const;

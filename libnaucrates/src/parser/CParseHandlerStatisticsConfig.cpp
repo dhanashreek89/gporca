@@ -34,9 +34,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerStatisticsConfig::CParseHandlerStatisticsConfig(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root), m_stats_conf(NULL)
 {
 }
@@ -93,8 +91,8 @@ CParseHandlerStatisticsConfig::StartElement(const XMLCh *const,  //element_uri,
 		EdxltokenDampingFactorGroupBy,
 		EdxltokenStatisticsConfig);
 
-	m_stats_conf = GPOS_NEW(m_mp) CStatisticsConfig(
-		m_mp, damping_factor_filter, damping_factor_join, damping_factor_groupby);
+	m_stats_conf = GPOS_NEW(m_mp)
+		CStatisticsConfig(m_mp, damping_factor_filter, damping_factor_join, damping_factor_groupby);
 }
 
 //---------------------------------------------------------------------------

@@ -9,7 +9,7 @@
 //		Dynamic bitmap table scan physical operator
 //
 //	@owner:
-//		
+//
 //
 //	@test:
 //
@@ -39,65 +39,59 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalDynamicBitmapTableScan : public CPhysicalDynamicScan
 	{
-		private:
+	private:
+		// disable copy ctor
+		CPhysicalDynamicBitmapTableScan(const CPhysicalDynamicBitmapTableScan &);
 
-			// disable copy ctor
-			CPhysicalDynamicBitmapTableScan(const CPhysicalDynamicBitmapTableScan &);
+	public:
+		// ctor
+		CPhysicalDynamicBitmapTableScan(IMemoryPool *mp,
+										BOOL is_partial,
+										CTableDescriptor *ptabdesc,
+										ULONG ulOriginOpId,
+										const CName *pnameAlias,
+										ULONG scan_id,
+										CColRefArray *pdrgpcrOutput,
+										CColRefArrays *pdrgpdrgpcrParts,
+										ULONG ulSecondaryScanId,
+										CPartConstraint *ppartcnstr,
+										CPartConstraint *ppartcnstrRel);
 
-		public:
-			// ctor
-			CPhysicalDynamicBitmapTableScan
-				(
-				IMemoryPool *mp,
-				BOOL is_partial,
-				CTableDescriptor *ptabdesc,
-				ULONG ulOriginOpId,
-				const CName *pnameAlias,
-				ULONG scan_id,
-				CColRefArray *pdrgpcrOutput,
-				CColRefArrays *pdrgpdrgpcrParts,
-				ULONG ulSecondaryScanId,
-				CPartConstraint *ppartcnstr,
-				CPartConstraint *ppartcnstrRel
-				);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalDynamicBitmapTableScan;
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalDynamicBitmapTableScan;
-			}
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalDynamicBitmapTableScan";
+		}
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CPhysicalDynamicBitmapTableScan";
-			}
+		// match function
+		virtual BOOL Matches(COperator *) const;
 
-			// match function
-			virtual
-			BOOL Matches(COperator *) const;
+		// statistics derivation during costing
+		virtual IStatistics *PstatsDerive(IMemoryPool *mp,
+										  CExpressionHandle &exprhdl,
+										  CReqdPropPlan *prpplan,
+										  IStatisticsArray *stats_ctxt) const;
 
-			// statistics derivation during costing
-			virtual
-			IStatistics *PstatsDerive(IMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prpplan, IStatisticsArray *stats_ctxt) const;
+		// conversion function
+		static CPhysicalDynamicBitmapTableScan *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopPhysicalDynamicBitmapTableScan == pop->Eopid());
 
-			// conversion function
-			static
-			CPhysicalDynamicBitmapTableScan *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopPhysicalDynamicBitmapTableScan == pop->Eopid());
-
-				return dynamic_cast<CPhysicalDynamicBitmapTableScan *>(pop);
-			}
+			return dynamic_cast<CPhysicalDynamicBitmapTableScan *>(pop);
+		}
 	};
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CPhysicalDynamicBitmapTableScan_H
+#endif  // !GPOPT_CPhysicalDynamicBitmapTableScan_H
 
 // EOF

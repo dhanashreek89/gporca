@@ -26,13 +26,9 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalLeftOuterNLJoin::CPhysicalLeftOuterNLJoin
-	(
-	IMemoryPool *mp
-	)
-	:
-	CPhysicalNLJoin(mp)
-{}
+CPhysicalLeftOuterNLJoin::CPhysicalLeftOuterNLJoin(IMemoryPool *mp) : CPhysicalNLJoin(mp)
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -44,8 +40,8 @@ CPhysicalLeftOuterNLJoin::CPhysicalLeftOuterNLJoin
 //
 //---------------------------------------------------------------------------
 CPhysicalLeftOuterNLJoin::~CPhysicalLeftOuterNLJoin()
-{}
+{
+}
 
 
 // EOF
-

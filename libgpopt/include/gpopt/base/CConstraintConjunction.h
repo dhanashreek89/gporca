@@ -32,81 +32,70 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CConstraintConjunction : public CConstraint
 	{
-		private:
+	private:
+		// array of constraints
+		CConstraintArray *m_pdrgpcnstr;
 
-			// array of constraints
-			CConstraintArray *m_pdrgpcnstr;
+		// mapping colref -> array of child constraints
+		ColRefToConstraintArrayMap *m_phmcolconstr;
 
-			// mapping colref -> array of child constraints
-			ColRefToConstraintArrayMap *m_phmcolconstr;
+		// hidden copy ctor
+		CConstraintConjunction(const CConstraintConjunction &);
 
-			// hidden copy ctor
-			CConstraintConjunction(const CConstraintConjunction&);
+	public:
+		// ctor
+		CConstraintConjunction(IMemoryPool *mp, CConstraintArray *pdrgpcnstr);
 
-		public:
+		// dtor
+		virtual ~CConstraintConjunction();
 
-			// ctor
-			CConstraintConjunction(IMemoryPool *mp, CConstraintArray *pdrgpcnstr);
+		// constraint type accessor
+		virtual EConstraintType
+		Ect() const
+		{
+			return CConstraint::EctConjunction;
+		}
 
-			// dtor
-			virtual
-			~CConstraintConjunction();
+		// all constraints in conjunction
+		CConstraintArray *
+		Pdrgpcnstr() const
+		{
+			return m_pdrgpcnstr;
+		}
 
-			// constraint type accessor
-			virtual
-			EConstraintType Ect() const
-			{
-				return CConstraint::EctConjunction;
-			}
+		// is this constraint a contradiction
+		virtual BOOL FContradiction() const;
 
-			// all constraints in conjunction
-			CConstraintArray *Pdrgpcnstr() const
-			{
-				return m_pdrgpcnstr;
-			}
+		// scalar expression
+		virtual CExpression *PexprScalar(IMemoryPool *mp);
 
-			// is this constraint a contradiction
-			virtual
-			BOOL FContradiction() const;
+		// check if there is a constraint on the given column
+		virtual BOOL FConstraint(const CColRef *colref) const;
 
-			// scalar expression
-			virtual
-			CExpression *PexprScalar(IMemoryPool *mp);
+		// return a copy of the constraint with remapped columns
+		virtual CConstraint *PcnstrCopyWithRemappedColumns(IMemoryPool *mp,
+														   UlongToColRefMap *colref_mapping,
+														   BOOL must_exist);
 
-			// check if there is a constraint on the given column
-			virtual
-			BOOL FConstraint(const CColRef *colref) const;
+		// return constraint on a given column
+		virtual CConstraint *Pcnstr(IMemoryPool *mp, const CColRef *colref);
 
-			// return a copy of the constraint with remapped columns
-			virtual
-			CConstraint *PcnstrCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+		// return constraint on a given column set
+		virtual CConstraint *Pcnstr(IMemoryPool *mp, CColRefSet *pcrs);
 
-			// return constraint on a given column
-			virtual
-			CConstraint *Pcnstr(IMemoryPool *mp, const CColRef *colref);
+		// return a clone of the constraint for a different column
+		virtual CConstraint *PcnstrRemapForColumn(IMemoryPool *mp, CColRef *colref) const;
 
-			// return constraint on a given column set
-			virtual
-			CConstraint *Pcnstr(IMemoryPool *mp, CColRefSet *pcrs);
+		// print
+		virtual IOstream &
+		OsPrint(IOstream &os) const
+		{
+			return PrintConjunctionDisjunction(os, m_pdrgpcnstr);
+		}
 
-			// return a clone of the constraint for a different column
-			virtual
-			CConstraint *PcnstrRemapForColumn(IMemoryPool *mp, CColRef *colref) const;
+	};  // class CConstraintConjunction
+}  // namespace gpopt
 
-			// print
-			virtual
-			IOstream &OsPrint
-						(
-						IOstream &os
-						)
-						const
-			{
-				return PrintConjunctionDisjunction(os, m_pdrgpcnstr);
-			}
-
-	}; // class CConstraintConjunction
-}
-
-#endif // !GPOPT_CConstraintConjunction_H
+#endif  // !GPOPT_CConstraintConjunction_H
 
 // EOF

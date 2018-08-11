@@ -57,8 +57,7 @@ CParseHandlerLogicalGroupBy::StartElement(const XMLCh *const,  // element_uri,
 	if (0 == XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenLogicalGrpBy),
 									  element_local_name))
 	{
-		m_dxlnode = GPOS_NEW(m_mp)
-			CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLLogicalGroupBy(m_mp));
+		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLLogicalGroupBy(m_mp));
 
 		// create child node parsers
 
@@ -68,11 +67,8 @@ CParseHandlerLogicalGroupBy::StartElement(const XMLCh *const,  // element_uri,
 		m_parse_handler_mgr->ActivateParseHandler(lg_op_parse_handler);
 
 		// parse handler for the proj list
-		CParseHandlerBase *proj_list_parse_handler =
-			CParseHandlerFactory::GetParseHandler(m_mp,
-												  CDXLTokens::XmlstrToken(EdxltokenScalarProjList),
-												  m_parse_handler_mgr,
-												  this);
+		CParseHandlerBase *proj_list_parse_handler = CParseHandlerFactory::GetParseHandler(
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarProjList), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(proj_list_parse_handler);
 
 		//parse handler for the grouping columns list

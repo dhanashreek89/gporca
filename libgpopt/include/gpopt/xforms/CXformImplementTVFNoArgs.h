@@ -28,40 +28,37 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformImplementTVFNoArgs : public CXformImplementTVF
 	{
+	private:
+		// private copy ctor
+		CXformImplementTVFNoArgs(const CXformImplementTVFNoArgs &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementTVFNoArgs(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformImplementTVFNoArgs(const CXformImplementTVFNoArgs &);
+		// dtor
+		virtual ~CXformImplementTVFNoArgs()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementTVFNoArgs;
+		}
 
-			// ctor
-			explicit
-			CXformImplementTVFNoArgs(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementTVFNoArgs";
+		}
 
-			// dtor
-			virtual
-			~CXformImplementTVFNoArgs() {}
+	};  // class CXformImplementTVFNoArgs
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementTVFNoArgs;
-			}
+}  // namespace gpopt
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementTVFNoArgs";
-			}
-
-	}; // class CXformImplementTVFNoArgs
-
-}
-
-#endif // !GPOPT_CXformImplementTVFNoArgs_H
+#endif  // !GPOPT_CXformImplementTVFNoArgs_H
 
 // EOF

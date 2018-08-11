@@ -27,22 +27,15 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformInlineCTEConsumerUnderSelect::CXformInlineCTEConsumerUnderSelect
-	(
-	IMemoryPool *mp
-	)
-	:
-	CXformExploration
-		(
-		GPOS_NEW(mp) CExpression
-				(
-				mp,
-				GPOS_NEW(mp) CLogicalSelect(mp),
-				GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalCTEConsumer(mp)),  // relational child
-				GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))	// predicate tree
-				)
-		)
-{}
+CXformInlineCTEConsumerUnderSelect::CXformInlineCTEConsumerUnderSelect(IMemoryPool *mp)
+	: CXformExploration(GPOS_NEW(mp) CExpression(
+		  mp,
+		  GPOS_NEW(mp) CLogicalSelect(mp),
+		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalCTEConsumer(mp)),  // relational child
+		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))		   // predicate tree
+		  ))
+{
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -53,11 +46,8 @@ CXformInlineCTEConsumerUnderSelect::CXformInlineCTEConsumerUnderSelect
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise
-CXformInlineCTEConsumerUnderSelect::Exfp
-	(
-	CExpressionHandle & //exprhdl
-	)
-	const
+CXformInlineCTEConsumerUnderSelect::Exfp(CExpressionHandle &  //exprhdl
+										 ) const
 {
 	return CXform::ExfpHigh;
 }
@@ -71,13 +61,9 @@ CXformInlineCTEConsumerUnderSelect::Exfp
 //
 //---------------------------------------------------------------------------
 void
-CXformInlineCTEConsumerUnderSelect::Transform
-	(
-	CXformContext *pxfctxt,
-	CXformResult *pxfres,
-	CExpression *pexpr
-	)
-	const
+CXformInlineCTEConsumerUnderSelect::Transform(CXformContext *pxfctxt,
+											  CXformResult *pxfres,
+											  CExpression *pexpr) const
 {
 	GPOS_ASSERT(NULL != pxfctxt);
 	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));

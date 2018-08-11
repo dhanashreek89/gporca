@@ -25,22 +25,15 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformImplementPartitionSelector::CXformImplementPartitionSelector
-	(
-	IMemoryPool *mp
-	)
-	:
-	// pattern
-	CXformImplementation
-		(
-		GPOS_NEW(mp) CExpression
-					(
-					mp,
-					GPOS_NEW(mp) CLogicalPartitionSelector(mp),
-					GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))	// relational child
-					)
-		)
-{}
+CXformImplementPartitionSelector::CXformImplementPartitionSelector(IMemoryPool *mp)
+	:  // pattern
+	  CXformImplementation(GPOS_NEW(mp) CExpression(
+		  mp,
+		  GPOS_NEW(mp) CLogicalPartitionSelector(mp),
+		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))  // relational child
+		  ))
+{
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -51,13 +44,9 @@ CXformImplementPartitionSelector::CXformImplementPartitionSelector
 //
 //---------------------------------------------------------------------------
 void
-CXformImplementPartitionSelector::Transform
-	(
-	CXformContext *pxfctxt,
-	CXformResult *pxfres,
-	CExpression *pexpr
-	)
-	const
+CXformImplementPartitionSelector::Transform(CXformContext *pxfctxt,
+											CXformResult *pxfres,
+											CExpression *pexpr) const
 {
 	GPOS_ASSERT(NULL != pxfctxt);
 	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
@@ -86,31 +75,19 @@ CXformImplementPartitionSelector::Transform
 #ifdef GPOS_DEBUG
 		BOOL fInserted =
 #endif
-		phmulexprFilter->Insert(GPOS_NEW(mp) ULONG(ul), pexprFilter);
+			phmulexprFilter->Insert(GPOS_NEW(mp) ULONG(ul), pexprFilter);
 		GPOS_ASSERT(fInserted);
 	}
 
 	// assemble physical operator
-	CPhysicalPartitionSelectorDML *popPhysicalPartitionSelector =
-			GPOS_NEW(mp) CPhysicalPartitionSelectorDML
-						(
-						mp,
-						mdid,
-						phmulexprFilter,
-						popSelector->PcrOid()
-						);
+	CPhysicalPartitionSelectorDML *popPhysicalPartitionSelector = GPOS_NEW(mp)
+		CPhysicalPartitionSelectorDML(mp, mdid, phmulexprFilter, popSelector->PcrOid());
 
 	CExpression *pexprPartitionSelector =
-		GPOS_NEW(mp) CExpression
-					(
-					mp,
-					popPhysicalPartitionSelector,
-					pexprRelational
-					);
+		GPOS_NEW(mp) CExpression(mp, popPhysicalPartitionSelector, pexprRelational);
 
 	// add alternative to results
 	pxfres->Add(pexprPartitionSelector);
 }
 
 // EOF
-

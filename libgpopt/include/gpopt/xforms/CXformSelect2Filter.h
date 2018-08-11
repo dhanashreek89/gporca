@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CXformSelect2Filter
@@ -28,47 +28,42 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformSelect2Filter : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformSelect2Filter(const CXformSelect2Filter &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformSelect2Filter(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformSelect2Filter(const CXformSelect2Filter &);
+		// dtor
+		virtual ~CXformSelect2Filter()
+		{
+		}
 
-		public:
-		
-			// ctor
-			explicit
-			CXformSelect2Filter(IMemoryPool *mp);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfSelect2Filter;
+		}
 
-			// dtor
-			virtual 
-			~CXformSelect2Filter() 
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformSelect2Filter";
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfSelect2Filter;
-			}
-			
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CXformSelect2Filter";
-			}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+		// actual transform
+		void Transform(CXformContext *, CXformResult *, CExpression *) const;
 
-			// actual transform
-			void Transform(CXformContext *, CXformResult *, CExpression *) const;
+	};  // class CXformSelect2Filter
 
-	}; // class CXformSelect2Filter
+}  // namespace gpopt
 
-}
-
-#endif // !GPOPT_CXformSelect2Filter_H
+#endif  // !GPOPT_CXformSelect2Filter_H
 
 // EOF

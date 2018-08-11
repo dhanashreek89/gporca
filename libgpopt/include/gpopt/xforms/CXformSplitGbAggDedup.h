@@ -28,58 +28,49 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformSplitGbAggDedup : public CXformSplitGbAgg
 	{
+	private:
+		// private copy ctor
+		CXformSplitGbAggDedup(const CXformSplitGbAggDedup &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformSplitGbAggDedup(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformSplitGbAggDedup(const CXformSplitGbAggDedup &);
+		// dtor
+		virtual ~CXformSplitGbAggDedup()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfSplitGbAggDedup;
+		}
 
-			// ctor
-			explicit
-			CXformSplitGbAggDedup(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformSplitGbAggDedup";
+		}
 
-			// dtor
-			virtual
-			~CXformSplitGbAggDedup()
-			{}
+		// Compatibility function for splitting aggregates
+		virtual BOOL
+		FCompatible(CXform::EXformId exfid)
+		{
+			return (CXform::ExfSplitGbAggDedup != exfid);
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfSplitGbAggDedup;
-			}
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformSplitGbAggDedup";
-			}
+	};  // class CXformSplitGbAggDedup
 
-			// Compatibility function for splitting aggregates
-			virtual
-			BOOL FCompatible(CXform::EXformId exfid)
-			{
-				return (CXform::ExfSplitGbAggDedup != exfid);
-			}
+}  // namespace gpopt
 
-			// actual transform
-			virtual
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformSplitGbAggDedup
-
-}
-
-#endif // !GPOPT_CXformSplitGbAggDedup_H
+#endif  // !GPOPT_CXformSplitGbAggDedup_H
 
 // EOF

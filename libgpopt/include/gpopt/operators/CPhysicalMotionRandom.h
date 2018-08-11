@@ -19,7 +19,6 @@
 
 namespace gpopt
 {
-	
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalMotionRandom
@@ -30,128 +29,104 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalMotionRandom : public CPhysicalMotion
 	{
+	private:
+		// distribution spec
+		CDistributionSpecRandom *m_pdsRandom;
 
-		private:					
+		// private copy ctor
+		CPhysicalMotionRandom(const CPhysicalMotionRandom &);
 
-			// distribution spec
-			CDistributionSpecRandom *m_pdsRandom;
-		
-			// private copy ctor
-			CPhysicalMotionRandom(const CPhysicalMotionRandom &);
+	public:
+		// ctor
+		CPhysicalMotionRandom(IMemoryPool *mp, CDistributionSpecRandom *pdsRandom);
 
-		public:
-		
-			// ctor
-			CPhysicalMotionRandom
-				(
-				IMemoryPool *mp, 
-				CDistributionSpecRandom *pdsRandom
-				);
-			
-			// dtor
-			virtual 
-			~CPhysicalMotionRandom();
+		// dtor
+		virtual ~CPhysicalMotionRandom();
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalMotionRandom;
-			}
-			
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CPhysicalMotionRandom";
-			}
-			
-			// output distribution accessor
-			virtual
-			CDistributionSpec *Pds() const
-			{
-				return m_pdsRandom;
-			}
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalMotionRandom;
+		}
 
-			// is distribution duplicate sensitive
-			BOOL IsDuplicateSensitive() const
-			{
-				return m_pdsRandom->IsDuplicateSensitive();
-			}
-			
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalMotionRandom";
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Required Plan Properties
-			//-------------------------------------------------------------------------------------
+		// output distribution accessor
+		virtual CDistributionSpec *
+		Pds() const
+		{
+			return m_pdsRandom;
+		}
 
-			// compute required output columns of the n-th child
-			virtual
-			CColRefSet *PcrsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CColRefSet *pcrsInput,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				);
+		// is distribution duplicate sensitive
+		BOOL
+		IsDuplicateSensitive() const
+		{
+			return m_pdsRandom->IsDuplicateSensitive();
+		}
 
-			// compute required sort order of the n-th child
-			virtual
-			COrderSpec *PosRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				COrderSpec *posInput,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				)
-				const;
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// check if required columns are included in output columns
-			virtual
-			BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const;
-			
-			//-------------------------------------------------------------------------------------
-			// Derived Plan Properties
-			//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		// Required Plan Properties
+		//-------------------------------------------------------------------------------------
 
-			// derive sort order
-			virtual
-			COrderSpec *PosDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
-			
-			//-------------------------------------------------------------------------------------
-			// Enforced Properties
-			//-------------------------------------------------------------------------------------
+		// compute required output columns of the n-th child
+		virtual CColRefSet *PcrsRequired(IMemoryPool *mp,
+										 CExpressionHandle &exprhdl,
+										 CColRefSet *pcrsInput,
+										 ULONG child_index,
+										 CDrvdPropArrays *pdrgpdpCtxt,
+										 ULONG ulOptReq);
 
-			// return order property enforcing type for this operator
-			virtual
-			CEnfdProp::EPropEnforcingType EpetOrder
-				(
-				CExpressionHandle &exprhdl,
-				const CEnfdOrder *peo
-				)
-				const;
+		// compute required sort order of the n-th child
+		virtual COrderSpec *PosRequired(IMemoryPool *mp,
+										CExpressionHandle &exprhdl,
+										COrderSpec *posInput,
+										ULONG child_index,
+										CDrvdPropArrays *pdrgpdpCtxt,
+										ULONG ulOptReq) const;
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+		// check if required columns are included in output columns
+		virtual BOOL FProvidesReqdCols(CExpressionHandle &exprhdl,
+									   CColRefSet *pcrsRequired,
+									   ULONG ulOptReq) const;
 
-			// print
-			virtual 
-			IOstream &OsPrint(IOstream &) const;
-			
-			// conversion function
-			static
-			CPhysicalMotionRandom *PopConvert(COperator *pop);			
-					
-	}; // class CPhysicalMotionRandom
+		//-------------------------------------------------------------------------------------
+		// Derived Plan Properties
+		//-------------------------------------------------------------------------------------
 
-}
+		// derive sort order
+		virtual COrderSpec *PosDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-#endif // !GPOPT_CPhysicalMotionRandom_H
+		//-------------------------------------------------------------------------------------
+		// Enforced Properties
+		//-------------------------------------------------------------------------------------
+
+		// return order property enforcing type for this operator
+		virtual CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl,
+														const CEnfdOrder *peo) const;
+
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+
+		// print
+		virtual IOstream &OsPrint(IOstream &) const;
+
+		// conversion function
+		static CPhysicalMotionRandom *PopConvert(COperator *pop);
+
+	};  // class CPhysicalMotionRandom
+
+}  // namespace gpopt
+
+#endif  // !GPOPT_CPhysicalMotionRandom_H
 
 // EOF

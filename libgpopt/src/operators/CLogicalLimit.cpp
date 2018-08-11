@@ -36,16 +36,8 @@ using namespace gpopt;
 //		Ctor - for pattern
 //
 //---------------------------------------------------------------------------
-CLogicalLimit::CLogicalLimit
-	(
-	IMemoryPool *mp
-	)
-	:
-	CLogical(mp),
-	m_pos(NULL),
-	m_fGlobal(true),
-	m_fHasCount(false),
-	m_top_limit_under_dml(false)
+CLogicalLimit::CLogicalLimit(IMemoryPool *mp)
+	: CLogical(mp), m_pos(NULL), m_fGlobal(true), m_fHasCount(false), m_top_limit_under_dml(false)
 {
 	m_fPattern = true;
 }
@@ -59,20 +51,13 @@ CLogicalLimit::CLogicalLimit
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalLimit::CLogicalLimit
-	(
-	IMemoryPool *mp,
-	COrderSpec *pos,
-	BOOL fGlobal,
-	BOOL fHasCount,
-	BOOL fTopLimitUnderDML
-	)
-	:
-	CLogical(mp),
-	m_pos(pos),
-	m_fGlobal(fGlobal),
-	m_fHasCount(fHasCount),
-	m_top_limit_under_dml(fTopLimitUnderDML)
+CLogicalLimit::CLogicalLimit(
+	IMemoryPool *mp, COrderSpec *pos, BOOL fGlobal, BOOL fHasCount, BOOL fTopLimitUnderDML)
+	: CLogical(mp),
+	  m_pos(pos),
+	  m_fGlobal(fGlobal),
+	  m_fHasCount(fHasCount),
+	  m_top_limit_under_dml(fTopLimitUnderDML)
 {
 	GPOS_ASSERT(NULL != pos);
 	CColRefSet *pcrsSort = m_pos->PcrsUsed(mp);
@@ -106,11 +91,9 @@ CLogicalLimit::~CLogicalLimit()
 ULONG
 CLogicalLimit::HashValue() const
 {
-	return gpos::CombineHashes
-			(
-			gpos::CombineHashes(COperator::HashValue(), m_pos->HashValue()),
-			gpos::CombineHashes(gpos::HashValue<BOOL>(&m_fGlobal), gpos::HashValue<BOOL>(&m_fHasCount))
-			);
+	return gpos::CombineHashes(gpos::CombineHashes(COperator::HashValue(), m_pos->HashValue()),
+							   gpos::CombineHashes(gpos::HashValue<BOOL>(&m_fGlobal),
+												   gpos::HashValue<BOOL>(&m_fHasCount)));
 }
 
 
@@ -123,24 +106,19 @@ CLogicalLimit::HashValue() const
 //
 //---------------------------------------------------------------------------
 BOOL
-CLogicalLimit::Matches
-	(
-	COperator *pop
-	)
-	const
+CLogicalLimit::Matches(COperator *pop) const
 {
 	if (pop->Eopid() == Eopid())
 	{
 		CLogicalLimit *popLimit = CLogicalLimit::PopConvert(pop);
-		
-		if (popLimit->FGlobal() == m_fGlobal &&
-			popLimit->FHasCount() == m_fHasCount)
+
+		if (popLimit->FGlobal() == m_fGlobal && popLimit->FHasCount() == m_fHasCount)
 		{
 			// match if order specs match
 			return m_pos->Matches(popLimit->m_pos);
 		}
 	}
-	
+
 	return false;
 }
 
@@ -154,12 +132,9 @@ CLogicalLimit::Matches
 //
 //---------------------------------------------------------------------------
 COperator *
-CLogicalLimit::PopCopyWithRemappedColumns
-	(
-	IMemoryPool *mp,
-	UlongToColRefMap *colref_mapping,
-	BOOL must_exist
-	)
+CLogicalLimit::PopCopyWithRemappedColumns(IMemoryPool *mp,
+										  UlongToColRefMap *colref_mapping,
+										  BOOL must_exist)
 {
 	COrderSpec *pos = m_pos->PosCopyWithRemappedColumns(mp, colref_mapping, must_exist);
 
@@ -175,11 +150,8 @@ CLogicalLimit::PopCopyWithRemappedColumns
 //
 //---------------------------------------------------------------------------
 CColRefSet *
-CLogicalLimit::PcrsDeriveOutput
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
+CLogicalLimit::PcrsDeriveOutput(IMemoryPool *,  // mp
+								CExpressionHandle &exprhdl)
 {
 	return PcrsDeriveOutputPassThru(exprhdl);
 }
@@ -194,11 +166,7 @@ CLogicalLimit::PcrsDeriveOutput
 //
 //---------------------------------------------------------------------------
 CColRefSet *
-CLogicalLimit::PcrsDeriveOuter
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl
-	)
+CLogicalLimit::PcrsDeriveOuter(IMemoryPool *mp, CExpressionHandle &exprhdl)
 {
 	CColRefSet *pcrsSort = m_pos->PcrsUsed(mp);
 	CColRefSet *outer_refs = CLogical::PcrsDeriveOuter(mp, exprhdl, pcrsSort);
@@ -216,12 +184,8 @@ CLogicalLimit::PcrsDeriveOuter
 //
 //---------------------------------------------------------------------------
 CMaxCard
-CLogicalLimit::Maxcard
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CLogicalLimit::Maxcard(IMemoryPool *,  // mp
+					   CExpressionHandle &exprhdl) const
 {
 	CExpression *pexprCount = exprhdl.PexprScalarChild(2 /*child_index*/);
 	if (CUtils::FScalarConstInt<IMDTypeInt8>(pexprCount))
@@ -246,17 +210,13 @@ CLogicalLimit::Maxcard
 //
 //---------------------------------------------------------------------------
 CXformSet *
-CLogicalLimit::PxfsCandidates
-	(
-	IMemoryPool *mp
-	) 
-	const
+CLogicalLimit::PxfsCandidates(IMemoryPool *mp) const
 {
 	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
-	
+
 	(void) xform_set->ExchangeSet(CXform::ExfImplementLimit);
 	(void) xform_set->ExchangeSet(CXform::ExfSplitLimit);
-	
+
 	return xform_set;
 }
 
@@ -270,14 +230,10 @@ CLogicalLimit::PxfsCandidates
 //
 //---------------------------------------------------------------------------
 CColRefSet *
-CLogicalLimit::PcrsStat
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CColRefSet *pcrsInput,
-	ULONG child_index
-	)
-	const
+CLogicalLimit::PcrsStat(IMemoryPool *mp,
+						CExpressionHandle &exprhdl,
+						CColRefSet *pcrsInput,
+						ULONG child_index) const
 {
 	GPOS_ASSERT(0 == child_index);
 
@@ -302,12 +258,8 @@ CLogicalLimit::PcrsStat
 //
 //---------------------------------------------------------------------------
 CKeyCollection *
-CLogicalLimit::PkcDeriveKeys
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CLogicalLimit::PkcDeriveKeys(IMemoryPool *,  // mp
+							 CExpressionHandle &exprhdl) const
 {
 	return PkcDeriveKeysPassThru(exprhdl, 0 /* ulChild */);
 }
@@ -321,15 +273,11 @@ CLogicalLimit::PkcDeriveKeys
 //
 //---------------------------------------------------------------------------
 IOstream &
-CLogicalLimit::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CLogicalLimit::OsPrint(IOstream &os) const
 {
 	os << SzId() << " " << (*m_pos) << " " << (m_fGlobal ? "global" : "local")
-			<< (m_top_limit_under_dml ? " NonRemovableLimit" : "");
-	
+	   << (m_top_limit_under_dml ? " NonRemovableLimit" : "");
+
 	return os;
 }
 
@@ -342,13 +290,10 @@ CLogicalLimit::OsPrint
 //
 //---------------------------------------------------------------------------
 IStatistics *
-CLogicalLimit::PstatsDerive
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	IStatisticsArray * // not used
-	)
-	const
+CLogicalLimit::PstatsDerive(IMemoryPool *mp,
+							CExpressionHandle &exprhdl,
+							IStatisticsArray *  // not used
+							) const
 {
 	GPOS_ASSERT(Esp(exprhdl) > EspNone);
 	IStatistics *child_stats = exprhdl.Pstats(0);
@@ -361,7 +306,8 @@ CLogicalLimit::PstatsDerive
 		return child_stats;
 	}
 
-	return CLimitStatsProcessor::CalcLimitStats(mp, dynamic_cast<CStatistics*>(child_stats), dRowsMax);
+	return CLimitStatsProcessor::CalcLimitStats(
+		mp, dynamic_cast<CStatistics *>(child_stats), dRowsMax);
 }
 
 // EOF

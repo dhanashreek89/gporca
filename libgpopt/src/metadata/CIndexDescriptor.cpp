@@ -26,23 +26,19 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CIndexDescriptor::CIndexDescriptor
-	(
-	IMemoryPool *mp,
-	IMDId *pmdidIndex,
-	const CName &name,
-	CColumnDescriptorArray *pdrgcoldescKeyCols,
-	CColumnDescriptorArray *pdrgcoldescIncludedCols,
-	BOOL is_clustered,
-	IMDIndex::EmdindexType emdindtype
-	)
-	:
-	m_pmdidIndex(pmdidIndex),
-	m_name(mp, name),
-	m_pdrgpcoldescKeyCols(pdrgcoldescKeyCols),
-	m_pdrgpcoldescIncludedCols(pdrgcoldescIncludedCols),
-	m_clustered(is_clustered),
-	m_emdindt(emdindtype)
+CIndexDescriptor::CIndexDescriptor(IMemoryPool *mp,
+								   IMDId *pmdidIndex,
+								   const CName &name,
+								   CColumnDescriptorArray *pdrgcoldescKeyCols,
+								   CColumnDescriptorArray *pdrgcoldescIncludedCols,
+								   BOOL is_clustered,
+								   IMDIndex::EmdindexType emdindtype)
+	: m_pmdidIndex(pmdidIndex),
+	  m_name(mp, name),
+	  m_pdrgpcoldescKeyCols(pdrgcoldescKeyCols),
+	  m_pdrgpcoldescIncludedCols(pdrgcoldescIncludedCols),
+	  m_clustered(is_clustered),
+	  m_emdindt(emdindtype)
 {
 	GPOS_ASSERT(NULL != mp);
 	GPOS_ASSERT(pmdidIndex->IsValid());
@@ -107,12 +103,9 @@ CIndexDescriptor::UlIncludedColumns() const
 //
 //---------------------------------------------------------------------------
 CIndexDescriptor *
-CIndexDescriptor::Pindexdesc
-	(
-	IMemoryPool *mp,
-	const CTableDescriptor *ptabdesc,
-	const IMDIndex *pmdindex
-	)
+CIndexDescriptor::Pindexdesc(IMemoryPool *mp,
+							 const CTableDescriptor *ptabdesc,
+							 const IMDIndex *pmdindex)
 {
 	CWStringConst strIndexName(mp, pmdindex->Mdname().GetMDName()->GetBuffer());
 
@@ -141,16 +134,13 @@ CIndexDescriptor::Pindexdesc
 
 
 	// create the index descriptors
-	CIndexDescriptor *pindexdesc = GPOS_NEW(mp) CIndexDescriptor
-											(
-											mp,
-											pmdindex->MDId(),
-											CName(&strIndexName),
-											pdrgcoldescKey,
-											pdrgcoldescIncluded,
-											pmdindex->IsClustered(),
-											pmdindex->IndexType()
-											);
+	CIndexDescriptor *pindexdesc = GPOS_NEW(mp) CIndexDescriptor(mp,
+																 pmdindex->MDId(),
+																 CName(&strIndexName),
+																 pdrgcoldescKey,
+																 pdrgcoldescIncluded,
+																 pmdindex->IsClustered(),
+																 pmdindex->IndexType());
 	return pindexdesc;
 }
 
@@ -164,11 +154,7 @@ CIndexDescriptor::Pindexdesc
 //
 //---------------------------------------------------------------------------
 IOstream &
-CIndexDescriptor::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CIndexDescriptor::OsPrint(IOstream &os) const
 {
 	m_name.OsPrint(os);
 	os << ": (Keys :";
@@ -192,7 +178,6 @@ CIndexDescriptor::OsPrint
 	return os;
 }
 
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF
-

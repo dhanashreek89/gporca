@@ -28,60 +28,51 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformImplementSequenceProject : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformImplementSequenceProject(const CXformImplementSequenceProject &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementSequenceProject(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformImplementSequenceProject(const CXformImplementSequenceProject &);
+		// dtor
+		virtual ~CXformImplementSequenceProject()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementSequenceProject;
+		}
 
-			// ctor
-			explicit
-			CXformImplementSequenceProject(IMemoryPool *mp);
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementSequenceProject";
+		}
 
-			// dtor
-			virtual
-			~CXformImplementSequenceProject()
-			{}
-
-			// ident accessors
-			virtual
-			EXformId Exfid() const
+		// compute xform promise for a given expression handle
+		virtual EXformPromise
+		Exfp(CExpressionHandle &exprhdl) const
+		{
+			if (exprhdl.GetDrvdScalarProps(1)->FHasSubquery())
 			{
-				return ExfImplementSequenceProject;
+				return CXform::ExfpNone;
 			}
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementSequenceProject";
-			}
+			return CXform::ExfpHigh;
+		}
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp
-				(
-				CExpressionHandle &exprhdl
-				)
-				const
-			{
-				if (exprhdl.GetDrvdScalarProps(1)->FHasSubquery())
-				{
-					return CXform::ExfpNone;
-				}
+		// actual transform
+		virtual void Transform(CXformContext *, CXformResult *, CExpression *) const;
 
-				return CXform::ExfpHigh;
-			}
+	};  // class CXformImplementSequenceProject
 
-			// actual transform
-			virtual
-			void Transform(CXformContext *, CXformResult *, CExpression *) const;
+}  // namespace gpopt
 
-	}; // class CXformImplementSequenceProject
-
-}
-
-#endif // !GPOPT_CXformImplementSequenceProject_H
+#endif  // !GPOPT_CXformImplementSequenceProject_H
 
 // EOF

@@ -32,81 +32,70 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CConstraintDisjunction : public CConstraint
 	{
-		private:
+	private:
+		// array of constraints
+		CConstraintArray *m_pdrgpcnstr;
 
-			// array of constraints
-			CConstraintArray *m_pdrgpcnstr;
+		// mapping colref -> array of child constraints
+		ColRefToConstraintArrayMap *m_phmcolconstr;
 
-			// mapping colref -> array of child constraints
-			ColRefToConstraintArrayMap *m_phmcolconstr;
+		// hidden copy ctor
+		CConstraintDisjunction(const CConstraintDisjunction &);
 
-			// hidden copy ctor
-			CConstraintDisjunction(const CConstraintDisjunction&);
+	public:
+		// ctor
+		CConstraintDisjunction(IMemoryPool *mp, CConstraintArray *pdrgpcnstr);
 
-		public:
+		// dtor
+		virtual ~CConstraintDisjunction();
 
-			// ctor
-			CConstraintDisjunction(IMemoryPool *mp, CConstraintArray *pdrgpcnstr);
+		// constraint type accessor
+		virtual EConstraintType
+		Ect() const
+		{
+			return CConstraint::EctDisjunction;
+		}
 
-			// dtor
-			virtual
-			~CConstraintDisjunction();
+		// all constraints in disjunction
+		CConstraintArray *
+		Pdrgpcnstr() const
+		{
+			return m_pdrgpcnstr;
+		}
 
-			// constraint type accessor
-			virtual
-			EConstraintType Ect() const
-			{
-				return CConstraint::EctDisjunction;
-			}
+		// is this constraint a contradiction
+		virtual BOOL FContradiction() const;
 
-			// all constraints in disjunction
-			CConstraintArray *Pdrgpcnstr() const
-			{
-				return m_pdrgpcnstr;
-			}
+		// return a copy of the constraint with remapped columns
+		virtual CConstraint *PcnstrCopyWithRemappedColumns(IMemoryPool *mp,
+														   UlongToColRefMap *colref_mapping,
+														   BOOL must_exist);
 
-			// is this constraint a contradiction
-			virtual
-			BOOL FContradiction() const;
+		// scalar expression
+		virtual CExpression *PexprScalar(IMemoryPool *mp);
 
-			// return a copy of the constraint with remapped columns
-			virtual
-			CConstraint *PcnstrCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+		// check if there is a constraint on the given column
+		virtual BOOL FConstraint(const CColRef *colref) const;
 
-			// scalar expression
-			virtual
-			CExpression *PexprScalar(IMemoryPool *mp);
+		// return constraint on a given column
+		virtual CConstraint *Pcnstr(IMemoryPool *mp, const CColRef *colref);
 
-			// check if there is a constraint on the given column
-			virtual
-			BOOL FConstraint(const CColRef *colref) const;
+		// return constraint on a given column set
+		virtual CConstraint *Pcnstr(IMemoryPool *mp, CColRefSet *pcrs);
 
-			// return constraint on a given column
-			virtual
-			CConstraint *Pcnstr(IMemoryPool *mp, const CColRef *colref);
+		// return a clone of the constraint for a different column
+		virtual CConstraint *PcnstrRemapForColumn(IMemoryPool *mp, CColRef *colref) const;
 
-			// return constraint on a given column set
-			virtual
-			CConstraint *Pcnstr(IMemoryPool *mp, CColRefSet *pcrs);
+		// print
+		virtual IOstream &
+		OsPrint(IOstream &os) const
+		{
+			return PrintConjunctionDisjunction(os, m_pdrgpcnstr);
+		}
 
-			// return a clone of the constraint for a different column
-			virtual
-			CConstraint *PcnstrRemapForColumn(IMemoryPool *mp, CColRef *colref) const;
+	};  // class CConstraintDisjunction
+}  // namespace gpopt
 
-			// print
-			virtual
-			IOstream &OsPrint
-						(
-						IOstream &os
-						)
-						const
-			{
-				return PrintConjunctionDisjunction(os, m_pdrgpcnstr);
-			}
-
-	}; // class CConstraintDisjunction
-}
-
-#endif // !GPOPT_CConstraintDisjunction_H
+#endif  // !GPOPT_CConstraintDisjunction_H
 
 // EOF

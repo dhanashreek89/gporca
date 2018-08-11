@@ -50,8 +50,8 @@ CMDCastGPDB::CMDCastGPDB(IMemoryPool *mp,
 	GPOS_ASSERT(m_mdid_dest->IsValid());
 	GPOS_ASSERT_IMP(!is_binary_coercible, m_mdid_cast_func->IsValid());
 
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+	m_dxl_str =
+		CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
 }
 
 //---------------------------------------------------------------------------

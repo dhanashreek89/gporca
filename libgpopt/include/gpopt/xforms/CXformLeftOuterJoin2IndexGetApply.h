@@ -14,49 +14,52 @@ namespace gpopt
 {
 	using namespace gpos;
 
-	class CXformLeftOuterJoin2IndexGetApply : public CXformJoin2IndexApplyBase
-		<CLogicalLeftOuterJoin, CLogicalIndexApply, CLogicalGet,
-		false /*fWithSelect*/, false /*is_partial*/, IMDIndex::EmdindBtree>
+	class CXformLeftOuterJoin2IndexGetApply
+		: public CXformJoin2IndexApplyBase<CLogicalLeftOuterJoin,
+										   CLogicalIndexApply,
+										   CLogicalGet,
+										   false /*fWithSelect*/,
+										   false /*is_partial*/,
+										   IMDIndex::EmdindBtree>
 	{
+	private:
+		// private copy ctor
+		CXformLeftOuterJoin2IndexGetApply(const CXformLeftOuterJoin2IndexGetApply &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformLeftOuterJoin2IndexGetApply(IMemoryPool *mp)
+			: CXformJoin2IndexApplyBase<CLogicalLeftOuterJoin,
+										CLogicalIndexApply,
+										CLogicalGet,
+										false /*fWithSelect*/,
+										false /*is_partial*/,
+										IMDIndex::EmdindBtree>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformLeftOuterJoin2IndexGetApply(const CXformLeftOuterJoin2IndexGetApply &);
+		// dtor
+		virtual ~CXformLeftOuterJoin2IndexGetApply()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftOuterJoin2IndexGetApply;
+		}
 
-			// ctor
-			explicit
-			CXformLeftOuterJoin2IndexGetApply(IMemoryPool *mp)
-				: CXformJoin2IndexApplyBase
-				<CLogicalLeftOuterJoin, CLogicalIndexApply, CLogicalGet,
-				false /*fWithSelect*/, false /*is_partial*/, IMDIndex::EmdindBtree>
-				(mp)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftOuterJoin2IndexGetApply";
+		}
 
-			// dtor
-			virtual
-			~CXformLeftOuterJoin2IndexGetApply()
-			{}
+	};  // class CXformLeftOuterJoin2IndexGetApply
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftOuterJoin2IndexGetApply;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftOuterJoin2IndexGetApply";
-			}
-
-	}; // class CXformLeftOuterJoin2IndexGetApply
-
-}
-
-#endif // !GPOPT_CXformLeftOuterJoin2IndexGetApply_H
+#endif  // !GPOPT_CXformLeftOuterJoin2IndexGetApply_H
 
 // EOF

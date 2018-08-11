@@ -27,8 +27,7 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarSubqueryNotExists::CDXLScalarSubqueryNotExists(IMemoryPool *mp)
-	: CDXLScalar(mp)
+CDXLScalarSubqueryNotExists::CDXLScalarSubqueryNotExists(IMemoryPool *mp) : CDXLScalar(mp)
 {
 }
 

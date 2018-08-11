@@ -28,171 +28,146 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalCTEAnchor : public CLogical
 	{
-		private:
+	private:
+		// cte identifier
+		ULONG m_id;
 
-			// cte identifier
-			ULONG m_id;
+		// private copy ctor
+		CLogicalCTEAnchor(const CLogicalCTEAnchor &);
 
-			// private copy ctor
-			CLogicalCTEAnchor(const CLogicalCTEAnchor &);
+	public:
+		// ctor
+		explicit CLogicalCTEAnchor(IMemoryPool *mp);
 
-		public:
+		// ctor
+		CLogicalCTEAnchor(IMemoryPool *mp, ULONG id);
 
-			// ctor
-			explicit
-			CLogicalCTEAnchor(IMemoryPool *mp);
+		// dtor
+		virtual ~CLogicalCTEAnchor()
+		{
+		}
 
-			// ctor
-			CLogicalCTEAnchor(IMemoryPool *mp, ULONG id);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalCTEAnchor;
+		}
 
-			// dtor
-			virtual
-			~CLogicalCTEAnchor()
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalCTEAnchor";
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopLogicalCTEAnchor;
-			}
+		// cte identifier
+		ULONG
+		Id() const
+		{
+			return m_id;
+		}
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CLogicalCTEAnchor";
-			}
+		// operator specific hash function
+		virtual ULONG HashValue() const;
 
-			// cte identifier
-			ULONG Id() const
-			{
-				return m_id;
-			}
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// operator specific hash function
-			virtual
-			ULONG HashValue() const;
+		// sensitivity to order of inputs
+		virtual BOOL
+		FInputOrderSensitive() const
+		{
+			return false;
+		}
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
+		// return a copy of the operator with remapped columns
+		virtual COperator *
+		PopCopyWithRemappedColumns(IMemoryPool *,		//mp,
+								   UlongToColRefMap *,  //colref_mapping,
+								   BOOL					//must_exist
+		)
+		{
+			return PopCopyDefault();
+		}
 
-			// sensitivity to order of inputs
-			virtual
-			BOOL FInputOrderSensitive() const
-			{
-				return false;
-			}
+		//-------------------------------------------------------------------------------------
+		// Derived Relational Properties
+		//-------------------------------------------------------------------------------------
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *, //mp,
-						UlongToColRefMap *, //colref_mapping,
-						BOOL //must_exist
-						)
-			{
-				return PopCopyDefault();
-			}
+		// derive output columns
+		virtual CColRefSet *PcrsDeriveOutput(IMemoryPool *mp, CExpressionHandle &exprhdl);
 
-			//-------------------------------------------------------------------------------------
-			// Derived Relational Properties
-			//-------------------------------------------------------------------------------------
+		// dervive keys
+		virtual CKeyCollection *PkcDeriveKeys(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// derive output columns
-			virtual
-			CColRefSet *PcrsDeriveOutput(IMemoryPool *mp, CExpressionHandle &exprhdl);
+		// derive max card
+		virtual CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// dervive keys
-			virtual
-			CKeyCollection *PkcDeriveKeys(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// derive constraint property
+		virtual CPropConstraint *
+		PpcDeriveConstraint(IMemoryPool *,  //mp,
+							CExpressionHandle &exprhdl) const
+		{
+			return PpcDeriveConstraintPassThru(exprhdl, 0 /*ulChild*/);
+		}
 
-			// derive max card
-			virtual
-			CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// derive partition consumer info
+		virtual CPartInfo *PpartinfoDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// derive constraint property
-			virtual
-			CPropConstraint *PpcDeriveConstraint
-				(
-				IMemoryPool *, //mp,
-				CExpressionHandle &exprhdl
-				)
-				const
-			{
-				return PpcDeriveConstraintPassThru(exprhdl, 0 /*ulChild*/);
-			}
+		// compute required stats columns of the n-th child
+		virtual CColRefSet *
+		PcrsStat(IMemoryPool *,		   // mp
+				 CExpressionHandle &,  // exprhdl
+				 CColRefSet *pcrsInput,
+				 ULONG  // child_index
+				 ) const
+		{
+			return PcrsStatsPassThru(pcrsInput);
+		}
 
-			// derive partition consumer info
-			virtual
-			CPartInfo *PpartinfoDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// derive statistics
+		virtual IStatistics *
+		PstatsDerive(IMemoryPool *,  //mp,
+					 CExpressionHandle &exprhdl,
+					 IStatisticsArray *  //stats_ctxt
+					 ) const
+		{
+			return PstatsPassThruOuter(exprhdl);
+		}
 
-			// compute required stats columns of the n-th child
-			virtual
-			CColRefSet *PcrsStat
-				(
-				IMemoryPool *,// mp
-				CExpressionHandle &,// exprhdl
-				CColRefSet *pcrsInput,
-				ULONG // child_index
-				)
-				const
-			{
-				return PcrsStatsPassThru(pcrsInput);
-			}
+		// stat promise
+		virtual EStatPromise
+		Esp(CExpressionHandle &) const
+		{
+			return CLogical::EspHigh;
+		}
 
-			// derive statistics
-			virtual
-			IStatistics *PstatsDerive
-						(
-						IMemoryPool *, //mp,
-						CExpressionHandle &exprhdl,
-						IStatisticsArray * //stats_ctxt
-						)
-						const
-			{
-				return PstatsPassThruOuter(exprhdl);
-			}
+		//-------------------------------------------------------------------------------------
+		// Transformations
+		//-------------------------------------------------------------------------------------
 
-			// stat promise
-			virtual
-			EStatPromise Esp(CExpressionHandle &) const
-			{
-				return CLogical::EspHigh;
-			}
+		// candidate set of xforms
+		virtual CXformSet *PxfsCandidates(IMemoryPool *mp) const;
 
-			//-------------------------------------------------------------------------------------
-			// Transformations
-			//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
 
-			// candidate set of xforms
-			virtual
-			CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+		// conversion function
+		static CLogicalCTEAnchor *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalCTEAnchor == pop->Eopid());
 
-			//-------------------------------------------------------------------------------------
+			return dynamic_cast<CLogicalCTEAnchor *>(pop);
+		}
 
-			// conversion function
-			static
-			CLogicalCTEAnchor *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalCTEAnchor == pop->Eopid());
+		// debug print
+		virtual IOstream &OsPrint(IOstream &) const;
 
-				return dynamic_cast<CLogicalCTEAnchor*>(pop);
-			}
+	};  // class CLogicalCTEAnchor
 
-			// debug print
-			virtual
-			IOstream &OsPrint(IOstream &) const;
+}  // namespace gpopt
 
-	}; // class CLogicalCTEAnchor
-
-}
-
-#endif // !GPOPT_CLogicalCTEAnchor_H
+#endif  // !GPOPT_CLogicalCTEAnchor_H
 
 // EOF

@@ -29,13 +29,9 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarSubqueryExistential::CScalarSubqueryExistential
-	(
-	IMemoryPool *mp
-	)
-	:
-	CScalar(mp)
-{}
+CScalarSubqueryExistential::CScalarSubqueryExistential(IMemoryPool *mp) : CScalar(mp)
+{
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -46,7 +42,8 @@ CScalarSubqueryExistential::CScalarSubqueryExistential
 //
 //---------------------------------------------------------------------------
 CScalarSubqueryExistential::~CScalarSubqueryExistential()
-{}
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -74,11 +71,7 @@ CScalarSubqueryExistential::MDIdType() const
 //
 //---------------------------------------------------------------------------
 BOOL
-CScalarSubqueryExistential::Matches
-	(
-	COperator *pop
-	)
-	const
+CScalarSubqueryExistential::Matches(COperator *pop) const
 {
 	GPOS_ASSERT(NULL != pop);
 
@@ -95,12 +88,8 @@ CScalarSubqueryExistential::Matches
 //
 //---------------------------------------------------------------------------
 CPartInfo *
-CScalarSubqueryExistential::PpartinfoDerive
-	(
-	IMemoryPool *, // mp, 
-	CExpressionHandle &exprhdl
-	)
-	const
+CScalarSubqueryExistential::PpartinfoDerive(IMemoryPool *,  // mp,
+											CExpressionHandle &exprhdl) const
 {
 	CPartInfo *ppartinfoChild = exprhdl.GetRelationalProperties(0 /*child_index*/)->Ppartinfo();
 	GPOS_ASSERT(NULL != ppartinfoChild);
@@ -109,4 +98,3 @@ CScalarSubqueryExistential::PpartinfoDerive
 }
 
 // EOF
-

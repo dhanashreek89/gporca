@@ -7,45 +7,30 @@
 
 using namespace gpopt;
 
-static
-BOOL
-Equals(ULongPtrArray *pdrgpulFst, ULongPtrArray *pdrgpulSnd);
+static BOOL Equals(ULongPtrArray *pdrgpulFst, ULongPtrArray *pdrgpulSnd);
 
 #ifdef GPOS_DEBUG
 
 // helper to assert distribution delivered by UnionAll children
-static
-void
-AssertValidChildDistributions
-	(
-		IMemoryPool *mp,
-		CExpressionHandle &exprhdl,
-		CDistributionSpec::EDistributionType *pedt, // array of distribution types to check
-		ULONG ulDistrs, // number of distribution types to check
-		const CHAR *szAssertMsg
-	);
+static void AssertValidChildDistributions(
+	IMemoryPool *mp,
+	CExpressionHandle &exprhdl,
+	CDistributionSpec::EDistributionType *pedt,  // array of distribution types to check
+	ULONG ulDistrs,								 // number of distribution types to check
+	const CHAR *szAssertMsg);
 
 // helper to check if UnionAll children have valid distributions
-static
-void
-CheckChildDistributions
-	(
-		IMemoryPool *mp,
-		CExpressionHandle &exprhdl,
-		BOOL fSingletonChild,
-		BOOL fReplicatedChild,
-		BOOL fUniversalOuterChild
-	);
+static void CheckChildDistributions(IMemoryPool *mp,
+									CExpressionHandle &exprhdl,
+									BOOL fSingletonChild,
+									BOOL fReplicatedChild,
+									BOOL fUniversalOuterChild);
 
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // helper to do value equality check of arrays of ULONG pointers
 BOOL
-Equals
-	(
-		ULongPtrArray *pdrgpulFst,
-		ULongPtrArray *pdrgpulSnd
-	)
+Equals(ULongPtrArray *pdrgpulFst, ULongPtrArray *pdrgpulSnd)
 {
 	GPOS_ASSERT(NULL != pdrgpulFst);
 	GPOS_ASSERT(NULL != pdrgpulSnd);
@@ -70,10 +55,7 @@ Equals
 }
 
 CColRefSet *
-CPhysicalUnionAll::PcrsInput
-	(
-		ULONG child_index
-	)
+CPhysicalUnionAll::PcrsInput(ULONG child_index)
 {
 	GPOS_ASSERT(NULL != m_pdrgpcrsInput);
 	CColRefSet *pcrs = (*m_pdrgpcrsInput)[child_index];
@@ -87,20 +69,16 @@ CPhysicalUnionAll::FInputOrderSensitive() const
 	return false;
 }
 
-CPhysicalUnionAll::CPhysicalUnionAll
-	(
-		IMemoryPool *mp,
-		CColRefArray *pdrgpcrOutput,
-		CColRefArrays *pdrgpdrgpcrInput,
-		ULONG ulScanIdPartialIndex
-	)
-	:
-	CPhysical(mp),
-	m_pdrgpcrOutput(pdrgpcrOutput),
-	m_pdrgpdrgpcrInput(pdrgpdrgpcrInput),
-	m_ulScanIdPartialIndex(ulScanIdPartialIndex),
-	m_pdrgpcrsInput(NULL),
-	m_pdrgpds(GPOS_NEW(mp) CHashedDistributions(mp, pdrgpcrOutput, pdrgpdrgpcrInput))
+CPhysicalUnionAll::CPhysicalUnionAll(IMemoryPool *mp,
+									 CColRefArray *pdrgpcrOutput,
+									 CColRefArrays *pdrgpdrgpcrInput,
+									 ULONG ulScanIdPartialIndex)
+	: CPhysical(mp),
+	  m_pdrgpcrOutput(pdrgpcrOutput),
+	  m_pdrgpdrgpcrInput(pdrgpdrgpcrInput),
+	  m_ulScanIdPartialIndex(ulScanIdPartialIndex),
+	  m_pdrgpcrsInput(NULL),
+	  m_pdrgpds(GPOS_NEW(mp) CHashedDistributions(mp, pdrgpcrOutput, pdrgpdrgpcrInput))
 {
 	GPOS_ASSERT(NULL != pdrgpcrOutput);
 	GPOS_ASSERT(NULL != pdrgpdrgpcrInput);
@@ -153,10 +131,7 @@ CPhysicalUnionAll::IsPartialIndex() const
 }
 
 CPhysicalUnionAll *
-CPhysicalUnionAll::PopConvert
-	(
-		COperator *pop
-	)
+CPhysicalUnionAll::PopConvert(COperator *pop)
 {
 	GPOS_ASSERT(NULL != pop);
 
@@ -175,11 +150,7 @@ CPhysicalUnionAll::PopConvert
 //
 //---------------------------------------------------------------------------
 BOOL
-CPhysicalUnionAll::Matches
-	(
-		COperator *pop
-	)
-const
+CPhysicalUnionAll::Matches(COperator *pop) const
 {
 	if (Eopid() == pop->Eopid())
 	{
@@ -190,7 +161,6 @@ const
 	}
 
 	return false;
-
 }
 
 //---------------------------------------------------------------------------
@@ -203,15 +173,13 @@ const
 //
 //---------------------------------------------------------------------------
 CColRefSet *
-CPhysicalUnionAll::PcrsRequired
-	(
-		IMemoryPool *, // mp
-		CExpressionHandle &,//exprhdl,
-		CColRefSet *, //pcrsRequired,
-		ULONG child_index,
-		CDrvdPropArrays *, // pdrgpdpCtxt
-		ULONG // ulOptReq
-	)
+CPhysicalUnionAll::PcrsRequired(IMemoryPool *,		  // mp
+								CExpressionHandle &,  //exprhdl,
+								CColRefSet *,		  //pcrsRequired,
+								ULONG child_index,
+								CDrvdPropArrays *,  // pdrgpdpCtxt
+								ULONG				// ulOptReq
+)
 {
 	CColRefSet *pcrs = PcrsInput(child_index);
 	pcrs->AddRef();
@@ -228,20 +196,17 @@ CPhysicalUnionAll::PcrsRequired
 //
 //---------------------------------------------------------------------------
 COrderSpec *
-CPhysicalUnionAll::PosRequired
-	(
-		IMemoryPool *mp,
-		CExpressionHandle &, //exprhdl,
-		COrderSpec *, //posRequired,
-		ULONG
+CPhysicalUnionAll::PosRequired(IMemoryPool *mp,
+							   CExpressionHandle &,  //exprhdl,
+							   COrderSpec *,		 //posRequired,
+							   ULONG
 #ifdef GPOS_DEBUG
-	child_index
-#endif // GPOS_DEBUG
-	,
-		CDrvdPropArrays *, // pdrgpdpCtxt
-		ULONG // ulOptReq
-)
-const
+								   child_index
+#endif  // GPOS_DEBUG
+							   ,
+							   CDrvdPropArrays *,  // pdrgpdpCtxt
+							   ULONG			   // ulOptReq
+							   ) const
 {
 	GPOS_ASSERT(PdrgpdrgpcrInput()->Size() > child_index);
 
@@ -259,16 +224,13 @@ const
 //
 //---------------------------------------------------------------------------
 CRewindabilitySpec *
-CPhysicalUnionAll::PrsRequired
-	(
-		IMemoryPool *mp,
-		CExpressionHandle &exprhdl,
-		CRewindabilitySpec *prsRequired,
-		ULONG child_index,
-		CDrvdPropArrays *, // pdrgpdpCtxt
-		ULONG // ulOptReq
-	)
-const
+CPhysicalUnionAll::PrsRequired(IMemoryPool *mp,
+							   CExpressionHandle &exprhdl,
+							   CRewindabilitySpec *prsRequired,
+							   ULONG child_index,
+							   CDrvdPropArrays *,  // pdrgpdpCtxt
+							   ULONG			   // ulOptReq
+							   ) const
 {
 	GPOS_ASSERT(PdrgpdrgpcrInput()->Size() > child_index);
 
@@ -284,15 +246,13 @@ const
 //
 //---------------------------------------------------------------------------
 CPartitionPropagationSpec *
-CPhysicalUnionAll::PppsRequired
-	(
-		IMemoryPool *mp,
-		CExpressionHandle &exprhdl,
-		CPartitionPropagationSpec *pppsRequired,
-		ULONG child_index,
-		CDrvdPropArrays *, //pdrgpdpCtxt,
-		ULONG //ulOptReq
-	)
+CPhysicalUnionAll::PppsRequired(IMemoryPool *mp,
+								CExpressionHandle &exprhdl,
+								CPartitionPropagationSpec *pppsRequired,
+								ULONG child_index,
+								CDrvdPropArrays *,  //pdrgpdpCtxt,
+								ULONG				//ulOptReq
+)
 {
 	GPOS_ASSERT(NULL != pppsRequired);
 
@@ -300,11 +260,8 @@ CPhysicalUnionAll::PppsRequired
 	{
 		// if this union came from the partial index xform, push an
 		// empty partition request below
-		return GPOS_NEW(mp) CPartitionPropagationSpec
-			(
-				GPOS_NEW(mp) CPartIndexMap(mp),
-				GPOS_NEW(mp) CPartFilterMap(mp)
-			);
+		return GPOS_NEW(mp) CPartitionPropagationSpec(GPOS_NEW(mp) CPartIndexMap(mp),
+													  GPOS_NEW(mp) CPartFilterMap(mp));
 	}
 
 	return CPhysical::PppsRequiredPushThruNAry(mp, exprhdl, pppsRequired, child_index);
@@ -319,16 +276,13 @@ CPhysicalUnionAll::PppsRequired
 //
 //---------------------------------------------------------------------------
 CCTEReq *
-CPhysicalUnionAll::PcteRequired
-	(
-		IMemoryPool *mp,
-		CExpressionHandle &exprhdl,
-		CCTEReq *pcter,
-		ULONG child_index,
-		CDrvdPropArrays *pdrgpdpCtxt,
-		ULONG //ulOptReq
-	)
-const
+CPhysicalUnionAll::PcteRequired(IMemoryPool *mp,
+								CExpressionHandle &exprhdl,
+								CCTEReq *pcter,
+								ULONG child_index,
+								CDrvdPropArrays *pdrgpdpCtxt,
+								ULONG  //ulOptReq
+								) const
 {
 	return PcterNAry(mp, exprhdl, pcter, child_index, pdrgpdpCtxt);
 }
@@ -343,17 +297,14 @@ const
 //
 //---------------------------------------------------------------------------
 BOOL
-CPhysicalUnionAll::FProvidesReqdCols
-	(
-		CExpressionHandle &
+CPhysicalUnionAll::FProvidesReqdCols(CExpressionHandle &
 #ifdef GPOS_DEBUG
-		exprhdl
-#endif // GPOS_DEBUG
-	,
-		CColRefSet *pcrsRequired,
-		ULONG // ulOptReq
-)
-const
+										 exprhdl
+#endif  // GPOS_DEBUG
+									 ,
+									 CColRefSet *pcrsRequired,
+									 ULONG  // ulOptReq
+									 ) const
 {
 	GPOS_ASSERT(NULL != pcrsRequired);
 	GPOS_ASSERT(PdrgpdrgpcrInput()->Size() == exprhdl.Arity());
@@ -378,12 +329,9 @@ const
 //
 //---------------------------------------------------------------------------
 COrderSpec *
-CPhysicalUnionAll::PosDerive
-	(
-		IMemoryPool *mp,
-		CExpressionHandle &//exprhdl
-	)
-const
+CPhysicalUnionAll::PosDerive(IMemoryPool *mp,
+							 CExpressionHandle &  //exprhdl
+							 ) const
 {
 	// return empty sort order
 	return GPOS_NEW(mp) COrderSpec(mp);
@@ -399,12 +347,8 @@ const
 //
 //---------------------------------------------------------------------------
 CRewindabilitySpec *
-CPhysicalUnionAll::PrsDerive
-	(
-		IMemoryPool *, // mp
-		CExpressionHandle &exprhdl
-	)
-const
+CPhysicalUnionAll::PrsDerive(IMemoryPool *,  // mp
+							 CExpressionHandle &exprhdl) const
 {
 	return PrsDerivePassThruOuter(exprhdl);
 }
@@ -418,15 +362,12 @@ const
 //
 //---------------------------------------------------------------------------
 CEnfdProp::EPropEnforcingType
-CPhysicalUnionAll::EpetOrder
-	(
-		CExpressionHandle &, // exprhdl
-		const CEnfdOrder *
+CPhysicalUnionAll::EpetOrder(CExpressionHandle &,  // exprhdl
+							 const CEnfdOrder *
 #ifdef GPOS_DEBUG
-		peo
-#endif // GPOS_DEBUG
-)
-const
+								 peo
+#endif  // GPOS_DEBUG
+							 ) const
 {
 	GPOS_ASSERT(NULL != peo);
 	GPOS_ASSERT(!peo->PosRequired()->IsEmpty());
@@ -444,12 +385,8 @@ const
 //
 //---------------------------------------------------------------------------
 CEnfdProp::EPropEnforcingType
-CPhysicalUnionAll::EpetRewindability
-	(
-		CExpressionHandle &exprhdl,
-		const CEnfdRewindability *per
-	)
-const
+CPhysicalUnionAll::EpetRewindability(CExpressionHandle &exprhdl,
+									 const CEnfdRewindability *per) const
 {
 	GPOS_ASSERT(NULL != per);
 
@@ -473,12 +410,8 @@ const
 //
 //---------------------------------------------------------------------------
 CEnfdProp::EPropEnforcingType
-CPhysicalUnionAll::EpetPartitionPropagation
-	(
-		CExpressionHandle &exprhdl,
-		const CEnfdPartitionPropagation *pepp
-	)
-const
+CPhysicalUnionAll::EpetPartitionPropagation(CExpressionHandle &exprhdl,
+											const CEnfdPartitionPropagation *pepp) const
 {
 	CPartIndexMap *ppimReqd = pepp->PppsRequired()->Ppim();
 	if (!ppimReqd->FContainsUnresolved())
@@ -547,19 +480,16 @@ const
 //
 //---------------------------------------------------------------------------
 CPartIndexMap *
-CPhysicalUnionAll::PpimDerive
-	(
-		IMemoryPool *mp,
-		CExpressionHandle &exprhdl,
-		CDrvdPropCtxt *pdpctxt
-	)
-const
+CPhysicalUnionAll::PpimDerive(IMemoryPool *mp,
+							  CExpressionHandle &exprhdl,
+							  CDrvdPropCtxt *pdpctxt) const
 {
 	CPartIndexMap *ppim = PpimDeriveCombineRelational(mp, exprhdl);
 	if (IsPartialIndex())
 	{
 		GPOS_ASSERT(NULL != pdpctxt);
-		ULONG ulExpectedPartitionSelectors = CDrvdPropCtxtPlan::PdpctxtplanConvert(pdpctxt)->UlExpectedPartitionSelectors();
+		ULONG ulExpectedPartitionSelectors =
+			CDrvdPropCtxtPlan::PdpctxtplanConvert(pdpctxt)->UlExpectedPartitionSelectors();
 		ppim->SetExpectedPropagators(UlScanIdPartialIndex(), ulExpectedPartitionSelectors);
 	}
 
@@ -568,12 +498,7 @@ const
 
 // derive partition filter map
 CPartFilterMap *
-CPhysicalUnionAll::PpfmDerive
-	(
-		IMemoryPool *mp,
-		CExpressionHandle &exprhdl
-	)
-const
+CPhysicalUnionAll::PpfmDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const
 {
 	// combine part filter maps from relational children
 	return PpfmDeriveCombineRelational(mp, exprhdl);
@@ -594,12 +519,7 @@ CPhysicalUnionAll::FPassThruStats() const
 //
 //---------------------------------------------------------------------------
 CDistributionSpec *
-CPhysicalUnionAll::PdsDerive
-	(
-		IMemoryPool *mp,
-		CExpressionHandle &exprhdl
-	)
-const
+CPhysicalUnionAll::PdsDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const
 {
 	CDistributionSpecHashed *pdshashed = PdshashedDerive(mp, exprhdl);
 	if (NULL != pdshashed)
@@ -628,12 +548,7 @@ const
 //
 //---------------------------------------------------------------------------
 CDistributionSpecHashed *
-CPhysicalUnionAll::PdshashedDerive
-	(
-		IMemoryPool *mp,
-		CExpressionHandle &exprhdl
-	)
-const
+CPhysicalUnionAll::PdshashedDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const
 {
 	BOOL fSuccess = true;
 	const ULONG arity = exprhdl.Arity();
@@ -643,8 +558,10 @@ const
 	{
 		CDistributionSpec *pdsChild = exprhdl.Pdpplan(ulChild)->Pds();
 		CDistributionSpec::EDistributionType edtChild = pdsChild->Edt();
-		fSuccess = (CDistributionSpec::EdtHashed == edtChild || CDistributionSpec::EdtHashedNoOp == edtChild || CDistributionSpec::EdtStrictHashed == edtChild)
-				&& pdsChild->FSatisfies((*m_pdrgpds)[ulChild]);
+		fSuccess = (CDistributionSpec::EdtHashed == edtChild ||
+					CDistributionSpec::EdtHashedNoOp == edtChild ||
+					CDistributionSpec::EdtStrictHashed == edtChild) &&
+				   pdsChild->FSatisfies((*m_pdrgpds)[ulChild]);
 	}
 
 	if (!fSuccess)
@@ -656,7 +573,10 @@ const
 	// (2) check that child hashed distributions map to the same output columns
 
 	// map outer child hashed distribution to corresponding UnionAll column positions
-	ULongPtrArray *pdrgpulOuter = PdrgpulMap(mp, CDistributionSpecHashed::PdsConvert(exprhdl.Pdpplan(0 /*child_index*/)->Pds())->Pdrgpexpr(), 0/*child_index*/);
+	ULongPtrArray *pdrgpulOuter = PdrgpulMap(
+		mp,
+		CDistributionSpecHashed::PdsConvert(exprhdl.Pdpplan(0 /*child_index*/)->Pds())->Pdrgpexpr(),
+		0 /*child_index*/);
 	if (NULL == pdrgpulOuter)
 	{
 		return NULL;
@@ -665,7 +585,10 @@ const
 	ULongPtrArray *pdrgpulChild = NULL;
 	for (ULONG ulChild = 1; fSuccess && ulChild < arity; ulChild++)
 	{
-		pdrgpulChild = PdrgpulMap(mp, CDistributionSpecHashed::PdsConvert(exprhdl.Pdpplan(ulChild)->Pds())->Pdrgpexpr(), ulChild);
+		pdrgpulChild = PdrgpulMap(
+			mp,
+			CDistributionSpecHashed::PdsConvert(exprhdl.Pdpplan(ulChild)->Pds())->Pdrgpexpr(),
+			ulChild);
 
 		// match mapped column positions of current child with outer child
 		fSuccess = (NULL != pdrgpulChild) && Equals(pdrgpulOuter, pdrgpulChild);
@@ -693,12 +616,7 @@ const
 //		hashed distribution
 //---------------------------------------------------------------------------
 CDistributionSpecHashed *
-CPhysicalUnionAll::PdsMatching
-	(
-		IMemoryPool *mp,
-		const ULongPtrArray *pdrgpulOuter
-	)
-const
+CPhysicalUnionAll::PdsMatching(IMemoryPool *mp, const ULongPtrArray *pdrgpulOuter) const
 {
 	GPOS_ASSERT(NULL != pdrgpulOuter);
 
@@ -729,13 +647,9 @@ const
 //
 //---------------------------------------------------------------------------
 CDistributionSpecHashed *
-CPhysicalUnionAll::PdshashedPassThru
-	(
-		IMemoryPool *mp,
-		CDistributionSpecHashed *pdshashedRequired,
-		ULONG child_index
-	)
-const
+CPhysicalUnionAll::PdshashedPassThru(IMemoryPool *mp,
+									 CDistributionSpecHashed *pdshashedRequired,
+									 ULONG child_index) const
 {
 	CExpressionArray *pdrgpexprRequired = pdshashedRequired->Pdrgpexpr();
 	CColRefArray *pdrgpcrChild = (*PdrgpdrgpcrInput())[child_index];
@@ -772,7 +686,8 @@ const
 
 	if (0 < pdrgpexprChildRequired->Size())
 	{
-		return GPOS_NEW(mp) CDistributionSpecHashed(pdrgpexprChildRequired, true /* fNullsCollocated */);
+		return GPOS_NEW(mp)
+			CDistributionSpecHashed(pdrgpexprChildRequired, true /* fNullsCollocated */);
 	}
 
 	// failed to create a matching hashed distribution
@@ -797,16 +712,12 @@ const
 //
 //---------------------------------------------------------------------------
 CDistributionSpec *
-CPhysicalUnionAll::PdsDeriveFromChildren
-	(
-		IMemoryPool *
+CPhysicalUnionAll::PdsDeriveFromChildren(IMemoryPool *
 #ifdef GPOS_DEBUG
-		mp
-#endif // GPOS_DEBUG
-	,
-		CExpressionHandle &exprhdl
-)
-const
+											 mp
+#endif  // GPOS_DEBUG
+										 ,
+										 CExpressionHandle &exprhdl) const
 {
 	const ULONG arity = exprhdl.Arity();
 
@@ -838,7 +749,7 @@ const
 
 #ifdef GPOS_DEBUG
 	CheckChildDistributions(mp, exprhdl, fSingletonChild, fReplicatedChild, fUniversalOuterChild);
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 	if (!(fSingletonChild || fReplicatedChild || fUniversalOuterChild))
 	{
@@ -860,13 +771,7 @@ const
 //
 //---------------------------------------------------------------------------
 ULongPtrArray *
-CPhysicalUnionAll::PdrgpulMap
-	(
-		IMemoryPool *mp,
-		CExpressionArray *pdrgpexpr,
-		ULONG child_index
-	)
-const
+CPhysicalUnionAll::PdrgpulMap(IMemoryPool *mp, CExpressionArray *pdrgpexpr, ULONG child_index) const
 {
 	GPOS_ASSERT(NULL != pdrgpexpr);
 
@@ -904,14 +809,12 @@ const
 #ifdef GPOS_DEBUG
 
 void
-AssertValidChildDistributions
-	(
-		IMemoryPool *mp,
-		CExpressionHandle &exprhdl,
-		CDistributionSpec::EDistributionType *pedt, // array of distribution types to check
-		ULONG ulDistrs, // number of distribution types to check
-		const CHAR *szAssertMsg
-	)
+AssertValidChildDistributions(
+	IMemoryPool *mp,
+	CExpressionHandle &exprhdl,
+	CDistributionSpec::EDistributionType *pedt,  // array of distribution types to check
+	ULONG ulDistrs,								 // number of distribution types to check
+	const CHAR *szAssertMsg)
 {
 	const ULONG arity = exprhdl.Arity();
 	for (ULONG ulChild = 0; ulChild < arity; ulChild++)
@@ -934,14 +837,11 @@ AssertValidChildDistributions
 }
 
 void
-CheckChildDistributions
-	(
-		IMemoryPool *mp,
-		CExpressionHandle &exprhdl,
-		BOOL fSingletonChild,
-		BOOL fReplicatedChild,
-		BOOL fUniversalOuterChild
-	)
+CheckChildDistributions(IMemoryPool *mp,
+						CExpressionHandle &exprhdl,
+						BOOL fSingletonChild,
+						BOOL fReplicatedChild,
+						BOOL fUniversalOuterChild)
 {
 	CDistributionSpec::EDistributionType rgedt[4];
 	rgedt[0] = CDistributionSpec::EdtSingleton;
@@ -952,14 +852,23 @@ CheckChildDistributions
 	if (fReplicatedChild)
 	{
 		// assert all children have distribution Universal or Replicated
-		AssertValidChildDistributions(mp, exprhdl, rgedt + 2 /*start from Universal in rgedt*/, 2 /*ulDistrs*/,
-									  "expecting Replicated or Universal distribution in UnionAll children" /*szAssertMsg*/);
-	} else if (fSingletonChild || fUniversalOuterChild)
+		AssertValidChildDistributions(
+			mp,
+			exprhdl,
+			rgedt + 2 /*start from Universal in rgedt*/,
+			2 /*ulDistrs*/,
+			"expecting Replicated or Universal distribution in UnionAll children" /*szAssertMsg*/);
+	}
+	else if (fSingletonChild || fUniversalOuterChild)
 	{
 		// assert all children have distribution Singleton, StrictSingleton or Universal
-		AssertValidChildDistributions(mp, exprhdl, rgedt, 3  /*ulDistrs*/,
-									  "expecting Singleton or Universal distribution in UnionAll children" /*szAssertMsg*/);
+		AssertValidChildDistributions(
+			mp,
+			exprhdl,
+			rgedt,
+			3 /*ulDistrs*/,
+			"expecting Singleton or Universal distribution in UnionAll children" /*szAssertMsg*/);
 	}
 }
 
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG

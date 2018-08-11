@@ -25,11 +25,8 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 DrvdPropArray *
-CPattern::PdpCreate
-	(
-	IMemoryPool * // mp
-	)
-	const
+CPattern::PdpCreate(IMemoryPool *  // mp
+					) const
 {
 	GPOS_ASSERT(!"Cannot derive properties on pattern");
 	return NULL;
@@ -46,11 +43,8 @@ CPattern::PdpCreate
 //
 //---------------------------------------------------------------------------
 CReqdProp *
-CPattern::PrpCreate
-	(
-	IMemoryPool * // mp
-	)
-	const
+CPattern::PrpCreate(IMemoryPool *  // mp
+					) const
 {
 	GPOS_ASSERT(!"Cannot compute required properties on pattern");
 	return NULL;
@@ -66,11 +60,7 @@ CPattern::PrpCreate
 //
 //---------------------------------------------------------------------------
 BOOL
-CPattern::Matches
-	(
-	COperator *pop
-	)
-	const
+CPattern::Matches(COperator *pop) const
 {
 	return Eopid() == pop->Eopid();
 }
@@ -84,7 +74,7 @@ CPattern::Matches
 //		By default patterns are leaves; no need to call this function ever
 //
 //---------------------------------------------------------------------------
-BOOL 
+BOOL
 CPattern::FInputOrderSensitive() const
 {
 	GPOS_ASSERT(!"Unexpected call to function FInputOrderSensitive");
@@ -100,16 +90,13 @@ CPattern::FInputOrderSensitive() const
 //
 //---------------------------------------------------------------------------
 COperator *
-CPattern::PopCopyWithRemappedColumns
-	(
-	IMemoryPool *, //mp,
-	UlongToColRefMap *, //colref_mapping,
-	BOOL //must_exist
-	)
+CPattern::PopCopyWithRemappedColumns(IMemoryPool *,		  //mp,
+									 UlongToColRefMap *,  //colref_mapping,
+									 BOOL				  //must_exist
+)
 {
 	GPOS_ASSERT(!"PopCopyWithRemappedColumns should not be called for a pattern");
 	return NULL;
 }
 
 // EOF
-

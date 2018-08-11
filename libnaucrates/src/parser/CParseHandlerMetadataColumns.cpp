@@ -80,11 +80,8 @@ CParseHandlerMetadataColumns::StartElement(const XMLCh *const element_uri,
 		GPOS_ASSERT(NULL != m_md_col_array);
 
 		// activate parse handler to parse the column info
-		CParseHandlerBase *col_parse_handler =
-			CParseHandlerFactory::GetParseHandler(m_mp,
-												  CDXLTokens::XmlstrToken(EdxltokenMetadataColumn),
-												  m_parse_handler_mgr,
-												  this);
+		CParseHandlerBase *col_parse_handler = CParseHandlerFactory::GetParseHandler(
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenMetadataColumn), m_parse_handler_mgr, this);
 
 		m_parse_handler_mgr->ActivateParseHandler(col_parse_handler);
 		this->Append(col_parse_handler);

@@ -27,20 +27,19 @@ namespace gpdxl
 	//		Static unit tests
 	//
 	//---------------------------------------------------------------------------
-	
+
 	class CDXLUtilsTest
-	{		
-		public:
+	{
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
+		static GPOS_RESULT EresUnittest_SerializeQuery();
+		static GPOS_RESULT EresUnittest_SerializePlan();
+		static GPOS_RESULT EresUnittest_Encoding();
 
-			// unittests
-			static GPOS_RESULT EresUnittest();
-			static GPOS_RESULT EresUnittest_SerializeQuery();
-			static GPOS_RESULT EresUnittest_SerializePlan();
-			static GPOS_RESULT EresUnittest_Encoding();
+	};  // class CDXLUtilsTest
+}  // namespace gpdxl
 
-	}; // class CDXLUtilsTest
-}
-
-#endif // !GPOPT_CDXLUtilsTest_H
+#endif  // !GPOPT_CDXLUtilsTest_H
 
 // EOF

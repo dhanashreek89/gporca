@@ -40,8 +40,7 @@ namespace gpdxl
 
 	public:
 		// ctor
-		explicit CDXLScalarRecheckCondFilter(IMemoryPool *mp)
-			: CDXLScalarFilter(mp)
+		explicit CDXLScalarRecheckCondFilter(IMemoryPool *mp) : CDXLScalarFilter(mp)
 		{
 		}
 

@@ -29,28 +29,24 @@ using namespace gpopt;
 //		Does not take ownership of 'pcomp'.
 //
 //---------------------------------------------------------------------------
-CRange::CRange
-	(
-	IMDId *mdid,
-	const IComparator *pcomp,
-	IDatum *pdatumLeft,
-	ERangeInclusion eriLeft,
-	IDatum *pdatumRight,
-	ERangeInclusion eriRight
-	)
-	:
-	m_mdid(mdid),
-	m_pcomp(pcomp),
-	m_pdatumLeft(pdatumLeft),
-	m_eriLeft(eriLeft),
-	m_pdatumRight(pdatumRight),
-	m_eriRight(eriRight)
+CRange::CRange(IMDId *mdid,
+			   const IComparator *pcomp,
+			   IDatum *pdatumLeft,
+			   ERangeInclusion eriLeft,
+			   IDatum *pdatumRight,
+			   ERangeInclusion eriRight)
+	: m_mdid(mdid),
+	  m_pcomp(pcomp),
+	  m_pdatumLeft(pdatumLeft),
+	  m_eriLeft(eriLeft),
+	  m_pdatumRight(pdatumRight),
+	  m_eriRight(eriRight)
 {
 	GPOS_ASSERT(mdid->IsValid());
 	GPOS_ASSERT(NULL != pcomp);
 	GPOS_ASSERT(CUtils::FConstrainableType(mdid));
 	GPOS_ASSERT_IMP(NULL != pdatumLeft && NULL != pdatumRight,
-			pcomp->IsLessThanOrEqual(pdatumLeft, pdatumRight));
+					pcomp->IsLessThanOrEqual(pdatumLeft, pdatumRight));
 }
 
 //---------------------------------------------------------------------------
@@ -62,19 +58,13 @@ CRange::CRange
 //		Does not take ownership of 'pcomp'.
 //
 //---------------------------------------------------------------------------
-CRange::CRange
-	(
-	const IComparator *pcomp,
-	IMDType::ECmpType cmp_type,
-	IDatum *datum
-	)
-	:
-	m_mdid(NULL),
-	m_pcomp(pcomp),
-	m_pdatumLeft(NULL),
-	m_eriLeft(EriExcluded),
-	m_pdatumRight(NULL),
-	m_eriRight(EriExcluded)
+CRange::CRange(const IComparator *pcomp, IMDType::ECmpType cmp_type, IDatum *datum)
+	: m_mdid(NULL),
+	  m_pcomp(pcomp),
+	  m_pdatumLeft(NULL),
+	  m_eriLeft(EriExcluded),
+	  m_pdatumRight(NULL),
+	  m_eriRight(EriExcluded)
 {
 	m_mdid = datum->MDId();
 
@@ -151,10 +141,7 @@ CRange::~CRange()
 //
 //---------------------------------------------------------------------------
 BOOL
-CRange::FDisjointLeft
-	(
-	CRange *prange
-	)
+CRange::FDisjointLeft(CRange *prange)
 {
 	GPOS_ASSERT(NULL != prange);
 
@@ -187,10 +174,7 @@ CRange::FDisjointLeft
 //
 //---------------------------------------------------------------------------
 BOOL
-CRange::Contains
-	(
-	CRange *prange
-	)
+CRange::Contains(CRange *prange)
 {
 	GPOS_ASSERT(NULL != prange);
 
@@ -206,16 +190,11 @@ CRange::Contains
 //
 //---------------------------------------------------------------------------
 BOOL
-CRange::FOverlapsLeft
-	(
-	CRange *prange
-	)
+CRange::FOverlapsLeft(CRange *prange)
 {
 	GPOS_ASSERT(NULL != prange);
 
-	return (FStartsBefore(prange) &&
-			!FEndsAfter(prange) &&
-			!FDisjointLeft(prange));
+	return (FStartsBefore(prange) && !FEndsAfter(prange) && !FDisjointLeft(prange));
 }
 
 //---------------------------------------------------------------------------
@@ -227,16 +206,11 @@ CRange::FOverlapsLeft
 //
 //---------------------------------------------------------------------------
 BOOL
-CRange::FOverlapsRight
-	(
-	CRange *prange
-	)
+CRange::FOverlapsRight(CRange *prange)
 {
 	GPOS_ASSERT(NULL != prange);
 
-	return (FEndsAfter(prange) &&
-			!FStartsBefore(prange) &&
-			!prange->FDisjointLeft(this));
+	return (FEndsAfter(prange) && !FStartsBefore(prange) && !prange->FDisjointLeft(this));
 }
 
 //---------------------------------------------------------------------------
@@ -252,10 +226,7 @@ CRange::FOverlapsRight
 //
 //---------------------------------------------------------------------------
 BOOL
-CRange::FUpperBoundEqualsLowerBound
-	(
-	CRange *prange
-	)
+CRange::FUpperBoundEqualsLowerBound(CRange *prange)
 {
 	GPOS_ASSERT(NULL != prange);
 
@@ -283,10 +254,7 @@ CRange::FUpperBoundEqualsLowerBound
 //
 //---------------------------------------------------------------------------
 BOOL
-CRange::FStartsWithOrBefore
-	(
-	CRange *prange
-	)
+CRange::FStartsWithOrBefore(CRange *prange)
 {
 	if (FStartsBefore(prange))
 	{
@@ -316,10 +284,7 @@ CRange::FStartsWithOrBefore
 //
 //---------------------------------------------------------------------------
 BOOL
-CRange::FStartsBefore
-	(
-	CRange *prange
-	)
+CRange::FStartsBefore(CRange *prange)
 {
 	GPOS_ASSERT(NULL != prange);
 
@@ -353,10 +318,7 @@ CRange::FStartsBefore
 //
 //---------------------------------------------------------------------------
 BOOL
-CRange::FEndsAfter
-	(
-	CRange *prange
-	)
+CRange::FEndsAfter(CRange *prange)
 {
 	GPOS_ASSERT(NULL != prange);
 
@@ -390,10 +352,7 @@ CRange::FEndsAfter
 //
 //---------------------------------------------------------------------------
 BOOL
-CRange::FEndsWithOrAfter
-	(
-	CRange *prange
-	)
+CRange::FEndsWithOrAfter(CRange *prange)
 {
 	if (FEndsAfter(prange))
 	{
@@ -438,11 +397,7 @@ CRange::FPoint() const
 //
 //---------------------------------------------------------------------------
 CExpression *
-CRange::PexprScalar
-	(
-	IMemoryPool *mp,
-	const CColRef *colref
-	)
+CRange::PexprScalar(IMemoryPool *mp, const CColRef *colref)
 {
 	CExpression *pexprEq = PexprEquality(mp, colref);
 	if (NULL != pexprEq)
@@ -450,25 +405,11 @@ CRange::PexprScalar
 		return pexprEq;
 	}
 
-	CExpression *pexprLeft = PexprScalarCompEnd
-								(
-								mp,
-								m_pdatumLeft,
-								m_eriLeft,
-								IMDType::EcmptGEq,
-								IMDType::EcmptG,
-								colref
-								);
+	CExpression *pexprLeft =
+		PexprScalarCompEnd(mp, m_pdatumLeft, m_eriLeft, IMDType::EcmptGEq, IMDType::EcmptG, colref);
 
-	CExpression *pexprRight = PexprScalarCompEnd
-								(
-								mp,
-								m_pdatumRight,
-								m_eriRight,
-								IMDType::EcmptLEq,
-								IMDType::EcmptL,
-								colref
-								);
+	CExpression *pexprRight = PexprScalarCompEnd(
+		mp, m_pdatumRight, m_eriRight, IMDType::EcmptLEq, IMDType::EcmptL, colref);
 
 	CExpressionArray *pdrgpexpr = GPOS_NEW(mp) CExpressionArray(mp);
 
@@ -494,21 +435,19 @@ CRange::PexprScalar
 //
 //---------------------------------------------------------------------------
 CExpression *
-CRange::PexprEquality
-	(
-	IMemoryPool *mp,
-	const CColRef *colref
-	)
+CRange::PexprEquality(IMemoryPool *mp, const CColRef *colref)
 {
 	if (NULL == m_pdatumLeft || NULL == m_pdatumRight ||
-		!m_pcomp->Equals(m_pdatumLeft, m_pdatumRight) || EriExcluded == m_eriLeft || EriExcluded == m_eriRight)
+		!m_pcomp->Equals(m_pdatumLeft, m_pdatumRight) || EriExcluded == m_eriLeft ||
+		EriExcluded == m_eriRight)
 	{
 		// not an equality predicate
 		return NULL;
 	}
 
 	m_pdatumLeft->AddRef();
-	CExpression *pexprVal = GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CScalarConst(mp, m_pdatumLeft));
+	CExpression *pexprVal =
+		GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CScalarConst(mp, m_pdatumLeft));
 
 	return CUtils::PexprScalarCmp(mp, colref, pexprVal, IMDType::EcmptEq);
 }
@@ -522,15 +461,12 @@ CRange::PexprEquality
 //
 //---------------------------------------------------------------------------
 CExpression *
-CRange::PexprScalarCompEnd
-	(
-	IMemoryPool *mp,
-	IDatum *datum,
-	ERangeInclusion eri,
-	IMDType::ECmpType ecmptIncl,
-	IMDType::ECmpType ecmptExcl,
-	const CColRef *colref
-	)
+CRange::PexprScalarCompEnd(IMemoryPool *mp,
+						   IDatum *datum,
+						   ERangeInclusion eri,
+						   IMDType::ECmpType ecmptIncl,
+						   IMDType::ECmpType ecmptExcl,
+						   const CColRef *colref)
 {
 	if (NULL == datum)
 	{
@@ -563,11 +499,7 @@ CRange::PexprScalarCompEnd
 //
 //---------------------------------------------------------------------------
 CRange *
-CRange::PrngIntersect
-	(
-	IMemoryPool *mp,
-	CRange *prange
-	)
+CRange::PrngIntersect(IMemoryPool *mp, CRange *prange)
 {
 	if (Contains(prange))
 	{
@@ -589,7 +521,8 @@ CRange::PrngIntersect
 		pdatumLeft->AddRef();
 		m_pdatumRight->AddRef();
 
-		return GPOS_NEW(mp) CRange(m_mdid, m_pcomp, pdatumLeft, prange->EriLeft(), m_pdatumRight, m_eriRight);
+		return GPOS_NEW(mp)
+			CRange(m_mdid, m_pcomp, pdatumLeft, prange->EriLeft(), m_pdatumRight, m_eriRight);
 	}
 
 	if (FOverlapsRight(prange))
@@ -600,7 +533,8 @@ CRange::PrngIntersect
 		pdatumRight->AddRef();
 		m_pdatumLeft->AddRef();
 
-		return GPOS_NEW(mp) CRange(m_mdid, m_pcomp, m_pdatumLeft, m_eriLeft, pdatumRight, prange->EriRight());
+		return GPOS_NEW(mp)
+			CRange(m_mdid, m_pcomp, m_pdatumLeft, m_eriLeft, pdatumRight, prange->EriRight());
 	}
 
 	return NULL;
@@ -618,11 +552,7 @@ CRange::PrngIntersect
 //		result  |------|
 //---------------------------------------------------------------------------
 CRange *
-CRange::PrngDifferenceLeft
-	(
-	IMemoryPool *mp,
-	CRange *prange
-	)
+CRange::PrngDifferenceLeft(IMemoryPool *mp, CRange *prange)
 {
 	if (FDisjointLeft(prange))
 	{
@@ -642,15 +572,12 @@ CRange::PrngDifferenceLeft
 		IDatum *pdatumRight = prange->PdatumLeft();
 		pdatumRight->AddRef();
 
-		return GPOS_NEW(mp) CRange
-							(
-							m_mdid,
-							m_pcomp,
-							m_pdatumLeft,
-							m_eriLeft,
-							pdatumRight,
-							EriInverseInclusion(prange->EriLeft())
-							);
+		return GPOS_NEW(mp) CRange(m_mdid,
+								   m_pcomp,
+								   m_pdatumLeft,
+								   m_eriLeft,
+								   pdatumRight,
+								   EriInverseInclusion(prange->EriLeft()));
 	}
 
 	return NULL;
@@ -668,11 +595,7 @@ CRange::PrngDifferenceLeft
 //		result                  |------|
 //---------------------------------------------------------------------------
 CRange *
-CRange::PrngDifferenceRight
-	(
-	IMemoryPool *mp,
-	CRange *prange
-	)
+CRange::PrngDifferenceRight(IMemoryPool *mp, CRange *prange)
 {
 	if (prange->FDisjointLeft(this))
 	{
@@ -692,15 +615,12 @@ CRange::PrngDifferenceRight
 		IDatum *pdatumRight = prange->PdatumRight();
 		pdatumRight->AddRef();
 
-		return GPOS_NEW(mp) CRange
-							(
-							m_mdid,
-							m_pcomp,
-							pdatumRight,
-							EriInverseInclusion(prange->EriRight()),
-							m_pdatumRight,
-							m_eriRight
-							);
+		return GPOS_NEW(mp) CRange(m_mdid,
+								   m_pcomp,
+								   pdatumRight,
+								   EriInverseInclusion(prange->EriRight()),
+								   m_pdatumRight,
+								   m_eriRight);
 	}
 
 	return NULL;
@@ -716,14 +636,9 @@ CRange::PrngDifferenceRight
 //
 //---------------------------------------------------------------------------
 CRange *
-CRange::PrngExtend
-	(
-	IMemoryPool *mp,
-	CRange *prange
-	)
+CRange::PrngExtend(IMemoryPool *mp, CRange *prange)
 {
-	if (FDisjointLeft(prange) &&
-		m_pcomp->Equals(prange->PdatumLeft(), m_pdatumRight) &&
+	if (FDisjointLeft(prange) && m_pcomp->Equals(prange->PdatumLeft(), m_pdatumRight) &&
 		(EriIncluded == prange->EriLeft() || EriIncluded == m_eriRight))
 	{
 		// ranges are contiguous so combine them into one
@@ -740,7 +655,8 @@ CRange::PrngExtend
 			pdatumRight->AddRef();
 		}
 
-		return GPOS_NEW(mp) CRange(m_mdid, m_pcomp, m_pdatumLeft, m_eriLeft, pdatumRight, prange->EriRight());
+		return GPOS_NEW(mp)
+			CRange(m_mdid, m_pcomp, m_pdatumLeft, m_eriLeft, pdatumRight, prange->EriRight());
 	}
 
 	return NULL;
@@ -755,11 +671,7 @@ CRange::PrngExtend
 //
 //---------------------------------------------------------------------------
 IOstream &
-CRange::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CRange::OsPrint(IOstream &os) const
 {
 	if (EriIncluded == m_eriLeft)
 	{
@@ -795,13 +707,7 @@ CRange::OsPrint
 //
 //---------------------------------------------------------------------------
 IOstream &
-CRange::OsPrintBound
-	(
-	IOstream &os,
-	IDatum *datum,
-	const CHAR *szInfinity
-	)
-	const
+CRange::OsPrintBound(IOstream &os, IDatum *datum, const CHAR *szInfinity) const
 {
 	if (NULL == datum)
 	{

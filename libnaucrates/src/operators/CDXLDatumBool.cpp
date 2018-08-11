@@ -25,8 +25,7 @@ using namespace gpdxl;
 //
 //---------------------------------------------------------------------------
 CDXLDatumBool::CDXLDatumBool(IMemoryPool *mp, IMDId *mdid_type, BOOL is_null, BOOL value)
-	: CDXLDatum(mp, mdid_type, default_type_modifier, is_null, 1 /*length*/),
-	  m_value(value)
+	: CDXLDatum(mp, mdid_type, default_type_modifier, is_null, 1 /*length*/), m_value(value)
 {
 }
 

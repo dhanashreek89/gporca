@@ -28,128 +28,114 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalUnionAll : public CLogicalUnion
 	{
+	private:
+		// if this union is needed for partial indexes then store the scan
+		// id, otherwise this will be gpos::ulong_max
+		ULONG m_ulScanIdPartialIndex;
 
-		private:
-			// if this union is needed for partial indexes then store the scan
-			// id, otherwise this will be gpos::ulong_max
-			ULONG m_ulScanIdPartialIndex;
+		// private copy ctor
+		CLogicalUnionAll(const CLogicalUnionAll &);
 
-			// private copy ctor
-			CLogicalUnionAll(const CLogicalUnionAll &);
+	public:
+		// ctor
+		explicit CLogicalUnionAll(IMemoryPool *mp);
 
-		public:
+		CLogicalUnionAll(IMemoryPool *mp,
+						 CColRefArray *pdrgpcrOutput,
+						 CColRefArrays *pdrgpdrgpcrInput,
+						 ULONG ulScanIdPartialIndex = gpos::ulong_max);
 
-			// ctor
-			explicit
-			CLogicalUnionAll(IMemoryPool *mp);
+		// dtor
+		virtual ~CLogicalUnionAll();
 
-			CLogicalUnionAll
-				(
-				IMemoryPool *mp,
-				CColRefArray *pdrgpcrOutput,
-				CColRefArrays *pdrgpdrgpcrInput,
-				ULONG ulScanIdPartialIndex = gpos::ulong_max
-				);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalUnionAll;
+		}
 
-			// dtor
-			virtual
-			~CLogicalUnionAll();
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalUnionAll";
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopLogicalUnionAll;
-			}
+		// if this union is needed for partial indexes then return the scan
+		// id, otherwise return gpos::ulong_max
+		ULONG
+		UlScanIdPartialIndex() const
+		{
+			return m_ulScanIdPartialIndex;
+		}
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CLogicalUnionAll";
-			}
+		// is this unionall needed for a partial index
+		BOOL
+		IsPartialIndex() const
+		{
+			return (gpos::ulong_max > m_ulScanIdPartialIndex);
+		}
 
-			// if this union is needed for partial indexes then return the scan
-			// id, otherwise return gpos::ulong_max
-			ULONG UlScanIdPartialIndex() const
-			{
-				return m_ulScanIdPartialIndex;
-			}
+		// sensitivity to order of inputs
+		BOOL
+		FInputOrderSensitive() const
+		{
+			return true;
+		}
 
-			// is this unionall needed for a partial index
-			BOOL IsPartialIndex() const
-			{
-				return (gpos::ulong_max > m_ulScanIdPartialIndex);
-			}
+		// return a copy of the operator with remapped columns
+		virtual COperator *PopCopyWithRemappedColumns(IMemoryPool *mp,
+													  UlongToColRefMap *colref_mapping,
+													  BOOL must_exist);
 
-			// sensitivity to order of inputs
-			BOOL FInputOrderSensitive() const
-			{
-				return true;
-			}
+		//-------------------------------------------------------------------------------------
+		// Derived Relational Properties
+		//-------------------------------------------------------------------------------------
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+		// derive max card
+		virtual CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			//-------------------------------------------------------------------------------------
-			// Derived Relational Properties
-			//-------------------------------------------------------------------------------------
+		// derive key collections
+		virtual CKeyCollection *PkcDeriveKeys(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// derive max card
-			virtual
-			CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		//-------------------------------------------------------------------------------------
+		// Transformations
+		//-------------------------------------------------------------------------------------
 
-			// derive key collections
-			virtual
-			CKeyCollection *PkcDeriveKeys(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// candidate set of xforms
+		CXformSet *PxfsCandidates(IMemoryPool *mp) const;
 
-			//-------------------------------------------------------------------------------------
-			// Transformations
-			//-------------------------------------------------------------------------------------
+		// stat promise
+		virtual EStatPromise
+		Esp(CExpressionHandle &) const
+		{
+			return CLogical::EspHigh;
+		}
 
-			// candidate set of xforms
-			CXformSet *PxfsCandidates(IMemoryPool *mp) const;
-
-			// stat promise
-			virtual
-			EStatPromise Esp(CExpressionHandle &) const
-			{
-				return CLogical::EspHigh;
-			}
-
-			// derive statistics
-			virtual
-			IStatistics *PstatsDerive
-						(
-						IMemoryPool *mp,
-						CExpressionHandle &exprhdl,
-						IStatisticsArray *stats_ctxt
-						)
-						const;
+		// derive statistics
+		virtual IStatistics *PstatsDerive(IMemoryPool *mp,
+										  CExpressionHandle &exprhdl,
+										  IStatisticsArray *stats_ctxt) const;
 
 
-			// conversion function
-			static
-			CLogicalUnionAll *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalUnionAll == pop->Eopid());
+		// conversion function
+		static CLogicalUnionAll *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalUnionAll == pop->Eopid());
 
-				return reinterpret_cast<CLogicalUnionAll*>(pop);
-			}
+			return reinterpret_cast<CLogicalUnionAll *>(pop);
+		}
 
-			// derive statistics based on union all semantics
-			static
-			IStatistics *PstatsDeriveUnionAll(IMemoryPool *mp, CExpressionHandle &exprhdl);
+		// derive statistics based on union all semantics
+		static IStatistics *PstatsDeriveUnionAll(IMemoryPool *mp, CExpressionHandle &exprhdl);
 
-	}; // class CLogicalUnionAll
+	};  // class CLogicalUnionAll
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CLogicalUnionAll_H
+#endif  // !GPOPT_CLogicalUnionAll_H
 
 // EOF

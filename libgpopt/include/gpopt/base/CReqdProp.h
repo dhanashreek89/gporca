@@ -66,79 +66,69 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CReqdProp : public CRefCount
 	{
+	public:
+		// types of required properties
+		enum EPropType
+		{
+			EptRelational,
+			EptPlan,
 
-		public:
+			EptSentinel
+		};
 
-			// types of required properties
-			enum EPropType
-			{
-				EptRelational,
-				EptPlan,
+	private:
+		// private copy ctor
+		CReqdProp(const CReqdProp &);
 
-				EptSentinel
-			};
+	public:
+		// ctor
+		CReqdProp();
 
-		private:
+		// dtor
+		virtual ~CReqdProp();
 
-			// private copy ctor
-			CReqdProp(const CReqdProp &);
+		// is it a relational property?
+		virtual BOOL
+		FRelational() const
+		{
+			return false;
+		}
 
-		public:
+		// is it a plan property?
+		virtual BOOL
+		FPlan() const
+		{
+			return false;
+		}
 
-			// ctor
-			CReqdProp();
+		// required properties computation function
+		virtual void Compute(IMemoryPool *mp,
+							 CExpressionHandle &exprhdl,
+							 CReqdProp *prpInput,
+							 ULONG child_index,
+							 CDrvdPropArrays *pdrgpdpCtxt,
+							 ULONG ulOptReq) = 0;
 
-			// dtor
-			virtual
-			~CReqdProp();
-
-			// is it a relational property?
-			virtual
-			BOOL FRelational() const
-			{
-				return false;
-			}
-
-			// is it a plan property?
-			virtual
-			BOOL FPlan() const
-			{
-				return false;
-			}
-
-			// required properties computation function
-			virtual
-			void Compute
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CReqdProp *prpInput,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				) = 0;
-
-			// print function
-			virtual
-			IOstream &OsPrint(IOstream &os) const = 0;
+		// print function
+		virtual IOstream &OsPrint(IOstream &os) const = 0;
 
 #ifdef GPOS_DEBUG
-			// debug print for interactive debugging sessions only
-			void DbgPrint() const;
-#endif // GPOS_DEBUG
+		// debug print for interactive debugging sessions only
+		void DbgPrint() const;
+#endif  // GPOS_DEBUG
 
-	}; // class CReqdProp
+	};  // class CReqdProp
 
 	// shorthand for printing
-	inline
-	IOstream &operator << (IOstream &os, const CReqdProp &reqdprop)
+	inline IOstream &
+	operator<<(IOstream &os, const CReqdProp &reqdprop)
 	{
 		return reqdprop.OsPrint(os);
 	}
 
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CReqdProp_H
+#endif  // !GPOPT_CReqdProp_H
 
 // EOF

@@ -154,11 +154,11 @@ CParseHandlerColStatsBucket::EndElement(const XMLCh *const,  // element_uri,
 									  element_local_name))
 	{
 		m_dxl_bucket = GPOS_NEW(m_mp) CDXLBucket(m_lower_bound_dxl_datum,
-														  m_upper_bound_dxl_datum,
-														  m_is_lower_closed,
-														  m_is_upper_closed,
-														  m_frequency,
-														  m_distinct);
+												 m_upper_bound_dxl_datum,
+												 m_is_lower_closed,
+												 m_is_upper_closed,
+												 m_frequency,
+												 m_distinct);
 
 		// deactivate handler
 		m_parse_handler_mgr->DeactivateHandler();

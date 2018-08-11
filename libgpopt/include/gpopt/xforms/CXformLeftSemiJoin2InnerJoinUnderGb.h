@@ -28,55 +28,46 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformLeftSemiJoin2InnerJoinUnderGb : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformLeftSemiJoin2InnerJoinUnderGb(const CXformLeftSemiJoin2InnerJoinUnderGb &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformLeftSemiJoin2InnerJoinUnderGb(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformLeftSemiJoin2InnerJoinUnderGb(const CXformLeftSemiJoin2InnerJoinUnderGb &);
+		// dtor
+		virtual ~CXformLeftSemiJoin2InnerJoinUnderGb()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftSemiJoin2InnerJoinUnderGb;
+		}
 
-			// ctor
-			explicit
-			CXformLeftSemiJoin2InnerJoinUnderGb(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftSemiJoin2InnerJoinUnderGb";
+		}
 
-			// dtor
-			virtual
-			~CXformLeftSemiJoin2InnerJoinUnderGb() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftSemiJoin2InnerJoinUnderGb;
-			}
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftSemiJoin2InnerJoinUnderGb";
-			}
+	};  // class CXformLeftSemiJoin2InnerJoinUnderGb
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			virtual
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformLeftSemiJoin2InnerJoinUnderGb
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformLeftSemiJoin2InnerJoinUnderGb_H
+#endif  // !GPOPT_CXformLeftSemiJoin2InnerJoinUnderGb_H
 
 // EOF

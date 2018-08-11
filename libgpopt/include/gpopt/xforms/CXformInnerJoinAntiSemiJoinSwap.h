@@ -28,58 +28,49 @@ namespace gpopt
 	//		Swap cascaded inner join and anti semi-join
 	//
 	//---------------------------------------------------------------------------
-	class CXformInnerJoinAntiSemiJoinSwap : public CXformJoinSwap<CLogicalInnerJoin, CLogicalLeftAntiSemiJoin>
+	class CXformInnerJoinAntiSemiJoinSwap
+		: public CXformJoinSwap<CLogicalInnerJoin, CLogicalLeftAntiSemiJoin>
 	{
+	private:
+		// private copy ctor
+		CXformInnerJoinAntiSemiJoinSwap(const CXformInnerJoinAntiSemiJoinSwap &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformInnerJoinAntiSemiJoinSwap(IMemoryPool *mp)
+			: CXformJoinSwap<CLogicalInnerJoin, CLogicalLeftAntiSemiJoin>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformInnerJoinAntiSemiJoinSwap(const CXformInnerJoinAntiSemiJoinSwap &);
+		// dtor
+		virtual ~CXformInnerJoinAntiSemiJoinSwap()
+		{
+		}
 
-		public:
+		// Compatibility function
+		virtual BOOL
+		FCompatible(CXform::EXformId exfid)
+		{
+			return ExfAntiSemiJoinInnerJoinSwap != exfid;
+		}
 
-			// ctor
-			explicit
-			CXformInnerJoinAntiSemiJoinSwap
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformJoinSwap<CLogicalInnerJoin, CLogicalLeftAntiSemiJoin>(mp)
-			{}
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfInnerJoinAntiSemiJoinSwap;
+		}
 
-			// dtor
-			virtual
-			~CXformInnerJoinAntiSemiJoinSwap()
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformInnerJoinAntiSemiJoinSwap";
+		}
 
-			// Compatibility function
-			virtual
-			BOOL FCompatible
-				(
-				CXform::EXformId exfid
-				)
-			{
-				return ExfAntiSemiJoinInnerJoinSwap != exfid;
-			}
+	};  // class CXformInnerJoinAntiSemiJoinSwap
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfInnerJoinAntiSemiJoinSwap;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformInnerJoinAntiSemiJoinSwap";
-			}
-
-	}; // class CXformInnerJoinAntiSemiJoinSwap
-
-}
-
-#endif // !GPOPT_CXformInnerJoinAntiSemiJoinSwap_H
+#endif  // !GPOPT_CXformInnerJoinAntiSemiJoinSwap_H
 
 // EOF

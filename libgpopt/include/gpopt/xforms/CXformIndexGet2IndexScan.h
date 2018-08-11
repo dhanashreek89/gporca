@@ -28,60 +28,48 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformIndexGet2IndexScan : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformIndexGet2IndexScan(const CXformIndexGet2IndexScan &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformIndexGet2IndexScan(IMemoryPool *);
 
-			// private copy ctor
-			CXformIndexGet2IndexScan(const CXformIndexGet2IndexScan &);
+		// dtor
+		virtual ~CXformIndexGet2IndexScan()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfIndexGet2IndexScan;
+		}
 
-			// ctor
-			explicit
-			CXformIndexGet2IndexScan(IMemoryPool *);
+		// xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformIndexGet2IndexScan";
+		}
 
-			// dtor
-			virtual
-			~CXformIndexGet2IndexScan() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise
+		Exfp(CExpressionHandle &  //exprhdl
+			 ) const
+		{
+			return CXform::ExfpHigh;
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfIndexGet2IndexScan;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformIndexGet2IndexScan";
-			}
+	};  // class CXformIndexGet2IndexScan
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp
-				(
-				CExpressionHandle &//exprhdl
-				)
-				const
-			{
-				return CXform::ExfpHigh;
-			}
+}  // namespace gpopt
 
-			// actual transform
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformIndexGet2IndexScan
-
-}
-
-#endif // !GPOPT_CXformIndexGet2IndexScan_H
+#endif  // !GPOPT_CXformIndexGet2IndexScan_H
 
 // EOF

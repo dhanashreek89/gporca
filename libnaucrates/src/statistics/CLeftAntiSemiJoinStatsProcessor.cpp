@@ -55,12 +55,8 @@ CLeftAntiSemiJoinStatsProcessor::JoinHistogramsLASJ(
 	BOOL empty_histograms = histogram1->IsEmpty() || histogram2->IsEmpty();
 	if (!empty_histograms && CHistogram::JoinPredCmpTypeIsSupported(stats_cmp_type))
 	{
-		*result_hist1 = histogram1->MakeLASJHistogramNormalize(mp,
-															   stats_cmp_type,
-															   num_rows1,
-															   histogram2,
-															   scale_factor,
-															   DoIgnoreLASJHistComputation);
+		*result_hist1 = histogram1->MakeLASJHistogramNormalize(
+			mp, stats_cmp_type, num_rows1, histogram2, scale_factor, DoIgnoreLASJHistComputation);
 		*result_hist2 = NULL;
 
 		if ((*result_hist1)->IsEmpty())

@@ -215,20 +215,19 @@ CParseHandlerPhysicalCTAS::EndElement(const XMLCh *const,  // element_uri,
 	CDXLCtasStorageOptions *ctas_options = ctas_options_parse_handler->GetDxlCtasStorageOption();
 	ctas_options->AddRef();
 
-	m_dxlnode = GPOS_NEW(m_mp)
-		CDXLNode(m_mp,
-				 GPOS_NEW(m_mp) CDXLPhysicalCTAS(m_mp,
-														  m_mdname_schema,
-														  m_mdname,
-														  dxl_col_descr_array,
-														  ctas_options,
-														  m_rel_distr_policy,
-														  m_distr_column_pos_array,
-														  m_is_temp_table,
-														  m_has_oids,
-														  m_rel_storage_type,
-														  m_src_colids_array,
-														  m_vartypemod_array));
+	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp,
+										GPOS_NEW(m_mp) CDXLPhysicalCTAS(m_mp,
+																		m_mdname_schema,
+																		m_mdname,
+																		dxl_col_descr_array,
+																		ctas_options,
+																		m_rel_distr_policy,
+																		m_distr_column_pos_array,
+																		m_is_temp_table,
+																		m_has_oids,
+																		m_rel_storage_type,
+																		m_src_colids_array,
+																		m_vartypemod_array));
 	// set statistics and physical properties
 	CParseHandlerUtils::SetProperties(m_dxlnode, prop_parse_handler);
 

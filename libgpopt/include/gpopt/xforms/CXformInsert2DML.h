@@ -28,53 +28,44 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformInsert2DML : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformInsert2DML(const CXformInsert2DML &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformInsert2DML(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformInsert2DML(const CXformInsert2DML &);
+		// dtor
+		virtual ~CXformInsert2DML()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfInsert2DML;
+		}
 
-			// ctor
-			explicit
-			CXformInsert2DML(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformInsert2DML";
+		}
 
-			// dtor
-			virtual
-			~CXformInsert2DML() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfInsert2DML;
-			}
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformInsert2DML";
-			}
+	};  // class CXformInsert2DML
+}  // namespace gpopt
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			virtual
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformInsert2DML
-}
-
-#endif // !GPOPT_CXformInsert2DML_H
+#endif  // !GPOPT_CXformInsert2DML_H
 
 // EOF

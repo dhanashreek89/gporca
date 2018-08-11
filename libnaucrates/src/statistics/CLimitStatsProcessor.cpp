@@ -31,13 +31,12 @@ CLimitStatsProcessor::CalcLimitStats(IMemoryPool *mp,
 		limit_rows = std::max(CStatistics::MinRows, input_limit_rows);
 	}
 	// create an output stats object
-	CStatistics *pstatsLimit =
-		GPOS_NEW(mp) CStatistics(mp,
-										  colid_histogram,
-										  input_stats->CopyWidths(mp),
-										  limit_rows,
-										  input_stats->IsEmpty(),
-										  input_stats->GetNumberOfPredicates());
+	CStatistics *pstatsLimit = GPOS_NEW(mp) CStatistics(mp,
+														colid_histogram,
+														input_stats->CopyWidths(mp),
+														limit_rows,
+														input_stats->IsEmpty(),
+														input_stats->GetNumberOfPredicates());
 
 	// In the output statistics object, the upper bound source cardinality of the join column
 	// cannot be greater than the upper bound source cardinality information maintained in the input
@@ -46,11 +45,8 @@ CLimitStatsProcessor::CalcLimitStats(IMemoryPool *mp,
 	// and estimated limit cardinality.
 
 	// modify source id to upper bound card information
-	CStatisticsUtils::ComputeCardUpperBounds(mp,
-											 input_stats,
-											 pstatsLimit,
-											 limit_rows,
-											 CStatistics::EcbmMin /* card_bounding_method */);
+	CStatisticsUtils::ComputeCardUpperBounds(
+		mp, input_stats, pstatsLimit, limit_rows, CStatistics::EcbmMin /* card_bounding_method */);
 
 	return pstatsLimit;
 }

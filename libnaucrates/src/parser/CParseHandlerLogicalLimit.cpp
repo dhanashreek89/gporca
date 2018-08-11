@@ -65,8 +65,8 @@ CParseHandlerLogicalLimit::StartElement(const XMLCh *const,  // element_uri,
 				EdxltokenLogicalLimit);
 		}
 
-		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(
-			m_mp, GPOS_NEW(m_mp) CDXLLogicalLimit(m_mp, keep_limit));
+		m_dxlnode =
+			GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLLogicalLimit(m_mp, keep_limit));
 
 		// create child node parsers
 
@@ -76,25 +76,16 @@ CParseHandlerLogicalLimit::StartElement(const XMLCh *const,  // element_uri,
 		m_parse_handler_mgr->ActivateParseHandler(child_parse_handler);
 
 		CParseHandlerBase *offset_parse_handler = CParseHandlerFactory::GetParseHandler(
-			m_mp,
-			CDXLTokens::XmlstrToken(EdxltokenScalarLimitOffset),
-			m_parse_handler_mgr,
-			this);
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarLimitOffset), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(offset_parse_handler);
 
 		CParseHandlerBase *count_parse_handler = CParseHandlerFactory::GetParseHandler(
-			m_mp,
-			CDXLTokens::XmlstrToken(EdxltokenScalarLimitCount),
-			m_parse_handler_mgr,
-			this);
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarLimitCount), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(count_parse_handler);
 
 		// parse handler for the sorting column list
 		CParseHandlerBase *sort_col_list_parse_handler = CParseHandlerFactory::GetParseHandler(
-			m_mp,
-			CDXLTokens::XmlstrToken(EdxltokenScalarSortColList),
-			m_parse_handler_mgr,
-			this);
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarSortColList), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(sort_col_list_parse_handler);
 
 		// store child parse handler in array

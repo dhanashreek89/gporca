@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CXformImplementDML
@@ -28,52 +28,42 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformImplementDML : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformImplementDML(const CXformImplementDML &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementDML(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformImplementDML(const CXformImplementDML &);
+		// dtor
+		virtual ~CXformImplementDML()
+		{
+		}
 
-		public:
-		
-			// ctor
-			explicit
-			CXformImplementDML(IMemoryPool *mp);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementDML;
+		}
 
-			// dtor
-			virtual 
-			~CXformImplementDML() {}
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementDML";
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementDML;
-			}
-			
-			// return a string for xform name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CXformImplementDML";
-			}
-			
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-			
-			// actual transform
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				) 
-				const;
-		
-	}; // class CXformImplementDML
-}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-#endif // !GPOPT_CXformImplementDML_H
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
+
+	};  // class CXformImplementDML
+}  // namespace gpopt
+
+#endif  // !GPOPT_CXformImplementDML_H
 
 // EOF

@@ -23,7 +23,6 @@
 
 namespace gpopt
 {
-
 	using namespace gpos;
 
 	//---------------------------------------------------------------------------
@@ -36,208 +35,179 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CExpressionPreprocessor
 	{
+	private:
+		// map CTE id to collected predicates
+		typedef CHashMap<ULONG,
+						 CExpressionArray,
+						 gpos::HashValue<ULONG>,
+						 gpos::Equals<ULONG>,
+						 CleanupDelete<ULONG>,
+						 CleanupRelease<CExpressionArray> >
+			CTEPredsMap;
 
-		private:
+		// iterator for map of CTE id to collected predicates
+		typedef CHashMapIter<ULONG,
+							 CExpressionArray,
+							 gpos::HashValue<ULONG>,
+							 gpos::Equals<ULONG>,
+							 CleanupDelete<ULONG>,
+							 CleanupRelease<CExpressionArray> >
+			CTEPredsMapIter;
 
-			// map CTE id to collected predicates
-			typedef CHashMap<ULONG, CExpressionArray, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-						CleanupDelete<ULONG>, CleanupRelease<CExpressionArray> > CTEPredsMap;
+		// generate a conjunction of equality predicates between the columns in the given set
+		static CExpression *PexprConjEqualityPredicates(IMemoryPool *mp, CColRefSet *pcrs);
 
-			// iterator for map of CTE id to collected predicates
-			typedef CHashMapIter<ULONG, CExpressionArray, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-						CleanupDelete<ULONG>, CleanupRelease<CExpressionArray> > CTEPredsMapIter;
+		// additional equality predicates are generated based on the equivalence
+		// classes in the constraint properties of the expression
+		static CExpression *PexprAddEqualityPreds(IMemoryPool *mp,
+												  CExpression *pexpr,
+												  CColRefSet *pcrsProcessed);
 
-			// generate a conjunction of equality predicates between the columns in the given set
-			static
-			CExpression *PexprConjEqualityPredicates(IMemoryPool *mp, CColRefSet *pcrs);
+		// check if all columns in the given equivalence class come from one of the
+		// children of the given expression
+		static BOOL FEquivClassFromChild(CColRefSet *pcrs, CExpression *pexpr);
 
-			// additional equality predicates are generated based on the equivalence
-			// classes in the constraint properties of the expression
-			static
-			CExpression *PexprAddEqualityPreds(IMemoryPool *mp, CExpression *pexpr, CColRefSet *pcrsProcessed);
+		// generate predicates for the given set of columns based on the given
+		// constraint property
+		static CExpression *PexprScalarPredicates(IMemoryPool *mp,
+												  CPropConstraint *ppc,
+												  CColRefSet *pcrsNotNull,
+												  CColRefSet *pcrs,
+												  CColRefSet *pcrsProcessed);
 
-			// check if all columns in the given equivalence class come from one of the
-			// children of the given expression
-			static
-			BOOL FEquivClassFromChild(CColRefSet *pcrs, CExpression *pexpr);
+		// eliminate self comparisons
+		static CExpression *PexprEliminateSelfComparison(IMemoryPool *mp, CExpression *pexpr);
 
-			// generate predicates for the given set of columns based on the given
-			// constraint property
-			static
-			CExpression *PexprScalarPredicates
-							(
-							IMemoryPool *mp,
-							CPropConstraint *ppc,
-							CColRefSet *pcrsNotNull,
-							CColRefSet *pcrs,
-							CColRefSet *pcrsProcessed
-							);
+		// remove CTE Anchor nodes
+		static CExpression *PexprRemoveCTEAnchors(IMemoryPool *mp, CExpression *pexpr);
 
-			// eliminate self comparisons
-			static
-			CExpression *PexprEliminateSelfComparison(IMemoryPool *mp, CExpression *pexpr);
+		// trim superfluos equality
+		static CExpression *PexprPruneSuperfluousEquality(IMemoryPool *mp, CExpression *pexpr);
 
-			// remove CTE Anchor nodes
-			static
-			CExpression *PexprRemoveCTEAnchors(IMemoryPool *mp, CExpression *pexpr);
+		// trim existential subqueries
+		static CExpression *PexprTrimExistentialSubqueries(IMemoryPool *mp, CExpression *pexpr);
 
-			// trim superfluos equality
-			static
-			CExpression *PexprPruneSuperfluousEquality(IMemoryPool *mp, CExpression *pexpr);
+		// simplify quantified subqueries
+		static CExpression *PexprSimplifyQuantifiedSubqueries(IMemoryPool *mp, CExpression *pexpr);
 
-			// trim existential subqueries
-			static
-			CExpression *PexprTrimExistentialSubqueries(IMemoryPool *mp, CExpression *pexpr);
+		// preliminary unnesting of scalar  subqueries
+		static CExpression *PexprUnnestScalarSubqueries(IMemoryPool *mp, CExpression *pexpr);
 
-			// simplify quantified subqueries
-			static
-			CExpression *PexprSimplifyQuantifiedSubqueries(IMemoryPool *mp, CExpression *pexpr);
+		// remove superfluous limit nodes
+		static CExpression *PexprRemoveSuperfluousLimit(IMemoryPool *mp, CExpression *pexpr);
 
-			// preliminary unnesting of scalar  subqueries
-			static
-			CExpression *PexprUnnestScalarSubqueries(IMemoryPool *mp, CExpression *pexpr);
+		// remove superfluous outer references from limit, group by and window operators
+		static CExpression *PexprRemoveSuperfluousOuterRefs(IMemoryPool *mp, CExpression *pexpr);
 
-			// remove superfluous limit nodes
-			static
-			CExpression *PexprRemoveSuperfluousLimit(IMemoryPool *mp, CExpression *pexpr);
+		// generate predicates based on derived constraint properties
+		static CExpression *PexprFromConstraints(IMemoryPool *mp,
+												 CExpression *pexpr,
+												 CColRefSet *pcrsProcessed);
 
-			// remove superfluous outer references from limit, group by and window operators
-			static
-			CExpression *PexprRemoveSuperfluousOuterRefs(IMemoryPool *mp, CExpression *pexpr);
+		// generate predicates based on derived constraint properties under scalar expressions
+		static CExpression *PexprFromConstraintsScalar(IMemoryPool *mp, CExpression *pexpr);
 
-			// generate predicates based on derived constraint properties
-			static
-			CExpression *PexprFromConstraints(IMemoryPool *mp, CExpression *pexpr, CColRefSet *pcrsProcessed);
+		// eliminate subtrees that have zero output cardinality
+		static CExpression *PexprPruneEmptySubtrees(IMemoryPool *mp, CExpression *pexpr);
 
-			// generate predicates based on derived constraint properties under scalar expressions
-			static
-			CExpression *PexprFromConstraintsScalar(IMemoryPool *mp, CExpression *pexpr);
+		// collapse cascaded inner joins into NAry-joins
+		static CExpression *PexprCollapseInnerJoins(IMemoryPool *mp, CExpression *pexpr);
 
-			// eliminate subtrees that have zero output cardinality
-			static
-			CExpression *PexprPruneEmptySubtrees(IMemoryPool *mp, CExpression *pexpr);
+		// collapse cascaded logical project operators
+		static CExpression *PexprCollapseProjects(IMemoryPool *mp, CExpression *pexpr);
 
-			// collapse cascaded inner joins into NAry-joins
-			static
-			CExpression *PexprCollapseInnerJoins(IMemoryPool *mp, CExpression *pexpr);
+		// add dummy project element below scalar subquery when the output column is an outer reference
+		static CExpression *PexprProjBelowSubquery(IMemoryPool *mp,
+												   CExpression *pexpr,
+												   BOOL fUnderPrList);
 
-			// collapse cascaded logical project operators
-			static
-			CExpression *PexprCollapseProjects(IMemoryPool *mp, CExpression *pexpr);
+		// helper function to rewrite IN query to simple EXISTS with a predicate
+		static CExpression *ConvertInToSimpleExists(IMemoryPool *mp, CExpression *pexpr);
 
-			// add dummy project element below scalar subquery when the output column is an outer reference
-			static
-			CExpression *PexprProjBelowSubquery(IMemoryPool *mp, CExpression *pexpr, BOOL fUnderPrList);
+		// rewrite IN subquery to EXIST subquery with a predicate
+		static CExpression *PexprExistWithPredFromINSubq(IMemoryPool *mp, CExpression *pexpr);
 
-			// helper function to rewrite IN query to simple EXISTS with a predicate
-			static
-			CExpression *ConvertInToSimpleExists (IMemoryPool *mp, CExpression *pexpr);
+		// collapse cascaded union/union all into an NAry union/union all operator
+		static CExpression *PexprCollapseUnionUnionAll(IMemoryPool *mp, CExpression *pexpr);
 
-			// rewrite IN subquery to EXIST subquery with a predicate
-			static
-			CExpression *PexprExistWithPredFromINSubq(IMemoryPool *mp, CExpression *pexpr);
+		// transform outer joins into inner joins whenever possible
+		static CExpression *PexprOuterJoinToInnerJoin(IMemoryPool *mp, CExpression *pexpr);
 
-			// collapse cascaded union/union all into an NAry union/union all operator
-			static
-			CExpression *PexprCollapseUnionUnionAll(IMemoryPool *mp, CExpression *pexpr);
+		// eliminate CTE Anchors for CTEs that have zero consumers
+		static CExpression *PexprRemoveUnusedCTEs(IMemoryPool *mp, CExpression *pexpr);
 
-			// transform outer joins into inner joins whenever possible
-			static
-			CExpression *PexprOuterJoinToInnerJoin(IMemoryPool *mp, CExpression *pexpr);
+		// collect CTE predicates from consumers
+		static void CollectCTEPredicates(IMemoryPool *mp, CExpression *pexpr, CTEPredsMap *phm);
 
-			// eliminate CTE Anchors for CTEs that have zero consumers
-			static
-			CExpression *PexprRemoveUnusedCTEs(IMemoryPool *mp, CExpression *pexpr);
+		// imply new predicates on LOJ's inner child based on constraints derived from LOJ's outer child and join predicate
+		static CExpression *PexprWithImpliedPredsOnLOJInnerChild(IMemoryPool *mp,
+																 CExpression *pexprLOJ,
+																 BOOL *pfAddedPredicates);
 
-			// collect CTE predicates from consumers
-			static
-			void CollectCTEPredicates(IMemoryPool *mp, CExpression *pexpr, CTEPredsMap *phm);
+		// infer predicate from outer child to inner child of the outer join
+		static CExpression *PexprOuterJoinInferPredsFromOuterChildToInnerChild(
+			IMemoryPool *mp, CExpression *pexpr, BOOL *pfAddedPredicates);
 
-			// imply new predicates on LOJ's inner child based on constraints derived from LOJ's outer child and join predicate
-			static
-			CExpression *PexprWithImpliedPredsOnLOJInnerChild(IMemoryPool *mp, CExpression *pexprLOJ, BOOL *pfAddedPredicates);
+		// driver for inferring predicates from constraints
+		static CExpression *PexprInferPredicates(IMemoryPool *mp, CExpression *pexpr);
 
-			// infer predicate from outer child to inner child of the outer join
-			static
-			CExpression *PexprOuterJoinInferPredsFromOuterChildToInnerChild(IMemoryPool *mp, CExpression *pexpr, BOOL *pfAddedPredicates);
+		// entry for pruning unused computed columns
+		static CExpression *PexprPruneUnusedComputedCols(IMemoryPool *mp,
+														 CExpression *pexpr,
+														 CColRefSet *pcrsReqd);
 
-			// driver for inferring predicates from constraints
-			static
-			CExpression *PexprInferPredicates(IMemoryPool *mp, CExpression *pexpr);
+		// driver for pruning unused computed columns
+		static CExpression *PexprPruneUnusedComputedColsRecursive(IMemoryPool *mp,
+																  CExpression *pexpr,
+																  CColRefSet *pcrsReqd);
 
-			// entry for pruning unused computed columns
-			static CExpression *
-			PexprPruneUnusedComputedCols
-				(
-				IMemoryPool *mp,
-				CExpression *pexpr,
-				CColRefSet *pcrsReqd
-				);
+		// prune unused project elements from the project list of Project or GbAgg
+		static CExpression *PexprPruneProjListProjectOrGbAgg(IMemoryPool *mp,
+															 CExpression *pexpr,
+															 CColRefSet *pcrsUnused,
+															 CColRefSet *pcrsDefined,
+															 const CColRefSet *pcrsReqd);
 
-			// driver for pruning unused computed columns
-			static CExpression *
-			PexprPruneUnusedComputedColsRecursive
-				(
-				IMemoryPool *mp,
-				CExpression *pexpr,
-				CColRefSet *pcrsReqd
-				);
+		// generate a scalar bool op expression or return the only child expression in array
+		static CExpression *PexprScalarBoolOpConvert2In(IMemoryPool *mp,
+														CScalarBoolOp::EBoolOperator eboolop,
+														CExpressionArray *pdrgpexpr);
 
-			// prune unused project elements from the project list of Project or GbAgg
-			static CExpression *
-			PexprPruneProjListProjectOrGbAgg
-				(
-				IMemoryPool *mp,
-				CExpression *pexpr,
-				CColRefSet *pcrsUnused,
-				CColRefSet *pcrsDefined,
-				const CColRefSet *pcrsReqd
-				);
+		// determines if the expression is likely convertible to an array expression
+		static BOOL FConvert2InIsConvertable(CExpression *pexpr,
+											 CScalarBoolOp::EBoolOperator eboolop);
 
-			// generate a scalar bool op expression or return the only child expression in array
-			static CExpression *
-			PexprScalarBoolOpConvert2In(IMemoryPool *mp, CScalarBoolOp::EBoolOperator eboolop, CExpressionArray *pdrgpexpr);
+		// reorder the scalar cmp children to ensure that left child is Scalar Ident and right Child is Scalar Const
+		static CExpression *PexprReorderScalarCmpChildren(IMemoryPool *mp, CExpression *pexpr);
 
-			// determines if the expression is likely convertible to an array expression
-			static BOOL
-			FConvert2InIsConvertable(CExpression *pexpr, CScalarBoolOp::EBoolOperator eboolop);
+		// private ctor
+		CExpressionPreprocessor();
 
-			// reorder the scalar cmp children to ensure that left child is Scalar Ident and right Child is Scalar Const
-			static CExpression *
-			PexprReorderScalarCmpChildren(IMemoryPool *mp, CExpression *pexpr);
+		// private dtor
+		virtual ~CExpressionPreprocessor();
 
-			// private ctor
-			CExpressionPreprocessor();
+		// private copy ctor
+		CExpressionPreprocessor(const CExpressionPreprocessor &);
 
-			// private dtor
-			virtual
-			~CExpressionPreprocessor();
+	public:
+		// main driver
+		static CExpression *PexprPreprocess(IMemoryPool *mp,
+											CExpression *pexpr,
+											CColRefSet *pcrsOutputAndOrderCols = NULL);
 
-			// private copy ctor
-			CExpressionPreprocessor(const CExpressionPreprocessor &);
+		// add predicates collected from CTE consumers to producer expressions
+		static void AddPredsToCTEProducers(IMemoryPool *mp, CExpression *pexpr);
 
-		public:
+		// derive constraints on given expression
+		static CExpression *PexprAddPredicatesFromConstraints(IMemoryPool *mp, CExpression *pexpr);
 
-			// main driver
-			static
-			CExpression *PexprPreprocess(IMemoryPool *mp, CExpression *pexpr, CColRefSet *pcrsOutputAndOrderCols = NULL);
+		// convert series of AND or OR comparisons into array IN expressions
+		static CExpression *PexprConvert2In(IMemoryPool *mp, CExpression *pexpr);
 
-			// add predicates collected from CTE consumers to producer expressions
-			static
-			void AddPredsToCTEProducers(IMemoryPool *mp, CExpression *pexpr);
-
-			// derive constraints on given expression
-			static
-			CExpression *PexprAddPredicatesFromConstraints(IMemoryPool *mp, CExpression *pexpr);
-
-			// convert series of AND or OR comparisons into array IN expressions
-			static
-			CExpression *PexprConvert2In(IMemoryPool *mp, CExpression *pexpr);
-
-	}; // class CExpressionPreprocessor
-}
+	};  // class CExpressionPreprocessor
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CExpressionPreprocessor_H
+#endif  // !GPOPT_CExpressionPreprocessor_H
 
 // EOF

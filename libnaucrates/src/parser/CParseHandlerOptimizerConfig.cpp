@@ -98,11 +98,8 @@ CParseHandlerOptimizerConfig::StartElement(const XMLCh *const element_uri,
 										   element_local_name))
 	{
 		// install a parse handler for the cost model config
-		CParseHandlerBase *pphCostModel =
-			CParseHandlerFactory::GetParseHandler(m_mp,
-												  CDXLTokens::XmlstrToken(EdxltokenCostModelConfig),
-												  m_parse_handler_mgr,
-												  this);
+		CParseHandlerBase *pphCostModel = CParseHandlerFactory::GetParseHandler(
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenCostModelConfig), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(pphCostModel);
 		pphCostModel->startElement(element_uri, element_local_name, element_qname, attrs);
 		this->Append(pphCostModel);
@@ -137,19 +134,13 @@ CParseHandlerOptimizerConfig::StartElement(const XMLCh *const element_uri,
 	m_parse_handler_mgr->ActivateParseHandler(pphCTEConfig);
 
 	// install a parse handler for the statistics configuration
-	CParseHandlerBase *pphStatisticsConfig =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenStatisticsConfig),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *pphStatisticsConfig = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenStatisticsConfig), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(pphStatisticsConfig);
 
 	// install a parse handler for the enumerator configuration
-	CParseHandlerBase *pphEnumeratorConfig =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenEnumeratorConfig),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *pphEnumeratorConfig = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenEnumeratorConfig), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(pphEnumeratorConfig);
 
 	// store parse handlers
@@ -232,8 +223,8 @@ CParseHandlerOptimizerConfig::EndElement(const XMLCh *const,  // element_uri,
 		}
 	}
 
-	m_optimizer_config = GPOS_NEW(m_mp)
-		COptimizerConfig(pec, stats_config, pcteconfig, pcm, phint, pwindowoidsGPDB);
+	m_optimizer_config =
+		GPOS_NEW(m_mp) COptimizerConfig(pec, stats_config, pcteconfig, pcm, phint, pwindowoidsGPDB);
 
 	CParseHandlerTraceFlags *pphTraceFlags =
 		dynamic_cast<CParseHandlerTraceFlags *>((*this)[this->Length() - 1]);

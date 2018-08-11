@@ -33,8 +33,7 @@ XERCES_CPP_NAMESPACE_USE
 CParseHandlerColDescr::CParseHandlerColDescr(IMemoryPool *mp,
 											 CParseHandlerManager *parse_handler_mgr,
 											 CParseHandlerBase *parse_handler_base)
-	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_base),
-	  m_current_column_descr(NULL)
+	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_base), m_current_column_descr(NULL)
 {
 	m_dxl_column_descr_array = GPOS_NEW(mp) CDXLColDescrArray(mp);
 }

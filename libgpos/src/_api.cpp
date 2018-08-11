@@ -180,9 +180,9 @@ gpos_exec(gpos_exec_params *params)
 				{
 					GPOS_ASSERT(0 < params->error_buffer_size);
 
-					apwstr = GPOS_NEW(mp)
-						CWStringStatic((WCHAR *) params->error_buffer,
-									   params->error_buffer_size / GPOS_SIZEOF(WCHAR));
+					apwstr =
+						GPOS_NEW(mp) CWStringStatic((WCHAR *) params->error_buffer,
+													params->error_buffer_size / GPOS_SIZEOF(WCHAR));
 					aposs = GPOS_NEW(mp) COstreamString(apwstr.Value());
 					aplogger = GPOS_NEW(mp) CLoggerStream(*aposs.Value());
 

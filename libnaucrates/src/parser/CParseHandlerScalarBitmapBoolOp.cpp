@@ -33,9 +33,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerScalarBitmapBoolOp::CParseHandlerScalarBitmapBoolOp(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root)
 {
 }
@@ -76,9 +74,8 @@ CParseHandlerScalarBitmapBoolOp::StartElement(const XMLCh *const,  // element_ur
 
 	IMDId *mdid = CDXLOperatorFactory::ExtractConvertAttrValueToMdId(
 		m_parse_handler_mgr->GetDXLMemoryManager(), attrs, EdxltokenTypeId, token_type);
-	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(
-		m_mp,
-		GPOS_NEW(m_mp) CDXLScalarBitmapBoolOp(m_mp, mdid, bitmap_bool_dxlop));
+	m_dxlnode = GPOS_NEW(m_mp)
+		CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarBitmapBoolOp(m_mp, mdid, bitmap_bool_dxlop));
 
 	// install parse handlers for children
 	CParseHandlerBase *right_child_parse_handler = CParseHandlerFactory::GetParseHandler(

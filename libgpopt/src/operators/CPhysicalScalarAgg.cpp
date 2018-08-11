@@ -29,19 +29,22 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalScalarAgg::CPhysicalScalarAgg
-	(
-	IMemoryPool *mp,
-	CColRefArray *colref_array,
-	CColRefArray *pdrgpcrMinimal,
-	COperator::EGbAggType egbaggtype,
-	BOOL fGeneratesDuplicates,
-	CColRefArray *pdrgpcrArgDQA,
-	BOOL fMultiStage
-	)
-	:
-	CPhysicalAgg(mp, colref_array, pdrgpcrMinimal, egbaggtype, fGeneratesDuplicates, pdrgpcrArgDQA, fMultiStage)
-{}
+CPhysicalScalarAgg::CPhysicalScalarAgg(IMemoryPool *mp,
+									   CColRefArray *colref_array,
+									   CColRefArray *pdrgpcrMinimal,
+									   COperator::EGbAggType egbaggtype,
+									   BOOL fGeneratesDuplicates,
+									   CColRefArray *pdrgpcrArgDQA,
+									   BOOL fMultiStage)
+	: CPhysicalAgg(mp,
+				   colref_array,
+				   pdrgpcrMinimal,
+				   egbaggtype,
+				   fGeneratesDuplicates,
+				   pdrgpcrArgDQA,
+				   fMultiStage)
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -53,7 +56,8 @@ CPhysicalScalarAgg::CPhysicalScalarAgg
 //
 //---------------------------------------------------------------------------
 CPhysicalScalarAgg::~CPhysicalScalarAgg()
-{}
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -65,20 +69,17 @@ CPhysicalScalarAgg::~CPhysicalScalarAgg()
 //
 //---------------------------------------------------------------------------
 COrderSpec *
-CPhysicalScalarAgg::PosRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &, // exprhdl
-	COrderSpec *, // posRequired
-	ULONG
+CPhysicalScalarAgg::PosRequired(IMemoryPool *mp,
+								CExpressionHandle &,  // exprhdl
+								COrderSpec *,		  // posRequired
+								ULONG
 #ifdef GPOS_DEBUG
-	child_index
-#endif // GPOS_DEBUG
-	,
-	CDrvdPropArrays *, // pdrgpdpCtxt
-	ULONG // ulOptReq
-	)
-	const
+									child_index
+#endif  // GPOS_DEBUG
+								,
+								CDrvdPropArrays *,  // pdrgpdpCtxt
+								ULONG				// ulOptReq
+								) const
 {
 	GPOS_ASSERT(0 == child_index);
 
@@ -96,12 +97,9 @@ CPhysicalScalarAgg::PosRequired
 //
 //---------------------------------------------------------------------------
 COrderSpec *
-CPhysicalScalarAgg::PosDerive
-	(
-	IMemoryPool *mp,
-	CExpressionHandle & // exprhdl
-	)
-	const
+CPhysicalScalarAgg::PosDerive(IMemoryPool *mp,
+							  CExpressionHandle &  // exprhdl
+							  ) const
 {
 	// return empty sort order
 	return GPOS_NEW(mp) COrderSpec(mp);
@@ -117,15 +115,12 @@ CPhysicalScalarAgg::PosDerive
 //
 //---------------------------------------------------------------------------
 CEnfdProp::EPropEnforcingType
-CPhysicalScalarAgg::EpetOrder
-	(
-	CExpressionHandle &, // exprhdl
-	const CEnfdOrder *
+CPhysicalScalarAgg::EpetOrder(CExpressionHandle &,  // exprhdl
+							  const CEnfdOrder *
 #ifdef GPOS_DEBUG
-	peo
-#endif // GPOS_DEBUG
-	)
-	const
+								  peo
+#endif  // GPOS_DEBUG
+							  ) const
 {
 	GPOS_ASSERT(NULL != peo);
 	GPOS_ASSERT(!peo->PosRequired()->IsEmpty());

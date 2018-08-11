@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CXformResult
@@ -28,59 +28,51 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformResult : public CRefCount
 	{
+	private:
+		// set of alternatives
+		CExpressionArray *m_pdrgpexpr;
 
-		private:
+		// cursor for retrieval
+		ULONG m_ulExpr;
 
-			// set of alternatives
-			CExpressionArray *m_pdrgpexpr;
+		// private copy ctor
+		CXformResult(const CXformResult &);
 
-			// cursor for retrieval
-			ULONG m_ulExpr;
+	public:
+		// ctor
+		explicit CXformResult(IMemoryPool *);
 
-			// private copy ctor
-			CXformResult(const CXformResult &);
+		// dtor
+		~CXformResult();
 
-		public:
-		
-			// ctor
-			explicit
-			CXformResult(IMemoryPool *);
+		// accessor
+		inline CExpressionArray *
+		Pdrgpexpr() const
+		{
+			return m_pdrgpexpr;
+		}
 
-			// dtor
-			~CXformResult();
+		// add alternative
+		void Add(CExpression *pexpr);
 
-			// accessor
-			inline
-			CExpressionArray *Pdrgpexpr() const
-			{
-				return m_pdrgpexpr;
-			}
-			
-			// add alternative
-			void Add(CExpression *pexpr);
-			
-			// retrieve next alternative
-			CExpression *PexprNext();
+		// retrieve next alternative
+		CExpression *PexprNext();
 
-			// print function
-			IOstream &OsPrint(IOstream &) const;
+		// print function
+		IOstream &OsPrint(IOstream &) const;
 
-	}; // class CXformResult
+	};  // class CXformResult
 
 	// shorthand for printing
-	inline
-	IOstream &operator <<
-		(
-		IOstream &os,
-		CXformResult &xfres
-		)
+	inline IOstream &
+	operator<<(IOstream &os, CXformResult &xfres)
 	{
 		return xfres.OsPrint(os);
 	}
 
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformResult_H
+#endif  // !GPOPT_CXformResult_H
 
 // EOF

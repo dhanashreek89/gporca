@@ -17,8 +17,6 @@
 
 namespace gpopt
 {
-
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CLogicalLeftAntiSemiApplyNotIn
@@ -29,88 +27,74 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalLeftAntiSemiApplyNotIn : public CLogicalLeftAntiSemiApply
 	{
+	private:
+		// private copy ctor
+		CLogicalLeftAntiSemiApplyNotIn(const CLogicalLeftAntiSemiApplyNotIn &);
 
-		private:
+	public:
+		// ctor
+		explicit CLogicalLeftAntiSemiApplyNotIn(IMemoryPool *mp) : CLogicalLeftAntiSemiApply(mp)
+		{
+		}
 
-			// private copy ctor
-			CLogicalLeftAntiSemiApplyNotIn(const CLogicalLeftAntiSemiApplyNotIn &);
+		// ctor
+		CLogicalLeftAntiSemiApplyNotIn(IMemoryPool *mp,
+									   CColRefArray *pdrgpcrInner,
+									   EOperatorId eopidOriginSubq)
+			: CLogicalLeftAntiSemiApply(mp, pdrgpcrInner, eopidOriginSubq)
+		{
+		}
 
-		public:
+		// dtor
+		virtual ~CLogicalLeftAntiSemiApplyNotIn()
+		{
+		}
 
-			// ctor
-			explicit
-			CLogicalLeftAntiSemiApplyNotIn
-				(
-				IMemoryPool *mp
-				)
-				:
-				CLogicalLeftAntiSemiApply(mp)
-			{}
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalLeftAntiSemiApplyNotIn;
+		}
 
-			// ctor
-			CLogicalLeftAntiSemiApplyNotIn
-				(
-				IMemoryPool *mp,
-				CColRefArray *pdrgpcrInner,
-				EOperatorId eopidOriginSubq
-				)
-				:
-				CLogicalLeftAntiSemiApply(mp, pdrgpcrInner, eopidOriginSubq)
-			{}
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalLeftAntiSemiApplyNotIn";
+		}
 
-			// dtor
-			virtual
-			~CLogicalLeftAntiSemiApplyNotIn()
-			{}
+		//-------------------------------------------------------------------------------------
+		// Transformations
+		//-------------------------------------------------------------------------------------
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopLogicalLeftAntiSemiApplyNotIn;
-			}
+		// candidate set of xforms
+		virtual CXformSet *PxfsCandidates(IMemoryPool *mp) const;
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CLogicalLeftAntiSemiApplyNotIn";
-			}
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			// Transformations
-			//-------------------------------------------------------------------------------------
+		// return a copy of the operator with remapped columns
+		virtual COperator *PopCopyWithRemappedColumns(IMemoryPool *mp,
+													  UlongToColRefMap *colref_mapping,
+													  BOOL must_exist);
 
-			// candidate set of xforms
-			virtual
-			CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+		// conversion function
+		static CLogicalLeftAntiSemiApplyNotIn *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalLeftAntiSemiApplyNotIn == pop->Eopid());
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+			return dynamic_cast<CLogicalLeftAntiSemiApplyNotIn *>(pop);
+		}
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+	};  // class CLogicalLeftAntiSemiApplyNotIn
 
-			// conversion function
-			static
-			CLogicalLeftAntiSemiApplyNotIn *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalLeftAntiSemiApplyNotIn == pop->Eopid());
-
-				return dynamic_cast<CLogicalLeftAntiSemiApplyNotIn*>(pop);
-			}
-
-	}; // class CLogicalLeftAntiSemiApplyNotIn
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CLogicalLeftAntiSemiApplyNotIn_H
+#endif  // !GPOPT_CLogicalLeftAntiSemiApplyNotIn_H
 
 // EOF

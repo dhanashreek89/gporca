@@ -30,92 +30,78 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalarDMLAction : public CScalar
 	{
+	private:
+		// private copy ctor
+		CScalarDMLAction(const CScalarDMLAction &);
 
-		private:
+	public:
+		// dml action specification
+		enum EDMLAction
+		{
+			EdmlactionDelete,
+			EdmlactionInsert
+		};
 
-			// private copy ctor
-			CScalarDMLAction(const CScalarDMLAction &);
+		// ctor
+		CScalarDMLAction(IMemoryPool *mp) : CScalar(mp)
+		{
+		}
 
-		public:
+		// dtor
+		virtual ~CScalarDMLAction()
+		{
+		}
+		// ident accessors
 
-			// dml action specification
-			enum EDMLAction
-			{
-				EdmlactionDelete,
-				EdmlactionInsert
-			};
-			
-			// ctor
-			CScalarDMLAction
-				(
-				IMemoryPool *mp
-				)
-				:
-				CScalar(mp)
-			{}
+		// the type of the scalar expression
+		virtual IMDId *MDIdType() const;
 
-			// dtor
-			virtual
-			~CScalarDMLAction() 
-			{}
-			// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopScalarDMLAction;
+		}
 
-			// the type of the scalar expression
-			virtual 
-			IMDId *MDIdType() const;
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CScalarDMLAction";
+		}
 
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopScalarDMLAction;
-			}
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CScalarDMLAction";
-			}
+		// sensitivity to order of inputs
+		virtual BOOL
+		FInputOrderSensitive() const
+		{
+			return false;
+		}
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
+		// return a copy of the operator with remapped columns
+		virtual COperator *
+		PopCopyWithRemappedColumns(IMemoryPool *,		//mp,
+								   UlongToColRefMap *,  //colref_mapping,
+								   BOOL					//must_exist
+		)
+		{
+			return PopCopyDefault();
+		}
 
-			// sensitivity to order of inputs
-			virtual
-			BOOL FInputOrderSensitive() const
-			{
-				return false;
-			}
+		// conversion function
+		static CScalarDMLAction *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopScalarDMLAction == pop->Eopid());
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *, //mp,
-						UlongToColRefMap *, //colref_mapping,
-						BOOL //must_exist
-						)
-			{
-				return PopCopyDefault();
-			}
+			return dynamic_cast<CScalarDMLAction *>(pop);
+		}
 
-			// conversion function
-			static
-			CScalarDMLAction *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopScalarDMLAction == pop->Eopid());
+	};  // class CScalarDMLAction
+}  // namespace gpopt
 
-				return dynamic_cast<CScalarDMLAction*>(pop);
-			}
-
-	}; // class CScalarDMLAction
-}
-
-#endif // !GPOPT_CScalarDMLAction_H
+#endif  // !GPOPT_CScalarDMLAction_H
 
 // EOF

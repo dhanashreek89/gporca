@@ -64,11 +64,7 @@ namespace gpdxl
 
 	public:
 		// ctor/dtor
-		CDXLColRef(IMemoryPool *mp,
-				   CMDName *mdname,
-				   ULONG id,
-				   IMDId *mdid_type,
-				   INT type_modifier);
+		CDXLColRef(IMemoryPool *mp, CMDName *mdname, ULONG id, IMDId *mdid_type, INT type_modifier);
 
 		~CDXLColRef();
 

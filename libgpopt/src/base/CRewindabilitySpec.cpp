@@ -23,13 +23,9 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CRewindabilitySpec::CRewindabilitySpec
-	(
-	ERewindabilityType ert
-	)
-	:
-	m_ert(ert)
-{}
+CRewindabilitySpec::CRewindabilitySpec(ERewindabilityType ert) : m_ert(ert)
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -41,7 +37,8 @@ CRewindabilitySpec::CRewindabilitySpec
 //
 //---------------------------------------------------------------------------
 CRewindabilitySpec::~CRewindabilitySpec()
-{}
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -53,11 +50,7 @@ CRewindabilitySpec::~CRewindabilitySpec()
 //
 //---------------------------------------------------------------------------
 BOOL
-CRewindabilitySpec::Matches
-	(
-	const CRewindabilitySpec *prs
-	)
-	const
+CRewindabilitySpec::Matches(const CRewindabilitySpec *prs) const
 {
 	GPOS_ASSERT(NULL != prs);
 
@@ -74,16 +67,10 @@ CRewindabilitySpec::Matches
 //
 //---------------------------------------------------------------------------
 BOOL
-CRewindabilitySpec::FSatisfies
-	(
-	const CRewindabilitySpec *prs
-	)
-	const
+CRewindabilitySpec::FSatisfies(const CRewindabilitySpec *prs) const
 {
-	return
-		Matches(prs) ||
-		ErtNone == prs->Ert() ||
-		(ErtMarkRestore == Ert() && ErtGeneral == prs->Ert());
+	return Matches(prs) || ErtNone == prs->Ert() ||
+		   (ErtMarkRestore == Ert() && ErtGeneral == prs->Ert());
 }
 
 
@@ -111,18 +98,15 @@ CRewindabilitySpec::HashValue() const
 //
 //---------------------------------------------------------------------------
 void
-CRewindabilitySpec::AppendEnforcers
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &, // exprhdl
-	CReqdPropPlan *
+CRewindabilitySpec::AppendEnforcers(IMemoryPool *mp,
+									CExpressionHandle &,  // exprhdl
+									CReqdPropPlan *
 #ifdef GPOS_DEBUG
-	prpp
-#endif // GPOS_DEBUG
-	,
-	CExpressionArray *pdrgpexpr, 
-	CExpression *pexpr
-	)
+										prpp
+#endif  // GPOS_DEBUG
+									,
+									CExpressionArray *pdrgpexpr,
+									CExpression *pexpr)
 {
 	GPOS_ASSERT(NULL != prpp);
 	GPOS_ASSERT(NULL != mp);
@@ -132,12 +116,7 @@ CRewindabilitySpec::AppendEnforcers
 				"required plan properties don't match enforced rewindability spec");
 
 	pexpr->AddRef();
-	CExpression *pexprSpool = GPOS_NEW(mp) CExpression
-									(
-									mp, 
-									GPOS_NEW(mp) CPhysicalSpool(mp),
-									pexpr
-									);
+	CExpression *pexprSpool = GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPhysicalSpool(mp), pexpr);
 	pdrgpexpr->Append(pexprSpool);
 }
 
@@ -151,11 +130,7 @@ CRewindabilitySpec::AppendEnforcers
 //
 //---------------------------------------------------------------------------
 IOstream &
-CRewindabilitySpec::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CRewindabilitySpec::OsPrint(IOstream &os) const
 {
 	switch (Ert())
 	{
@@ -176,4 +151,3 @@ CRewindabilitySpec::OsPrint
 
 
 // EOF
-

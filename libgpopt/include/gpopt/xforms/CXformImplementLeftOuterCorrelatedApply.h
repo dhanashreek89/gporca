@@ -28,49 +28,44 @@ namespace gpopt
 	//		apply
 	//
 	//-------------------------------------------------------------------------
-	class CXformImplementLeftOuterCorrelatedApply :
-		public CXformImplementCorrelatedApply<CLogicalLeftOuterCorrelatedApply, CPhysicalCorrelatedLeftOuterNLJoin>
+	class CXformImplementLeftOuterCorrelatedApply
+		: public CXformImplementCorrelatedApply<CLogicalLeftOuterCorrelatedApply,
+												CPhysicalCorrelatedLeftOuterNLJoin>
 	{
+	private:
+		// private copy ctor
+		CXformImplementLeftOuterCorrelatedApply(const CXformImplementLeftOuterCorrelatedApply &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementLeftOuterCorrelatedApply(IMemoryPool *mp)
+			: CXformImplementCorrelatedApply<CLogicalLeftOuterCorrelatedApply,
+											 CPhysicalCorrelatedLeftOuterNLJoin>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformImplementLeftOuterCorrelatedApply(const CXformImplementLeftOuterCorrelatedApply &);
+		// dtor
+		virtual ~CXformImplementLeftOuterCorrelatedApply()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementLeftOuterCorrelatedApply;
+		}
 
-			// ctor
-			explicit
-			CXformImplementLeftOuterCorrelatedApply
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformImplementCorrelatedApply<CLogicalLeftOuterCorrelatedApply, CPhysicalCorrelatedLeftOuterNLJoin>(mp)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementLeftOuterCorrelatedApply";
+		}
 
-			// dtor
-			virtual
-			~CXformImplementLeftOuterCorrelatedApply()
-			{}
+	};  // class CXformImplementLeftOuterCorrelatedApply
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementLeftOuterCorrelatedApply;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementLeftOuterCorrelatedApply";
-			}
-
-	}; // class CXformImplementLeftOuterCorrelatedApply
-
-}
-
-#endif // !GPOPT_CXformImplementLeftOuterCorrelatedApply_H
+#endif  // !GPOPT_CXformImplementLeftOuterCorrelatedApply_H
 
 // EOF

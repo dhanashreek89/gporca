@@ -28,9 +28,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerLogicalCTEConsumer::CParseHandlerLogicalCTEConsumer(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerLogicalOp(mp, parse_handler_mgr, parse_handler_root)
 {
 }
@@ -70,9 +68,8 @@ CParseHandlerLogicalCTEConsumer::StartElement(const XMLCh *const,  // element_ur
 														 EdxltokenColumns,
 														 EdxltokenLogicalCTEConsumer);
 
-	m_dxlnode = GPOS_NEW(m_mp) CDXLNode(
-		m_mp,
-		GPOS_NEW(m_mp) CDXLLogicalCTEConsumer(m_mp, id, output_colids_array));
+	m_dxlnode = GPOS_NEW(m_mp)
+		CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLLogicalCTEConsumer(m_mp, id, output_colids_array));
 }
 
 //---------------------------------------------------------------------------

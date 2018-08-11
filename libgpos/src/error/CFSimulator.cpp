@@ -49,8 +49,7 @@ CFSimulator::AddTracker(CStackTracker::SStackKey key)
 	CAutoTraceFlag atf(EtraceSimulateOOM, false);
 
 	// allocate new tracker before getting the spinlock
-	CStackTracker *new_stack_tracker =
-		GPOS_NEW(m_mp) CStackTracker(m_mp, m_resolution, key);
+	CStackTracker *new_stack_tracker = GPOS_NEW(m_mp) CStackTracker(m_mp, m_resolution, key);
 
 	// assume somebody overtook
 	BOOL overtaken = true;
@@ -204,8 +203,7 @@ CFSimulator::CStackTracker::ExchangeSet(ULONG bit)
 //		ctor
 //
 //---------------------------------------------------------------------------
-CFSimulator::CFSimulator(IMemoryPool *mp, ULONG resolution)
-	: m_mp(mp), m_resolution(resolution)
+CFSimulator::CFSimulator(IMemoryPool *mp, ULONG resolution) : m_mp(mp), m_resolution(resolution)
 {
 	// setup init table
 	m_stack.Init(m_mp,

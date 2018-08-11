@@ -46,21 +46,24 @@ namespace gpdxl
 		// i.e., inner side is an index scan that uses values from outer side
 		BOOL m_is_index_nlj;
 
-			// array holding nest params col references used for creating nestparam
-			// node during translation
-			CDXLColRefArray *m_nest_params_col_refs;
+		// array holding nest params col references used for creating nestparam
+		// node during translation
+		CDXLColRefArray *m_nest_params_col_refs;
 
-			// if nest params are required to be parsed
-			BOOL m_nest_params_exists;
+		// if nest params are required to be parsed
+		BOOL m_nest_params_exists;
 
-			void SerializeNestLoopParamsToDXL(CXMLSerializer *pxmlser) const;
+		void SerializeNestLoopParamsToDXL(CXMLSerializer *pxmlser) const;
 
-			// private copy ctor
-			CDXLPhysicalNLJoin(const CDXLPhysicalNLJoin&);
+		// private copy ctor
+		CDXLPhysicalNLJoin(const CDXLPhysicalNLJoin &);
 
 	public:
 		// ctor/dtor
-		CDXLPhysicalNLJoin(IMemoryPool *mp, EdxlJoinType join_type, BOOL is_index_nlj, BOOL nest_params_exists);
+		CDXLPhysicalNLJoin(IMemoryPool *mp,
+						   EdxlJoinType join_type,
+						   BOOL is_index_nlj,
+						   BOOL nest_params_exists);
 
 		~CDXLPhysicalNLJoin();
 
@@ -75,18 +78,17 @@ namespace gpdxl
 			return m_is_index_nlj;
 		}
 
-			// nest params exists for parsing
-			BOOL NestParamsExists() const;
+		// nest params exists for parsing
+		BOOL NestParamsExists() const;
 
-			// serialize operator in DXL format
-			virtual
-			void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const;
+		// serialize operator in DXL format
+		virtual void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const;
 
-			void SetNestLoopParamsColRefs(CDXLColRefArray *nest_params_col_refs);
+		void SetNestLoopParamsColRefs(CDXLColRefArray *nest_params_col_refs);
 
-			CDXLColRefArray *GetNestLoopParamsColRefs() const;
+		CDXLColRefArray *GetNestLoopParamsColRefs() const;
 
-    	// conversion function
+		// conversion function
 		static CDXLPhysicalNLJoin *
 		PdxlConvert(CDXLOperator *dxl_op)
 		{

@@ -8,8 +8,8 @@
 //	@doc:
 //		Implementation of physical union all operator
 //
-//	@owner: 
-//		
+//	@owner:
+//
 //
 //	@test:
 //
@@ -42,15 +42,11 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalSerialUnionAll::CPhysicalSerialUnionAll
-	(
-	IMemoryPool *mp,
-	CColRefArray *pdrgpcrOutput,
-	CColRefArrays *pdrgpdrgpcrInput,
-	ULONG ulScanIdPartialIndex
-	)
-	:
-	CPhysicalUnionAll(mp, pdrgpcrOutput, pdrgpdrgpcrInput, ulScanIdPartialIndex)
+CPhysicalSerialUnionAll::CPhysicalSerialUnionAll(IMemoryPool *mp,
+												 CColRefArray *pdrgpcrOutput,
+												 CColRefArrays *pdrgpdrgpcrInput,
+												 ULONG ulScanIdPartialIndex)
+	: CPhysicalUnionAll(mp, pdrgpcrOutput, pdrgpdrgpcrInput, ulScanIdPartialIndex)
 {
 	// UnionAll creates two distribution requests to enforce distribution of its children:
 	// (1) (Hashed, Hashed): used to pass hashed distribution (requested from above)
@@ -76,22 +72,19 @@ CPhysicalSerialUnionAll::~CPhysicalSerialUnionAll()
 //
 //---------------------------------------------------------------------------
 CDistributionSpec *
-CPhysicalSerialUnionAll::PdsRequired
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CDistributionSpec *pdsRequired,
-	ULONG child_index,
-	CDrvdPropArrays *pdrgpdpCtxt,
-	ULONG ulOptReq
-	)
-	const
+CPhysicalSerialUnionAll::PdsRequired(IMemoryPool *mp,
+									 CExpressionHandle &exprhdl,
+									 CDistributionSpec *pdsRequired,
+									 ULONG child_index,
+									 CDrvdPropArrays *pdrgpdpCtxt,
+									 ULONG ulOptReq) const
 {
 	GPOS_ASSERT(NULL != PdrgpdrgpcrInput());
 	GPOS_ASSERT(child_index < PdrgpdrgpcrInput()->Size());
 	GPOS_ASSERT(2 > ulOptReq);
 
-	CDistributionSpec *pds = PdsMasterOnlyOrReplicated(mp, exprhdl, pdsRequired, child_index, ulOptReq);
+	CDistributionSpec *pds =
+		PdsMasterOnlyOrReplicated(mp, exprhdl, pdsRequired, child_index, ulOptReq);
 	if (NULL != pds)
 	{
 		return pds;
@@ -100,7 +93,8 @@ CPhysicalSerialUnionAll::PdsRequired
 	if (0 == ulOptReq && CDistributionSpec::EdtHashed == pdsRequired->Edt())
 	{
 		// attempt passing requested hashed distribution to children
-		CDistributionSpecHashed *pdshashed = PdshashedPassThru(mp, CDistributionSpecHashed::PdsConvert(pdsRequired), child_index);
+		CDistributionSpecHashed *pdshashed =
+			PdshashedPassThru(mp, CDistributionSpecHashed::PdsConvert(pdsRequired), child_index);
 		if (NULL != pdshashed)
 		{
 			return pdshashed;

@@ -30,8 +30,7 @@ using namespace gpopt;
 CParseHandlerSearchStrategy::CParseHandlerSearchStrategy(IMemoryPool *mp,
 														 CParseHandlerManager *parse_handler_mgr,
 														 CParseHandlerBase *parse_handler_root)
-	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root),
-	  m_search_stage_array(NULL)
+	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root), m_search_stage_array(NULL)
 {
 }
 
@@ -75,11 +74,8 @@ CParseHandlerSearchStrategy::StartElement(const XMLCh *const element_uri,
 		GPOS_ASSERT(NULL != m_search_stage_array);
 
 		// start new search stage
-		CParseHandlerBase *search_stage_parse_handler =
-			CParseHandlerFactory::GetParseHandler(m_mp,
-												  CDXLTokens::XmlstrToken(EdxltokenSearchStage),
-												  m_parse_handler_mgr,
-												  this);
+		CParseHandlerBase *search_stage_parse_handler = CParseHandlerFactory::GetParseHandler(
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenSearchStage), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(search_stage_parse_handler);
 
 		// store parse handler
@@ -128,8 +124,8 @@ CParseHandlerSearchStrategy::EndElement(const XMLCh *const,  // element_uri,
 		xform_set->AddRef();
 		CSearchStage *search_stage =
 			GPOS_NEW(m_mp) CSearchStage(xform_set,
-												 search_stage_parse_handler->TimeThreshold(),
-												 search_stage_parse_handler->CostThreshold());
+										search_stage_parse_handler->TimeThreshold(),
+										search_stage_parse_handler->CostThreshold());
 		m_search_stage_array->Append(search_stage);
 	}
 

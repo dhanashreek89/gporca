@@ -119,11 +119,11 @@ CParseHandlerHint::StartElement(const XMLCh *const,  //element_uri,
 		true);
 
 	m_hint = GPOS_NEW(m_mp) CHint(min_num_of_parts_to_require_sort_on_insert,
-										   join_arity_for_associativity_commutativity,
-										   array_expansion_threshold,
-										   join_order_dp_threshold,
-										   broadcast_threshold,
-										   enforce_constraint_on_dml);
+								  join_arity_for_associativity_commutativity,
+								  array_expansion_threshold,
+								  join_order_dp_threshold,
+								  broadcast_threshold,
+								  enforce_constraint_on_dml);
 }
 
 //---------------------------------------------------------------------------

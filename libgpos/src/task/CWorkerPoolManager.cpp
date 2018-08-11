@@ -88,8 +88,7 @@ CWorkerPoolManager::Init(ULONG min_workers, ULONG max_workers)
 	GPOS_TRY
 	{
 		// create worker pool
-		CWorkerPoolManager::m_worker_pool_manager =
-			GPOS_NEW(mp) CWorkerPoolManager(mp);
+		CWorkerPoolManager::m_worker_pool_manager = GPOS_NEW(mp) CWorkerPoolManager(mp);
 
 		// set min and max number of workers
 		CWorkerPoolManager::m_worker_pool_manager->SetWorkersLimit(min_workers, max_workers);

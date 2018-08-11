@@ -33,60 +33,50 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformInnerApplyWithOuterKey2InnerJoin : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformInnerApplyWithOuterKey2InnerJoin(const CXformInnerApplyWithOuterKey2InnerJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformInnerApplyWithOuterKey2InnerJoin(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformInnerApplyWithOuterKey2InnerJoin(const CXformInnerApplyWithOuterKey2InnerJoin &);
+		// dtor
+		virtual ~CXformInnerApplyWithOuterKey2InnerJoin()
+		{
+		}
 
-		public:
+		// transformation promise
+		EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ctor
-			explicit
-			CXformInnerApplyWithOuterKey2InnerJoin(IMemoryPool *mp);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfInnerApplyWithOuterKey2InnerJoin;
+		}
 
-			// dtor
-			virtual
-			~CXformInnerApplyWithOuterKey2InnerJoin()
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformInnerApplyWithOuterKey2InnerJoin";
+		}
 
-			// transformation promise
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+		// is transformation an Apply decorrelation (Apply To Join) xform?
+		virtual BOOL
+		FApplyDecorrelating() const
+		{
+			return true;
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfInnerApplyWithOuterKey2InnerJoin;
-			}
-
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformInnerApplyWithOuterKey2InnerJoin";
-			}
-
-			// is transformation an Apply decorrelation (Apply To Join) xform?
-			virtual
-			BOOL FApplyDecorrelating() const
-			{
-				return true;
-			}
-
-			// actual transform
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
 
-	}; // class CXformInnerApplyWithOuterKey2InnerJoin
+	};  // class CXformInnerApplyWithOuterKey2InnerJoin
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CXformInnerApplyWithOuterKey2InnerJoin_H
+#endif  // !GPOPT_CXformInnerApplyWithOuterKey2InnerJoin_H
 
 // EOF

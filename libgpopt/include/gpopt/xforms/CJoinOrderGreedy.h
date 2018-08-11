@@ -29,42 +29,34 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CJoinOrderGreedy : public CJoinOrder
 	{
+	private:
+		// result component
+		SComponent *m_pcompResult;
 
-		private:
+		ULONG m_ulNumUsedEdges;
 
-			// result component
-			SComponent *m_pcompResult;
+		// mark edges used by result component
+		void MarkUsedEdges();
 
-			ULONG m_ulNumUsedEdges;
+		// returns starting joins with minimal cardinality
+		SComponent *GetStartingJoins();
 
-			// mark edges used by result component
-			void MarkUsedEdges();
+	public:
+		// ctor
+		CJoinOrderGreedy(IMemoryPool *pmp,
+						 CExpressionArray *pdrgpexprComponents,
+						 CExpressionArray *pdrgpexprConjuncts);
 
-			// returns starting joins with minimal cardinality
-			SComponent *GetStartingJoins();
+		// dtor
+		virtual ~CJoinOrderGreedy();
 
-		public:
+		// main handler
+		virtual CExpression *PexprExpand();
 
-			// ctor
-			CJoinOrderGreedy
-				(
-				IMemoryPool *pmp,
-				CExpressionArray *pdrgpexprComponents,
-				CExpressionArray *pdrgpexprConjuncts
-				);
+	};  // class CJoinOrderGreedy
 
-			// dtor
-			virtual
-			~CJoinOrderGreedy();
+}  // namespace gpopt
 
-			// main handler
-			virtual
-			CExpression *PexprExpand();
-
-	}; // class CJoinOrderGreedy
-
-}
-
-#endif // !GPOPT_CJoinOrderGreedy_H
+#endif  // !GPOPT_CJoinOrderGreedy_H
 
 // EOF

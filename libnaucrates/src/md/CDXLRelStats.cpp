@@ -29,20 +29,13 @@ using namespace gpmd;
 //		Constructs a metadata relation
 //
 //---------------------------------------------------------------------------
-CDXLRelStats::CDXLRelStats(IMemoryPool *mp,
-						   CMDIdRelStats *rel_stats_mdid,
-						   CMDName *mdname,
-						   CDouble rows,
-						   BOOL is_empty)
-	: m_mp(mp),
-	  m_rel_stats_mdid(rel_stats_mdid),
-	  m_mdname(mdname),
-	  m_rows(rows),
-	  m_empty(is_empty)
+CDXLRelStats::CDXLRelStats(
+	IMemoryPool *mp, CMDIdRelStats *rel_stats_mdid, CMDName *mdname, CDouble rows, BOOL is_empty)
+	: m_mp(mp), m_rel_stats_mdid(rel_stats_mdid), m_mdname(mdname), m_rows(rows), m_empty(is_empty)
 {
 	GPOS_ASSERT(rel_stats_mdid->IsValid());
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+	m_dxl_str =
+		CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
 }
 
 //---------------------------------------------------------------------------
@@ -185,11 +178,8 @@ CDXLRelStats::CreateDXLDummyRelStats(IMemoryPool *mp, IMDId *mdid)
 	CAutoP<CMDName> mdname;
 	mdname = GPOS_NEW(mp) CMDName(mp, str.Value());
 	CAutoRef<CDXLRelStats> rel_stats_dxl;
-	rel_stats_dxl = GPOS_NEW(mp) CDXLRelStats(mp,
-													   rel_stats_mdid,
-													   mdname.Value(),
-													   CStatistics::DefaultColumnWidth,
-													   false /* is_empty */);
+	rel_stats_dxl = GPOS_NEW(mp) CDXLRelStats(
+		mp, rel_stats_mdid, mdname.Value(), CStatistics::DefaultColumnWidth, false /* is_empty */);
 	mdname.Reset();
 	return rel_stats_dxl.Reset();
 }

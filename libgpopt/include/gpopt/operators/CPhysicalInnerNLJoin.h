@@ -16,7 +16,6 @@
 
 namespace gpopt
 {
-	
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalInnerNLJoin
@@ -27,66 +26,53 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalInnerNLJoin : public CPhysicalNLJoin
 	{
+	private:
+		// private copy ctor
+		CPhysicalInnerNLJoin(const CPhysicalInnerNLJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CPhysicalInnerNLJoin(IMemoryPool *mp);
 
-			// private copy ctor
-			CPhysicalInnerNLJoin(const CPhysicalInnerNLJoin &);
+		// dtor
+		virtual ~CPhysicalInnerNLJoin();
 
-		public:
-		
-			// ctor
-			explicit
-			CPhysicalInnerNLJoin(IMemoryPool *mp);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalInnerNLJoin;
+		}
 
-			// dtor
-			virtual 
-			~CPhysicalInnerNLJoin();
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalInnerNLJoin";
+		}
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalInnerNLJoin;
-			}
-			
-			 // return a string for operator name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CPhysicalInnerNLJoin";
-			}
-			
-			// compute required distribution of the n-th child
-			virtual
-			CDistributionSpec *PdsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CDistributionSpec *pdsRequired,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				)
-				const;
+		// compute required distribution of the n-th child
+		virtual CDistributionSpec *PdsRequired(IMemoryPool *mp,
+											   CExpressionHandle &exprhdl,
+											   CDistributionSpec *pdsRequired,
+											   ULONG child_index,
+											   CDrvdPropArrays *pdrgpdpCtxt,
+											   ULONG ulOptReq) const;
 
-			// conversion function
-			static
-			CPhysicalInnerNLJoin *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(EopPhysicalInnerNLJoin == pop->Eopid());
+		// conversion function
+		static CPhysicalInnerNLJoin *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(EopPhysicalInnerNLJoin == pop->Eopid());
 
-				return dynamic_cast<CPhysicalInnerNLJoin*>(pop);
-			}
+			return dynamic_cast<CPhysicalInnerNLJoin *>(pop);
+		}
 
-					
-	}; // class CPhysicalInnerNLJoin
 
-}
+	};  // class CPhysicalInnerNLJoin
 
-#endif // !GPOPT_CPhysicalInnerNLJoin_H
+}  // namespace gpopt
+
+#endif  // !GPOPT_CPhysicalInnerNLJoin_H
 
 // EOF

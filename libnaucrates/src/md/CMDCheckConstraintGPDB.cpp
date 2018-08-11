@@ -31,19 +31,15 @@ using namespace gpopt;
 //---------------------------------------------------------------------------
 CMDCheckConstraintGPDB::CMDCheckConstraintGPDB(
 	IMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *rel_mdid, CDXLNode *dxlnode)
-	: m_mp(mp),
-	  m_mdid(mdid),
-	  m_mdname(mdname),
-	  m_rel_mdid(rel_mdid),
-	  m_dxlnode(dxlnode)
+	: m_mp(mp), m_mdid(mdid), m_mdname(mdname), m_rel_mdid(rel_mdid), m_dxlnode(dxlnode)
 {
 	GPOS_ASSERT(mdid->IsValid());
 	GPOS_ASSERT(rel_mdid->IsValid());
 	GPOS_ASSERT(NULL != mdname);
 	GPOS_ASSERT(NULL != dxlnode);
 
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+	m_dxl_str =
+		CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
 }
 
 //---------------------------------------------------------------------------

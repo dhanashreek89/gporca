@@ -225,8 +225,7 @@ CMessageRepository::AddMessage(ELocale locale, CMessage *msg)
 void
 CMessageRepository::AddMessageTable(ELocale locale)
 {
-	CMessageTable *new_mt =
-		GPOS_NEW(m_mp) CMessageTable(m_mp, GPOS_MSGTAB_SIZE, locale);
+	CMessageTable *new_mt = GPOS_NEW(m_mp) CMessageTable(m_mp, GPOS_MSGTAB_SIZE, locale);
 
 	{
 		TMTAccessor tmta(m_hash_table, locale);

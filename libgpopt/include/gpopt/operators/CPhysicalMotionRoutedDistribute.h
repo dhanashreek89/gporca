@@ -19,7 +19,6 @@
 
 namespace gpopt
 {
-	
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalMotionRoutedDistribute
@@ -30,125 +29,100 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalMotionRoutedDistribute : public CPhysicalMotion
 	{
+	private:
+		// routed distribution spec
+		CDistributionSpecRouted *m_pdsRouted;
 
-		private:
+		// required columns in distribution spec
+		CColRefSet *m_pcrsRequiredLocal;
 
-			// routed distribution spec
-			CDistributionSpecRouted *m_pdsRouted;
-			
-			// required columns in distribution spec
-			CColRefSet *m_pcrsRequiredLocal;
+		// private copy ctor
+		CPhysicalMotionRoutedDistribute(const CPhysicalMotionRoutedDistribute &);
 
-			// private copy ctor
-			CPhysicalMotionRoutedDistribute(const CPhysicalMotionRoutedDistribute &);
+	public:
+		// ctor
+		CPhysicalMotionRoutedDistribute(IMemoryPool *mp, CDistributionSpecRouted *pdsRouted);
 
-		public:
-		
-			// ctor
-			CPhysicalMotionRoutedDistribute
-				(
-				IMemoryPool *mp,
-				CDistributionSpecRouted *pdsRouted
-				);
-			
-			// dtor
-			virtual 
-			~CPhysicalMotionRoutedDistribute();
+		// dtor
+		virtual ~CPhysicalMotionRoutedDistribute();
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalMotionRoutedDistribute;
-			}
-			
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CPhysicalMotionRoutedDistribute";
-			}
-			
-			// output distribution accessor
-			virtual
-			CDistributionSpec *Pds() const
-			{
-				return m_pdsRouted;
-			}
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalMotionRoutedDistribute;
+		}
 
-			// match function
-			virtual
-			BOOL Matches(COperator *) const;
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalMotionRoutedDistribute";
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Required Plan Properties
-			//-------------------------------------------------------------------------------------
+		// output distribution accessor
+		virtual CDistributionSpec *
+		Pds() const
+		{
+			return m_pdsRouted;
+		}
 
-			// compute required output columns of the n-th child
-			virtual
-			CColRefSet *PcrsRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CColRefSet *pcrsInput,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				);
+		// match function
+		virtual BOOL Matches(COperator *) const;
 
-			// compute required sort order of the n-th child
-			virtual
-			COrderSpec *PosRequired
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				COrderSpec *posInput,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				)
-				const;
+		//-------------------------------------------------------------------------------------
+		// Required Plan Properties
+		//-------------------------------------------------------------------------------------
 
-			// check if required columns are included in output columns
-			virtual
-			BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const;
+		// compute required output columns of the n-th child
+		virtual CColRefSet *PcrsRequired(IMemoryPool *mp,
+										 CExpressionHandle &exprhdl,
+										 CColRefSet *pcrsInput,
+										 ULONG child_index,
+										 CDrvdPropArrays *pdrgpdpCtxt,
+										 ULONG ulOptReq);
 
-			//-------------------------------------------------------------------------------------
-			// Derived Plan Properties
-			//-------------------------------------------------------------------------------------
+		// compute required sort order of the n-th child
+		virtual COrderSpec *PosRequired(IMemoryPool *mp,
+										CExpressionHandle &exprhdl,
+										COrderSpec *posInput,
+										ULONG child_index,
+										CDrvdPropArrays *pdrgpdpCtxt,
+										ULONG ulOptReq) const;
 
-			// derive sort order
-			virtual
-			COrderSpec *PosDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// check if required columns are included in output columns
+		virtual BOOL FProvidesReqdCols(CExpressionHandle &exprhdl,
+									   CColRefSet *pcrsRequired,
+									   ULONG ulOptReq) const;
 
-			//-------------------------------------------------------------------------------------
-			// Enforced Properties
-			//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		// Derived Plan Properties
+		//-------------------------------------------------------------------------------------
 
-			// return order property enforcing type for this operator
-			virtual
-			CEnfdProp::EPropEnforcingType EpetOrder
-				(
-				CExpressionHandle &exprhdl,
-				const CEnfdOrder *peo
-				)
-				const;
+		// derive sort order
+		virtual COrderSpec *PosDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		// Enforced Properties
+		//-------------------------------------------------------------------------------------
 
-			// print
-			virtual 
-			IOstream &OsPrint(IOstream &) const;
-			
-			// conversion function
-			static
-			CPhysicalMotionRoutedDistribute *PopConvert(COperator *pop);			
-					
-	}; // class CPhysicalMotionRoutedDistribute
+		// return order property enforcing type for this operator
+		virtual CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl,
+														const CEnfdOrder *peo) const;
 
-}
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
 
-#endif // !GPOPT_CPhysicalMotionRoutedDistribute_H
+		// print
+		virtual IOstream &OsPrint(IOstream &) const;
+
+		// conversion function
+		static CPhysicalMotionRoutedDistribute *PopConvert(COperator *pop);
+
+	};  // class CPhysicalMotionRoutedDistribute
+
+}  // namespace gpopt
+
+#endif  // !GPOPT_CPhysicalMotionRoutedDistribute_H
 
 // EOF

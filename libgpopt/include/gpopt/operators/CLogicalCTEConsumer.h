@@ -28,189 +28,168 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalCTEConsumer : public CLogical
 	{
-		private:
+	private:
+		// cte identifier
+		ULONG m_id;
 
-			// cte identifier
-			ULONG m_id;
+		// mapped cte columns
+		CColRefArray *m_pdrgpcr;
 
-			// mapped cte columns
-			CColRefArray *m_pdrgpcr;
+		// inlined expression
+		CExpression *m_pexprInlined;
 
-			// inlined expression
-			CExpression *m_pexprInlined;
+		// map of CTE producer's output column ids to consumer's output columns
+		UlongToColRefMap *m_phmulcr;
 
-			// map of CTE producer's output column ids to consumer's output columns
-			UlongToColRefMap *m_phmulcr;
+		// output columns
+		CColRefSet *m_pcrsOutput;
 
-			// output columns
-			CColRefSet *m_pcrsOutput;
+		// create the inlined version of this consumer as well as the column mapping
+		void CreateInlinedExpr(IMemoryPool *mp);
 
-			// create the inlined version of this consumer as well as the column mapping
-			void CreateInlinedExpr(IMemoryPool *mp);
+		// private copy ctor
+		CLogicalCTEConsumer(const CLogicalCTEConsumer &);
 
-			// private copy ctor
-			CLogicalCTEConsumer(const CLogicalCTEConsumer &);
+	public:
+		// ctor
+		explicit CLogicalCTEConsumer(IMemoryPool *mp);
 
-		public:
+		// ctor
+		CLogicalCTEConsumer(IMemoryPool *mp, ULONG id, CColRefArray *colref_array);
 
-			// ctor
-			explicit
-			CLogicalCTEConsumer(IMemoryPool *mp);
+		// dtor
+		virtual ~CLogicalCTEConsumer();
 
-			// ctor
-			CLogicalCTEConsumer(IMemoryPool *mp, ULONG id, CColRefArray *colref_array);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalCTEConsumer;
+		}
 
-			// dtor
-			virtual
-			~CLogicalCTEConsumer();
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalCTEConsumer";
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopLogicalCTEConsumer;
-			}
+		// cte identifier
+		ULONG
+		UlCTEId() const
+		{
+			return m_id;
+		}
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CLogicalCTEConsumer";
-			}
+		// cte columns
+		CColRefArray *
+		Pdrgpcr() const
+		{
+			return m_pdrgpcr;
+		}
 
-			// cte identifier
-			ULONG UlCTEId() const
-			{
-				return m_id;
-			}
+		// column mapping
+		UlongToColRefMap *
+		Phmulcr() const
+		{
+			return m_phmulcr;
+		}
 
-			// cte columns
-			CColRefArray *Pdrgpcr() const
-			{
-				return m_pdrgpcr;
-			}
+		CExpression *
+		PexprInlined() const
+		{
+			return m_pexprInlined;
+		}
 
-			// column mapping
-			UlongToColRefMap *Phmulcr() const
-			{
-				return m_phmulcr;
-			}
+		// operator specific hash function
+		virtual ULONG HashValue() const;
 
-			CExpression *PexprInlined() const
-			{
-				return m_pexprInlined;
-			}
+		// match function
+		virtual BOOL Matches(COperator *pop) const;
 
-			// operator specific hash function
-			virtual
-			ULONG HashValue() const;
+		// sensitivity to order of inputs
+		virtual BOOL FInputOrderSensitive() const;
 
-			// match function
-			virtual
-			BOOL Matches(COperator *pop) const;
+		// return a copy of the operator with remapped columns
+		virtual COperator *PopCopyWithRemappedColumns(IMemoryPool *mp,
+													  UlongToColRefMap *colref_mapping,
+													  BOOL must_exist);
 
-			// sensitivity to order of inputs
-			virtual
-			BOOL FInputOrderSensitive() const;
+		//-------------------------------------------------------------------------------------
+		// Derived Relational Properties
+		//-------------------------------------------------------------------------------------
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+		// derive output columns
+		virtual CColRefSet *PcrsDeriveOutput(IMemoryPool *mp, CExpressionHandle &exprhdl);
 
-			//-------------------------------------------------------------------------------------
-			// Derived Relational Properties
-			//-------------------------------------------------------------------------------------
+		// dervive keys
+		virtual CKeyCollection *PkcDeriveKeys(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// derive output columns
-			virtual
-			CColRefSet *PcrsDeriveOutput(IMemoryPool *mp, CExpressionHandle &exprhdl);
+		// derive max card
+		virtual CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// dervive keys
-			virtual
-			CKeyCollection *PkcDeriveKeys(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// derive join depth
+		virtual ULONG JoinDepth(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// derive max card
-			virtual
-			CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// derive not nullable output columns
+		virtual CColRefSet *PcrsDeriveNotNull(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// derive join depth
-			virtual
-			ULONG JoinDepth(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// derive constraint property
+		virtual CPropConstraint *PpcDeriveConstraint(IMemoryPool *mp,
+													 CExpressionHandle &exprhdl) const;
 
-			// derive not nullable output columns
-			virtual
-			CColRefSet *PcrsDeriveNotNull(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// derive partition consumer info
+		virtual CPartInfo *PpartinfoDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// derive constraint property
-			virtual
-			CPropConstraint *PpcDeriveConstraint(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// compute required stats columns of the n-th child
+		virtual CColRefSet *
+		PcrsStat(IMemoryPool *,		   // mp
+				 CExpressionHandle &,  // exprhdl
+				 CColRefSet *,		   //pcrsInput,
+				 ULONG				   // child_index
+				 ) const
+		{
+			GPOS_ASSERT(!"CLogicalCTEConsumer has no children");
+			return NULL;
+		}
 
-			// derive partition consumer info
-			virtual
-			CPartInfo *PpartinfoDerive(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		// stat promise
+		virtual EStatPromise
+		Esp(CExpressionHandle &) const
+		{
+			return CLogical::EspHigh;
+		}
 
-			// compute required stats columns of the n-th child
-			virtual
-			CColRefSet *PcrsStat
-				(
-				IMemoryPool *,// mp
-				CExpressionHandle &,// exprhdl
-				CColRefSet *, //pcrsInput,
-				ULONG // child_index
-				)
-				const
-			{
-				GPOS_ASSERT(!"CLogicalCTEConsumer has no children");
-				return NULL;
-			}
+		// derive statistics
+		virtual IStatistics *PstatsDerive(IMemoryPool *mp,
+										  CExpressionHandle &exprhdl,
+										  IStatisticsArray *stats_ctxt) const;
 
-			// stat promise
-			virtual
-			EStatPromise Esp(CExpressionHandle &) const
-			{
-				return CLogical::EspHigh;
-			}
+		//-------------------------------------------------------------------------------------
+		// Transformations
+		//-------------------------------------------------------------------------------------
 
-			// derive statistics
-			virtual
-			IStatistics *PstatsDerive
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				IStatisticsArray *stats_ctxt
-				)
-				const;
+		// candidate set of xforms
+		virtual CXformSet *PxfsCandidates(IMemoryPool *mp) const;
 
-			//-------------------------------------------------------------------------------------
-			// Transformations
-			//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
 
-			// candidate set of xforms
-			virtual
-			CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+		// conversion function
+		static CLogicalCTEConsumer *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalCTEConsumer == pop->Eopid());
 
-			//-------------------------------------------------------------------------------------
+			return dynamic_cast<CLogicalCTEConsumer *>(pop);
+		}
 
-			// conversion function
-			static
-			CLogicalCTEConsumer *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalCTEConsumer == pop->Eopid());
+		// debug print
+		virtual IOstream &OsPrint(IOstream &) const;
 
-				return dynamic_cast<CLogicalCTEConsumer*>(pop);
-			}
+	};  // class CLogicalCTEConsumer
 
-			// debug print
-			virtual
-			IOstream &OsPrint(IOstream &) const;
+}  // namespace gpopt
 
-	}; // class CLogicalCTEConsumer
-
-}
-
-#endif // !GPOPT_CLogicalCTEConsumer_H
+#endif  // !GPOPT_CLogicalCTEConsumer_H
 
 // EOF

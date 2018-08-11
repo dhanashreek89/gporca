@@ -28,56 +28,51 @@ namespace gpopt
 	//		Transform Apply into Join by decorrelating the inner side
 	//
 	//---------------------------------------------------------------------------
-	class CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn : public CXformApply2Join<CLogicalLeftAntiSemiApplyNotIn, CLogicalLeftAntiSemiJoinNotIn>
+	class CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn
+		: public CXformApply2Join<CLogicalLeftAntiSemiApplyNotIn, CLogicalLeftAntiSemiJoinNotIn>
 	{
+	private:
+		// private copy ctor
+		CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn(
+			const CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn(IMemoryPool *mp)
+			: CXformApply2Join<CLogicalLeftAntiSemiApplyNotIn, CLogicalLeftAntiSemiJoinNotIn>(
+				  mp, true /*fDeepTree*/)
+		{
+		}
 
-			// private copy ctor
-			CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn(const CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn &);
+		// dtor
+		virtual ~CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn;
+		}
 
-			// ctor
-			explicit
-			CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformApply2Join<CLogicalLeftAntiSemiApplyNotIn, CLogicalLeftAntiSemiJoinNotIn>(mp, true /*fDeepTree*/)
-			{}
+		// xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn";
+		}
 
-			// dtor
-			virtual
-			~CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn";
-			}
+	};  // class CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+}  // namespace gpopt
 
-			// actual transform
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
-
-	}; // class CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn
-
-}
-
-#endif // !GPOPT_CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn_H
+#endif  // !GPOPT_CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn_H
 
 // EOF

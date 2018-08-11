@@ -255,8 +255,8 @@ CParseHandlerMetadata::GetSrcSysIdArray(const Attributes &attrs,
 		CWStringDynamic *str_name = CDXLUtils::CreateDynamicStringFromXMLChArray(
 			m_parse_handler_mgr->GetDXLMemoryManager(), xml_str_name);
 
-		src_sys_id_array->Append(GPOS_NEW(m_mp) CSystemId(
-			(IMDId::EMDIdType) type, str_name->GetBuffer(), str_name->Length()));
+		src_sys_id_array->Append(GPOS_NEW(
+			m_mp) CSystemId((IMDId::EMDIdType) type, str_name->GetBuffer(), str_name->Length()));
 
 		GPOS_DELETE(str_name);
 	}

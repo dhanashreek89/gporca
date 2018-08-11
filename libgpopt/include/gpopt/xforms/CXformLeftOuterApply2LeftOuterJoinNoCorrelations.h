@@ -29,55 +29,49 @@ namespace gpopt
 	//		Transform left outer apply into left outer join
 	//
 	//---------------------------------------------------------------------------
-	class CXformLeftOuterApply2LeftOuterJoinNoCorrelations : public CXformApply2Join<CLogicalLeftOuterApply, CLogicalLeftOuterJoin>
+	class CXformLeftOuterApply2LeftOuterJoinNoCorrelations
+		: public CXformApply2Join<CLogicalLeftOuterApply, CLogicalLeftOuterJoin>
 	{
+	private:
+		// private copy ctor
+		CXformLeftOuterApply2LeftOuterJoinNoCorrelations(
+			const CXformLeftOuterApply2LeftOuterJoinNoCorrelations &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformLeftOuterApply2LeftOuterJoinNoCorrelations(IMemoryPool *mp)
+			: CXformApply2Join<CLogicalLeftOuterApply, CLogicalLeftOuterJoin>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformLeftOuterApply2LeftOuterJoinNoCorrelations(const CXformLeftOuterApply2LeftOuterJoinNoCorrelations &);
+		// dtor
+		virtual ~CXformLeftOuterApply2LeftOuterJoinNoCorrelations()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftOuterApply2LeftOuterJoinNoCorrelations;
+		}
 
-			// ctor
-			explicit
-			CXformLeftOuterApply2LeftOuterJoinNoCorrelations
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformApply2Join<CLogicalLeftOuterApply, CLogicalLeftOuterJoin>(mp)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftOuterApply2LeftOuterJoinNoCorrelations";
+		}
 
-			// dtor
-			virtual
-			~CXformLeftOuterApply2LeftOuterJoinNoCorrelations()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftOuterApply2LeftOuterJoinNoCorrelations;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftOuterApply2LeftOuterJoinNoCorrelations";
-			}
+	};  // class CXformLeftOuterApply2LeftOuterJoinNoCorrelations
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+}  // namespace gpopt
 
-			// actual transform
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
-
-	}; // class CXformLeftOuterApply2LeftOuterJoinNoCorrelations
-
-}
-
-#endif // !GPOPT_CXformLeftOuterApply2LeftOuterJoinNoCorrelations_H
+#endif  // !GPOPT_CXformLeftOuterApply2LeftOuterJoinNoCorrelations_H
 
 // EOF

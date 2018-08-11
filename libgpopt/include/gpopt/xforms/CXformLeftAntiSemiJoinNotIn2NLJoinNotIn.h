@@ -28,53 +28,43 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformLeftAntiSemiJoinNotIn2NLJoinNotIn : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformLeftAntiSemiJoinNotIn2NLJoinNotIn(const CXformLeftAntiSemiJoinNotIn2NLJoinNotIn &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformLeftAntiSemiJoinNotIn2NLJoinNotIn(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformLeftAntiSemiJoinNotIn2NLJoinNotIn(const CXformLeftAntiSemiJoinNotIn2NLJoinNotIn &);
+		// dtor
+		virtual ~CXformLeftAntiSemiJoinNotIn2NLJoinNotIn()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftAntiSemiJoinNotIn2NLJoinNotIn;
+		}
 
-			// ctor
-			explicit
-			CXformLeftAntiSemiJoinNotIn2NLJoinNotIn(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftAntiSemiJoinNotIn2NLJoinNotIn";
+		}
 
-			// dtor
-			virtual
-			~CXformLeftAntiSemiJoinNotIn2NLJoinNotIn() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftAntiSemiJoinNotIn2NLJoinNotIn;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftAntiSemiJoinNotIn2NLJoinNotIn";
-			}
+	};  // class CXformLeftAntiSemiJoinNotIn2NLJoinNotIn
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+}  // namespace gpopt
 
-			// actual transform
-			void Transform
-					(
-					CXformContext *pxfctxt,
-					CXformResult *pxfres,
-					CExpression *pexpr
-					)
-					const;
-
-	}; // class CXformLeftAntiSemiJoinNotIn2NLJoinNotIn
-
-}
-
-#endif // !GPOPT_CXformLeftAntiSemiJoinNotIn2NLJoinNotIn_H
+#endif  // !GPOPT_CXformLeftAntiSemiJoinNotIn2NLJoinNotIn_H
 
 // EOF

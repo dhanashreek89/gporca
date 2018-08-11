@@ -40,66 +40,71 @@ namespace gpopt
 	//		of dynamic index get applies
 	//
 	//---------------------------------------------------------------------------
-	class CXformInnerJoinWithInnerSelect2PartialDynamicIndexGetApply : public CXformJoin2IndexApplyBase
-		<CLogicalInnerJoin, CLogicalIndexApply, CLogicalDynamicGet,
-		true /*fWithSelect*/, true /*is_partial*/, IMDIndex::EmdindBtree>
+	class CXformInnerJoinWithInnerSelect2PartialDynamicIndexGetApply
+		: public CXformJoin2IndexApplyBase<CLogicalInnerJoin,
+										   CLogicalIndexApply,
+										   CLogicalDynamicGet,
+										   true /*fWithSelect*/,
+										   true /*is_partial*/,
+										   IMDIndex::EmdindBtree>
 	{
-		public:
-			// ctor
-			explicit
-			CXformInnerJoinWithInnerSelect2PartialDynamicIndexGetApply(IMemoryPool *mp)
-				: CXformJoin2IndexApplyBase
-				 <CLogicalInnerJoin, CLogicalIndexApply, CLogicalDynamicGet,
-				 true /*fWithSelect*/, true /*is_partial*/, IMDIndex::EmdindBtree>
-				(mp)
-			{}
+	public:
+		// ctor
+		explicit CXformInnerJoinWithInnerSelect2PartialDynamicIndexGetApply(IMemoryPool *mp)
+			: CXformJoin2IndexApplyBase<CLogicalInnerJoin,
+										CLogicalIndexApply,
+										CLogicalDynamicGet,
+										true /*fWithSelect*/,
+										true /*is_partial*/,
+										IMDIndex::EmdindBtree>(mp)
+		{
+		}
 
-			// dtor
-			virtual
-			~CXformInnerJoinWithInnerSelect2PartialDynamicIndexGetApply()
-			{}
+		// dtor
+		virtual ~CXformInnerJoinWithInnerSelect2PartialDynamicIndexGetApply()
+		{
+		}
 
-			// compute xform promise for a given expression handle
-			virtual
-			CXform::EXformPromise Exfp(CExpressionHandle &exprhdl) const
+		// compute xform promise for a given expression handle
+		virtual CXform::EXformPromise
+		Exfp(CExpressionHandle &exprhdl) const
+		{
+			if (CXform::ExfpNone == CXformJoin2IndexApply::Exfp(exprhdl))
 			{
-				if (CXform::ExfpNone == CXformJoin2IndexApply::Exfp(exprhdl))
-				{
-					return CXform::ExfpNone;
-				}
-
-				if (exprhdl.GetRelationalProperties(1 /*child_index*/)->FHasPartialIndexes())
-				{
-					return CXform::ExfpHigh;
-				}
-
 				return CXform::ExfpNone;
 			}
 
-			// ident accessor
-			virtual
-			EXformId Exfid() const
+			if (exprhdl.GetRelationalProperties(1 /*child_index*/)->FHasPartialIndexes())
 			{
-				return ExfInnerJoinWithInnerSelect2PartialDynamicIndexGetApply;
+				return CXform::ExfpHigh;
 			}
 
-			// xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformInnerJoinWithInnerSelect2PartialDynamicIndexGetApply";
-			}
+			return CXform::ExfpNone;
+		}
 
-			// return true if xform should be applied only once
-			virtual
-			BOOL IsApplyOnce()
-			{
-				return true;
-			}
+		// ident accessor
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfInnerJoinWithInnerSelect2PartialDynamicIndexGetApply;
+		}
 
+		// xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformInnerJoinWithInnerSelect2PartialDynamicIndexGetApply";
+		}
+
+		// return true if xform should be applied only once
+		virtual BOOL
+		IsApplyOnce()
+		{
+			return true;
+		}
 	};
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CXformInnerJoinWithInnerSelect2PartialDynamicIndexGetApply_H
+#endif  // !GPOPT_CXformInnerJoinWithInnerSelect2PartialDynamicIndexGetApply_H
 
 // EOF

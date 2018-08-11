@@ -16,44 +16,50 @@ namespace gpopt
 {
 	using namespace gpos;
 
-	class CXformLeftOuterJoin2BitmapIndexGetApply : public CXformJoin2IndexApplyBase
-		<CLogicalLeftOuterJoin, CLogicalIndexApply, CLogicalGet,
-		false /*fWithSelect*/, false /*is_partial*/, IMDIndex::EmdindBitmap>
+	class CXformLeftOuterJoin2BitmapIndexGetApply
+		: public CXformJoin2IndexApplyBase<CLogicalLeftOuterJoin,
+										   CLogicalIndexApply,
+										   CLogicalGet,
+										   false /*fWithSelect*/,
+										   false /*is_partial*/,
+										   IMDIndex::EmdindBitmap>
 	{
-		private:
-			// private copy ctor
-			CXformLeftOuterJoin2BitmapIndexGetApply(const CXformLeftOuterJoin2BitmapIndexGetApply &);
+	private:
+		// private copy ctor
+		CXformLeftOuterJoin2BitmapIndexGetApply(const CXformLeftOuterJoin2BitmapIndexGetApply &);
 
-		public:
-			// ctor
-			explicit
-			CXformLeftOuterJoin2BitmapIndexGetApply(IMemoryPool *mp)
-				: CXformJoin2IndexApplyBase
-				<CLogicalLeftOuterJoin, CLogicalIndexApply, CLogicalGet,
-				false /*fWithSelect*/, false /*is_partial*/, IMDIndex::EmdindBitmap>
-				(mp)
-			{}
+	public:
+		// ctor
+		explicit CXformLeftOuterJoin2BitmapIndexGetApply(IMemoryPool *mp)
+			: CXformJoin2IndexApplyBase<CLogicalLeftOuterJoin,
+										CLogicalIndexApply,
+										CLogicalGet,
+										false /*fWithSelect*/,
+										false /*is_partial*/,
+										IMDIndex::EmdindBitmap>(mp)
+		{
+		}
 
-			// dtor
-			virtual
-			~CXformLeftOuterJoin2BitmapIndexGetApply()
-			{}
+		// dtor
+		virtual ~CXformLeftOuterJoin2BitmapIndexGetApply()
+		{
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftOuterJoin2BitmapIndexGetApply;
-			}
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftOuterJoin2BitmapIndexGetApply;
+		}
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftOuterJoin2BitmapIndexGetApply";
-			}
-	}; // class CXformLeftOuterJoin2BitmapIndexGetApply
-}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftOuterJoin2BitmapIndexGetApply";
+		}
+	};  // class CXformLeftOuterJoin2BitmapIndexGetApply
+}  // namespace gpopt
 
-#endif // !GPOPT_CXformLeftOuterJoin2BitmapIndexGetApply_H
+#endif  // !GPOPT_CXformLeftOuterJoin2BitmapIndexGetApply_H
 
 // EOF

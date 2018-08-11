@@ -66,8 +66,7 @@ CParseHandlerScalarSwitch::StartElement(const XMLCh *const element_uri,
 			EdxltokenScalarSwitch);
 
 		// construct node
-		CDXLScalarSwitch *dxl_op =
-			GPOS_NEW(m_mp) CDXLScalarSwitch(m_mp, m_mdid_type);
+		CDXLScalarSwitch *dxl_op = GPOS_NEW(m_mp) CDXLScalarSwitch(m_mp, m_mdid_type);
 		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, dxl_op);
 	}
 	else if (0 == XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenScalarSwitchCase),
@@ -78,10 +77,7 @@ CParseHandlerScalarSwitch::StartElement(const XMLCh *const element_uri,
 
 		// parse case
 		CParseHandlerBase *parse_handler_case = CParseHandlerFactory::GetParseHandler(
-			m_mp,
-			CDXLTokens::XmlstrToken(EdxltokenScalarSwitchCase),
-			m_parse_handler_mgr,
-			this);
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarSwitchCase), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(parse_handler_case);
 
 		// store parse handlers

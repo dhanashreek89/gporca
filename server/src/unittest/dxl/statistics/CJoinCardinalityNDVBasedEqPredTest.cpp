@@ -30,81 +30,81 @@ namespace
 {
 	class Fixture
 	{
-		private:
+	private:
+		const CAutoMemoryPool m_amp;
+		CMDAccessor m_mda;
+		const CAutoOptCtxt m_aoc;
+		static IMDProvider *
+		Pmdp()
+		{
+			CTestUtils::m_pmdpf->AddRef();
+			return CTestUtils::m_pmdpf;
+		}
 
-			const CAutoMemoryPool m_amp;
-			CMDAccessor m_mda;
-			const CAutoOptCtxt m_aoc;
-			static IMDProvider *Pmdp()
+		IStatisticsArray *m_pdrgpstat;
+
+	public:
+		Fixture(const CHAR *file_name)
+			: m_amp(),
+			  m_mda(m_amp.Pmp(), CMDCache::Pcache(), CTestUtils::m_sysidDefault, Pmdp()),
+			  m_aoc(m_amp.Pmp(), &m_mda, NULL /* pceeval */, CTestUtils::GetCostModel(m_amp.Pmp())),
+			  m_pdrgpstat(GPOS_NEW(m_amp.Pmp()) IStatisticsArray(m_amp.Pmp()))
+		{
+			CHAR *szDXLInput = CDXLUtils::Read(Pmp(), file_name);
+			GPOS_CHECK_ABORT;
+			// read the stats from the input xml
+			CDXLStatsDerivedRelationArray *dxl_derived_rel_stats_array =
+				CDXLUtils::ParseDXLToStatsDerivedRelArray(Pmp(), szDXLInput, NULL);
+			CStatisticsArray *pdrgpstats = CDXLUtils::ParseDXLToOptimizerStatisticObjArray(
+				Pmp(), &m_mda, dxl_derived_rel_stats_array);
+			GPOS_ASSERT(pdrgpstats != NULL);
+			GPOS_ASSERT(2 == pdrgpstats->Size());
+			// ParseDXLToOptimizerStatisticObjArray returns an array of CStatistics (CStatisticsArray)
+			// and PStatsJoinArray takes an array of IStatistics (IStatisticsArray) as input
+			// So, iterate through CStatisticsArray and append members to a IStatisticsArray
+			ULONG arity = pdrgpstats->Size();
+			for (ULONG ul = 0; ul < arity; ul++)
 			{
-				CTestUtils::m_pmdpf->AddRef();
-				return CTestUtils::m_pmdpf;
+				IStatistics *stats = (*pdrgpstats)[ul];
+				stats->AddRef();
+				m_pdrgpstat->Append(stats);
 			}
+			pdrgpstats->Release();
+			dxl_derived_rel_stats_array->Release();
+			GPOS_DELETE_ARRAY(szDXLInput);
+		}
 
-			IStatisticsArray *m_pdrgpstat;
+		~Fixture()
+		{
+			m_pdrgpstat->Release();
+		}
 
-		public:
+		IMemoryPool *
+		Pmp() const
+		{
+			return m_amp.Pmp();
+		}
 
-			Fixture
-					(
-						const CHAR *file_name
-					) :
-					m_amp(),
-					m_mda(m_amp.Pmp(), CMDCache::Pcache(), CTestUtils::m_sysidDefault, Pmdp()),
-					m_aoc(m_amp.Pmp(), &m_mda, NULL /* pceeval */, CTestUtils::GetCostModel(m_amp.Pmp())),
-					m_pdrgpstat(GPOS_NEW(m_amp.Pmp()) IStatisticsArray(m_amp.Pmp()))
-			{
-				CHAR *szDXLInput = CDXLUtils::Read(Pmp(), file_name);
-				GPOS_CHECK_ABORT;
-				// read the stats from the input xml
-				CDXLStatsDerivedRelationArray *dxl_derived_rel_stats_array = CDXLUtils::ParseDXLToStatsDerivedRelArray(Pmp(), szDXLInput,
-																								 NULL);
-				CStatisticsArray *pdrgpstats = CDXLUtils::ParseDXLToOptimizerStatisticObjArray(Pmp(), &m_mda, dxl_derived_rel_stats_array);
-				GPOS_ASSERT(pdrgpstats != NULL);
-				GPOS_ASSERT(2 == pdrgpstats->Size());
-				// ParseDXLToOptimizerStatisticObjArray returns an array of CStatistics (CStatisticsArray)
-				// and PStatsJoinArray takes an array of IStatistics (IStatisticsArray) as input
-				// So, iterate through CStatisticsArray and append members to a IStatisticsArray
-				ULONG arity = pdrgpstats->Size();
-				for (ULONG ul = 0; ul < arity; ul++)
-				{
-					IStatistics *stats = (*pdrgpstats)[ul];
-					stats->AddRef();
-					m_pdrgpstat->Append(stats);
-				}
-				pdrgpstats->Release();
-				dxl_derived_rel_stats_array->Release();
-				GPOS_DELETE_ARRAY(szDXLInput);
-			}
-
-			~Fixture()
-			{
-				m_pdrgpstat->Release();
-			}
-
-			IMemoryPool *Pmp() const
-			{
-				return m_amp.Pmp();
-			}
-
-			IStatisticsArray *PdrgPstat()
-			{
-				return m_pdrgpstat;
-			}
+		IStatisticsArray *
+		PdrgPstat()
+		{
+			return m_pdrgpstat;
+		}
 	};
-}
+}  // namespace
 
 namespace gpnaucrates
 {
 	// input xml file has stats for 3 columns from 2 relations, i.e. T1 (0, 1) and T2(2)
-	const CHAR *file_name = "../data/dxl/statistics/Join-Statistics-NDVBasedCardEstimation-EqPred-Input.xml";
+	const CHAR *file_name =
+		"../data/dxl/statistics/Join-Statistics-NDVBasedCardEstimation-EqPred-Input.xml";
 
 	// test cardinality for predicates of the form: a + 1 = b
 	// for such predicates, NDV based cardinality estimation is applicable
 	GPOS_RESULT
 	CJoinCardinalityNDVBasedEqPredTest::EresUnittest_NDVEqCardEstimation()
 	{
-		CDouble dRowsExpected(10000); // the minimum cardinality is min(NDV a, NDV b)
+		CDouble dRowsExpected(10000);  // the minimum cardinality is min(NDV a, NDV b)
 
 		Fixture f(file_name);
 		IMemoryPool *mp = f.Pmp();
@@ -127,7 +127,10 @@ namespace gpnaucrates
 		//	|--CScalarIdent "column_0002" (2)
 		//	+--CScalarConst (10)
 		CExpression *pexprScConst = CUtils::PexprScalarConstInt4(mp, 10 /* val */);
-		CExpression *pexprScOp = CUtils::PexprScalarOp(mp, pcrLeft, pexprScConst, CWStringConst(GPOS_WSZ_LIT("+")),
+		CExpression *pexprScOp = CUtils::PexprScalarOp(mp,
+													   pcrLeft,
+													   pexprScConst,
+													   CWStringConst(GPOS_WSZ_LIT("+")),
 													   GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_ADD_OP));
 
 		// create a scalar comparision operator
@@ -138,8 +141,8 @@ namespace gpnaucrates
 		//	+--CScalarIdent "column_0000" (0)
 		CExpression *pScalarCmp = CUtils::PexprScalarEqCmp(mp, pexprScOp, pexprScalarIdentRight);
 
-		IStatistics *join_stats = CJoinStatsProcessor::CalcAllJoinStats(mp, statistics_array, pScalarCmp,
-																	   IStatistics::EsjtInnerJoin);
+		IStatistics *join_stats = CJoinStatsProcessor::CalcAllJoinStats(
+			mp, statistics_array, pScalarCmp, IStatistics::EsjtInnerJoin);
 
 		GPOS_ASSERT(NULL != join_stats);
 		CDouble dRowsActual(join_stats->Rows());
@@ -188,7 +191,9 @@ namespace gpnaucrates
 		//  CScalarOp (+)
 		//	|--CScalarIdent "column_0002" (2)
 		//	+--CScalarIdent "column_0001" (1)
-		CExpression *pexprScOp = CUtils::PexprScalarOp(mp, pcrLeft1, pexprScalarIdentLeft2,
+		CExpression *pexprScOp = CUtils::PexprScalarOp(mp,
+													   pcrLeft1,
+													   pexprScalarIdentLeft2,
 													   CWStringConst(GPOS_WSZ_LIT("+")),
 													   GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_ADD_OP));
 
@@ -199,8 +204,8 @@ namespace gpnaucrates
 		//	|  +--CScalarIdent "column_0001" (1)
 		//	+--CScalarIdent "column_0000" (0)
 		CExpression *pScalarCmp = CUtils::PexprScalarEqCmp(mp, pexprScOp, pexprScalarIdentRight);
-		IStatistics *join_stats = CJoinStatsProcessor::CalcAllJoinStats(mp, statistics_array, pScalarCmp,
-																	   IStatistics::EsjtInnerJoin);
+		IStatistics *join_stats = CJoinStatsProcessor::CalcAllJoinStats(
+			mp, statistics_array, pScalarCmp, IStatistics::EsjtInnerJoin);
 
 		GPOS_ASSERT(NULL != join_stats);
 		CDouble dRowsActual(join_stats->Rows());
@@ -249,7 +254,10 @@ namespace gpnaucrates
 		//	|--CScalarIdent "column_0002" (2)
 		//	+--CScalarConst (10)
 		CExpression *pexprScConst = CUtils::PexprScalarConstInt4(mp, 10 /* val */);
-		CExpression *pexprScOp = CUtils::PexprScalarOp(mp, pcrLeft, pexprScConst, CWStringConst(GPOS_WSZ_LIT("+")),
+		CExpression *pexprScOp = CUtils::PexprScalarOp(mp,
+													   pcrLeft,
+													   pexprScConst,
+													   CWStringConst(GPOS_WSZ_LIT("+")),
 													   GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_ADD_OP));
 
 		// create a scalar comparision operator
@@ -258,14 +266,11 @@ namespace gpnaucrates
 		//	|  |--CScalarIdent "column_0002" (2)
 		//	|  +--CScalarConst (10)
 		//	+--CScalarIdent "column_0000" (0)
-		CExpression *pScalarCmp = CUtils::PexprScalarCmp(mp,
-														 pexprScOp,
-														 pexprScalarIdentRight,
-														 IMDType::EcmptLEq
-		);
+		CExpression *pScalarCmp =
+			CUtils::PexprScalarCmp(mp, pexprScOp, pexprScalarIdentRight, IMDType::EcmptLEq);
 
-		IStatistics *join_stats = CJoinStatsProcessor::CalcAllJoinStats(mp, statistics_array, pScalarCmp,
-																	   IStatistics::EsjtInnerJoin);
+		IStatistics *join_stats = CJoinStatsProcessor::CalcAllJoinStats(
+			mp, statistics_array, pScalarCmp, IStatistics::EsjtInnerJoin);
 
 		GPOS_ASSERT(NULL != join_stats);
 		CDouble dRowsActual(join_stats->Rows());
@@ -287,17 +292,15 @@ namespace gpnaucrates
 	GPOS_RESULT
 	CJoinCardinalityNDVBasedEqPredTest::EresUnittest()
 	{
-		CUnittest rgut[] =
-				{
-						GPOS_UNITTEST_FUNC(EresUnittest_NDVEqCardEstimation),
-						GPOS_UNITTEST_FUNC(EresUnittest_NDVCardEstimationNotApplicableMultipleIdents),
-						GPOS_UNITTEST_FUNC(EresUnittest_NDVCardEstimationNotApplicableInequalityRange)
-				};
+		CUnittest rgut[] = {
+			GPOS_UNITTEST_FUNC(EresUnittest_NDVEqCardEstimation),
+			GPOS_UNITTEST_FUNC(EresUnittest_NDVCardEstimationNotApplicableMultipleIdents),
+			GPOS_UNITTEST_FUNC(EresUnittest_NDVCardEstimationNotApplicableInequalityRange)};
 
 		GPOS_RESULT eres = CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
 
 		return eres;
 	}
-}
+}  // namespace gpnaucrates
 
 // EOF

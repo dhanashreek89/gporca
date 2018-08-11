@@ -25,25 +25,19 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CCTETest
 	{
-		private:
+	private:
+		// counter used to mark last successful test
+		static gpos::ULONG m_ulCTETestCounter;
 
-			// counter used to mark last successful test
-			static
-			gpos::ULONG m_ulCTETestCounter;
+	public:
+		// unittests
+		static gpos::GPOS_RESULT EresUnittest();
 
-		public:
+		static gpos::GPOS_RESULT EresUnittest_RunTests();
 
-			// unittests
-			static
-			gpos::GPOS_RESULT EresUnittest();
+	};  // class CCTETest
+}  // namespace gpopt
 
-			static
-			gpos::GPOS_RESULT EresUnittest_RunTests();
-
-	}; // class CCTETest
-}
-
-#endif // !GPOPT_CCTETest_H
+#endif  // !GPOPT_CCTETest_H
 
 // EOF
-

@@ -26,49 +26,44 @@ namespace gpopt
 	//		Transform inner correlated apply to physical inner correlated apply
 	//
 	//-------------------------------------------------------------------------
-	class CXformImplementInnerCorrelatedApply :
-		public CXformImplementCorrelatedApply<CLogicalInnerCorrelatedApply, CPhysicalCorrelatedInnerNLJoin>
+	class CXformImplementInnerCorrelatedApply
+		: public CXformImplementCorrelatedApply<CLogicalInnerCorrelatedApply,
+												CPhysicalCorrelatedInnerNLJoin>
 	{
+	private:
+		// private copy ctor
+		CXformImplementInnerCorrelatedApply(const CXformImplementInnerCorrelatedApply &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementInnerCorrelatedApply(IMemoryPool *mp)
+			: CXformImplementCorrelatedApply<CLogicalInnerCorrelatedApply,
+											 CPhysicalCorrelatedInnerNLJoin>(mp)
+		{
+		}
 
-			// private copy ctor
-			CXformImplementInnerCorrelatedApply(const CXformImplementInnerCorrelatedApply &);
+		// dtor
+		virtual ~CXformImplementInnerCorrelatedApply()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementInnerCorrelatedApply;
+		}
 
-			// ctor
-			explicit
-			CXformImplementInnerCorrelatedApply
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformImplementCorrelatedApply<CLogicalInnerCorrelatedApply, CPhysicalCorrelatedInnerNLJoin>(mp)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementInnerCorrelatedApply";
+		}
 
-			// dtor
-			virtual
-			~CXformImplementInnerCorrelatedApply()
-			{}
+	};  // class CXformImplementInnerCorrelatedApply
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementInnerCorrelatedApply;
-			}
+}  // namespace gpopt
 
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformImplementInnerCorrelatedApply";
-			}
-
-	}; // class CXformImplementInnerCorrelatedApply
-
-}
-
-#endif // !GPOPT_CXformImplementInnerCorrelatedApply_H
+#endif  // !GPOPT_CXformImplementInnerCorrelatedApply_H
 
 // EOF

@@ -17,8 +17,6 @@
 
 namespace gpopt
 {
-
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CLogicalInnerApply
@@ -29,117 +27,97 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalInnerApply : public CLogicalApply
 	{
+	private:
+		// private copy ctor
+		CLogicalInnerApply(const CLogicalInnerApply &);
 
-		private:
-			// private copy ctor
-			CLogicalInnerApply(const CLogicalInnerApply &);
+	public:
+		// ctor for patterns
+		explicit CLogicalInnerApply(IMemoryPool *mp);
 
-		public:
+		// ctor
+		CLogicalInnerApply(IMemoryPool *mp,
+						   CColRefArray *pdrgpcrInner,
+						   EOperatorId eopidOriginSubq);
 
-			// ctor for patterns
-			explicit
-			CLogicalInnerApply(IMemoryPool *mp);
+		// dtor
+		virtual ~CLogicalInnerApply();
 
-			// ctor
-			CLogicalInnerApply(IMemoryPool *mp, CColRefArray *pdrgpcrInner, EOperatorId eopidOriginSubq);
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalInnerApply;
+		}
 
-			// dtor
-			virtual
-			~CLogicalInnerApply();
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalInnerApply";
+		}
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopLogicalInnerApply;
-			}
+		// return a copy of the operator with remapped columns
+		virtual COperator *PopCopyWithRemappedColumns(IMemoryPool *mp,
+													  UlongToColRefMap *colref_mapping,
+													  BOOL must_exist);
 
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CLogicalInnerApply";
-			}
+		//-------------------------------------------------------------------------------------
+		// Derived Relational Properties
+		//-------------------------------------------------------------------------------------
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+		// derive output columns
+		virtual CColRefSet *
+		PcrsDeriveOutput(IMemoryPool *mp, CExpressionHandle &exprhdl)
+		{
+			GPOS_ASSERT(3 == exprhdl.Arity());
 
-			//-------------------------------------------------------------------------------------
-			// Derived Relational Properties
-			//-------------------------------------------------------------------------------------
+			return PcrsDeriveOutputCombineLogical(mp, exprhdl);
+		}
 
-			// derive output columns
-			virtual
-			CColRefSet *PcrsDeriveOutput
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl
-				)
-			{
-				GPOS_ASSERT(3 == exprhdl.Arity());
+		// derive not nullable columns
+		virtual CColRefSet *
+		PcrsDeriveNotNull(IMemoryPool *mp, CExpressionHandle &exprhdl) const
+		{
+			return PcrsDeriveNotNullCombineLogical(mp, exprhdl);
+		}
 
-				return PcrsDeriveOutputCombineLogical(mp, exprhdl);
-			}
+		// derive max card
+		virtual CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
-			// derive not nullable columns
-			virtual
-			CColRefSet *PcrsDeriveNotNull
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl
-				)
-				const
-			{
-				return PcrsDeriveNotNullCombineLogical(mp, exprhdl);
-			}
+		// derive constraint property
+		virtual CPropConstraint *
+		PpcDeriveConstraint(IMemoryPool *mp, CExpressionHandle &exprhdl) const
+		{
+			return PpcDeriveConstraintFromPredicates(mp, exprhdl);
+		}
 
-			// derive max card
-			virtual
-			CMaxCard Maxcard(IMemoryPool *mp, CExpressionHandle &exprhdl) const;
+		//-------------------------------------------------------------------------------------
+		// Transformations
+		//-------------------------------------------------------------------------------------
 
-			// derive constraint property
-			virtual
-			CPropConstraint *PpcDeriveConstraint
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl
-				)
-				const
-			{
-				return PpcDeriveConstraintFromPredicates(mp, exprhdl);
-			}
+		// candidate set of xforms
+		virtual CXformSet *PxfsCandidates(IMemoryPool *) const;
 
-			//-------------------------------------------------------------------------------------
-			// Transformations
-			//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
 
-			// candidate set of xforms
-			virtual
-			CXformSet *PxfsCandidates(IMemoryPool *) const;
+		// conversion function
+		static CLogicalInnerApply *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalInnerApply == pop->Eopid());
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
+			return dynamic_cast<CLogicalInnerApply *>(pop);
+		}
 
-			// conversion function
-			static
-			CLogicalInnerApply *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalInnerApply == pop->Eopid());
+	};  // class CLogicalInnerApply
 
-				return dynamic_cast<CLogicalInnerApply*>(pop);
-			}
-
-	}; // class CLogicalInnerApply
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CLogicalInnerApply_H
+#endif  // !GPOPT_CLogicalInnerApply_H
 
 // EOF

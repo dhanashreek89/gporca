@@ -32,9 +32,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerEnumeratorConfig::CParseHandlerEnumeratorConfig(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root), m_enumerator_cfg(NULL)
 {
 }
@@ -91,8 +89,8 @@ CParseHandlerEnumeratorConfig::StartElement(const XMLCh *const,  //element_uri,
 		EdxltokenCostThreshold,
 		EdxltokenOptimizerConfig);
 
-	m_enumerator_cfg = GPOS_NEW(m_mp)
-		CEnumeratorConfig(m_mp, plan_id, num_of_plan_samples, cost_threshold);
+	m_enumerator_cfg =
+		GPOS_NEW(m_mp) CEnumeratorConfig(m_mp, plan_id, num_of_plan_samples, cost_threshold);
 }
 
 //---------------------------------------------------------------------------

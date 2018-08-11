@@ -31,8 +31,7 @@ XERCES_CPP_NAMESPACE_USE
 CParseHandlerWindowKey::CParseHandlerWindowKey(IMemoryPool *mp,
 											   CParseHandlerManager *parse_handler_mgr,
 											   CParseHandlerBase *parse_handler_root)
-	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root),
-	  m_dxl_window_key_gen(NULL)
+	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root), m_dxl_window_key_gen(NULL)
 {
 }
 
@@ -58,10 +57,7 @@ CParseHandlerWindowKey::StartElement(const XMLCh *const element_uri,
 
 		// parse handler for the sorting column list
 		CParseHandlerBase *sort_col_list_parse_handler = CParseHandlerFactory::GetParseHandler(
-			m_mp,
-			CDXLTokens::XmlstrToken(EdxltokenScalarSortColList),
-			m_parse_handler_mgr,
-			this);
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarSortColList), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(sort_col_list_parse_handler);
 
 		// store parse handler
@@ -73,11 +69,8 @@ CParseHandlerWindowKey::StartElement(const XMLCh *const element_uri,
 		GPOS_ASSERT(1 == this->Length());
 
 		// parse handler for the leading and trailing scalar values
-		CParseHandlerBase *window_frame_parse_handler_base =
-			CParseHandlerFactory::GetParseHandler(m_mp,
-												  CDXLTokens::XmlstrToken(EdxltokenWindowFrame),
-												  m_parse_handler_mgr,
-												  this);
+		CParseHandlerBase *window_frame_parse_handler_base = CParseHandlerFactory::GetParseHandler(
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenWindowFrame), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(window_frame_parse_handler_base);
 
 		// store parse handler

@@ -33,75 +33,67 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CJobQueue
 	{
-		private:
+	private:
+		// main job
+		volatile CJob *m_pj;
 
-			// main job
-			volatile CJob *m_pj;
+		// flag indicating if main job has completed
+		volatile BOOL m_fCompleted;
 
-			// flag indicating if main job has completed
-			volatile BOOL m_fCompleted;
+		// list of jobs waiting for main job to complete
+		CList<CJob> m_listjQueued;
 
-			// list of jobs waiting for main job to complete
-			CList<CJob> m_listjQueued;
+		// lock protecting queue
+		CSpinlockJobQueue m_lock;
 
-			// lock protecting queue
-			CSpinlockJobQueue m_lock;
+	public:
+		// enum indicating job queueing result
+		enum EJobQueueResult
+		{
+			EjqrMain = 0,
+			EjqrQueued,
+			EjqrCompleted
+		};
 
-		public:
+		// ctor
+		CJobQueue() : m_pj(NULL), m_fCompleted(false)
+		{
+			m_listjQueued.Init(GPOS_OFFSET(CJob, m_linkQueue));
+		}
 
-			// enum indicating job queueing result
-			enum EJobQueueResult
-			{
-				EjqrMain = 0,
-				EjqrQueued,
-				EjqrCompleted
-			};
+		// dtor
+		~CJobQueue()
+		{
+			GPOS_ASSERT_IMP(NULL != ITask::Self() && !ITask::Self()->HasPendingExceptions(),
+							m_listjQueued.IsEmpty());
+		}
 
-			// ctor
-			CJobQueue()
-				:
-				m_pj(NULL),
-				m_fCompleted(false)
-			{
-				m_listjQueued.Init(GPOS_OFFSET(CJob, m_linkQueue));
-			}
+		// reset job queue
+		void
+		Reset()
+		{
+			GPOS_ASSERT(m_listjQueued.IsEmpty());
 
-			// dtor
-			~CJobQueue()
-			{
-				GPOS_ASSERT_IMP
-					(
-					NULL != ITask::Self() &&
-					!ITask::Self()->HasPendingExceptions(),
-					m_listjQueued.IsEmpty()
-					);
-			}
+			m_pj = NULL;
+			m_fCompleted = false;
+		}
 
-			// reset job queue
-			void Reset()
-			{
-				GPOS_ASSERT(m_listjQueued.IsEmpty());
+		// add job as a waiter;
+		EJobQueueResult EjqrAdd(CJob *pj);
 
-				m_pj = NULL;
-				m_fCompleted = false;
-			}
-
-			// add job as a waiter;
-			EJobQueueResult EjqrAdd(CJob *pj);
-
-			// notify waiting jobs of job completion
-			void NotifyCompleted(CSchedulerContext *psc);
+		// notify waiting jobs of job completion
+		void NotifyCompleted(CSchedulerContext *psc);
 
 #ifdef GPOS_DEBUG
-			// print queue - not thread-safe
-			IOstream &OsPrintQueuedJobs(IOstream &);
-#endif // GPOS_DEBUG
+		// print queue - not thread-safe
+		IOstream &OsPrintQueuedJobs(IOstream &);
+#endif  // GPOS_DEBUG
 
-	}; // class CJobQueue
+	};  // class CJobQueue
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CJobQueue_H
+#endif  // !GPOPT_CJobQueue_H
 
 
 // EOF

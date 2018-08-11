@@ -524,7 +524,7 @@ CDXLTokens::Init(IMemoryPool *mp)
 
 		{EdxltokenIndexInfoList, GPOS_WSZ_LIT("IndexInfoList")},
 		{EdxltokenIndexInfo, GPOS_WSZ_LIT("IndexInfo")},
-			
+
 		{EdxltokenIndexKeyCols, GPOS_WSZ_LIT("KeyColumns")},
 		{EdxltokenIndexIncludedCols, GPOS_WSZ_LIT("IncludedColumns")},
 		{EdxltokenIndexClustered, GPOS_WSZ_LIT("IsClustered")},
@@ -716,9 +716,9 @@ CDXLTokens::Init(IMemoryPool *mp)
 
 		{EdxltokenCtasOptionType, GPOS_WSZ_LIT("CtasOptionType")},
 		{EdxltokenVarTypeModList, GPOS_WSZ_LIT("VarTypeModList")},
-			{EdxltokenNLJIndexParamList, GPOS_WSZ_LIT("NLJIndexParamList")},
-			{EdxltokenNLJIndexParam, GPOS_WSZ_LIT("NLJIndexParam")},
-			{EdxltokenNLJIndexOuterRefAsParam, GPOS_WSZ_LIT("OuterRefAsParam")},
+		{EdxltokenNLJIndexParamList, GPOS_WSZ_LIT("NLJIndexParamList")},
+		{EdxltokenNLJIndexParam, GPOS_WSZ_LIT("NLJIndexParam")},
+		{EdxltokenNLJIndexOuterRefAsParam, GPOS_WSZ_LIT("OuterRefAsParam")},
 	};
 
 	m_pstrmap = GPOS_NEW_ARRAY(m_mp, SStrMapElem, EdxltokenSentinel);
@@ -728,8 +728,7 @@ CDXLTokens::Init(IMemoryPool *mp)
 	{
 		SWszMapElem mapelem = rgStrMap[ul];
 
-		m_pstrmap[mapelem.m_edxlt].m_pstr =
-			GPOS_NEW(m_mp) CWStringConst(m_mp, mapelem.m_wsz);
+		m_pstrmap[mapelem.m_edxlt].m_pstr = GPOS_NEW(m_mp) CWStringConst(m_mp, mapelem.m_wsz);
 		m_pxmlszmap[mapelem.m_edxlt].m_xmlsz = XmlstrFromWsz(mapelem.m_wsz);
 	}
 }

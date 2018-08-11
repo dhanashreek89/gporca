@@ -16,7 +16,6 @@
 
 namespace gpopt
 {
-
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CPhysicalLeftSemiNLJoin
@@ -27,57 +26,50 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPhysicalLeftSemiNLJoin : public CPhysicalNLJoin
 	{
+	private:
+		// private copy ctor
+		CPhysicalLeftSemiNLJoin(const CPhysicalLeftSemiNLJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CPhysicalLeftSemiNLJoin(IMemoryPool *mp);
 
-			// private copy ctor
-			CPhysicalLeftSemiNLJoin(const CPhysicalLeftSemiNLJoin &);
+		// dtor
+		virtual ~CPhysicalLeftSemiNLJoin();
 
-		public:
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPhysicalLeftSemiNLJoin;
+		}
 
-			// ctor
-			explicit
-			CPhysicalLeftSemiNLJoin(IMemoryPool *mp);
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPhysicalLeftSemiNLJoin";
+		}
 
-			// dtor
-			virtual
-			~CPhysicalLeftSemiNLJoin();
+		// check if required columns are included in output columns
+		virtual BOOL FProvidesReqdCols(CExpressionHandle &exprhdl,
+									   CColRefSet *pcrsRequired,
+									   ULONG ulOptReq) const;
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopPhysicalLeftSemiNLJoin;
-			}
+		// conversion function
+		static CPhysicalLeftSemiNLJoin *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(EopPhysicalLeftSemiNLJoin == pop->Eopid());
 
-			 // return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CPhysicalLeftSemiNLJoin";
-			}
-
-			// check if required columns are included in output columns
-			virtual
-			BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const;
-			
-			// conversion function
-			static
-			CPhysicalLeftSemiNLJoin *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(EopPhysicalLeftSemiNLJoin == pop->Eopid());
-
-				return dynamic_cast<CPhysicalLeftSemiNLJoin*>(pop);
-			}
+			return dynamic_cast<CPhysicalLeftSemiNLJoin *>(pop);
+		}
 
 
-	}; // class CPhysicalLeftSemiNLJoin
+	};  // class CPhysicalLeftSemiNLJoin
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CPhysicalLeftSemiNLJoin_H
+#endif  // !GPOPT_CPhysicalLeftSemiNLJoin_H
 
 // EOF

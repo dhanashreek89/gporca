@@ -22,49 +22,45 @@ namespace gpopt
 {
 	// fwd decl
 	class CMDAccessor;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CSerializableMDAccessor
 	//
 	//	@doc:
-	//		Wrapper for serializing MD objects in a minidump 
+	//		Wrapper for serializing MD objects in a minidump
 	//
 	//---------------------------------------------------------------------------
 	class CSerializableMDAccessor : public CSerializable
 	{
-		private:
-			// MD accessor
-			CMDAccessor *m_pmda;
-			
-			// serialize header
-			void SerializeHeader(COstream &oos);
-			
-			// serialize footer
-			void SerializeFooter(COstream &oos);
+	private:
+		// MD accessor
+		CMDAccessor *m_pmda;
 
-			// private copy ctor
-			CSerializableMDAccessor(const CSerializableMDAccessor&);
+		// serialize header
+		void SerializeHeader(COstream &oos);
 
-		public:
+		// serialize footer
+		void SerializeFooter(COstream &oos);
 
-			// ctor
-			explicit
-			CSerializableMDAccessor(CMDAccessor *md_accessor);
+		// private copy ctor
+		CSerializableMDAccessor(const CSerializableMDAccessor &);
 
-			// dtor
-			virtual
-			~CSerializableMDAccessor()
-			{}
-			
-			// serialize object to passed stream
-			virtual
-			void Serialize(COstream &oos);
+	public:
+		// ctor
+		explicit CSerializableMDAccessor(CMDAccessor *md_accessor);
 
-	}; // class CSerializableMDAccessor
-}
+		// dtor
+		virtual ~CSerializableMDAccessor()
+		{
+		}
 
-#endif // !GPOS_CSerializableMDAccessor_H
+		// serialize object to passed stream
+		virtual void Serialize(COstream &oos);
+
+	};  // class CSerializableMDAccessor
+}  // namespace gpopt
+
+#endif  // !GPOS_CSerializableMDAccessor_H
 
 // EOF
-

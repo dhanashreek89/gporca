@@ -29,67 +29,54 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformExpandFullOuterJoin : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformExpandFullOuterJoin(const CXformExpandFullOuterJoin &);
 
-		private:
+		// construct a join expression of two CTEs using the given CTE ids
+		// and output columns
+		CExpression *PexprLogicalJoinOverCTEs(IMemoryPool *mp,
+											  EdxlJoinType edxljointype,
+											  ULONG ulLeftCTEId,
+											  CColRefArray *pdrgpcrLeft,
+											  ULONG ulRightCTEId,
+											  CColRefArray *pdrgpcrRight,
+											  CExpression *pexprScalar) const;
 
-			// private copy ctor
-			CXformExpandFullOuterJoin(const CXformExpandFullOuterJoin &);
+	public:
+		// ctor
+		explicit CXformExpandFullOuterJoin(IMemoryPool *mp);
 
-			// construct a join expression of two CTEs using the given CTE ids
-			// and output columns
-			CExpression *PexprLogicalJoinOverCTEs
-				(
-				IMemoryPool *mp,
-				EdxlJoinType edxljointype,
-				ULONG ulLeftCTEId,
-				CColRefArray *pdrgpcrLeft,
-				ULONG ulRightCTEId,
-				CColRefArray *pdrgpcrRight,
-				CExpression *pexprScalar
-				)
-				const;
+		// dtor
+		virtual ~CXformExpandFullOuterJoin()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfExpandFullOuterJoin;
+		}
 
-			// ctor
-			explicit
-			CXformExpandFullOuterJoin(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformExpandFullOuterJoin";
+		}
 
-			// dtor
-			virtual
-			~CXformExpandFullOuterJoin() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfExpandFullOuterJoin;
-			}
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformExpandFullOuterJoin";
-			}
+	};  // class CXformExpandFullOuterJoin
+}  // namespace gpopt
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			virtual
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformExpandFullOuterJoin
-}
-
-#endif // !GPOPT_CXformExpandFullOuterJoin_H
+#endif  // !GPOPT_CXformExpandFullOuterJoin_H
 
 // EOF

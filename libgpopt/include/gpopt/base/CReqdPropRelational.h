@@ -35,85 +35,76 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CReqdPropRelational : public CReqdProp
 	{
+	private:
+		// required stat columns
+		CColRefSet *m_pcrsStat;
 
-		private:
+		// predicate on partition key
+		CExpression *m_pexprPartPred;
 
-			// required stat columns
-			CColRefSet *m_pcrsStat;
+		// private copy ctor
+		CReqdPropRelational(const CReqdPropRelational &);
 
-			// predicate on partition key
-			CExpression *m_pexprPartPred;
+	public:
+		// default ctor
+		CReqdPropRelational();
 
-			// private copy ctor
-			CReqdPropRelational(const CReqdPropRelational &);
+		// ctor
+		explicit CReqdPropRelational(CColRefSet *pcrs);
 
-		public:
+		// ctor
+		CReqdPropRelational(CColRefSet *pcrs, CExpression *pexprPartPred);
 
-			// default ctor
-			CReqdPropRelational();
+		// dtor
+		virtual ~CReqdPropRelational();
 
-			// ctor
-			explicit
-			CReqdPropRelational(CColRefSet *pcrs);
+		// type of properties
+		virtual BOOL
+		FRelational() const
+		{
+			GPOS_ASSERT(!FPlan());
+			return true;
+		}
 
-			// ctor
-			CReqdPropRelational(CColRefSet *pcrs, CExpression *pexprPartPred);
+		// stat columns accessor
+		CColRefSet *
+		PcrsStat() const
+		{
+			return m_pcrsStat;
+		}
 
-			// dtor
-			virtual
-			~CReqdPropRelational();
+		// partition predicate accessor
+		CExpression *
+		PexprPartPred() const
+		{
+			return m_pexprPartPred;
+		}
 
-			// type of properties
-			virtual
-			BOOL FRelational() const
-			{
-				GPOS_ASSERT(!FPlan());
-				return true;
-			}
+		// required properties computation function
+		virtual void Compute(IMemoryPool *mp,
+							 CExpressionHandle &exprhdl,
+							 CReqdProp *prpInput,
+							 ULONG child_index,
+							 CDrvdPropArrays *pdrgpdpCtxt,
+							 ULONG ulOptReq);
 
-			// stat columns accessor
-			CColRefSet *PcrsStat() const
-			{
-				return m_pcrsStat;
-			}
+		// return difference from given properties
+		CReqdPropRelational *PrprelDifference(IMemoryPool *mp, CReqdPropRelational *prprel);
 
-			// partition predicate accessor
-			CExpression *PexprPartPred() const
-			{
-				return m_pexprPartPred;
-			}
+		// return true if property container is empty
+		BOOL IsEmpty() const;
 
-			// required properties computation function
-			virtual
-			void Compute
-				(
-				IMemoryPool *mp,
-				CExpressionHandle &exprhdl,
-				CReqdProp *prpInput,
-				ULONG child_index,
-				CDrvdPropArrays *pdrgpdpCtxt,
-				ULONG ulOptReq
-				);
+		// shorthand for conversion
+		static CReqdPropRelational *GetReqdRelationalProps(CReqdProp *prp);
 
-			// return difference from given properties
-			CReqdPropRelational *PrprelDifference(IMemoryPool *mp, CReqdPropRelational *prprel);
+		// print function
+		virtual IOstream &OsPrint(IOstream &os) const;
 
-			// return true if property container is empty
-			BOOL IsEmpty() const;
+	};  // class CReqdPropRelational
 
-			// shorthand for conversion
-			static
-			CReqdPropRelational *GetReqdRelationalProps(CReqdProp *prp);
-
-			// print function
-			virtual
-			IOstream &OsPrint(IOstream &os) const;
-
-	}; // class CReqdPropRelational
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CReqdPropRelational_H
+#endif  // !GPOPT_CReqdPropRelational_H
 
 // EOF

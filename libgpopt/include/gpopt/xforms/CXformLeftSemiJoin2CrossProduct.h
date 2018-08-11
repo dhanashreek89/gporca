@@ -28,54 +28,44 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformLeftSemiJoin2CrossProduct : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformLeftSemiJoin2CrossProduct(const CXformLeftSemiJoin2CrossProduct &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformLeftSemiJoin2CrossProduct(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformLeftSemiJoin2CrossProduct(const CXformLeftSemiJoin2CrossProduct &);
+		// dtor
+		virtual ~CXformLeftSemiJoin2CrossProduct()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftSemiJoin2CrossProduct;
+		}
 
-			// ctor
-			explicit
-			CXformLeftSemiJoin2CrossProduct(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftSemiJoin2CrossProduct";
+		}
 
-			// dtor
-			virtual
-			~CXformLeftSemiJoin2CrossProduct() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftSemiJoin2CrossProduct;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftSemiJoin2CrossProduct";
-			}
+	};  // class CXformLeftSemiJoin2CrossProduct
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			void Transform
-					(
-					CXformContext *pxfctxt,
-					CXformResult *pxfres,
-					CExpression *pexpr
-					)
-					const;
-
-	}; // class CXformLeftSemiJoin2CrossProduct
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformLeftSemiJoin2CrossProduct_H
+#endif  // !GPOPT_CXformLeftSemiJoin2CrossProduct_H
 
 // EOF

@@ -31,9 +31,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerStatsDerivedRelation::CParseHandlerStatsDerivedRelation(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root),
 	  m_rows(CStatistics::DefaultColumnWidth),
 	  m_empty(false),
@@ -73,10 +71,7 @@ CParseHandlerStatsDerivedRelation::StartElement(const XMLCh *const element_uri,
 	{
 		// start new derived column element
 		CParseHandlerBase *parse_handler_base = CParseHandlerFactory::GetParseHandler(
-			m_mp,
-			CDXLTokens::XmlstrToken(EdxltokenStatsDerivedColumn),
-			m_parse_handler_mgr,
-			this);
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenStatsDerivedColumn), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(parse_handler_base);
 
 		// store parse handler
@@ -151,8 +146,8 @@ CParseHandlerStatsDerivedRelation::EndElement(const XMLCh *const,  // element_ur
 		dxl_stats_derived_col_array->Append(pdxlstatdercol);
 	}
 
-	m_dxl_stats_derived_relation = GPOS_NEW(m_mp)
-		CDXLStatsDerivedRelation(m_rows, m_empty, dxl_stats_derived_col_array);
+	m_dxl_stats_derived_relation =
+		GPOS_NEW(m_mp) CDXLStatsDerivedRelation(m_rows, m_empty, dxl_stats_derived_col_array);
 
 	// deactivate handler
 	m_parse_handler_mgr->DeactivateHandler();

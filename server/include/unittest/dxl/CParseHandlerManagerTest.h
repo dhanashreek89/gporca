@@ -29,18 +29,17 @@ namespace gpdxl
 	//		Static unit tests
 	//
 	//---------------------------------------------------------------------------
-	
+
 	class CParseHandlerManagerTest
 	{
-		public:
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
+		static GPOS_RESULT EresUnittest_Basic();
 
-			// unittests
-			static GPOS_RESULT EresUnittest();
-			static GPOS_RESULT EresUnittest_Basic();
+	};  // class CParseHandlerManagerTest
+}  // namespace gpdxl
 
-	}; // class CParseHandlerManagerTest
-}
-
-#endif // GPOPT_CParseHandlerManagerTest_H
+#endif  // GPOPT_CParseHandlerManagerTest_H
 
 // EOF

@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CXformInnerJoin2NLJoin
@@ -28,53 +28,44 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformInnerJoin2NLJoin : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformInnerJoin2NLJoin(const CXformInnerJoin2NLJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformInnerJoin2NLJoin(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformInnerJoin2NLJoin(const CXformInnerJoin2NLJoin &);
+		// dtor
+		virtual ~CXformInnerJoin2NLJoin()
+		{
+		}
 
-		public:
-		
-			// ctor
-			explicit
-			CXformInnerJoin2NLJoin(IMemoryPool *mp);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfInnerJoin2NLJoin;
+		}
 
-			// dtor
-			virtual 
-			~CXformInnerJoin2NLJoin() {}
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformInnerJoin2NLJoin";
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfInnerJoin2NLJoin;
-			}
-			
-			// return a string for xform name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CXformInnerJoin2NLJoin";
-			}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// actual transform
-			void Transform
-					(
-					CXformContext *pxfctxt,
-					CXformResult *pxfres,
-					CExpression *pexpr
-					) const;
+	};  // class CXformInnerJoin2NLJoin
 
-	}; // class CXformInnerJoin2NLJoin
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformInnerJoin2NLJoin_H
+#endif  // !GPOPT_CXformInnerJoin2NLJoin_H
 
 // EOF

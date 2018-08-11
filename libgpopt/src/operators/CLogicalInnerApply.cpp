@@ -24,12 +24,7 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CLogicalInnerApply::CLogicalInnerApply
-	(
-	IMemoryPool *mp
-	)
-	:
-	CLogicalApply(mp)
+CLogicalInnerApply::CLogicalInnerApply(IMemoryPool *mp) : CLogicalApply(mp)
 {
 	GPOS_ASSERT(NULL != mp);
 
@@ -45,14 +40,10 @@ CLogicalInnerApply::CLogicalInnerApply
 //		ctor
 //
 //---------------------------------------------------------------------------
-CLogicalInnerApply::CLogicalInnerApply
-	(
-	IMemoryPool *mp,
-	CColRefArray *pdrgpcrInner,
-	EOperatorId eopidOriginSubq
-	)
-	:
-	CLogicalApply(mp, pdrgpcrInner, eopidOriginSubq)
+CLogicalInnerApply::CLogicalInnerApply(IMemoryPool *mp,
+									   CColRefArray *pdrgpcrInner,
+									   EOperatorId eopidOriginSubq)
+	: CLogicalApply(mp, pdrgpcrInner, eopidOriginSubq)
 {
 	GPOS_ASSERT(0 < pdrgpcrInner->Size());
 }
@@ -68,7 +59,8 @@ CLogicalInnerApply::CLogicalInnerApply
 //
 //---------------------------------------------------------------------------
 CLogicalInnerApply::~CLogicalInnerApply()
-{}
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -80,12 +72,8 @@ CLogicalInnerApply::~CLogicalInnerApply()
 //
 //---------------------------------------------------------------------------
 CMaxCard
-CLogicalInnerApply::Maxcard
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CLogicalInnerApply::Maxcard(IMemoryPool *,  // mp
+							CExpressionHandle &exprhdl) const
 {
 	return CLogical::Maxcard(exprhdl, 2 /*ulScalarIndex*/, MaxcardDef(exprhdl));
 }
@@ -99,18 +87,14 @@ CLogicalInnerApply::Maxcard
 //
 //---------------------------------------------------------------------------
 CXformSet *
-CLogicalInnerApply::PxfsCandidates
-	(
-	IMemoryPool *mp
-	) 
-	const
+CLogicalInnerApply::PxfsCandidates(IMemoryPool *mp) const
 {
 	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
-	
+
 	(void) xform_set->ExchangeSet(CXform::ExfInnerApply2InnerJoin);
 	(void) xform_set->ExchangeSet(CXform::ExfInnerApply2InnerJoinNoCorrelations);
 	(void) xform_set->ExchangeSet(CXform::ExfInnerApplyWithOuterKey2InnerJoin);
-	
+
 	return xform_set;
 }
 
@@ -124,17 +108,14 @@ CLogicalInnerApply::PxfsCandidates
 //
 //---------------------------------------------------------------------------
 COperator *
-CLogicalInnerApply::PopCopyWithRemappedColumns
-	(
-	IMemoryPool *mp,
-	UlongToColRefMap *colref_mapping,
-	BOOL must_exist
-	)
+CLogicalInnerApply::PopCopyWithRemappedColumns(IMemoryPool *mp,
+											   UlongToColRefMap *colref_mapping,
+											   BOOL must_exist)
 {
-	CColRefArray *pdrgpcrInner = CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
+	CColRefArray *pdrgpcrInner =
+		CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
 
 	return GPOS_NEW(mp) CLogicalInnerApply(mp, pdrgpcrInner, m_eopidOriginSubq);
 }
 
 // EOF
-

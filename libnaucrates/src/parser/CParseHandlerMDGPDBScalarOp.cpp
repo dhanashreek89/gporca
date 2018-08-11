@@ -183,11 +183,8 @@ CParseHandlerMDGPDBScalarOp::StartElement(const XMLCh *const element_uri,
 										   element_local_name))
 	{
 		// parse handler for operator class list
-		CParseHandlerBase *op_class_list_parse_handler =
-			CParseHandlerFactory::GetParseHandler(m_mp,
-												  CDXLTokens::XmlstrToken(EdxltokenMetadataIdList),
-												  m_parse_handler_mgr,
-												  this);
+		CParseHandlerBase *op_class_list_parse_handler = CParseHandlerFactory::GetParseHandler(
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenMetadataIdList), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(op_class_list_parse_handler);
 		this->Append(op_class_list_parse_handler);
 		op_class_list_parse_handler->startElement(
@@ -237,17 +234,17 @@ CParseHandlerMDGPDBScalarOp::EndElement(const XMLCh *const,  // element_uri,
 			mdid_op_classes_array = GPOS_NEW(m_mp) IMdIdArray(m_mp);
 		}
 		m_imd_obj = GPOS_NEW(m_mp) CMDScalarOpGPDB(m_mp,
-															m_mdid,
-															m_mdname,
-															m_mdid_type_left,
-															m_mdid_type_right,
-															m_mdid_type_result,
-															m_func_mdid,
-															m_mdid_commute_opr,
-															m_mdid_inverse_opr,
-															m_comparision_type,
-															m_returns_null_on_null_input,
-															mdid_op_classes_array);
+												   m_mdid,
+												   m_mdname,
+												   m_mdid_type_left,
+												   m_mdid_type_right,
+												   m_mdid_type_result,
+												   m_func_mdid,
+												   m_mdid_commute_opr,
+												   m_mdid_inverse_opr,
+												   m_comparision_type,
+												   m_returns_null_on_null_input,
+												   mdid_op_classes_array);
 
 		// deactivate handler
 		m_parse_handler_mgr->DeactivateHandler();

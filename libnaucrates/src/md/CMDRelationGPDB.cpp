@@ -110,15 +110,14 @@ CMDRelationGPDB::CMDRelationGPDB(IMemoryPool *mp,
 				m_nondrop_col_pos_array->Append(GPOS_NEW(m_mp) ULONG(ul));
 			}
 			(void) m_colpos_nondrop_colpos_map->Insert(GPOS_NEW(m_mp) ULONG(ul),
-													   GPOS_NEW(m_mp)
-														   ULONG(non_dropped_col_pos));
+													   GPOS_NEW(m_mp) ULONG(non_dropped_col_pos));
 			non_dropped_col_pos++;
 		}
 
 		m_col_width_array->Append(GPOS_NEW(mp) CDouble(mdcol->Length()));
 	}
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+	m_dxl_str =
+		CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
 }
 
 //---------------------------------------------------------------------------
@@ -686,8 +685,7 @@ CMDRelationGPDB::Serialize(CXMLSerializer *xml_serializer) const
 	if (IsPartitioned())
 	{
 		// serialize partition keys
-		CWStringDynamic *part_keys_str_array =
-			CDXLUtils::Serialize(m_mp, m_partition_cols_array);
+		CWStringDynamic *part_keys_str_array = CDXLUtils::Serialize(m_mp, m_partition_cols_array);
 		xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenPartKeys),
 									 part_keys_str_array);
 		GPOS_DELETE(part_keys_str_array);

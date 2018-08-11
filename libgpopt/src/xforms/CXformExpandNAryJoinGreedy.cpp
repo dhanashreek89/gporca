@@ -35,23 +35,16 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformExpandNAryJoinGreedy::CXformExpandNAryJoinGreedy
-	(
-	IMemoryPool *pmp
-	)
-	:
-	CXformExploration
-		(
-		 // pattern
-		GPOS_NEW(pmp) CExpression
-					(
-					pmp,
-					GPOS_NEW(pmp) CLogicalNAryJoin(pmp),
-					GPOS_NEW(pmp) CExpression(pmp, GPOS_NEW(pmp) CPatternMultiLeaf(pmp)),
-					GPOS_NEW(pmp) CExpression(pmp, GPOS_NEW(pmp) CPatternTree(pmp))
-					)
-		)
-{}
+CXformExpandNAryJoinGreedy::CXformExpandNAryJoinGreedy(IMemoryPool *pmp)
+	: CXformExploration(
+		  // pattern
+		  GPOS_NEW(pmp)
+			  CExpression(pmp,
+						  GPOS_NEW(pmp) CLogicalNAryJoin(pmp),
+						  GPOS_NEW(pmp) CExpression(pmp, GPOS_NEW(pmp) CPatternMultiLeaf(pmp)),
+						  GPOS_NEW(pmp) CExpression(pmp, GPOS_NEW(pmp) CPatternTree(pmp))))
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -63,11 +56,7 @@ CXformExpandNAryJoinGreedy::CXformExpandNAryJoinGreedy
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise
-CXformExpandNAryJoinGreedy::Exfp
-	(
-	CExpressionHandle &exprhdl
-	)
-	const
+CXformExpandNAryJoinGreedy::Exfp(CExpressionHandle &exprhdl) const
 {
 	COptimizerConfig *poconf = COptCtxt::PoctxtFromTLS()->GetOptimizerConfig();
 	const CHint *phint = poconf->GetHint();
@@ -79,7 +68,8 @@ CXformExpandNAryJoinGreedy::Exfp
 	const ULONG ulRelChild = ulArity - 1;
 
 	// This transform is used only when DP is disabled
-	if (GPOPT_FENABLED_XFORM(CXform::ExfExpandNAryJoinDP) && ulRelChild < phint->UlJoinOrderDPLimit())
+	if (GPOPT_FENABLED_XFORM(CXform::ExfExpandNAryJoinDP) &&
+		ulRelChild < phint->UlJoinOrderDPLimit())
 	{
 		return CXform::ExfpNone;
 	}
@@ -97,13 +87,9 @@ CXformExpandNAryJoinGreedy::Exfp
 //
 //---------------------------------------------------------------------------
 void
-CXformExpandNAryJoinGreedy::Transform
-	(
-	CXformContext *pxfctxt,
-	CXformResult *pxfres,
-	CExpression *pexpr
-	)
-	const
+CXformExpandNAryJoinGreedy::Transform(CXformContext *pxfctxt,
+									  CXformResult *pxfres,
+									  CExpression *pexpr) const
 {
 	GPOS_ASSERT(NULL != pxfctxt);
 	GPOS_ASSERT(NULL != pxfres);

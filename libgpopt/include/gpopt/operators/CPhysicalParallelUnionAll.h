@@ -13,33 +13,35 @@ namespace gpopt
 	// See gpopt::CPhysicalSerialUnionAll for its serial sibling.
 	class CPhysicalParallelUnionAll : public CPhysicalUnionAll
 	{
-		private:
-			// array of child hashed distributions -- used locally for distribution derivation
-			CDistributionSpecArray *const m_pdrgpds;
+	private:
+		// array of child hashed distributions -- used locally for distribution derivation
+		CDistributionSpecArray *const m_pdrgpds;
 
-		public:
-			CPhysicalParallelUnionAll(IMemoryPool *mp, CColRefArray *pdrgpcrOutput, CColRefArrays *pdrgpdrgpcrInput,
-									  ULONG ulScanIdPartialIndex);
+	public:
+		CPhysicalParallelUnionAll(IMemoryPool *mp,
+								  CColRefArray *pdrgpcrOutput,
+								  CColRefArrays *pdrgpdrgpcrInput,
+								  ULONG ulScanIdPartialIndex);
 
-			virtual EOperatorId Eopid() const;
+		virtual EOperatorId Eopid() const;
 
-			virtual const CHAR *SzId() const;
+		virtual const CHAR *SzId() const;
 
-			virtual CDistributionSpec *
-			PdsRequired(IMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
-						ULONG child_index, CDrvdPropArrays *pdrgpdpCtxt, ULONG ulOptReq) const;
+		virtual CDistributionSpec *PdsRequired(IMemoryPool *mp,
+											   CExpressionHandle &exprhdl,
+											   CDistributionSpec *pdsRequired,
+											   ULONG child_index,
+											   CDrvdPropArrays *pdrgpdpCtxt,
+											   ULONG ulOptReq) const;
 
-			virtual
-			CEnfdDistribution::EDistributionMatching Edm
-				(
-				CReqdPropPlan *, // prppInput
-				ULONG,  // child_index
-				CDrvdPropArrays *, //pdrgpdpCtxt
-				ULONG // ulOptReq
-				);
+		virtual CEnfdDistribution::EDistributionMatching Edm(CReqdPropPlan *,	// prppInput
+															 ULONG,				 // child_index
+															 CDrvdPropArrays *,  //pdrgpdpCtxt
+															 ULONG				 // ulOptReq
+		);
 
-			virtual ~CPhysicalParallelUnionAll();
+		virtual ~CPhysicalParallelUnionAll();
 	};
-}
+}  // namespace gpopt
 
-#endif //GPOPT_CPhysicalParallelUnionAll_H
+#endif  //GPOPT_CPhysicalParallelUnionAll_H

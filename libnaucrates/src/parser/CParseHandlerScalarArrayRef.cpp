@@ -85,10 +85,10 @@ CParseHandlerScalarArrayRef::StartElement(const XMLCh *const element_uri,
 			true,
 			default_type_modifier);
 
-		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(
-			m_mp,
-			GPOS_NEW(m_mp) CDXLScalarArrayRef(
-				m_mp, elem_type_mdid, type_modifier, array_type_mdid, return_type_mdid));
+		m_dxlnode = GPOS_NEW(m_mp)
+			CDXLNode(m_mp,
+					 GPOS_NEW(m_mp) CDXLScalarArrayRef(
+						 m_mp, elem_type_mdid, type_modifier, array_type_mdid, return_type_mdid));
 	}
 	else if (0 ==
 			 XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenScalarArrayRefIndexList),

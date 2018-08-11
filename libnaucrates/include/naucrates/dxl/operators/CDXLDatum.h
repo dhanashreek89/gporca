@@ -70,11 +70,7 @@ namespace gpdxl
 			EdxldatumSentinel
 		};
 		// ctor
-		CDXLDatum(IMemoryPool *mp,
-				  IMDId *mdid_type,
-				  INT type_modifier,
-				  BOOL is_null,
-				  ULONG length);
+		CDXLDatum(IMemoryPool *mp, IMDId *mdid_type, INT type_modifier, BOOL is_null, ULONG length);
 
 		// dtor
 		virtual ~CDXLDatum()

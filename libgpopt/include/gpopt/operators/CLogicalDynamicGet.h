@@ -16,12 +16,11 @@
 
 namespace gpopt
 {
-	
 	// fwd declarations
 	class CTableDescriptor;
 	class CName;
 	class CColRefSet;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CLogicalDynamicGet
@@ -32,162 +31,136 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CLogicalDynamicGet : public CLogicalDynamicGetBase
 	{
+	private:
+		// private copy ctor
+		CLogicalDynamicGet(const CLogicalDynamicGet &);
 
-		private:
-	
-			// private copy ctor
-			CLogicalDynamicGet(const CLogicalDynamicGet &);
+	public:
+		// ctors
+		explicit CLogicalDynamicGet(IMemoryPool *mp);
 
-		public:
-		
-			// ctors
-			explicit
-			CLogicalDynamicGet(IMemoryPool *mp);
+		CLogicalDynamicGet(IMemoryPool *mp,
+						   const CName *pnameAlias,
+						   CTableDescriptor *ptabdesc,
+						   ULONG ulPartIndex,
+						   CColRefArray *colref_array,
+						   CColRefArrays *pdrgpdrgpcrPart,
+						   ULONG ulSecondaryPartIndexId,
+						   BOOL is_partial,
+						   CPartConstraint *ppartcnstr,
+						   CPartConstraint *ppartcnstrRel);
 
-			CLogicalDynamicGet
-				(
-				IMemoryPool *mp,
-				const CName *pnameAlias,
-				CTableDescriptor *ptabdesc,
-				ULONG ulPartIndex,
-				CColRefArray *colref_array,
-				CColRefArrays *pdrgpdrgpcrPart,
-				ULONG ulSecondaryPartIndexId,
-				BOOL is_partial,
-				CPartConstraint *ppartcnstr,
-				CPartConstraint *ppartcnstrRel
-				);
-			
-			CLogicalDynamicGet
-				(
-				IMemoryPool *mp,
-				const CName *pnameAlias,
-				CTableDescriptor *ptabdesc,
-				ULONG ulPartIndex
-				);
+		CLogicalDynamicGet(IMemoryPool *mp,
+						   const CName *pnameAlias,
+						   CTableDescriptor *ptabdesc,
+						   ULONG ulPartIndex);
 
-			// dtor
-			virtual 
-			~CLogicalDynamicGet();
+		// dtor
+		virtual ~CLogicalDynamicGet();
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopLogicalDynamicGet;
-			}
-			
-			// return a string for operator name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CLogicalDynamicGet";
-			}
-			
-			// operator specific hash function
-			virtual
-			ULONG HashValue() const;
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopLogicalDynamicGet;
+		}
 
-			// match function
-			BOOL Matches(COperator *pop) const;
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CLogicalDynamicGet";
+		}
 
-			// sensitivity to order of inputs
-			BOOL FInputOrderSensitive() const;
+		// operator specific hash function
+		virtual ULONG HashValue() const;
 
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns(IMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+		// match function
+		BOOL Matches(COperator *pop) const;
 
-			//-------------------------------------------------------------------------------------
-			// Derived Relational Properties
-			//-------------------------------------------------------------------------------------
+		// sensitivity to order of inputs
+		BOOL FInputOrderSensitive() const;
+
+		// return a copy of the operator with remapped columns
+		virtual COperator *PopCopyWithRemappedColumns(IMemoryPool *mp,
+													  UlongToColRefMap *colref_mapping,
+													  BOOL must_exist);
+
+		//-------------------------------------------------------------------------------------
+		// Derived Relational Properties
+		//-------------------------------------------------------------------------------------
 
 
-			// derive join depth
-			virtual
-			ULONG JoinDepth
-				(
-				IMemoryPool *, // mp
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{
-				return 1;
-			}
+		// derive join depth
+		virtual ULONG
+		JoinDepth(IMemoryPool *,	   // mp
+				  CExpressionHandle &  // exprhdl
+				  ) const
+		{
+			return 1;
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Required Relational Properties
-			//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		// Required Relational Properties
+		//-------------------------------------------------------------------------------------
 
-			// compute required stat columns of the n-th child
-			virtual
-			CColRefSet *PcrsStat
-				(
-				IMemoryPool *, // mp,
-				CExpressionHandle &, // exprhdl
-				CColRefSet *, //pcrsInput
-				ULONG // child_index
-				)
-				const
-			{
-				GPOS_ASSERT(!"CLogicalDynamicGet has no children");
-				return NULL;
-			}
-			
-			//-------------------------------------------------------------------------------------
-			// Transformations
-			//-------------------------------------------------------------------------------------
-		
-			// candidate set of xforms
-			CXformSet *PxfsCandidates(IMemoryPool *mp) const;
+		// compute required stat columns of the n-th child
+		virtual CColRefSet *
+		PcrsStat(IMemoryPool *,		   // mp,
+				 CExpressionHandle &,  // exprhdl
+				 CColRefSet *,		   //pcrsInput
+				 ULONG				   // child_index
+				 ) const
+		{
+			GPOS_ASSERT(!"CLogicalDynamicGet has no children");
+			return NULL;
+		}
 
-			//-------------------------------------------------------------------------------------
-			// Statistics
-			//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		// Transformations
+		//-------------------------------------------------------------------------------------
 
-			// derive statistics
-			virtual
-			IStatistics *PstatsDerive
-						(
-						IMemoryPool *mp,
-						CExpressionHandle &exprhdl,
-						IStatisticsArray *stats_ctxt
-						)
-						const;
+		// candidate set of xforms
+		CXformSet *PxfsCandidates(IMemoryPool *mp) const;
 
-			// stat promise
-			virtual
-			EStatPromise Esp(CExpressionHandle &) const
-			{
-				return CLogical::EspHigh;
-			}
+		//-------------------------------------------------------------------------------------
+		// Statistics
+		//-------------------------------------------------------------------------------------
 
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-			//-------------------------------------------------------------------------------------
-		
-			// conversion function
-			static
-			CLogicalDynamicGet *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopLogicalDynamicGet == pop->Eopid());
-				
-				return dynamic_cast<CLogicalDynamicGet*>(pop);
-			}
-			
-			// debug print
-			virtual 
-			IOstream &OsPrint(IOstream &) const;
+		// derive statistics
+		virtual IStatistics *PstatsDerive(IMemoryPool *mp,
+										  CExpressionHandle &exprhdl,
+										  IStatisticsArray *stats_ctxt) const;
 
-	}; // class CLogicalDynamicGet
+		// stat promise
+		virtual EStatPromise
+		Esp(CExpressionHandle &) const
+		{
+			return CLogical::EspHigh;
+		}
 
-}
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------
+
+		// conversion function
+		static CLogicalDynamicGet *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopLogicalDynamicGet == pop->Eopid());
+
+			return dynamic_cast<CLogicalDynamicGet *>(pop);
+		}
+
+		// debug print
+		virtual IOstream &OsPrint(IOstream &) const;
+
+	};  // class CLogicalDynamicGet
+
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CLogicalDynamicGet_H
+#endif  // !GPOPT_CLogicalDynamicGet_H
 
 // EOF

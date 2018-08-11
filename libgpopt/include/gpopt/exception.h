@@ -44,9 +44,9 @@ namespace gpopt
 	// message initialization for GPOS exceptions
 	gpos::GPOS_RESULT EresExceptionInit(gpos::IMemoryPool *mp);
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_exception_H
+#endif  // !GPOPT_exception_H
 
 
 // EOF

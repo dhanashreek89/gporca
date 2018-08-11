@@ -27,17 +27,15 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CMaxCardTest
 	{
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
+		static GPOS_RESULT EresUnittest_Basics();
 
-		public:
+	};  // class CMaxCardTest
+}  // namespace gpopt
 
-			// unittests
-			static GPOS_RESULT EresUnittest();
-			static GPOS_RESULT EresUnittest_Basics();
-
-	}; // class CMaxCardTest
-}
-
-#endif // !GPOS_CMaxCardTest_H
+#endif  // !GPOS_CMaxCardTest_H
 
 
 // EOF

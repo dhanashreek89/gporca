@@ -28,67 +28,57 @@ namespace gpopt
 	//		Transform Apply into Join by decorrelating the inner side
 	//
 	//---------------------------------------------------------------------------
-	class CXformLeftSemiApply2LeftSemiJoin : public CXformApply2Join<CLogicalLeftSemiApply, CLogicalLeftSemiJoin>
+	class CXformLeftSemiApply2LeftSemiJoin
+		: public CXformApply2Join<CLogicalLeftSemiApply, CLogicalLeftSemiJoin>
 	{
+	private:
+		// private copy ctor
+		CXformLeftSemiApply2LeftSemiJoin(const CXformLeftSemiApply2LeftSemiJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformLeftSemiApply2LeftSemiJoin(IMemoryPool *mp)
+			: CXformApply2Join<CLogicalLeftSemiApply, CLogicalLeftSemiJoin>(mp, true /*fDeepTree*/)
+		{
+		}
 
-			// private copy ctor
-			CXformLeftSemiApply2LeftSemiJoin(const CXformLeftSemiApply2LeftSemiJoin &);
+		// ctor with a passed pattern
+		CXformLeftSemiApply2LeftSemiJoin(IMemoryPool *mp, CExpression *pexprPattern)
+			: CXformApply2Join<CLogicalLeftSemiApply, CLogicalLeftSemiJoin>(mp, pexprPattern)
+		{
+		}
 
-		public:
+		// dtor
+		virtual ~CXformLeftSemiApply2LeftSemiJoin()
+		{
+		}
 
-			// ctor
-			explicit
-			CXformLeftSemiApply2LeftSemiJoin
-				(
-				IMemoryPool *mp
-				)
-				:
-				CXformApply2Join<CLogicalLeftSemiApply, CLogicalLeftSemiJoin>(mp, true /*fDeepTree*/)
-			{}
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftSemiApply2LeftSemiJoin;
+		}
 
-			// ctor with a passed pattern
-			CXformLeftSemiApply2LeftSemiJoin
-				(
-				IMemoryPool *mp,
-				CExpression *pexprPattern
-				)
-				:
-				CXformApply2Join<CLogicalLeftSemiApply, CLogicalLeftSemiJoin>(mp, pexprPattern)
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftSemiApply2LeftSemiJoin";
+		}
 
-			// dtor
-			virtual
-			~CXformLeftSemiApply2LeftSemiJoin()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftSemiApply2LeftSemiJoin;
-			}
-
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftSemiApply2LeftSemiJoin";
-			}
-
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			virtual
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
 
-	}; // class CXformLeftSemiApply2LeftSemiJoin
+	};  // class CXformLeftSemiApply2LeftSemiJoin
 
-}
+}  // namespace gpopt
 
-#endif // !GPOPT_CXformLeftSemiApply2LeftSemiJoin_H
+#endif  // !GPOPT_CXformLeftSemiApply2LeftSemiJoin_H
 
 // EOF

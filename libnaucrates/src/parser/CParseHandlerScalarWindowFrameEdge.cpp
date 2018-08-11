@@ -34,8 +34,7 @@ CParseHandlerScalarWindowFrameEdge::CParseHandlerScalarWindowFrameEdge(
 	CParseHandlerManager *parse_handler_mgr,
 	CParseHandlerBase *parse_handler_root,
 	BOOL leading_edge)
-	: CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root),
-	  m_leading_edge(leading_edge)
+	: CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root), m_leading_edge(leading_edge)
 {
 }
 
@@ -62,8 +61,7 @@ CParseHandlerScalarWindowFrameEdge::StartElement(const XMLCh *const element_uri,
 			CDXLOperatorFactory::ParseDXLFrameBoundary(attrs, EdxltokenWindowLeadingBoundary);
 		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(
 			m_mp,
-			GPOS_NEW(m_mp)
-				CDXLScalarWindowFrameEdge(m_mp, true /*fLeading*/, dxl_frame_bound));
+			GPOS_NEW(m_mp) CDXLScalarWindowFrameEdge(m_mp, true /*fLeading*/, dxl_frame_bound));
 	}
 	else if (0 == XMLString::compareString(
 					  CDXLTokens::XmlstrToken(EdxltokenScalarWindowFrameTrailingEdge),
@@ -74,8 +72,7 @@ CParseHandlerScalarWindowFrameEdge::StartElement(const XMLCh *const element_uri,
 			CDXLOperatorFactory::ParseDXLFrameBoundary(attrs, EdxltokenWindowTrailingBoundary);
 		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(
 			m_mp,
-			GPOS_NEW(m_mp)
-				CDXLScalarWindowFrameEdge(m_mp, false /*fLeading*/, dxl_frame_bound));
+			GPOS_NEW(m_mp) CDXLScalarWindowFrameEdge(m_mp, false /*fLeading*/, dxl_frame_bound));
 	}
 	else
 	{

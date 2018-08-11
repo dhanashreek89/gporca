@@ -76,11 +76,8 @@ CParseHandlerRoutedMotion::StartElement(const XMLCh *const,  // element_uri,
 	m_parse_handler_mgr->ActivateParseHandler(child_parse_handler);
 
 	// parse handler for sorting column list
-	CParseHandlerBase *sort_col_list_parse_handler =
-		CParseHandlerFactory::GetParseHandler(m_mp,
-											  CDXLTokens::XmlstrToken(EdxltokenScalarSortColList),
-											  m_parse_handler_mgr,
-											  this);
+	CParseHandlerBase *sort_col_list_parse_handler = CParseHandlerFactory::GetParseHandler(
+		m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarSortColList), m_parse_handler_mgr, this);
 	m_parse_handler_mgr->ActivateParseHandler(sort_col_list_parse_handler);
 
 	// parse handler for the filter

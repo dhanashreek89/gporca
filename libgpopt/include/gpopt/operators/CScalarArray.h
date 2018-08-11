@@ -19,7 +19,6 @@
 
 namespace gpopt
 {
-
 	using namespace gpos;
 	using namespace gpmd;
 
@@ -35,111 +34,110 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalarArray : public CScalar
 	{
-		private:
-	
-			// element type id
-			IMDId *m_pmdidElem;
-			
-			// array type id
-			IMDId *m_pmdidArray;
-			
-			// is array multidimensional
-			BOOL m_fMultiDimensional;
+	private:
+		// element type id
+		IMDId *m_pmdidElem;
 
-			// const values
-			CScalarConstArray *m_pdrgPconst;
+		// array type id
+		IMDId *m_pmdidArray;
 
-			// private copy ctor
-			CScalarArray(const CScalarArray &);
-		
-		public:
-		
-			// ctor
-			CScalarArray(IMemoryPool *mp, IMDId *elem_type_mdid, IMDId *array_type_mdid, BOOL is_multidimenstional);
+		// is array multidimensional
+		BOOL m_fMultiDimensional;
 
-			// ctor
-			CScalarArray(IMemoryPool *mp, IMDId *elem_type_mdid, IMDId *array_type_mdid, BOOL is_multidimenstional, CScalarConstArray *pdrgPconst);
+		// const values
+		CScalarConstArray *m_pdrgPconst;
 
-			// dtor
-			virtual 
-			~CScalarArray();
+		// private copy ctor
+		CScalarArray(const CScalarArray &);
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopScalarArray;
-			}
-			
-			// return a string for aggregate function
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CScalarArray";
-			}
+	public:
+		// ctor
+		CScalarArray(IMemoryPool *mp,
+					 IMDId *elem_type_mdid,
+					 IMDId *array_type_mdid,
+					 BOOL is_multidimenstional);
 
+		// ctor
+		CScalarArray(IMemoryPool *mp,
+					 IMDId *elem_type_mdid,
+					 IMDId *array_type_mdid,
+					 BOOL is_multidimenstional,
+					 CScalarConstArray *pdrgPconst);
 
-			// operator specific hash function
-			ULONG HashValue() const;
-			
-			// match function
-			BOOL Matches(COperator *pop) const;
-			
-			// sensitivity to order of inputs
-			BOOL FInputOrderSensitive() const
-			{
-				return true;
-			}
-			
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *, //mp,
-						UlongToColRefMap *, //colref_mapping,
-						BOOL //must_exist
-						)
-			{
-				return PopCopyDefault();
-			}
+		// dtor
+		virtual ~CScalarArray();
 
-			// conversion function
-			static
-			CScalarArray *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopScalarArray == pop->Eopid());
-				
-				return reinterpret_cast<CScalarArray*>(pop);
-			}
-			
-			// element type id
-			IMDId *PmdidElem() const;
-			
-			// array type id
-			IMDId *PmdidArray() const;
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopScalarArray;
+		}
 
-			// is array multi-dimensional
-			BOOL FMultiDimensional() const;
-
-			// type of expression's result
-			virtual 
-			IMDId *MDIdType() const;
-
-			// CScalarConst array
-			CScalarConstArray *PdrgPconst() const;
-
-			// print
-			IOstream &OsPrint(IOstream &os) const;
-
-	}; // class CScalarArray
-
-}
+		// return a string for aggregate function
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CScalarArray";
+		}
 
 
-#endif // !GPOPT_CScalarArray_H
+		// operator specific hash function
+		ULONG HashValue() const;
+
+		// match function
+		BOOL Matches(COperator *pop) const;
+
+		// sensitivity to order of inputs
+		BOOL
+		FInputOrderSensitive() const
+		{
+			return true;
+		}
+
+		// return a copy of the operator with remapped columns
+		virtual COperator *
+		PopCopyWithRemappedColumns(IMemoryPool *,		//mp,
+								   UlongToColRefMap *,  //colref_mapping,
+								   BOOL					//must_exist
+		)
+		{
+			return PopCopyDefault();
+		}
+
+		// conversion function
+		static CScalarArray *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopScalarArray == pop->Eopid());
+
+			return reinterpret_cast<CScalarArray *>(pop);
+		}
+
+		// element type id
+		IMDId *PmdidElem() const;
+
+		// array type id
+		IMDId *PmdidArray() const;
+
+		// is array multi-dimensional
+		BOOL FMultiDimensional() const;
+
+		// type of expression's result
+		virtual IMDId *MDIdType() const;
+
+		// CScalarConst array
+		CScalarConstArray *PdrgPconst() const;
+
+		// print
+		IOstream &OsPrint(IOstream &os) const;
+
+	};  // class CScalarArray
+
+}  // namespace gpopt
+
+
+#endif  // !GPOPT_CScalarArray_H
 
 // EOF

@@ -31,12 +31,7 @@ using namespace gpopt;
 //			members, hence, no need for a separate pattern ctor
 //
 //---------------------------------------------------------------------------
-CLogicalInnerJoin::CLogicalInnerJoin
-	(
-	IMemoryPool *mp
-	)
-	:
-	CLogicalJoin(mp)
+CLogicalInnerJoin::CLogicalInnerJoin(IMemoryPool *mp) : CLogicalJoin(mp)
 {
 	GPOS_ASSERT(NULL != mp);
 }
@@ -51,12 +46,8 @@ CLogicalInnerJoin::CLogicalInnerJoin
 //
 //---------------------------------------------------------------------------
 CMaxCard
-CLogicalInnerJoin::Maxcard
-	(
-	IMemoryPool *, // mp
-	CExpressionHandle &exprhdl
-	)
-	const
+CLogicalInnerJoin::Maxcard(IMemoryPool *,  // mp
+						   CExpressionHandle &exprhdl) const
 {
 	return CLogical::Maxcard(exprhdl, 2 /*ulScalarIndex*/, MaxcardDef(exprhdl));
 }
@@ -70,14 +61,10 @@ CLogicalInnerJoin::Maxcard
 //
 //---------------------------------------------------------------------------
 CXformSet *
-CLogicalInnerJoin::PxfsCandidates
-	(
-	IMemoryPool *mp
-	) 
-	const
+CLogicalInnerJoin::PxfsCandidates(IMemoryPool *mp) const
 {
 	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
-	
+
 	(void) xform_set->ExchangeSet(CXform::ExfInnerJoin2NLJoin);
 	(void) xform_set->ExchangeSet(CXform::ExfInnerJoin2HashJoin);
 	(void) xform_set->ExchangeSet(CXform::ExfSubqJoin2Apply);
@@ -97,7 +84,7 @@ CLogicalInnerJoin::PxfsCandidates
 	(void) xform_set->ExchangeSet(CXform::ExfInnerJoinSemiJoinSwap);
 	(void) xform_set->ExchangeSet(CXform::ExfInnerJoinAntiSemiJoinSwap);
 	(void) xform_set->ExchangeSet(CXform::ExfInnerJoinAntiSemiJoinNotInSwap);
-	
+
 	return xform_set;
 }
 
@@ -113,12 +100,9 @@ CLogicalInnerJoin::PxfsCandidates
 //
 //---------------------------------------------------------------------------
 BOOL
-CLogicalInnerJoin::FFewerConj
-	(
-	IMemoryPool *mp,
-	CGroupExpression *pgexprFst,
-	CGroupExpression *pgexprSnd
-	)
+CLogicalInnerJoin::FFewerConj(IMemoryPool *mp,
+							  CGroupExpression *pgexprFst,
+							  CGroupExpression *pgexprSnd)
 {
 	if (NULL == pgexprFst || NULL == pgexprSnd)
 	{
@@ -137,8 +121,10 @@ CLogicalInnerJoin::FFewerConj
 	GPOS_ASSERT(pgroupScalarFst->FScalar());
 	GPOS_ASSERT(pgroupScalarSnd->FScalar());
 
-	CExpressionArray *pdrgpexprConjFst = CPredicateUtils::PdrgpexprConjuncts(mp, pgroupScalarFst->PexprScalar());
-	CExpressionArray *pdrgpexprConjSnd = CPredicateUtils::PdrgpexprConjuncts(mp, pgroupScalarSnd->PexprScalar());
+	CExpressionArray *pdrgpexprConjFst =
+		CPredicateUtils::PdrgpexprConjuncts(mp, pgroupScalarFst->PexprScalar());
+	CExpressionArray *pdrgpexprConjSnd =
+		CPredicateUtils::PdrgpexprConjuncts(mp, pgroupScalarSnd->PexprScalar());
 
 	ULONG ulConjFst = pdrgpexprConjFst->Size();
 	ULONG ulConjSnd = pdrgpexprConjSnd->Size();
@@ -150,4 +136,3 @@ CLogicalInnerJoin::FFewerConj
 }
 
 // EOF
-

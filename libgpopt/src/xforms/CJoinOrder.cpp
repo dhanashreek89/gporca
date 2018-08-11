@@ -26,37 +26,34 @@
 
 using namespace gpopt;
 
-			
+
 //---------------------------------------------------------------------------
 //	@function:
 //		ICmpEdgesByLength
 //
 //	@doc:
 //		Comparison function for simple join ordering: sort edges by length
-//		only to guaranteed that single-table predicates don't end up above 
+//		only to guaranteed that single-table predicates don't end up above
 //		joins;
 //
 //---------------------------------------------------------------------------
-INT ICmpEdgesByLength
-	(
-	const void *pvOne,
-	const void *pvTwo
-	)
+INT
+ICmpEdgesByLength(const void *pvOne, const void *pvTwo)
 {
-	CJoinOrder::SEdge *pedgeOne = *(CJoinOrder::SEdge**)pvOne;
-	CJoinOrder::SEdge *pedgeTwo = *(CJoinOrder::SEdge**)pvTwo;
+	CJoinOrder::SEdge *pedgeOne = *(CJoinOrder::SEdge **) pvOne;
+	CJoinOrder::SEdge *pedgeTwo = *(CJoinOrder::SEdge **) pvTwo;
 
-	
+
 	INT iDiff = (pedgeOne->m_pbs->Size() - pedgeTwo->m_pbs->Size());
 	if (0 == iDiff)
 	{
-		return (INT)pedgeOne->m_pbs->HashValue() - (INT)pedgeTwo->m_pbs->HashValue();
+		return (INT) pedgeOne->m_pbs->HashValue() - (INT) pedgeTwo->m_pbs->HashValue();
 	}
-		
+
 	return iDiff;
 }
 
-	
+
 //---------------------------------------------------------------------------
 //	@function:
 //		CJoinOrder::SComponent::SComponent
@@ -65,16 +62,9 @@ INT ICmpEdgesByLength
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CJoinOrder::SComponent::SComponent
-	(
-	IMemoryPool *mp,
-	CExpression *pexpr
-	)
-	:
-	m_pbs(NULL),
-	m_pexpr(pexpr),
-	m_fUsed(false)
-{	
+CJoinOrder::SComponent::SComponent(IMemoryPool *mp, CExpression *pexpr)
+	: m_pbs(NULL), m_pexpr(pexpr), m_fUsed(false)
+{
 	m_pbs = GPOS_NEW(mp) CBitSet(mp);
 }
 
@@ -87,15 +77,8 @@ CJoinOrder::SComponent::SComponent
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CJoinOrder::SComponent::SComponent
-	(
-	CExpression *pexpr,
-	CBitSet *pbs
-	)
-	:
-	m_pbs(pbs),
-	m_pexpr(pexpr),
-	m_fUsed(false)
+CJoinOrder::SComponent::SComponent(CExpression *pexpr, CBitSet *pbs)
+	: m_pbs(pbs), m_pexpr(pexpr), m_fUsed(false)
 {
 	GPOS_ASSERT(NULL != pbs);
 }
@@ -110,7 +93,7 @@ CJoinOrder::SComponent::SComponent
 //
 //---------------------------------------------------------------------------
 CJoinOrder::SComponent::~SComponent()
-{	
+{
 	m_pbs->Release();
 	CRefCount::SafeRelease(m_pexpr);
 }
@@ -125,20 +108,13 @@ CJoinOrder::SComponent::~SComponent()
 //
 //---------------------------------------------------------------------------
 IOstream &
-CJoinOrder::SComponent::OsPrint
-	(
-	IOstream &os
-	)
-const
+CJoinOrder::SComponent::OsPrint(IOstream &os) const
 {
 	CBitSet *pbs = m_pbs;
-	os 
-		<< "Component: ";
-	os
-		<< (*pbs) << std::endl;
-	os
-		<< *m_pexpr << std::endl;
-		
+	os << "Component: ";
+	os << (*pbs) << std::endl;
+	os << *m_pexpr << std::endl;
+
 	return os;
 }
 
@@ -151,16 +127,9 @@ const
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CJoinOrder::SEdge::SEdge
-	(
-	IMemoryPool *mp,
-	CExpression *pexpr
-	)
-	:
-	m_pbs(NULL),
-	m_pexpr(pexpr),
-	m_fUsed(false)
-{	
+CJoinOrder::SEdge::SEdge(IMemoryPool *mp, CExpression *pexpr)
+	: m_pbs(NULL), m_pexpr(pexpr), m_fUsed(false)
+{
 	m_pbs = GPOS_NEW(mp) CBitSet(mp);
 }
 
@@ -174,7 +143,7 @@ CJoinOrder::SEdge::SEdge
 //
 //---------------------------------------------------------------------------
 CJoinOrder::SEdge::~SEdge()
-{	
+{
 	m_pbs->Release();
 	m_pexpr->Release();
 }
@@ -189,16 +158,9 @@ CJoinOrder::SEdge::~SEdge()
 //
 //---------------------------------------------------------------------------
 IOstream &
-CJoinOrder::SEdge::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CJoinOrder::SEdge::OsPrint(IOstream &os) const
 {
-	return os 
-		<< "Edge : " 
-		<< (*m_pbs) << std::endl 
-		<< *m_pexpr << std::endl;
+	return os << "Edge : " << (*m_pbs) << std::endl << *m_pexpr << std::endl;
 }
 
 
@@ -210,48 +172,40 @@ CJoinOrder::SEdge::OsPrint
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CJoinOrder::CJoinOrder
-	(
-	IMemoryPool *mp,
-	CExpressionArray *pdrgpexpr,
-	CExpressionArray *pdrgpexprConj
-	)
-	:
-	m_mp(mp),
-	m_rgpedge(NULL),
-	m_ulEdges(0),
-	m_rgpcomp(NULL),
-	m_ulComps(0)
+CJoinOrder::CJoinOrder(IMemoryPool *mp,
+					   CExpressionArray *pdrgpexpr,
+					   CExpressionArray *pdrgpexprConj)
+	: m_mp(mp), m_rgpedge(NULL), m_ulEdges(0), m_rgpcomp(NULL), m_ulComps(0)
 {
-	typedef SComponent* Pcomp;
-	typedef SEdge* Pedge;
-	
+	typedef SComponent *Pcomp;
+	typedef SEdge *Pedge;
+
 	m_ulComps = pdrgpexpr->Size();
 	m_rgpcomp = GPOS_NEW_ARRAY(mp, Pcomp, m_ulComps);
-	
+
 	for (ULONG ul = 0; ul < m_ulComps; ul++)
 	{
 		CExpression *pexprComp = (*pdrgpexpr)[ul];
 		pexprComp->AddRef();
 		m_rgpcomp[ul] = GPOS_NEW(mp) SComponent(mp, pexprComp);
-		
+
 		// component always covers itself
 		(void) m_rgpcomp[ul]->m_pbs->ExchangeSet(ul);
 	}
 
 	m_ulEdges = pdrgpexprConj->Size();
 	m_rgpedge = GPOS_NEW_ARRAY(mp, Pedge, m_ulEdges);
-	
+
 	for (ULONG ul = 0; ul < m_ulEdges; ul++)
 	{
 		CExpression *pexprEdge = (*pdrgpexprConj)[ul];
 		pexprEdge->AddRef();
 		m_rgpedge[ul] = GPOS_NEW(mp) SEdge(mp, pexprEdge);
 	}
-	
+
 	pdrgpexpr->Release();
 	pdrgpexprConj->Release();
-	
+
 	ComputeEdgeCover();
 }
 
@@ -299,7 +253,8 @@ CJoinOrder::ComputeEdgeCover()
 		for (ULONG ulComp = 0; ulComp < m_ulComps; ulComp++)
 		{
 			CExpression *pexprComp = m_rgpcomp[ulComp]->m_pexpr;
-			CColRefSet *pcrsOutput = CDrvdPropRelational::GetRelationalProperties(pexprComp->PdpDerive())->PcrsOutput();
+			CColRefSet *pcrsOutput =
+				CDrvdPropRelational::GetRelationalProperties(pexprComp->PdpDerive())->PcrsOutput();
 
 			if (!pcrsUsed->IsDisjoint(pcrsOutput))
 			{
@@ -319,11 +274,7 @@ CJoinOrder::ComputeEdgeCover()
 //
 //---------------------------------------------------------------------------
 CJoinOrder::SComponent *
-CJoinOrder::PcompCombine
-	(
-	SComponent *pcompOuter,
-	SComponent *pcompInner
-	)
+CJoinOrder::PcompCombine(SComponent *pcompOuter, SComponent *pcompInner)
 {
 	CBitSet *pbs = GPOS_NEW(m_mp) CBitSet(m_mp);
 	pbs->Union(pcompOuter->m_pbs);
@@ -363,7 +314,8 @@ CJoinOrder::PcompCombine
 		// not first call, we create an Inner Join
 		pexprInner->AddRef();
 		pexprOuter->AddRef();
-		pexpr = CUtils::PexprLogicalJoin<CLogicalInnerJoin>(m_mp, pexprOuter, pexprInner, pexprScalar);
+		pexpr =
+			CUtils::PexprLogicalJoin<CLogicalInnerJoin>(m_mp, pexprOuter, pexprInner, pexprScalar);
 	}
 
 	return GPOS_NEW(m_mp) SComponent(pexpr, pbs);
@@ -379,10 +331,7 @@ CJoinOrder::PcompCombine
 //
 //---------------------------------------------------------------------------
 void
-CJoinOrder::DeriveStats
-	(
-	CExpression *pexpr
-	)
+CJoinOrder::DeriveStats(CExpression *pexpr)
 {
 	GPOS_ASSERT(NULL != pexpr);
 
@@ -407,16 +356,10 @@ CJoinOrder::DeriveStats
 //
 //---------------------------------------------------------------------------
 IOstream &
-CJoinOrder::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CJoinOrder::OsPrint(IOstream &os) const
 {
-	os	
-		<< "Join Order: " << std::endl
-		<< "Edges: " << m_ulEdges << std::endl;
-		
+	os << "Join Order: " << std::endl << "Edges: " << m_ulEdges << std::endl;
+
 	for (ULONG ul = 0; ul < m_ulEdges; ul++)
 	{
 		m_rgpedge[ul]->OsPrint(os);
@@ -426,10 +369,10 @@ CJoinOrder::OsPrint
 	os << "Components: " << m_ulComps << std::endl;
 	for (ULONG ul = 0; ul < m_ulComps; ul++)
 	{
-		os << (void*)m_rgpcomp[ul] << " - " << std::endl;
+		os << (void *) m_rgpcomp[ul] << " - " << std::endl;
 		m_rgpcomp[ul]->OsPrint(os);
 	}
-	
+
 	return os;
 }
 

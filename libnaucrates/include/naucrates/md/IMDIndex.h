@@ -36,16 +36,15 @@ namespace gpmd
 	//---------------------------------------------------------------------------
 	class IMDIndex : public IMDCacheObject
 	{
-		public:
-
-			// index type
-			enum EmdindexType
-			{
-				EmdindBtree,	// btree
-				EmdindBitmap,	// bitmap
-				EmdindGist,     // gist using btree or bitmap
-				EmdindSentinel
-			};
+	public:
+		// index type
+		enum EmdindexType
+		{
+			EmdindBtree,   // btree
+			EmdindBitmap,  // bitmap
+			EmdindGist,	// gist using btree or bitmap
+			EmdindSentinel
+		};
 
 		// object type
 		virtual Emdtype

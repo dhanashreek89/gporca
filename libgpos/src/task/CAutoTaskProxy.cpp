@@ -26,9 +26,7 @@ using namespace gpos;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CAutoTaskProxy::CAutoTaskProxy(IMemoryPool *mp,
-							   CWorkerPoolManager *pwpm,
-							   BOOL propagate_error)
+CAutoTaskProxy::CAutoTaskProxy(IMemoryPool *mp, CWorkerPoolManager *pwpm, BOOL propagate_error)
 	: m_mp(mp), m_pwpm(pwpm), m_propagate_error(propagate_error)
 {
 	m_list.Init(GPOS_OFFSET(CTask, m_proxy_link));
@@ -158,8 +156,7 @@ CAutoTaskProxy::Create(void *(*pfunc)(void *), void *arg, volatile BOOL *cancel)
 	// auto pointer to hold new task
 	// task is created inside ATP's memory pool
 	CAutoP<CTask> new_task;
-	new_task = GPOS_NEW(m_mp)
-		CTask(mp, task_ctxt.Value(), err_ctxt.Value(), &m_event, cancel);
+	new_task = GPOS_NEW(m_mp) CTask(mp, task_ctxt.Value(), err_ctxt.Value(), &m_event, cancel);
 
 	// reset auto pointers - task now handles task and error context
 	(void) task_ctxt.Reset();

@@ -30,9 +30,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerStatsDerivedColumn::CParseHandlerStatsDerivedColumn(
-	IMemoryPool *mp,
-	CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
+	IMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root)
 	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root),
 	  m_colid(0),
 	  m_width(CStatistics::DefaultColumnWidth),
@@ -128,10 +126,7 @@ CParseHandlerStatsDerivedColumn::StartElement(const XMLCh *const element_uri,
 	{
 		// install a parse handler for the given element
 		CParseHandlerBase *parse_handler_base = CParseHandlerFactory::GetParseHandler(
-			m_mp,
-			CDXLTokens::XmlstrToken(EdxltokenColumnStatsBucket),
-			m_parse_handler_mgr,
-			this);
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenColumnStatsBucket), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(parse_handler_base);
 
 		// store parse handler
@@ -169,8 +164,7 @@ CParseHandlerStatsDerivedColumn::EndElement(const XMLCh *const,  // element_uri,
 		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, str->GetBuffer());
 	}
 
-	CDXLBucketArray *dxl_stats_bucket_array =
-		GPOS_NEW(m_mp) CDXLBucketArray(m_mp);
+	CDXLBucketArray *dxl_stats_bucket_array = GPOS_NEW(m_mp) CDXLBucketArray(m_mp);
 
 	const ULONG num_of_buckets = this->Length();
 	// add constructed children from child parse handlers
@@ -183,13 +177,12 @@ CParseHandlerStatsDerivedColumn::EndElement(const XMLCh *const,  // element_uri,
 		dxl_stats_bucket_array->Append(dxl_bucket);
 	}
 
-	m_dxl_stats_derived_col =
-		GPOS_NEW(m_mp) CDXLStatsDerivedColumn(m_colid,
-													   m_width,
-													   m_null_freq,
-													   m_distinct_remaining,
-													   m_freq_remaining,
-													   dxl_stats_bucket_array);
+	m_dxl_stats_derived_col = GPOS_NEW(m_mp) CDXLStatsDerivedColumn(m_colid,
+																	m_width,
+																	m_null_freq,
+																	m_distinct_remaining,
+																	m_freq_remaining,
+																	dxl_stats_bucket_array);
 
 	// deactivate handler
 	m_parse_handler_mgr->DeactivateHandler();

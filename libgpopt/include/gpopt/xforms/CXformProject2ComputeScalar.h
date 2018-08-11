@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CXformProject2ComputeScalar
@@ -28,60 +28,51 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformProject2ComputeScalar : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformProject2ComputeScalar(const CXformProject2ComputeScalar &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformProject2ComputeScalar(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformProject2ComputeScalar(const CXformProject2ComputeScalar &);
+		// dtor
+		virtual ~CXformProject2ComputeScalar()
+		{
+		}
 
-		public:
-		
-			// ctor
-			explicit
-			CXformProject2ComputeScalar(IMemoryPool *mp);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfProject2ComputeScalar;
+		}
 
-			// dtor
-			virtual 
-			~CXformProject2ComputeScalar() 
-			{}
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformProject2ComputeScalar";
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
+		// compute xform promise for a given expression handle
+		virtual EXformPromise
+		Exfp(CExpressionHandle &exprhdl) const
+		{
+			if (exprhdl.GetDrvdScalarProps(1)->FHasSubquery())
 			{
-				return ExfProject2ComputeScalar;
-			}
-			
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CXformProject2ComputeScalar";
-			}
-
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp
-				(
-				CExpressionHandle &exprhdl
-				)
-				const
-			{
-				if (exprhdl.GetDrvdScalarProps(1)->FHasSubquery())
-				{
-					return CXform::ExfpNone;
-				}
-
-				return CXform::ExfpHigh;
+				return CXform::ExfpNone;
 			}
 
-			// actual transform
-			virtual
-			void Transform(CXformContext *, CXformResult *, CExpression *) const;
+			return CXform::ExfpHigh;
+		}
 
-	}; // class CXformProject2ComputeScalar
+		// actual transform
+		virtual void Transform(CXformContext *, CXformResult *, CExpression *) const;
 
-}
+	};  // class CXformProject2ComputeScalar
 
-#endif // !GPOPT_CXformProject2ComputeScalar_H
+}  // namespace gpopt
+
+#endif  // !GPOPT_CXformProject2ComputeScalar_H
 
 // EOF

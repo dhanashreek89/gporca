@@ -39,110 +39,92 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CDrvdPropCtxt : public CRefCount
 	{
+	private:
+		// private copy ctor
+		CDrvdPropCtxt(const CDrvdPropCtxt &);
 
-		private:
+	protected:
+		// memory pool
+		IMemoryPool *m_mp;
 
-			// private copy ctor
-			CDrvdPropCtxt(const CDrvdPropCtxt &);
+		// copy function
+		virtual CDrvdPropCtxt *PdpctxtCopy(IMemoryPool *mp) const = 0;
 
-		protected:
+		// add props to context
+		virtual void AddProps(DrvdPropArray *pdp) = 0;
 
-			// memory pool
-			IMemoryPool *m_mp;
+	public:
+		// ctor
+		CDrvdPropCtxt(IMemoryPool *mp) : m_mp(mp)
+		{
+		}
 
-			// copy function
-			virtual
-			CDrvdPropCtxt *PdpctxtCopy(IMemoryPool *mp) const = 0;
-
-			// add props to context
-			virtual
-			void AddProps(DrvdPropArray *pdp) = 0;
-
-		public:
-
-			// ctor
-			CDrvdPropCtxt
-				(
-				IMemoryPool *mp
-				)
-				:
-				m_mp(mp)
-			{}
-
-			// dtor
-			virtual
-			~CDrvdPropCtxt() {}
+		// dtor
+		virtual ~CDrvdPropCtxt()
+		{
+		}
 
 #ifdef GPOS_DEBUG
 
-			// is it a relational property context?
-			virtual
-			BOOL FRelational() const
+		// is it a relational property context?
+		virtual BOOL
+		FRelational() const
+		{
+			return false;
+		}
+
+		// is it a plan property context?
+		virtual BOOL
+		FPlan() const
+		{
+			return false;
+		}
+
+		// is it a scalar property context?
+		virtual BOOL
+		FScalar() const
+		{
+			return false;
+		}
+
+		// debug print for interactive debugging sessions only
+		void DbgPrint() const;
+
+#endif  // GPOS_DEBUG
+
+		// print
+		virtual IOstream &OsPrint(IOstream &os) const = 0;
+
+		// copy function
+		static CDrvdPropCtxt *
+		PdpctxtCopy(IMemoryPool *mp, CDrvdPropCtxt *pdpctxt)
+		{
+			if (NULL == pdpctxt)
 			{
-				return false;
+				return NULL;
 			}
 
-			// is it a plan property context?
-			virtual
-			BOOL FPlan() const
+			return pdpctxt->PdpctxtCopy(mp);
+		}
+
+		// add derived props to context
+		static void
+		AddDerivedProps(DrvdPropArray *pdp, CDrvdPropCtxt *pdpctxt)
+		{
+			if (NULL != pdpctxt)
 			{
-				return false;
+				pdpctxt->AddProps(pdp);
 			}
+		}
 
-			// is it a scalar property context?
-			virtual
-			BOOL FScalar()const
-			{
-				return false;
-			}
+	};  // class CDrvdPropCtxt
 
-			// debug print for interactive debugging sessions only
-			void DbgPrint() const;
+	// shorthand for printing
+	IOstream &operator<<(IOstream &os, CDrvdPropCtxt &drvdpropctxt);
 
-#endif // GPOS_DEBUG
-
-			// print
-			virtual
-			IOstream &OsPrint(IOstream &os) const = 0;
-
-			// copy function
-			static
-			CDrvdPropCtxt *PdpctxtCopy
-				(
-				IMemoryPool *mp,
-				CDrvdPropCtxt *pdpctxt
-				)
-			{
-				if (NULL == pdpctxt)
-				{
-					return NULL;
-				}
-
-				return pdpctxt->PdpctxtCopy(mp);
-			}
-
-			// add derived props to context
-			static
-			void AddDerivedProps
-				(
-				DrvdPropArray *pdp,
-				CDrvdPropCtxt *pdpctxt
-				)
-			{
-				if (NULL != pdpctxt)
-				{
-					pdpctxt->AddProps(pdp);
-				}
-			}
-
-	}; // class CDrvdPropCtxt
-
- 	// shorthand for printing
-	IOstream &operator << (IOstream &os, CDrvdPropCtxt &drvdpropctxt);
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CDrvdPropCtxt_H
+#endif  // !GPOPT_CDrvdPropCtxt_H
 
 // EOF

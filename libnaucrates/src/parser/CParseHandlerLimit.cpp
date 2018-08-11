@@ -66,17 +66,11 @@ CParseHandlerLimit::StartElement(const XMLCh *const,  // element_uri,
 		// order of their expected appearance
 
 		CParseHandlerBase *offset_parse_handler = CParseHandlerFactory::GetParseHandler(
-			m_mp,
-			CDXLTokens::XmlstrToken(EdxltokenScalarLimitOffset),
-			m_parse_handler_mgr,
-			this);
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarLimitOffset), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(offset_parse_handler);
 
 		CParseHandlerBase *count_parse_handler = CParseHandlerFactory::GetParseHandler(
-			m_mp,
-			CDXLTokens::XmlstrToken(EdxltokenScalarLimitCount),
-			m_parse_handler_mgr,
-			this);
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarLimitCount), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(count_parse_handler);
 
 		CParseHandlerBase *child_parse_handler = CParseHandlerFactory::GetParseHandler(
@@ -84,11 +78,8 @@ CParseHandlerLimit::StartElement(const XMLCh *const,  // element_uri,
 		m_parse_handler_mgr->ActivateParseHandler(child_parse_handler);
 
 		// parse handler for the proj list
-		CParseHandlerBase *proj_list_parse_handler =
-			CParseHandlerFactory::GetParseHandler(m_mp,
-												  CDXLTokens::XmlstrToken(EdxltokenScalarProjList),
-												  m_parse_handler_mgr,
-												  this);
+		CParseHandlerBase *proj_list_parse_handler = CParseHandlerFactory::GetParseHandler(
+			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarProjList), m_parse_handler_mgr, this);
 		m_parse_handler_mgr->ActivateParseHandler(proj_list_parse_handler);
 
 		//parse handler for the properties of the operator

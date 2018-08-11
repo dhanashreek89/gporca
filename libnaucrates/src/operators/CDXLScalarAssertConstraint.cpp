@@ -26,8 +26,7 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarAssertConstraint::CDXLScalarAssertConstraint(IMemoryPool *mp,
-													   CWStringBase *error_msg)
+CDXLScalarAssertConstraint::CDXLScalarAssertConstraint(IMemoryPool *mp, CWStringBase *error_msg)
 	: CDXLScalar(mp), m_error_msg(error_msg)
 {
 	GPOS_ASSERT(NULL != error_msg);

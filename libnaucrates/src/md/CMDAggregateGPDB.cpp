@@ -47,8 +47,8 @@ CMDAggregateGPDB::CMDAggregateGPDB(IMemoryPool *mp,
 {
 	GPOS_ASSERT(mdid->IsValid());
 
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+	m_dxl_str =
+		CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
 }
 
 //---------------------------------------------------------------------------

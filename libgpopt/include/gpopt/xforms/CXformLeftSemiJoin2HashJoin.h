@@ -28,54 +28,44 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformLeftSemiJoin2HashJoin : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformLeftSemiJoin2HashJoin(const CXformLeftSemiJoin2HashJoin &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformLeftSemiJoin2HashJoin(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformLeftSemiJoin2HashJoin(const CXformLeftSemiJoin2HashJoin &);
+		// dtor
+		virtual ~CXformLeftSemiJoin2HashJoin()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfLeftSemiJoin2HashJoin;
+		}
 
-			// ctor
-			explicit
-			CXformLeftSemiJoin2HashJoin(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformLeftSemiJoin2HashJoin";
+		}
 
-			// dtor
-			virtual
-			~CXformLeftSemiJoin2HashJoin() {}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfLeftSemiJoin2HashJoin;
-			}
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformLeftSemiJoin2HashJoin";
-			}
+	};  // class CXformLeftSemiJoin2HashJoin
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
-
-			// actual transform
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				)
-				const;
-
-	}; // class CXformLeftSemiJoin2HashJoin
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformLeftSemiJoin2HashJoin_H
+#endif  // !GPOPT_CXformLeftSemiJoin2HashJoin_H
 
 // EOF

@@ -17,14 +17,16 @@
 #ifdef GPOS_DEBUG
 #include "gpopt/base/COptCtxt.h"
 #include "gpos/error/CAutoTrace.h"
-#endif // GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
-namespace gpopt {
-
+namespace gpopt
+{
 	DrvdPropArray::DrvdPropArray()
-	{}
+	{
+	}
 
-	IOstream &operator << (IOstream &os, const DrvdPropArray &drvdprop)
+	IOstream &
+	operator<<(IOstream &os, const DrvdPropArray &drvdprop)
 	{
 		return drvdprop.OsPrint(os);
 	}
@@ -37,7 +39,7 @@ namespace gpopt {
 		CAutoTrace at(mp);
 		at.Os() << *this;
 	}
-#endif // GPOS_DEBUG
-}
+#endif  // GPOS_DEBUG
+}  // namespace gpopt
 
 // EOF

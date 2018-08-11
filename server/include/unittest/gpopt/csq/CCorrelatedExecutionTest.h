@@ -41,22 +41,19 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CCorrelatedExecutionTest
 	{
+	private:
+		// counter used to mark last successful test
+		static ULONG m_ulTestCounter;
 
-		private:
+	public:
+		// unittests
+		static GPOS_RESULT EresUnittest();
+		static GPOS_RESULT EresUnittest_RunAllPositiveTests();
 
-			// counter used to mark last successful test
-			static ULONG m_ulTestCounter;
-
-		public:
-
-			// unittests
-			static GPOS_RESULT EresUnittest();
-			static GPOS_RESULT EresUnittest_RunAllPositiveTests();
-
-	}; // class CCorrelatedExecutionTest
-}
+	};  // class CCorrelatedExecutionTest
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CCorrelatedExecutionTest_H
+#endif  // !GPOPT_CCorrelatedExecutionTest_H
 
 // EOF

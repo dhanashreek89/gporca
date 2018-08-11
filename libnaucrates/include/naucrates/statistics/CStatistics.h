@@ -156,8 +156,7 @@ namespace gpnaucrates
 
 		virtual UlongToDoubleMap *CopyWidths(IMemoryPool *mp) const;
 
-		virtual void CopyWidthsInto(IMemoryPool *mp,
-									UlongToDoubleMap *colid_width_mapping) const;
+		virtual void CopyWidthsInto(IMemoryPool *mp, UlongToDoubleMap *colid_width_mapping) const;
 
 		virtual UlongToHistogramMap *CopyHistograms(IMemoryPool *mp) const;
 
@@ -329,9 +328,7 @@ namespace gpnaucrates
 		}
 
 		// create a dummy statistics object
-		static CStatistics *MakeDummyStats(IMemoryPool *mp,
-										   ULongPtrArray *colids,
-										   CDouble rows);
+		static CStatistics *MakeDummyStats(IMemoryPool *mp, ULongPtrArray *colids, CDouble rows);
 
 		// create a dummy statistics object
 		static CStatistics *MakeDummyStats(IMemoryPool *mp,

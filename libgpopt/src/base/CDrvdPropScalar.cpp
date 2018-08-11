@@ -27,18 +27,18 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CDrvdPropScalar::CDrvdPropScalar()
-	:
-	m_pcrsDefined(NULL),
-	m_pcrsSetReturningFunction(NULL),
-	m_pcrsUsed(NULL),
-	m_fHasSubquery(false),
-	m_ppartinfo(NULL),
-	m_pfp(NULL),
-	m_fHasNonScalarFunction(false),
-	m_ulDistinctAggs(0),
-	m_fHasMultipleDistinctAggs(false),
-	m_fHasScalarArrayCmp(false)
-{}
+	: m_pcrsDefined(NULL),
+	  m_pcrsSetReturningFunction(NULL),
+	  m_pcrsUsed(NULL),
+	  m_fHasSubquery(false),
+	  m_ppartinfo(NULL),
+	  m_pfp(NULL),
+	  m_fHasNonScalarFunction(false),
+	  m_ulDistinctAggs(0),
+	  m_fHasMultipleDistinctAggs(false),
+	  m_fHasScalarArrayCmp(false)
+{
+}
 
 
 //---------------------------------------------------------------------------
@@ -68,22 +68,20 @@ CDrvdPropScalar::~CDrvdPropScalar()
 //
 //---------------------------------------------------------------------------
 void
-CDrvdPropScalar::Derive
-	(
-	IMemoryPool *mp,
-	CExpressionHandle &exprhdl,
-	CDrvdPropCtxt * // pdpctxt
-	)
+CDrvdPropScalar::Derive(IMemoryPool *mp,
+						CExpressionHandle &exprhdl,
+						CDrvdPropCtxt *  // pdpctxt
+)
 {
 	CScalar *popScalar = CScalar::PopConvert(exprhdl.Pop());
-	
+
 	// call derivation functions on the operator
 	GPOS_ASSERT(NULL == m_pcrsDefined);
 	m_pcrsDefined = popScalar->PcrsDefined(mp, exprhdl);
 
 	GPOS_ASSERT(NULL == m_pcrsSetReturningFunction);
 	m_pcrsSetReturningFunction = popScalar->PcrsSetReturningFunction(mp, exprhdl);
-	
+
 	GPOS_ASSERT(NULL == m_pcrsUsed);
 	m_pcrsUsed = popScalar->PcrsUsed(mp, exprhdl);
 
@@ -99,7 +97,8 @@ CDrvdPropScalar::Derive
 		{
 			m_pcrsDefined->Union(exprhdl.GetDrvdScalarProps(i)->PcrsDefined());
 			m_pcrsUsed->Union(exprhdl.GetDrvdScalarProps(i)->PcrsUsed());
-			m_pcrsSetReturningFunction->Union(exprhdl.GetDrvdScalarProps(i)->PcrsSetReturningFunction());
+			m_pcrsSetReturningFunction->Union(
+				exprhdl.GetDrvdScalarProps(i)->PcrsSetReturningFunction());
 		}
 		else
 		{
@@ -107,14 +106,14 @@ CDrvdPropScalar::Derive
 
 			// parent operator is a subquery, add outer references
 			// from its relational child as used columns
- 			m_pcrsUsed->Union(exprhdl.GetRelationalProperties(0)->PcrsOuter());
+			m_pcrsUsed->Union(exprhdl.GetRelationalProperties(0)->PcrsOuter());
 		}
 	}
 
 	// derive existence of subqueries
 	GPOS_ASSERT(!m_fHasSubquery);
 	m_fHasSubquery = popScalar->FHasSubquery(exprhdl);
-	
+
 	if (m_fHasSubquery)
 	{
 		m_ppartinfo = popScalar->PpartinfoDerive(mp, exprhdl);
@@ -136,7 +135,7 @@ CDrvdPropScalar::Derive
 	{
 		if (m_fHasNonScalarFunction)
 		{
-			CScalarProjectElement *pspeProject = (CScalarProjectElement *)(exprhdl.Pop());
+			CScalarProjectElement *pspeProject = (CScalarProjectElement *) (exprhdl.Pop());
 			m_pcrsSetReturningFunction->Include(pspeProject->Pcr());
 		}
 	}
@@ -154,15 +153,12 @@ CDrvdPropScalar::Derive
 //
 //---------------------------------------------------------------------------
 CDrvdPropScalar *
-CDrvdPropScalar::GetDrvdScalarProps
-	(
-	DrvdPropArray *pdp
-	)
+CDrvdPropScalar::GetDrvdScalarProps(DrvdPropArray *pdp)
 {
 	GPOS_ASSERT(NULL != pdp);
 	GPOS_ASSERT(EptScalar == pdp->Ept() && "This is not a scalar properties container");
 
-	return dynamic_cast<CDrvdPropScalar*>(pdp);
+	return dynamic_cast<CDrvdPropScalar *>(pdp);
 }
 
 
@@ -175,11 +171,7 @@ CDrvdPropScalar::GetDrvdScalarProps
 //
 //---------------------------------------------------------------------------
 BOOL
-CDrvdPropScalar::FSatisfies
-	(
-	const CReqdPropPlan *prpp
-	)
-	const
+CDrvdPropScalar::FSatisfies(const CReqdPropPlan *prpp) const
 {
 	GPOS_ASSERT(NULL != prpp);
 	GPOS_ASSERT(NULL != prpp->PcrsRequired());
@@ -199,27 +191,22 @@ CDrvdPropScalar::FSatisfies
 //
 //---------------------------------------------------------------------------
 IOstream &
-CDrvdPropScalar::OsPrint
-	(
-	IOstream &os
-	)
-	const
+CDrvdPropScalar::OsPrint(IOstream &os) const
 {
-		os	<<	"Defined Columns: [" << *m_pcrsDefined << "], "
-			<<	"Used Columns: [" << *m_pcrsUsed << "], "
-			<<	"Set Returning Function Columns: [" << *m_pcrsSetReturningFunction << "], "
-			<<	"Has Subqs: [" << m_fHasSubquery << "], "
-			<<	"Function Properties: [" << *m_pfp << "], "
-			<<	"Has Non-scalar Funcs: [" << m_fHasNonScalarFunction << "], ";
+	os << "Defined Columns: [" << *m_pcrsDefined << "], "
+	   << "Used Columns: [" << *m_pcrsUsed << "], "
+	   << "Set Returning Function Columns: [" << *m_pcrsSetReturningFunction << "], "
+	   << "Has Subqs: [" << m_fHasSubquery << "], "
+	   << "Function Properties: [" << *m_pfp << "], "
+	   << "Has Non-scalar Funcs: [" << m_fHasNonScalarFunction << "], ";
 
-		if (0 < m_ulDistinctAggs)
-		{
-			os
-				<<	"Distinct Aggs: [" << m_ulDistinctAggs << "]"
-				<<	"Has Multiple Distinct Aggs: [" << m_fHasMultipleDistinctAggs << "]";
-		}
+	if (0 < m_ulDistinctAggs)
+	{
+		os << "Distinct Aggs: [" << m_ulDistinctAggs << "]"
+		   << "Has Multiple Distinct Aggs: [" << m_fHasMultipleDistinctAggs << "]";
+	}
 
-		return os;
+	return os;
 }
 
 // EOF

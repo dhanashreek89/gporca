@@ -112,15 +112,13 @@ CParseHandlerLogicalGet::EndElement(const XMLCh *const element_local_name, Edxlt
 
 	if (EdxltokenLogicalGet == token_type)
 	{
-		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(
-			m_mp, GPOS_NEW(m_mp) CDXLLogicalGet(m_mp, table_descr));
+		m_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLLogicalGet(m_mp, table_descr));
 	}
 	else
 	{
 		GPOS_ASSERT(EdxltokenLogicalExternalGet == token_type);
-		m_dxlnode = GPOS_NEW(m_mp)
-			CDXLNode(m_mp,
-					 GPOS_NEW(m_mp) CDXLLogicalExternalGet(m_mp, table_descr));
+		m_dxlnode =
+			GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLLogicalExternalGet(m_mp, table_descr));
 	}
 
 #ifdef GPOS_DEBUG

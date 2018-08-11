@@ -68,8 +68,7 @@ CParseHandlerMDRequest::StartElement(const XMLCh *const,  // element_uri,
 		// start of MD request section
 		GPOS_ASSERT(NULL == m_mdid_array);
 		m_mdid_array = GPOS_NEW(m_mp) IMdIdArray(m_mp);
-		m_mdtype_request_array =
-			GPOS_NEW(m_mp) CMDRequest::SMDTypeRequestArray(m_mp);
+		m_mdtype_request_array = GPOS_NEW(m_mp) CMDRequest::SMDTypeRequestArray(m_mp);
 
 		return;
 	}
@@ -103,8 +102,7 @@ CParseHandlerMDRequest::StartElement(const XMLCh *const,  // element_uri,
 				attrs,
 				EdxltokenTypeInfo,
 				EdxltokenMDTypeRequest);
-		m_mdtype_request_array->Append(GPOS_NEW(m_mp)
-										   CMDRequest::SMDTypeRequest(sysid, type_info));
+		m_mdtype_request_array->Append(GPOS_NEW(m_mp) CMDRequest::SMDTypeRequest(sysid, type_info));
 	}
 }
 

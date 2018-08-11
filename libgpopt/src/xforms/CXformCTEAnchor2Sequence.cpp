@@ -26,22 +26,14 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformCTEAnchor2Sequence::CXformCTEAnchor2Sequence
-	(
-	IMemoryPool *mp
-	)
-	:
-	CXformExploration
-		(
-		 // pattern
-		GPOS_NEW(mp) CExpression
-				(
-				mp,
-				GPOS_NEW(mp) CLogicalCTEAnchor(mp),
-				GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))
-				)
-		)
-{}
+CXformCTEAnchor2Sequence::CXformCTEAnchor2Sequence(IMemoryPool *mp)
+	: CXformExploration(
+		  // pattern
+		  GPOS_NEW(mp) CExpression(mp,
+								   GPOS_NEW(mp) CLogicalCTEAnchor(mp),
+								   GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))))
+{
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -52,11 +44,7 @@ CXformCTEAnchor2Sequence::CXformCTEAnchor2Sequence
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise
-CXformCTEAnchor2Sequence::Exfp
-	(
-	CExpressionHandle &exprhdl
-	)
-	const
+CXformCTEAnchor2Sequence::Exfp(CExpressionHandle &exprhdl) const
 {
 	ULONG id = CLogicalCTEAnchor::PopConvert(exprhdl.Pop())->Id();
 	const ULONG ulConsumers = COptCtxt::PoctxtFromTLS()->Pcteinfo()->UlConsumers(id);
@@ -79,13 +67,9 @@ CXformCTEAnchor2Sequence::Exfp
 //
 //---------------------------------------------------------------------------
 void
-CXformCTEAnchor2Sequence::Transform
-	(
-	CXformContext *pxfctxt,
-	CXformResult *pxfres,
-	CExpression *pexpr
-	)
-	const
+CXformCTEAnchor2Sequence::Transform(CXformContext *pxfctxt,
+									CXformResult *pxfres,
+									CExpression *pexpr) const
 {
 	GPOS_ASSERT(NULL != pxfctxt);
 	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
@@ -107,13 +91,7 @@ CXformCTEAnchor2Sequence::Transform
 
 	// create logical sequence
 	CExpression *pexprSequence =
-		GPOS_NEW(mp) CExpression
-			(
-			mp,
-			GPOS_NEW(mp) CLogicalSequence(mp),
-			pexprProducer,
-			pexprChild
-			);
+		GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalSequence(mp), pexprProducer, pexprChild);
 
 	pxfres->Add(pexprSequence);
 }

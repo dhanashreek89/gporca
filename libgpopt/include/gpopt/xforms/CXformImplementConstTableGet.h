@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CXformImplementConstTableGet
@@ -28,61 +28,49 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformImplementConstTableGet : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformImplementConstTableGet(const CXformImplementConstTableGet &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformImplementConstTableGet(IMemoryPool *);
 
-			// private copy ctor
-			CXformImplementConstTableGet(const CXformImplementConstTableGet &);
+		// dtor
+		virtual ~CXformImplementConstTableGet()
+		{
+		}
 
-		public:
-		
-			// ctor
-			explicit
-			CXformImplementConstTableGet(IMemoryPool *);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfImplementConstTableGet;
+		}
 
-			// dtor
-			virtual 
-			~CXformImplementConstTableGet() {}
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformImplementConstTableGet";
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfImplementConstTableGet;
-			}
-			
-			// return a string for xform name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CXformImplementConstTableGet";
-			}
-			
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp
-				(
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{
-				return CXform::ExfpHigh;
-			}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise
+		Exfp(CExpressionHandle &  // exprhdl
+			 ) const
+		{
+			return CXform::ExfpHigh;
+		}
 
-			// actual transform
-			void Transform
-				(
-				CXformContext *pxfctxt,
-				CXformResult *pxfres,
-				CExpression *pexpr
-				) 
-				const;
-		
-	}; // class CXformImplementConstTableGet
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-}
+	};  // class CXformImplementConstTableGet
+
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformImplementConstTableGet_H
+#endif  // !GPOPT_CXformImplementConstTableGet_H
 
 // EOF

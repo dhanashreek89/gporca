@@ -28,54 +28,47 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CPatternMultiTree : public CPattern
 	{
+	private:
+		// private copy ctor
+		CPatternMultiTree(const CPatternMultiTree &);
 
-		private:
+	public:
+		// ctor
+		explicit CPatternMultiTree(IMemoryPool *mp) : CPattern(mp)
+		{
+		}
 
-			// private copy ctor
-			CPatternMultiTree(const CPatternMultiTree &);
+		// dtor
+		virtual ~CPatternMultiTree()
+		{
+		}
 
-		public:
+		// check if operator is a pattern leaf
+		virtual BOOL
+		FLeaf() const
+		{
+			return false;
+		}
 
-			// ctor
-			explicit
-			CPatternMultiTree
-				(
-				IMemoryPool *mp
-				)
-				:
-				CPattern(mp)
-			{}
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopPatternMultiTree;
+		}
 
-			// dtor
-			virtual
-			~CPatternMultiTree() {}
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CPatternMultiTree";
+		}
 
-			// check if operator is a pattern leaf
-			virtual
-			BOOL FLeaf() const
-			{
-				return false;
-			}
+	};  // class CPatternMultiTree
 
-			// ident accessors
-			virtual
-			EOperatorId Eopid() const
-			{
-				return EopPatternMultiTree;
-			}
-
-			// return a string for operator name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CPatternMultiTree";
-			}
-
-	}; // class CPatternMultiTree
-
-}
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CPatternMultiTree_H
+#endif  // !GPOPT_CPatternMultiTree_H
 
 // EOF

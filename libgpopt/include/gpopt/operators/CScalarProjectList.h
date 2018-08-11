@@ -18,7 +18,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CScalarProjectList
@@ -29,86 +29,77 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CScalarProjectList : public CScalar
 	{
-		private:
-				
-			// private copy ctor
-			CScalarProjectList(const CScalarProjectList &);
+	private:
+		// private copy ctor
+		CScalarProjectList(const CScalarProjectList &);
 
-		public:
-		
-			// ctor
-			explicit
-			CScalarProjectList(IMemoryPool *mp);
+	public:
+		// ctor
+		explicit CScalarProjectList(IMemoryPool *mp);
 
-			// dtor
-			virtual 
-			~CScalarProjectList() {}
+		// dtor
+		virtual ~CScalarProjectList()
+		{
+		}
 
-			// ident accessors
-			virtual 
-			EOperatorId Eopid() const
-			{
-				return EopScalarProjectList;
-			}
-			
-			// return a string for operator name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CScalarProjectList";
-			}
+		// ident accessors
+		virtual EOperatorId
+		Eopid() const
+		{
+			return EopScalarProjectList;
+		}
 
-			// match function
-			BOOL Matches(COperator *pop) const;
-			
-			// sensitivity to order of inputs
-			BOOL FInputOrderSensitive() const;
-			
-			// return a copy of the operator with remapped columns
-			virtual
-			COperator *PopCopyWithRemappedColumns
-						(
-						IMemoryPool *, //mp,
-						UlongToColRefMap *, //colref_mapping,
-						BOOL //must_exist
-						)
-			{
-				return PopCopyDefault();
-			}
+		// return a string for operator name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CScalarProjectList";
+		}
 
-			// conversion function
-			static
-			CScalarProjectList *PopConvert
-				(
-				COperator *pop
-				)
-			{
-				GPOS_ASSERT(NULL != pop);
-				GPOS_ASSERT(EopScalarProjectList == pop->Eopid());
-				
-				return reinterpret_cast<CScalarProjectList*>(pop);
-			}
+		// match function
+		BOOL Matches(COperator *pop) const;
 
-			virtual
-			IMDId *MDIdType() const
-			{
-				GPOS_ASSERT(!"Invalid function call: CScalarProjectList::MDIdType()");
-				return NULL;
-			}
+		// sensitivity to order of inputs
+		BOOL FInputOrderSensitive() const;
 
-			// return number of distinct aggs in project list attached to given handle
-			static
-			ULONG UlDistinctAggs(CExpressionHandle &exprhdl);
+		// return a copy of the operator with remapped columns
+		virtual COperator *
+		PopCopyWithRemappedColumns(IMemoryPool *,		//mp,
+								   UlongToColRefMap *,  //colref_mapping,
+								   BOOL					//must_exist
+		)
+		{
+			return PopCopyDefault();
+		}
 
-			// check if a project list has multiple distinct aggregates
-			static
-			BOOL FHasMultipleDistinctAggs(CExpressionHandle &exprhdl);
+		// conversion function
+		static CScalarProjectList *
+		PopConvert(COperator *pop)
+		{
+			GPOS_ASSERT(NULL != pop);
+			GPOS_ASSERT(EopScalarProjectList == pop->Eopid());
 
-	}; // class CScalarProjectList
+			return reinterpret_cast<CScalarProjectList *>(pop);
+		}
 
-}
+		virtual IMDId *
+		MDIdType() const
+		{
+			GPOS_ASSERT(!"Invalid function call: CScalarProjectList::MDIdType()");
+			return NULL;
+		}
+
+		// return number of distinct aggs in project list attached to given handle
+		static ULONG UlDistinctAggs(CExpressionHandle &exprhdl);
+
+		// check if a project list has multiple distinct aggregates
+		static BOOL FHasMultipleDistinctAggs(CExpressionHandle &exprhdl);
+
+	};  // class CScalarProjectList
+
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CScalarProjectList_H
+#endif  // !GPOPT_CScalarProjectList_H
 
 // EOF

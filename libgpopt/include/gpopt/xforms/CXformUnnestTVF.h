@@ -28,62 +28,53 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformUnnestTVF : public CXformExploration
 	{
+	private:
+		// private copy ctor
+		CXformUnnestTVF(const CXformUnnestTVF &);
 
-		private:
+		// helper for mapping subquery function arguments into columns
+		static CColRefArray *PdrgpcrSubqueries(IMemoryPool *mp,
+											   CExpression *pexprCTEProducer,
+											   CExpression *pexprCTEConsumer);
 
-			// private copy ctor
-			CXformUnnestTVF(const CXformUnnestTVF &);
+		//	collect subquery arguments and return a Project expression
+		static CExpression *PexprProjectSubqueries(IMemoryPool *mp, CExpression *pexprTVF);
 
-			// helper for mapping subquery function arguments into columns
-			static
-			CColRefArray *PdrgpcrSubqueries
-				(
-				IMemoryPool *mp,
-				CExpression *pexprCTEProducer,
-				CExpression *pexprCTEConsumer
-				);
+	public:
+		// ctor
+		explicit CXformUnnestTVF(IMemoryPool *mp);
 
-			//	collect subquery arguments and return a Project expression
-			static
-			CExpression *PexprProjectSubqueries(IMemoryPool *mp, CExpression *pexprTVF);
+		// dtor
+		virtual ~CXformUnnestTVF()
+		{
+		}
 
-		public:
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfUnnestTVF;
+		}
 
-			// ctor
-			explicit
-			CXformUnnestTVF(IMemoryPool *mp);
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformUnnestTVF";
+		}
 
-			// dtor
-			virtual
-			~CXformUnnestTVF()
-			{}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfUnnestTVF;
-			}
+		// actual transform
+		virtual void Transform(CXformContext *pxfctxt,
+							   CXformResult *pxfres,
+							   CExpression *pexpr) const;
 
-			// return a string for xform name
-			virtual
-			const CHAR *SzId() const
-			{
-				return "CXformUnnestTVF";
-			}
+	};  // class CXformUnnestTVF
 
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+}  // namespace gpopt
 
-			// actual transform
-			virtual
-			void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
-
-	}; // class CXformUnnestTVF
-
-}
-
-#endif // !GPOPT_CXformUnnestTVF_H
+#endif  // !GPOPT_CXformUnnestTVF_H
 
 // EOF

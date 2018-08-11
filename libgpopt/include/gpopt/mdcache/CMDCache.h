@@ -36,70 +36,59 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CMDCache
 	{
+	private:
+		// pointer to the underlying cache
+		static CMDAccessor::MDCache *m_pcache;
 
-		private:
+		// the maximum size of the cache
+		static ULLONG m_ullCacheQuota;
 
-			// pointer to the underlying cache
-			static CMDAccessor::MDCache *m_pcache;
+		// private ctor
+		CMDCache(){};
 
-			// the maximum size of the cache
-			static ULLONG m_ullCacheQuota;
+		// no copy ctor
+		CMDCache(const CMDCache &);
 
-			// private ctor
-			CMDCache()
-			{};
+		// private dtor
+		~CMDCache(){};
 
-			// no copy ctor
-			CMDCache(const CMDCache&);
+	public:
+		// initialize underlying cache
+		static void Init();
 
-			// private dtor
-			~CMDCache()
-			{};
+		// has cache been initialized?
+		static BOOL
+		FInitialized()
+		{
+			return (NULL != m_pcache);
+		}
 
-		public:
+		// destroy global instance
+		static void Shutdown();
 
-			// initialize underlying cache
-			static
-			void Init();
+		// set the maximum size of the cache
+		static void SetCacheQuota(ULLONG ullCacheQuota);
 
-			// has cache been initialized?
-			static
-			BOOL FInitialized()
-			{
-				return (NULL != m_pcache);
-			}
+		// get the maximum size of the cache
+		static ULLONG ULLGetCacheQuota();
 
-			// destroy global instance
-			static
-			void Shutdown();
+		// get the number of times we evicted entries from this cache
+		static ULLONG ULLGetCacheEvictionCounter();
 
-			// set the maximum size of the cache
-			static
-			void SetCacheQuota(ULLONG ullCacheQuota);
+		// reset global instance
+		static void Reset();
 
-			// get the maximum size of the cache
-			static
-			ULLONG ULLGetCacheQuota();
+		// global accessor
+		static CMDAccessor::MDCache *
+		Pcache()
+		{
+			return m_pcache;
+		}
 
-			// get the number of times we evicted entries from this cache
-			static
-			ULLONG ULLGetCacheEvictionCounter();
-
-			// reset global instance
-			static
-			void Reset();
-
-			// global accessor
-			static
-			CMDAccessor::MDCache *Pcache()
-			{
-				return m_pcache;
-			}
-
-	}; // class CMDCache
+	};  // class CMDCache
 
 }  // namespace gpopt
 
-#endif // !GPOPT_CMDCache_H
+#endif  // !GPOPT_CMDCache_H
 
 // EOF

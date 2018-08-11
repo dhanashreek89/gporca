@@ -17,7 +17,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	//---------------------------------------------------------------------------
 	//	@class:
 	//		CXformDynamicGet2DynamicTableScan
@@ -28,61 +28,49 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CXformDynamicGet2DynamicTableScan : public CXformImplementation
 	{
+	private:
+		// private copy ctor
+		CXformDynamicGet2DynamicTableScan(const CXformDynamicGet2DynamicTableScan &);
 
-		private:
+	public:
+		// ctor
+		explicit CXformDynamicGet2DynamicTableScan(IMemoryPool *mp);
 
-			// private copy ctor
-			CXformDynamicGet2DynamicTableScan(const CXformDynamicGet2DynamicTableScan &);
+		// dtor
+		virtual ~CXformDynamicGet2DynamicTableScan()
+		{
+		}
 
-		public:
-		
-			// ctor
-			explicit
-			CXformDynamicGet2DynamicTableScan(IMemoryPool *mp);
+		// ident accessors
+		virtual EXformId
+		Exfid() const
+		{
+			return ExfDynamicGet2DynamicTableScan;
+		}
 
-			// dtor
-			virtual 
-			~CXformDynamicGet2DynamicTableScan() {}
+		// return a string for xform name
+		virtual const CHAR *
+		SzId() const
+		{
+			return "CXformDynamicGet2DynamicTableScan";
+		}
 
-			// ident accessors
-			virtual
-			EXformId Exfid() const
-			{
-				return ExfDynamicGet2DynamicTableScan;
-			}
-			
-			// return a string for xform name
-			virtual 
-			const CHAR *SzId() const
-			{
-				return "CXformDynamicGet2DynamicTableScan";
-			}
-			
-			// compute xform promise for a given expression handle
-			virtual
-			EXformPromise Exfp
-				(
-				CExpressionHandle & // exprhdl
-				)
-				const
-			{
-				return CXform::ExfpHigh;
-			}
+		// compute xform promise for a given expression handle
+		virtual EXformPromise
+		Exfp(CExpressionHandle &  // exprhdl
+			 ) const
+		{
+			return CXform::ExfpHigh;
+		}
 
-			// actual transform
-			void Transform
-					(
-					CXformContext *pxfctxt,
-					CXformResult *pxfres,
-					CExpression *pexpr
-					) 
-					const;
-		
-	}; // class CXformDynamicGet2DynamicTableScan
+		// actual transform
+		void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const;
 
-}
+	};  // class CXformDynamicGet2DynamicTableScan
+
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CXformDynamicGet2DynamicTableScan_H
+#endif  // !GPOPT_CXformDynamicGet2DynamicTableScan_H
 
 // EOF

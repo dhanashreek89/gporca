@@ -19,14 +19,11 @@ namespace gpopt
 
 	class CHashedDistributions : public CDistributionSpecArray
 	{
-		public:
-			CHashedDistributions
-			(
-			IMemoryPool *mp,
-			CColRefArray *pdrgpcrOutput,
-			CColRefArrays *pdrgpdrgpcrInput
-			);
+	public:
+		CHashedDistributions(IMemoryPool *mp,
+							 CColRefArray *pdrgpcrOutput,
+							 CColRefArrays *pdrgpdrgpcrInput);
 	};
-}
+}  // namespace gpopt
 
-#endif //GPOPT_CHashedDistributions_H
+#endif  //GPOPT_CHashedDistributions_H

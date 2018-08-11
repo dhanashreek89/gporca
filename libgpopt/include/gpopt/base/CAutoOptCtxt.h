@@ -22,7 +22,7 @@
 namespace gpopt
 {
 	using namespace gpos;
-	
+
 	// forward declaration
 	class CCostParams;
 	class ICostModel;
@@ -40,38 +40,30 @@ namespace gpopt
 	//---------------------------------------------------------------------------
 	class CAutoOptCtxt
 	{
+	private:
+		// private copy ctor
+		CAutoOptCtxt(CAutoOptCtxt &);
 
-		private:
-			// private copy ctor
-			CAutoOptCtxt(CAutoOptCtxt &);
+	public:
+		// ctor
+		CAutoOptCtxt(IMemoryPool *mp,
+					 CMDAccessor *md_accessor,
+					 IConstExprEvaluator *pceeval,
+					 COptimizerConfig *optimizer_config);
 
-		public:
+		// ctor
+		CAutoOptCtxt(IMemoryPool *mp,
+					 CMDAccessor *md_accessor,
+					 IConstExprEvaluator *pceeval,
+					 ICostModel *pcm);
 
-			// ctor
-			CAutoOptCtxt
-				(
-				IMemoryPool *mp,
-				CMDAccessor *md_accessor,
-				IConstExprEvaluator *pceeval,
-				COptimizerConfig *optimizer_config
-				);
-			
-			// ctor
-			CAutoOptCtxt
-				(
-				IMemoryPool *mp,
-				CMDAccessor *md_accessor,
-				IConstExprEvaluator *pceeval,
-				ICostModel *pcm
-				);
+		// dtor
+		~CAutoOptCtxt();
 
-			// dtor
-			~CAutoOptCtxt();
-
-	}; // class CAutoOptCtxt
-}
+	};  // class CAutoOptCtxt
+}  // namespace gpopt
 
 
-#endif // !GPOPT_CAutoOptCtxt_H
+#endif  // !GPOPT_CAutoOptCtxt_H
 
 // EOF
