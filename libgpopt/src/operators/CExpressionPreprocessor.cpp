@@ -1050,6 +1050,72 @@ CExpressionPreprocessor::PexprOuterJoinToInnerJoin
 	return GPOS_NEW(mp) CExpression(mp, pop, pdrgpexprChildren);
 }
 
+// swap outer joins with nary-join
+CExpression *
+CExpressionPreprocessor::PexprOuterJoinNAryJoinSwap
+	(
+	IMemoryPool *mp,
+	CExpression *pexpr
+	)
+{
+	// protect against stack overflow during recursion
+	GPOS_CHECK_STACK_SIZE;
+	GPOS_ASSERT(NULL != mp);
+	GPOS_ASSERT(NULL != pexpr);
+
+	COperator *pop = pexpr->Pop();
+	const ULONG arity = pexpr->Arity();
+
+	if (CPredicateUtils::FInnerJoin(pexpr))
+	{
+		CExpressionArray *pdrgpexprChildrenNAry = GPOS_NEW(mp) CExpressionArray(mp);
+		for (ULONG ul = 0; ul < arity; ul++)
+		{
+			CExpression *pexprChild = (*pexpr)[ul];
+			if (COperator::EopLogicalLeftOuterJoin == pexprChild->Pop()->Eopid())
+			{
+				CExpression *pexprOuterChild = (*pexprChild)[0];
+				CExpression *pexprInnerChild = (*pexprChild)[1];
+				CExpression *pexprScalar = (*pexprChild)[2];
+
+				pexprOuterChild->AddRef();
+				pdrgpexprChildrenNAry->Append(pexprOuterChild);
+
+				for (ULONG i=ul+1; i<arity; i++)
+				{
+					CExpression *pexprUl = (*pexpr)[i];
+					pexprUl->AddRef();
+					pdrgpexprChildrenNAry->Append(pexprUl);
+				}
+				CExpression *pexprNewNAry = GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalNAryJoin(mp), pdrgpexprChildrenNAry);
+
+				CExpressionArray *pdrgpexprChildrenOuterJoin = GPOS_NEW(mp) CExpressionArray(mp);
+				pdrgpexprChildrenOuterJoin->Append(pexprNewNAry);
+				pexprInnerChild->AddRef();
+				pdrgpexprChildrenOuterJoin->Append(pexprInnerChild);
+				pexprScalar->AddRef();
+				pdrgpexprChildrenOuterJoin->Append(pexprScalar);
+
+				return GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalLeftOuterJoin(mp), pdrgpexprChildrenOuterJoin);
+			}
+			pdrgpexprChildrenNAry->Append((*pexpr)[ul]);
+		}
+		return GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalNAryJoin(mp), pdrgpexprChildrenNAry);
+	}
+
+	// current operator is not an NAry-join, recursively process children
+	CExpressionArray *pdrgpexprChildren = GPOS_NEW(mp) CExpressionArray(mp);
+	for (ULONG ul = 0; ul < arity; ul++)
+	{
+		CExpression *pexprChild = PexprOuterJoinNAryJoinSwap(mp, (*pexpr)[ul]);
+		pdrgpexprChildren->Append(pexprChild);
+	}
+
+	pop->AddRef();
+	return GPOS_NEW(mp) CExpression(mp, pop, pdrgpexprChildren);
+}
+
+
 // generate equality predicates between the columns in the given set,
 CExpression *
 CExpressionPreprocessor::PexprConjEqualityPredicates
@@ -2259,7 +2325,11 @@ CExpressionPreprocessor::PexprPreprocess
 	GPOS_CHECK_ABORT;
 	pexrReorderedScalarCmpChildren->Release();
 
-	return pexprExistWithPredFromINSubq;
+	CExpression *pexprOuterSwappedWithNAry = PexprOuterJoinNAryJoinSwap(mp, pexprExistWithPredFromINSubq);
+	GPOS_CHECK_ABORT;
+	pexprExistWithPredFromINSubq->Release();
+
+	return pexprOuterSwappedWithNAry;
 }
 
 // EOF

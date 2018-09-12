@@ -234,6 +234,9 @@ namespace gpopt
 			static
 			CExpression *PexprConvert2In(IMemoryPool *mp, CExpression *pexpr);
 
+			static
+			CExpression *PexprOuterJoinNAryJoinSwap(IMemoryPool *mp, CExpression *pexpr);
+
 	}; // class CExpressionPreprocessor
 }
 
